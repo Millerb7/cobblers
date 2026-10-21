@@ -556,12 +556,47 @@ def scan(instance: Path, with_packs=()) -> dict:
 
 # ---------------------------------------------------------------- build
 
+def restore_resolver_assets(st: Stack, jar: Layer, rel: str, files: dict, jar_posers: dict, jar_anims: dict):
+    """Restore every model, poser, animation group and texture Cobblemon's resolver `rel` names that a pack shadows.
+
+    A resolver restored on its own would name Cobblemon's models, but still meet a pack's poser, animations
+    and textures of the same name (all keyed by file name or path), which were drawn for another model."""
+    doc = jload(st.read(rel, layer=st.jar)) or {}
+    models = st.registry("models", upto=st.jar)
+    for v in doc.get("variations") or []:
+        if not isinstance(v, dict):
+            continue
+        mid = qualify(v["model"]) if isinstance(v.get("model"), str) else None
+        if mid in models:
+            for p in st.paths_for("models", mid):
+                if st.top(p) != st.jar:
+                    files[p] = (jar.label, models[mid])
+        pid = qualify(v["poser"]) if isinstance(v.get("poser"), str) else None
+        if pid in jar_posers:
+            for p in st.paths_for("posers", pid):
+                if st.top(p) != st.jar:
+                    files[p] = (jar.label, jar_posers[pid])
+            for g in sorted(set(GROUP_RE.findall(st.read(jar_posers[pid], layer=st.jar).decode("utf-8-sig", "replace")))):
+                if g in jar_anims:
+                    for p in st.paths_for("anims", g):
+                        if st.top(p) != st.jar:
+                            files[p] = (jar.label, jar_anims[g])
+        tex = tex_ids(v.get("texture"))
+        for layer in v.get("layers") or []:
+            tex += tex_ids(layer.get("texture")) if isinstance(layer, dict) else []
+        for t in tex:
+            trel = tex_rel(t)
+            if st.jar in st.prov.get(trel, ()) and st.top(trel) != st.jar:
+                files[trel] = (jar.label, trel)
+
+
 def cobblemon_fixes(instance: Path):
     """dst path -> (source label, src path, bytes) for Cobblemon's own files, plus what they cover."""
     st = stack_for(instance, include_ours=False)
     jar = st.layers[st.jar]
     builtin = builtin_poser_forms(jar.zf)
     files, covered = {}, {"crash": [], "uv_mismatch": [], "uv_mismatch_left": [], "poser_kept": []}
+    other = {}   # dst -> (source label, src path, layer): files restored from a layer other than Cobblemon's jar
     for f in crash_faults(st, builtin):
         for dst, src in f["shadow"].items():
             files[dst] = (jar.label, src)
@@ -596,6 +631,56 @@ def cobblemon_fixes(instance: Path):
                         if st.top(p) != st.jar:
                             files[p] = (jar.label, jar_anims[g])
         covered["uv_mismatch"].append(form_key(f))
+    # The forms left (2026-10-20, the bundle instance: Mega Showdown's Mega textures on COBBLEVERSE RP's 1.7 models,
+    # a pack texture on Cobblemon's model): restore whichever side has a match. A texture at a path Cobblemon also
+    # ships, on Cobblemon's model, gets Cobblemon's texture back; a texture whose own pack also ships the model it was
+    # drawn for gets that model, unless another form wears the same model id with a texture it already fits.
+    label_at = {l.label: i for i, l in enumerate(st.layers)}
+    uv_all = uv_forms(st)
+    fits = {}
+    for g in uv_all:
+        if not g["flagged"]:
+            fits.setdefault(g["model"], set()).add(g["texture"])
+    covered["restored_from_pack"] = []
+    for f in uv_all:
+        if not f["flagged"] or form_key(f) not in covered["uv_mismatch_left"]:
+            continue
+        if f["model_pack"] == jar.label and st.jar in st.prov.get(f["texture"], ()):
+            other[f["texture"]] = (jar.label, f["texture"], st.jar)
+            # every other form wearing that texture goes back to Cobblemon's model too, or it now mismatches
+            # (Beautifly: the male on COBBLEVERSE RP's model shares beautifly.png with the female on Cobblemon's)
+            allv = variations(res.get("cobblemon:" + f["species"], []))
+            for _, v0 in allv:
+                asp = set(v0.get("aspects") or [])
+                m, t = resolve(allv, asp, "model"), resolve(allv, asp, "texture")
+                ids = tex_ids(t)
+                mrel = st.registry("models").get(qualify(m)) if isinstance(m, str) else None
+                if ids and tex_rel(ids[0]) == f["texture"] and mrel and st.top(mrel) != st.jar \
+                        and st.jar in st.prov.get(mrel, ()):
+                    other[mrel] = (jar.label, mrel, st.jar)
+                    pid = resolve(allv, asp, "poser")
+                    pid = qualify(pid) if isinstance(pid, str) else None
+                    if pid in jar_posers and st.top(posers[pid]) != st.jar:
+                        for p in st.paths_for("posers", pid):
+                            if st.top(p) != st.jar:
+                                other[p] = (jar.label, jar_posers[pid], st.jar)
+        elif f["texture_pack"] == f["drawn_for_pack"] and not (fits.get(f["model"], set()) - {f["texture"]}):
+            src_layer = label_at[f["texture_pack"]]
+            for p in st.paths_for("models", f["model"]):
+                if p not in files:
+                    other[p] = (f["texture_pack"], f["drawn_for"], src_layer)
+            pid = resolve(variations(res.get("cobblemon:" + f["species"], [])), set(f["aspects"]), "poser")
+            pid = qualify(pid) if isinstance(pid, str) else None
+            pp = st.registry("posers", upto=src_layer).get(pid) if pid else None
+            if pp and st.top(pp, src_layer) == src_layer:
+                for p in st.paths_for("posers", pid):
+                    if p not in files:
+                        other[p] = (f["texture_pack"], pp, src_layer)
+        else:
+            continue
+        covered["uv_mismatch_left"].remove(form_key(f))
+        covered["uv_mismatch"].append(form_key(f))
+        covered["restored_from_pack"].append("%s (%s)" % (form_key(f), f["texture_pack"]))
     # A pack's resolver at Cobblemon's own path can still pair the restored model with textures drawn
     # for the old one (E19's Arbok snake patterns: 128x64 textures for the 1.7 model). Simulate the
     # fixes; for a species whose restored model still mismatches a pack texture, restore Cobblemon's
@@ -605,20 +690,29 @@ def cobblemon_fixes(instance: Path):
     with zipfile.ZipFile(buf, "w") as zf:
         for dst, (_, src) in files.items():
             zf.writestr(dst, st.read(src, layer=st.jar))
+        for dst, (_, src, lay) in other.items():
+            zf.writestr(dst, st.read(src, layer=lay))
     sim = Stack(st.layers + [Layer("simulated:fixes", zipfile.ZipFile(buf))], jar.label)
     covered["resolver_restored"] = []
     for f in uv_forms(sim):
-        if not f["flagged"] or f["species"] not in restored or f["model_pack"] != "simulated:fixes":
+        # model_pack simulated:fixes: the restored model still wears a pack's texture (Arbok).
+        # texture_pack simulated:fixes: the restored texture is now worn by a pack's model that was
+        # drawn for the old one (2026-10-21, the male Dustox and Beautifly: COBBLEVERSE RP's resolver
+        # at Cobblemon's base path points the male at COBBLEVERSE RP's own model, and the female, on
+        # Cobblemon's model, shares the texture path). Either way the species goes back to Cobblemon whole.
+        if not f["flagged"] or f["species"] not in restored                 or "simulated:fixes" not in (f["model_pack"], f["texture_pack"]):
             continue
         for _, rel, _ in sim.resolvers().get("cobblemon:" + f["species"], []):
             if st.top(rel) not in (None, st.jar) and st.jar in st.prov.get(rel, ()):
                 files[rel] = (jar.label, rel)
+                restore_resolver_assets(st, jar, rel, files, jar_posers, jar_anims)
                 if f["species"] + ": " + rel not in covered["resolver_restored"]:
                     covered["resolver_restored"].append(f["species"] + ": " + rel)
         covered["uv_mismatch"].append(form_key(f))
         if form_key(f) in covered["uv_mismatch_left"]:
             covered["uv_mismatch_left"].remove(form_key(f))
     out = {dst: (lab, src, st.read(src, layer=st.jar)) for dst, (lab, src) in files.items()}
+    out.update({dst: (lab, src, st.read(src, layer=lay)) for dst, (lab, src, lay) in other.items() if dst not in out})
     return out, covered
 
 
@@ -747,8 +841,12 @@ def build(instance: Path, out: Path) -> dict:
     return manifest
 
 
-def build_server_pack(instance: Path, out: Path, record_paths=False) -> dict:
+def build_server_pack(instance: Path, out: Path, record_paths=False, no_donor=False) -> dict:
     files, covered = cobblemon_fixes(instance)
+    if no_donor:
+        # the instance already carries the whole AllTheMons pack (ATM x MSD v4.0 in the bundle, 2026-10-20), so the
+        # zip holds only the model fixes for this stack, our NPC looks and the rip
+        return _write_client_pack(instance, out, files, covered, {"files": {}}, {}, None)
     sub = donor_subset(instance)
     if sub["unresolved"] or sub["collisions"] or sub["not_in_donor"]:
         raise SystemExit("donor subset is not clean:\n" + json.dumps(
@@ -767,13 +865,28 @@ def build_server_pack(instance: Path, out: Path, record_paths=False) -> dict:
         raise SystemExit("the derived ATMxMSD subset differs from %s (+%d -%d paths); review and rerun with "
                          "--record-paths\n  added: %s\n  removed: %s" % (DONOR_PATHS.relative_to(REPO), len(added),
                                                                          len(gone), added[:10], gone[:10]))
+    return _write_client_pack(instance, out, files, covered, sub, derived, donor_credits(sub["donor"]))
+
+
+def _write_client_pack(instance: Path, out: Path, files, covered, sub, derived, cred) -> dict:
     clash = sorted(set(files) & set(sub["files"]))
     if clash:
         raise SystemExit("a Cobblemon fix and the donor subset write the same path: %s" % clash)
-    cred = donor_credits(sub["donor"])
-    contributors = cred["people"].get("Contributors", [])
     entries = {d: b for d, (_, _, b) in files.items()}
     entries.update({d: b for d, (_, _, b) in sub["files"].items()})
+    if cred is None:
+        entries["pack.mcmeta"] = json.dumps({"pack": {"pack_format": PACK_FORMAT,
+            "description": "Cobblers client pack: model fixes for this stack, NPC looks and the dungeon rip"}},
+            indent=1).encode("utf-8")
+        entries["CREDITS.md"] = "\n".join([
+            "# Credits", "",
+            "Model, poser and animation files from Cobblemon 1.8 (%s) and from the packs and mods named in "
+            "cobblers-client-pack.json, placed at the paths that override other packs." % cobblemon_jar(instance).name,
+            ""]).encode("utf-8")
+        manifest = {"cobblemon": cobblemon_jar(instance).name, "donor": None, "covers": covered,
+                    "cobblemon_files": {d: s for d, (_, s, _) in sorted(files.items())}, "donor_files": []}
+        return _finish_client_pack(out, entries, manifest)
+    contributors = cred["people"].get("Contributors", [])
     credits = {"AllTheMons": "AllTheMons x Mega Showdown (ATMxMSD RP %s), (c) EasySqueeze & Lvnatic. Models, "
                              "animations and textures by its contributors; unaltered subset, not monetized."
                              % (cred["version"] or "?"),
@@ -796,6 +909,10 @@ def build_server_pack(instance: Path, out: Path, record_paths=False) -> dict:
     manifest = {"cobblemon": cobblemon_jar(instance).name, "donor": derived, "covers": covered,
                 "cobblemon_files": {d: s for d, (_, s, _) in sorted(files.items())},
                 "donor_files": sorted(sub["files"])}
+    return _finish_client_pack(out, entries, manifest)
+
+
+def _finish_client_pack(out: Path, entries: dict, manifest: dict) -> dict:
     # our NPC looks (data/npc_looks.json): one variation per look, textures from packs players already have
     looks = json.loads((Path(__file__).resolve().parent.parent / "data" / "npc_looks.json").read_text(encoding="utf-8"))
     for name, lk in sorted(looks["looks"].items()):
@@ -852,6 +969,8 @@ def main(argv=None) -> int:
         if name == "build":
             s.add_argument("--out", type=Path)
             s.add_argument("--server-pack", action="store_true")
+            s.add_argument("--no-donor", action="store_true",
+                           help="with --server-pack: the instance has the whole AllTheMons pack; no donor subset")
             s.add_argument("--record-paths", action="store_true")
         if name == "install":
             s.add_argument("--zip", type=Path, default=Path("build/client") / PACK_NAME)
@@ -870,11 +989,15 @@ def main(argv=None) -> int:
     if a.cmd == "build":
         if a.server_pack:
             out = a.out or Path("build/client") / SERVER_PACK_NAME
-            m = build_server_pack(a.instance, out, a.record_paths)
-            print("%s: %d Cobblemon file(s) (crash %d, uv %d forms), %d ATMxMSD file(s) of %d derived for %d species"
-                  % (out, len(m["cobblemon_files"]), len(m["covers"]["crash"]), len(m["covers"]["uv_mismatch"]),
-                     len(m["donor_files"]), len(m["donor"]["paths"]), len(m["donor"]["species"])))
-            print("left to the stack:", m["donor"]["left_to_stack"])
+            m = build_server_pack(a.instance, out, a.record_paths, a.no_donor)
+            if m["donor"] is None:
+                print("%s: %d fix file(s) (crash %d, uv %d forms), no donor subset"
+                      % (out, len(m["cobblemon_files"]), len(m["covers"]["crash"]), len(m["covers"]["uv_mismatch"])))
+            else:
+                print("%s: %d Cobblemon file(s) (crash %d, uv %d forms), %d ATMxMSD file(s) of %d derived for %d species"
+                      % (out, len(m["cobblemon_files"]), len(m["covers"]["crash"]), len(m["covers"]["uv_mismatch"]),
+                         len(m["donor_files"]), len(m["donor"]["paths"]), len(m["donor"]["species"])))
+                print("left to the stack:", m["donor"]["left_to_stack"])
             print("uv_mismatch not restorable from Cobblemon:", m["covers"]["uv_mismatch_left"])
             print("pack poser kept (Cobblemon's is built in):", m["covers"]["poser_kept"])
             print("Cobblemon resolver restored:", m["covers"]["resolver_restored"])

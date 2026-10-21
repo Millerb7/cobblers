@@ -24,7 +24,9 @@ Tropius elder's 5) and at least 20 max_spawns between them; each trunk block sit
 (the cell and its six face neighbours) and its mimic is that log; the top block sits in that wood's persistent leaves
 (the cell and its six face neighbours) inside a centre column of leaves from + 63 to + 81, and its mimic is those
 leaves; the doc's status paragraph states the layout the data holds; each pool is one evolution family, holds the
-doc's bird at the doc's levels, and carries no time condition; species are valid resource paths and implemented.
+DESIGNER's crown band at its levels (data/tree_bird_species.json, since 2026-10-21; the doc's bird column is the old
+mapping), and carries no time condition; species are valid resource paths and implemented. The added storey nests
+(tbird_*) and the pools of every band are tests/test_tree_bird_pools.py and tools/tree_birds_audit.py.
 
 derived/ is gitignored and disposable: without the site files the grove trees' seat test and the site-file test SKIP
 (a skip is not a pass). Without the Cobblemon jar the species tests SKIP.
@@ -63,7 +65,7 @@ PREFABS = ROOT / "kits" / "structures" / "prefabs" / "trees" / "tree_town"
 # the owner, 2026-09-26 (docs/STATE.md, commit ab3cf01): four blocks per elder, suffix -> (height above ground, the
 # block kind its mimic and its surroundings are), and what each keeps alive
 NEST = {"": (12, "log"), "_mid": (35, "log"), "_crown": (58, "log"), "_top": (74, "leaves")}
-ACTIVATED = {"spawn_range": 16, "max_spawns": 8, "max_spawns_per_activation": 2, "chance": 1.0, "trigger": "TICK",
+ACTIVATED = {"spawn_range": 16, "max_spawns": 8, "max_spawns_per_activation": 6, "chance": 1.0, "trigger": "TICK",
              "cancel_range": -1}
 LEAVES_RUN = (63, 81)           # the staging probe (docs/STATE.md): leaves at every elder's centre, ground + 63 to + 81
 AT_LEAST_PER_TREE = 20          # the owner: "at least 20 ... spread vertically along the tree"
@@ -389,38 +391,30 @@ def test_no_elder_pool_or_entry_carries_a_time_condition(compiled):
     assert not authored, authored
 
 
-def _level_range(pool_col, species):
-    """The doc's level range for a species: '12-15', or 'Rowlet 25-30, Decidueye 36-40' per species (the rest of the
-    family at the first one's range)."""
-    parts = re.findall(r"([A-Z][A-Za-z']+)\s+(\d+-\d+)", pool_col)
-    if not parts:
-        return pool_col.strip()
-    per = {_norm(n): r for n, r in parts}
-    return per.get(species, parts[0][1])
+# Since 2026-10-21 each tree's species are the species designer's (data/tree_bird_species.json: a unique line a tree, by
+# height band), not the doc table's bird column, which is the OLD mapping and is only parsed above for positions.
+DESIGN = json.loads((ROOT / "data" / "tree_bird_species.json").read_text(encoding="utf-8"))["trees"]
 
 
-def _pool_min(tid):
-    if tid.startswith("elder_long_isle_"):
-        return int(LONG_ISLE_LEVELS.split("-")[0])
-    return int(re.findall(r"\d+", ROWS[tid]["pool"])[0])
+def _crown_levels(tid):
+    v = DESIGN[tid]
+    lo, hi = (int(x) for x in (v.get("crown_levels") or v["levels"]).split("-"))
+    return lo, hi
 
 
-# Without it a tree's pool drifts from the owner-approved mapping: a bird the doc does not name for that tree, the
-# named bird dropped, or levels off the table. The two trees the status made single-species hold their find alone, as
-# a common spawn at the tree's full weight (a lone rare entry would still be the only thing the block can spawn, but
-# the pool would no longer say what it is). The Long Isle's trees were moved to 44-50 (LONG_ISLE.md D5).
+# Without it an elder's crown pool (the tree's own id: the four old nests, which Cobblemon re-centres into the crown)
+# drifts from the designer's crown band: a species the designer did not place there (the old shared bird back), a
+# placed species dropped, or a level outside the band (over the sub-region's cap). Replaces the doc-table version,
+# which asserted each tree's OLD bird. The expected species and levels are read from the designer's file.
 @pytest.mark.parametrize("tid", IDS)
-def test_the_pool_holds_the_docs_bird_at_the_docs_levels(tid, compiled):
-    row, pool = ROWS[tid], compiled[tid]
-    got = {s["species"] for s in pool}
-    assert row["bird"] <= got, (tid, "named in the doc, missing from the pool", sorted(row["bird"] - got))
-    for s in pool:
-        want = LONG_ISLE_LEVELS if tid.startswith("elder_long_isle_") else _level_range(row["pool"], s["species"])
-        assert s["levelRange"] == want, (tid, s["species"], s["levelRange"], want)
-        if s["species"] in row["rare"]:
-            assert s["bucket"] == "rare", (tid, s)
-    if tid in SINGLE:
-        assert [(s["species"], s["bucket"], s["weight"]) for s in pool] == [(SINGLE[tid], "common", 24.0)], (tid, pool)
+def test_the_crown_pool_is_the_designers_crown_band_at_the_designers_levels(tid, compiled):
+    pool = compiled[tid]
+    want = DESIGN[tid]["bands"]["crown"]
+    assert sorted({s["species"] for s in pool}) == sorted(want), (tid, [s["species"] for s in pool], want)
+    lo, hi = _crown_levels(tid)
+    spans = [tuple(int(x) for x in s["levelRange"].split("-")) for s in pool]
+    assert all(lo <= a <= b <= hi for a, b in spans), (tid, spans, (lo, hi))
+    assert max(b for _a, b in spans) == hi, (tid, "no entry reaches the band's top", spans, hi)
 
 
 def _jar():
@@ -479,10 +473,12 @@ def test_every_sapling_pool_is_one_evolution_family(compiled, species_files):
     assert not mixed, mixed
 
 
-# Without it an unnamed species could slip into a tree's pool in the name of "now eligible": a stage that needs an
-# item or is above the pool's floor. Every species the doc's bird column does not name must be a level-up evolution
-# (a level requirement only) of a named bird, reachable by the pool's minimum level: the doc's "stages at pool" rule.
-def test_unnamed_species_are_level_up_stages_of_the_docs_bird_reachable_by_the_pool_floor(compiled, species_files):
+# Without it an unexpected stage could slip into a tree's crown pool in the name of "now eligible": a stage that needs
+# an item or trade, or evolves above the band. Every crown species other than the designer's base stage (line[0]) must
+# be a level-up evolution (a level requirement only) reachable from that base at or under the crown band's TOP, which
+# is when an evolved stage is allowed to spawn. Replaces the doc-table version (base = the doc's old bird, bound =
+# the old pool floor). Expected bases come from data/tree_bird_species.json.
+def test_every_crown_species_is_the_designers_base_or_a_level_up_stage_reachable_within_the_band(compiled, species_files):
     z, files = species_files
 
     def evolves(sp, lo):
@@ -491,22 +487,26 @@ def test_unnamed_species_are_level_up_stages_of_the_docs_bird_reachable_by_the_p
             if ev.get("variant") != "level_up":
                 continue
             lv = [q.get("minLevel") for q in ev.get("requirements") or [] if q.get("variant") == "level"]
-            others = [q for q in ev.get("requirements") or [] if q.get("variant") != "level"]
+            # a `properties` (Burmy's gender split to Mothim) or `biome` (Spewpa's Vivillon wing pattern) requirement
+            # picks which form results, not how: the level-up still happens. Items, friendship and the rest stay out.
+            others = [q for q in ev.get("requirements") or []
+                      if q.get("variant") not in ("level", "properties", "biome")]
             if lv and not others and lv[0] <= lo:
                 yield ev["result"].split(" ")[0]
 
     extras = 0
     for tid in IDS:
         got = {s["species"] for s in compiled[tid]}
-        reach, todo = set(ROWS[tid]["bird"]), list(ROWS[tid]["bird"])
+        base = DESIGN[tid]["line"][0]
+        reach, todo = {base}, [base]
         while todo:
-            for nxt in evolves(todo.pop(), _pool_min(tid)):
+            for nxt in evolves(todo.pop(), _crown_levels(tid)[1]):
                 if nxt not in reach:
                     reach.add(nxt)
                     todo.append(nxt)
         assert got <= reach, (tid, sorted(got - reach))
-        extras += len(got - ROWS[tid]["bird"])
-    # the rule has cases: Dartrix, Trumbeak, Corvisquire at the rare-find trees, Corviknight and Unfezant on the Long Isle
+        extras += len(got - {base})
+    # the rule has cases: crown pools that hold an evolved stage (Vivillon's line, Xatu-less Natu aside, ...)
     assert extras >= 3, extras
 
 

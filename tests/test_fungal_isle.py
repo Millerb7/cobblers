@@ -128,7 +128,9 @@ def test_nothing_is_written_inside_the_ring_the_tower_or_under_the_newmoon_islan
     pm = {p["id"]: p for p in _load("placements.json")["placements"]}
     tw = pm["legendary_zapdos_tower"]["position"]
     nm = pm["legendary_newmoon_island"]["position"]
-    assert (ring, tw["x"], tw["z"], nm["x"], nm["y"], nm["z"]) == ([608, 5888], 881, 5569, 24, 141, 5582)
+    # Newmoon Island raised to the build limit, 2026-10-20 (data/placements.json legendary_newmoon_island superseded_seats)
+    assert (ring, tw["x"], tw["z"], nm["x"], nm["y"], nm["z"]) == ([608, 5888], 881, 5569, 24, 518, 5582)
+    assert DOC["rules"]["newmoon_ceiling"] == nm["y"] - 2
     bad = []
     for o, layer, (x, y, z), v in _all(pl):
         if math.hypot(x - ring[0], z - ring[1]) < 15 + 10:

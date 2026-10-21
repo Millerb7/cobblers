@@ -541,6 +541,7 @@
       "level_basis": "5 below the provisional 8-badge cap of 70. PROVISIONAL.",
       "cap_at_gate": 60,
       "kind": "sealed_chamber",
+      "kind_why": "2026-10-21, the owner: \"undo groudon cave\", then \"Old chamber back\". Groudon is in its first chamber again, exactly as it stood before 2026-10-20: the record before commit 9d764bcc, whose numbers (portal, approach, chamber, plug_depth) the quake's retired site sealed_chamber_v1 had frozen and are the same; bore, shell_margin and pedestal_block are still the defaults it was carved with (3, 4, smooth_basalt). The live world lost this chamber to the quake's R14L run (the v1 cleanup put it back to rock) and gets it back from carve_once, which runs because the quake cavern's cleanup (retired_sites quake_cavern_v1, run first) clears #groudon cobblers.leg.",
       "status": "sited",
       "site": "the_craters",
       "gate": {
@@ -548,7 +549,7 @@
           "gym8_cleared"
         ],
         "requires_met": [],
-        "status": "PROPOSED, NOT DECIDED",
+        "status": "DECIDED by the owner 2026-10-20 (gym8_cleared, chosen for the quake) and kept for the chamber on 2026-10-21: the plug opens for a player who holds it, per player, as before the quake.",
         "why": "STRUCTURE_DECISIONS: 'depth gates it through heat, lava and darkness' and it 'rewards going deeper than the fossil levels'. No badge is fixed anywhere; the eighth is this file's proposal, because gym 7 (Blaine, Cinderlee) is the crater town and the eighth badge sends a player back."
       },
       "portal": [
@@ -580,7 +581,46 @@
         5544
       ],
       "why": "STRUCTURE_DECISIONS section 4: the mountain's sleeper, reached by going deeper than the fossil levels. The connection through Fossick's deep workings is dressing for a later pass; this record only owns the chamber and its plug.",
-      "level_why": "lowered from 65 to the upper bound of its own gate (8 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'"
+      "level_why": "lowered from 65 to the upper bound of its own gate (8 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'",
+      "retired_sites": [
+        {
+          "id": "quake_cavern_v1",
+          "kind": "quake_cavern",
+          "retired": "2026-10-21",
+          "why": "Groudon's quake cavern (data/groudon_cavern.json, tools/groudon_cavern.py): a ravine from the eastern bowl's south floor, a plug, a lit tunnel and a magma hall 56 across with a lava lake, a blackstone lake wall and a basalt dais. R14L carved it into the live world at 01:16 on 2026-10-21 (#built cobblers.gq = 1) and the quake opened it fully (#quake cobblers.gq = 5, which also set #groudon cobblers.leg to 1). The owner then asked for it undone and the old chamber back. tools/groudon_cavern.py retire_functions emits a fail-closed cleanup into cobblers_legendaries (cobblers:legendary/groudon/retire_quake_cavern_v1, run by R14L before any summon): it refuses while a player stands in the ravine, the plug, the tunnel or the hall; kills the cavern's Groudon in the model box; and, only while #built is 1 or the dais's pedestal stands, puts every cell the carve and the cuts wrote at or under the ground back to terrain, clears the rim's walls, clears #groudon cobblers.leg (so the chamber is carved again), and sets #built and #quake to 0 last. cobblers:legendary/groudon/met is a per-player advancement and is not touched: data/rayquaza_sky.json gate.requires_met reads it.",
+          "portal": [
+            6706,
+            5510
+          ],
+          "cavern": "data/groudon_cavern.json",
+          "pedestal": [
+            6764,
+            66,
+            5638
+          ],
+          "pedestal_block": "minecraft:smooth_basalt",
+          "applied": {
+            "sha256": "5ce6d870e086fb1ec4eaf139ab4299129a6bb63a82dce7cad378dfb98be7e5f2",
+            "record": "build/groudon_cavern_applied (python tools/groudon_cavern.py build)",
+            "why": "sha256 of the carve and the three cuts as the world received them (tools/groudon_cavern.py applied_functions: the build pack's carve parts, state and carve_once, and the stages 2, 3 and 4), generated from the model of commit bb733a3f, the last change to tools/groudon_cavern.py's geometry before R14L ran at 01:16. Frozen so a later edit of the model cannot change what the cleanup thinks it is undoing: tools/groudon_cavern.py build and tools/groudon_revert_audit.py both refuse a record whose sha256 differs.",
+            "verified": "2026-10-21: the generator of commit bb733a3f, run from git into a scratch directory over the same data and heightmap, emits these eight functions byte for byte (the same sha256)."
+          },
+          "hand_edits": {
+            "why": "Measured in the live world on 2026-10-21 by the owner's session, after the apply; relayed, not re-measured here. The cleanup is written to be right with them in place.",
+            "water_plugged": "85 water sources in x6686-6728, y84-145, z5500-5575 turned to stone, and 31 flowing water blocks to air. Left alone: at or under the ground the restore writes rock where the cut was (what they already are), and over the ground it writes nothing but air in place of the rim's blackstone walls (fill ... replace), so a stone standing over the ground stays.",
+            "lake_walls_removed": "the lake's 88 blackstone_wall blocks round (6764, 64, 5614): under the ground, so rock either way.",
+            "groudon_moved": "Groudon onto the lava at (6763.5, 65, 5612.5), tags cobblers_leg_groudon and cobblers_leg_groudon.awake, NoAI. Inside the model box, so the cleanup's kill takes it."
+          },
+          "terrain": {
+            "code": "BASALT",
+            "surface": "minecraft:basalt",
+            "under": "minecraft:stone",
+            "deep": "minecraft:stone",
+            "surface_verified": false,
+            "why": "The east_cones subregion's paint preset, volcanic (data/regions.json paint_presets: terrain BASALT), as for sealed_chamber_v1; under the ground stone, the convention tools/gym_demolish.py and the retired chambers share. UNVERIFIED and offline-unknowable (the heightmap has heights, not block ids): the surface block over the ravine's columns, where the restore puts the ground back. The tunnel and the hall lie 40 and more under the plateau, so they are all `deep`. A one-line change here if the owner finds the patch wrong in game."
+          }
+        }
+      ]
     },
     {
       "id": "lugia",
@@ -1073,6 +1113,72 @@
           7692
         ],
         "by": "tools/legendaries.py geometry on tools/ground.py, 2026-10-12"
+      }
+    },
+    {
+      "id": "hooh",
+      "title": "Ho-Oh, at the top of the world tree",
+      "species": "hooh",
+      "level": 100,
+      "level_basis": "the cap of whoever may fight it: the gate is champion_cleared and the RCT cap after the Champion is 100 (tools/legendaries_audit.py rct_caps, level_caps.upper_bound_by_badges 'champion'). The level-cap catch block refuses a ball only STRICTLY above the thrower's cap, so a level-100 Ho-Oh is catchable by every player this pack lets in. As data/entei_boss.json. PROPOSED, not seen by the owner.",
+      "cap_at_gate": 100,
+      "kind": "tree_crown",
+      "kind_why": "2026-10-21, the owner: \"ho oh doesnt need a way up, its flight\". No chamber, ladder, plug or approach: a hollow barrier shell round the legendary on the world tree's highest standable cell, and players fly up on their mounts. Cobblemon ignores Invulnerable (EXP-023), so the shell is the only protection while the gate is shut; barrier blocks stop a ridden flyer as they stop a walker.",
+      "status": "sited",
+      "site": "world_tree_foothill_woods",
+      "gate": {
+        "flags": [
+          "champion_cleared"
+        ],
+        "requires_met": [],
+        "status": "PROPOSED, the coordinator's brief of 2026-10-21 (the owner decided only that Ho-Oh holds the top)",
+        "why": "Ho-Oh is `restricted` in the Cobblemon 1.8.2 jar's labels, was band 6 only (after the Champion) in the Ash Bell's pool (data/dungeon_prize_roster.json rules.restricted_band6_only), and every postgame legendary here is gated at the Champion (data/entei_boss.json gate_why). The partition, not the climb, is the gate: anyone can fly up, only a qualified player opens it, by being near it (look-then-act: cobblers:legendary/hooh/near)."
+      },
+      "portal": [
+        2045,
+        2283
+      ],
+      "portal_why": "The perch column of data/world_tree_hooh.json: the highest solid cells of the built tree are y535 (35 columns, one persistent oak-leaves block thick over air, measured 2026-10-21 on tools/tree_geometry.world_tree(), the tree's own block list), and (2045, 2283) is one of them, 29 blocks from the trunk axis (2016, 2280). No heightmap is involved: the tree is a built prefab, not terrain (tools/world_tree.py CENTRE and GROUND seat it).",
+      "perch": {
+        "top_y": 535,
+        "top_y_basis": "the highest solid y of tools/tree_geometry.world_tree() (35 columns at y535; (2045, 2283) is oak leaves with air under it and nothing solid anywhere above y535); tools/legendaries_audit.py re-measures it from the tree's block list, not from this number.",
+        "cavity_radius": 3,
+        "cavity_height": 8,
+        "shell_thickness": 1,
+        "cavity_why": "7 by 7 by 8 of air for Ho-Oh and its battle. NOT VERIFIED against Ho-Oh's hitbox in game (WORLD_TREE_PLAN.md U8, the Xerneas question); a dormant NoGravity Pokemon is not moved by its hitbox, so the risk is a clipped model, not a trapped one.",
+        "gate_reach": 48,
+        "zone_margin": 6,
+        "margins_why": "gate_reach: the driver runs only while a player is within 48 blocks of the perch (inside their own simulation radius, so the shell's chunk is loaded when open writes it). zone_margin: the `met` box is the shell grown by 6; the gate box (a qualified player opens the shell) is grown by 12."
+      },
+      "spawn_free_zone": [
+        2040,
+        2272,
+        2056,
+        2288
+      ],
+      "spawn_free_zone_why": "the shell's footprint (x2041-2049, z2279-2287) snapped out to the 8-block grid. Recorded for the audit's grid rule; nothing wild ground-spawns at y535.",
+      "why": "The owner, 2026-10-21: the very top of the world tree is Ho-Oh, 'as a legendary encounter, not a nest'. It was the Ash Bell's band-6 prize (data/dungeon_prize_roster.json) and was moved out of it in the same change. data/world_tree_hooh.json holds the measurements; its ladder, canopy walk and Slow Falling design are DROPPED (the owner: players fly).",
+      "level_why": "champion band = 100, the cap after the Champion; see level_basis.",
+      "measured": {
+        "perch": [
+          2045,
+          535,
+          2283
+        ],
+        "legendary_at": [
+          2045,
+          536,
+          2283
+        ],
+        "shell": [
+          2041,
+          535,
+          2279,
+          2049,
+          544,
+          2287
+        ],
+        "by": "tools/legendaries.py perch_geometry on tools/tree_geometry.world_tree(), 2026-10-21"
       }
     }
   ],

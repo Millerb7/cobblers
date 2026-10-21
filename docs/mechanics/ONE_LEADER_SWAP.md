@@ -9,16 +9,17 @@ then widen it to the other twelve.
 
 Built by `tools/challenge_mode.py` (`single_lines`, `retire_lines`, `single_leader_verify`) into
 `build/datapacks/cobblers_trainers`. The switch is `data/challenge_mode.json` `single_leader.rollout`. Since
-2026-10-16 it names **twelve of the thirteen**: every boss but Lance (section "Rollout, 2026-10-16" below).
+2026-10-20 it names **all thirteen** (section "Rollout" below): twelve from 2026-10-16, Lance on 2026-10-20.
 
-## Rollout, 2026-10-16
+## Rollout
 
 The owner, 2026-10-16: "challenge mode shouldnt need its own leader, we have gone through this." Brock had stood as
 one leader on staging and live since Wave A (`docs/STATE.md`); every other gym still stood two leaders (gym 2:
 `kanto_misty` at (1626.5, 109, 2883.5) and `kanto_misty_challenge` at (1627.5, 109, 2881.5), read over RCON by the
 orchestrator, relayed). The second matches `bosses.kanto_misty.spawner.at` (1627, 108, 2881), the cell R17L retires.
 
-**Rolled out (12):** the eight leaders, Lorelei, Bruno, Agatha and Blue. The sections below, written for Brock, now
+**Rolled out 2026-10-16 (12):** the eight leaders, Lorelei, Bruno, Agatha and Blue. **2026-10-20: Lance** (the
+owner: "lance should be one entity"; below). The sections below, written for Brock, now
 hold for each. The records that answer what each needs, none read from a world:
 
 | Boss | One spawner (swap anchor) | Retired cell, and what goes back |
@@ -30,21 +31,34 @@ The template restores were measured before this rollout and are unchanged; this 
 "strict xfail" on the arena gyms (`restore_blocks` writing a hall floor into a carve-below arena) no longer has a
 subject: every gym is now a hall whose Challenge cell is in the hall's own model.
 
-**Held on two leaders: Lance.** His one spawner MOVES (`single_leader.move`, the owner's 2026-10-09 decision, 30.6
-from the template cell). The move can leave the old template spawner's trainer standing beyond the swap's reach for
-good: `tools/challenge_mode_audit.py` P1:move_orphan finds three cases (a world with no second spawner whose old
-spawner had already raised Lance, two floors; and a first R17L that met Lance in a battle). The fix's shape is known
-and was tried in this unit: kill the idle trainers of either id within 24 of `move.from`, under the move's own
-guards, before the spawner moves (`tests/test_one_leader_retire_independent.py` `ORPHAN_FIX`). With it the audit's
-P1 is clean for Lance, but its R:summon rule then fails twice, because R:summon excuses kills only in a retire
-function, matched exactly. Widening that exemption is the auditor's decision, not the builder's (the N95 rule), so
-the fix was reverted and Lance stays out. Two Lances is not unsafe: the Challenge one is in series
-`cobblers_challenge`, the Normal one in `kanto`, so each refuses the other mode (`wrong_series`).
+**Lance, whose one spawner moves.** His one spawner MOVES (`single_leader.move`, the owner's 2026-10-09 decision)
+from the template cell (3695, 148, 2421) to (3676, 148, 2445), 30.6 away, out of Agatha's reach. R17L runs his
+retire, then `cobblers:trainers/challenge/move_kanto_league_lance`. The move first kills any idle trainer of either
+Lance id within 24 of the old cell, then sets the new spawner, then restores the old cell. Every line of it waits for
+the old spawner to still stand, for nobody within reach (17) of either cell, and for neither id to be in a battle by
+the old cell. Without the kills, the trainer the template spawner had already raised would stay at the old cell for
+good. The swap follows the new cell and never reaches him, and rctmod spawns no second trainer of an identity while
+one stands. The audit's P1:move_orphan finds three such worlds: one never given a second spawner, with that cell
+holding the floor or something else, and one where a first R17L met Lance in a battle. The retire's own kills miss
+all three, because they wait for the second spawner. The new leader at move.to is outside the 24-block kill radius,
+and a re-run finds no old spawner, so it kills nothing.
 
-**Lance held, Agatha one leader.** Lance's two template-floor spawners are 10.8 and 11.7 from Agatha's one spawner,
-inside her 17-block reach. A player on Lance's floor can therefore choose Agatha's id through the floor. Agatha and
-Bruno, and Bruno and Lorelei, already share floor cells this way, an open owner item (2026-10-09). In a mixed group
-the cost is a refusal at Agatha until the player there is nearest. It never gives anyone the other mode's team.
+**The audit rule this needed (2026-10-20).** R:summon forbids any trainer kill. Before this change it excused two
+shapes only, in a boss's retire function, gated on the second spawner. It now also excuses **exactly two more**:
+the two kill lines above, only in `move_<id>.mcfunction` of a rollout boss with `single_leader.move`, anchored at
+the record's `move.from`, with the old-spawner test, both player guards (move.from and move.to), the battle guard,
+and `TrainerId` one of the boss's two ids. The kill could not go in the retire function under the existing rule:
+that rule matches only kills gated on the second spawner, and all three orphan worlds lack one. Five generator
+mutations show the narrowed rule still fails everything else (`tests/test_one_leader_retire_independent.py`
+`SUMMON_MUTATIONS`): the kill without the old-spawner test, without the player guards, anchored at the new cell,
+aimed at Agatha, or written into the retire function. Each newly fails R:summon. Cutting the two kills out
+brings P1:move_orphan back. R17L's read-back (`single_leader_verify`) also names a trainer of either id left
+within 24 of move.from.
+
+**Agatha and Lance.** At his template cell, Lance's spawners were 10.8 and 11.7 from Agatha's one spawner, inside her
+17-block reach. At move.to they are 35.3 apart, and no floor cell lies in both reaches. Agatha and Bruno, and Bruno
+and Lorelei, still share floor cells this way, an open owner item (2026-10-09). In a mixed group the cost is a
+refusal at the shared boss until the player there is nearest. It never gives anyone the other mode's team.
 
 ### The two guarantees, and what holds them
 
@@ -60,14 +74,16 @@ the cost is a refusal at Agatha until the player there is nearest. It never give
 ### On live, in this order (the integrator's)
 
 1. `prepare`, then `install` of `cobblers_trainers`, then `install_check`.
-2. Restart: `cobblers_trainers` loads its functions at boot. From then on the cycle stops placing the eleven new
-   bosses' second spawners and drives their one spawner. Until step 3, an existing second spawner and its trainer
-   still stand.
+2. Restart: `cobblers_trainers` loads its functions at boot. From then on the cycle stops placing a rolled-out
+   boss's second spawner and drives its one spawner (for Lance, the one at move.to, which stands only after step 3:
+   until then nothing drives his template spawner, which keeps its Normal Lance). Until step 3, an existing second
+   spawner and its trainer still stand, so both Lances do until R17L.
 3. `python tools/reapply.py run --only R17L --no-reload`, **with nobody online**. The retire's kills and setblocks
    wait while any player is within reach of either seat. A player near one gym leaves that gym's retire undone,
    and `single_leader_verify` names it ("NOT checked" or "still there"). Run it again with nobody near.
-4. Read back: R17L's own `check single_leader` (12 bosses: second spawner gone, one spawner present on the Normal
-   id, no Challenge-id trainer by the old cell, at most one Normal trainer). Report probes present over total.
+4. Read back: R17L's own `check single_leader` (13 bosses: second spawner gone, one spawner present on the Normal
+   id, no Challenge-id trainer by the old cell, at most one Normal trainer; for Lance also the template spawner gone
+   from move.from and no trainer of either id within 24 of it). Report probes present over total.
    Then, by hand, one gym and one League floor from section (a) below, with the coordinates of that boss.
 
 ## Mechanism rung
@@ -203,5 +219,7 @@ None of this has run in a game. The following are assumed:
 - the spawner's own spawn range.
 
 The Challenge audit (`tools/challenge_mode_audit.py`) judges a rollout boss by P1 and excuses the retire's two kill
-shapes in R:summon. With the twelve rolled out (2026-10-16): 56 checks, 0 problems, 16 reports. Twelve of the
-reports are `P1:inbattle_assumed`: staging measured `InBattle:0b` on a standing trainer, never `1b` in a battle.
+shapes and a moved boss's two move kills in R:summon. With all thirteen rolled out (2026-10-20): 56 checks, 0
+problems, 17 reports. Thirteen of the reports are `P1:inbattle_assumed`: staging measured `InBattle:0b` on a standing
+trainer, never `1b` in a battle. Not run in any game: that killing Lance by the old cell lets his moved spawner raise
+him at move.to (the same assumption the retire's kills already rest on).

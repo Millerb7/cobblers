@@ -32,6 +32,12 @@ THE CHAMBER, PARAMETRIC BY DESIGN
                     shown to everyone and only answer to a badge (WATER_BUILD_PLAN 4.2).
     sealed_chamber  a stone plug at the surface -> a dry ladder shaft -> a short adit -> the chamber. The
                     plug IS the gate and it never closes again, so nobody is sealed in.
+    tree_crown      (2026-10-21, Ho-Oh at the top of the world tree) no chamber at all: a hollow barrier shell
+                    round the legendary on the tree's highest standable cell, opened when a qualified player is
+                    near. Players fly up on their mounts (the owner: "ho oh doesnt need a way up, its flight"),
+                    so there is no ladder, plug or approach; the barrier is the only thing between the sleeper
+                    and a ridden player, because Cobblemon ignores Invulnerable (EXP-023). It writes barrier
+                    blocks over AIR only and one pedestal block, so the tree's leaves stay as they are.
 
 A RECORD THAT MOVES (2026-10-12, Regigigas to the North Pine Isle) keeps its old chamber in `retired_sites`, each
 entry the numbers that chamber was carved from (bore, shell_margin and pedestal_block frozen as they stood). For
@@ -40,6 +46,11 @@ a retired void (and the step reads the held count back, so the run stops), resto
 sleeve and plug columns to the heightmap's terrain, clears the retired chamber's open score, and kills the record's
 own legendary in the old chamber's box. The restore runs only while the old pedestal stands, so a second run
 writes nothing; its ground is the heightmap (never a world) and its surface block is data, `terrain.surface`.
+
+A retired site of kind `quake_cavern` (2026-10-21, Groudon's quake cavern, which the owner had undone and the old
+chamber put back) is not a box chain: tools/groudon_cavern.py retire_functions emits its cleanup in the same shape
+(look-then-act, refuse while a player stands in a void, read the held count back, restore only while the cavern is
+there, kill the record's own legendary in the cavern's box), and this tool puts it in the pack and in R14L's order.
 
   python tools/legendaries.py                     # -> build/datapacks/cobblers_legendaries
   python tools/legendaries.py --report            # the geometry of every record, nothing written
@@ -63,7 +74,8 @@ SCHEMA = "cobblers.legendaries/1"
 PACK_FORMAT = 48  # Minecraft 1.21.1
 FILL_LIMIT = 32768
 
-KINDS = ("lake_grotto", "sealed_chamber", "sapling_wake")
+KINDS = ("lake_grotto", "sealed_chamber", "sapling_wake", "tree_crown")
+RETIRED_KINDS = ("sealed_chamber", "quake_cavern")   # a retired site's `kind`; absent means sealed_chamber
 STATUSES = ("sited", "blocked", "gate_only")
 
 # bearing -> (dx, dz). Cardinals only: every box stays axis aligned, so every write is a `fill`.
@@ -112,6 +124,8 @@ def load(path=DATA):
 
 RETIRED_KEYS = ("id", "retired", "why", "portal", "approach", "chamber", "plug_depth", "bore", "shell_margin",
                 "pedestal_block", "terrain")
+# a retired quake cavern (2026-10-21): its geometry is data/groudon_cavern.json's model, frozen by the applied record's sha256
+RETIRED_QUAKE_KEYS = ("id", "retired", "why", "portal", "cavern", "pedestal", "pedestal_block", "applied", "terrain")
 TERRAIN_KEYS = ("surface", "under", "deep")
 
 
@@ -128,9 +142,12 @@ def _check_retired(rec):
             raise LegendaryError("%s: declared twice" % where)
         seen.add(sid)
         if rec["kind"] != "sealed_chamber":
-            raise LegendaryError("%s: only a sealed_chamber can be retired (a lake grotto's undoing is the water's, "
-                                 "and nothing here writes it)" % where)
-        for k in RETIRED_KEYS:
+            raise LegendaryError("%s: only a sealed_chamber can have a retired site (a lake grotto's undoing is the "
+                                 "water's, and nothing here writes it)" % where)
+        kind = site_kind(s)
+        if kind not in RETIRED_KINDS:
+            raise LegendaryError("%s: kind must be one of %s" % (where, ", ".join(RETIRED_KINDS)))
+        for k in (RETIRED_QUAKE_KEYS if kind == "quake_cavern" else RETIRED_KEYS):
             if k not in s:
                 raise LegendaryError("%s: no %s; the cleanup would have to guess it" % (where, k))
         for k in TERRAIN_KEYS:
@@ -140,6 +157,11 @@ def _check_retired(rec):
             raise LegendaryError("%s: portal must be [x, z]" % where)
         if s["portal"] == rec.get("portal"):
             raise LegendaryError("%s: the retired portal is the record's live portal; nothing moved" % where)
+
+
+def site_kind(site):
+    """A retired site's kind: `sealed_chamber` (the default: every site before 2026-10-21) or `quake_cavern`."""
+    return site.get("kind") or "sealed_chamber"
 
 
 def emitted(doc):
@@ -174,6 +196,8 @@ def geometry(rec, doc, ground):
     Pure arithmetic on the record and the heightmap: no world is read, and the same function is what
     tools/legendaries_audit.py re-derives the plan from.
     """
+    if rec["kind"] == "tree_crown":
+        return perch_geometry(rec, doc)
     d = doc["defaults"]
     mx, mz = _anchor(rec)
     my = ground(mx, mz)
@@ -253,6 +277,41 @@ def geometry(rec, doc, ground):
     g["env_footprint_min_ground"] = int(ground.box(ex0, ez0, ex1, ez1).min())
     g["bbox"] = _hull([g["envelope"], (sx0, env_top + 1, sz0, sx1, my, sz1)])
     g["lanterns"] = _lanterns(g["chamber"], alcove, (dx, dz), floor_y + height)
+    return g
+
+
+PERCH_KEYS = ("top_y", "cavity_radius", "cavity_height", "shell_thickness", "gate_reach", "zone_margin")
+
+
+def perch_geometry(rec, doc):
+    """A tree_crown record's boxes (inclusive tuples): a hollow barrier shell round the legendary.
+
+    The record's `portal` is the perch column [x, z] and `perch.top_y` the y of its highest standable cell, measured on
+    the tree's own block list (tools/tree_geometry.world_tree), never on the heightmap or a world: the tree is a built
+    prefab, not terrain. The pedestal replaces that cell and the legendary stands on it. The cavity is the room the
+    legendary is in, `cavity_radius` either side and `cavity_height` tall; the shell is `shell_thickness` of barrier all
+    round it, its floor on the pedestal's own level so nothing can enter the cavity from under the leaf plateau.
+    Returns the keys the generator and the tools that read a record's geometry use (anchor, legendary, pedestal, zone,
+    bbox, chamber) plus the shell's own (shell, cavity, gate_zone)."""
+    pv = rec.get("perch") or {}
+    for k in PERCH_KEYS:
+        if not isinstance(pv.get(k), int) or isinstance(pv.get(k), bool):
+            raise LegendaryError("%s: perch.%s must be an integer" % (rec["id"], k))
+    mx, mz = _anchor(rec)
+    top, cr, ch, t = pv["top_y"], pv["cavity_radius"], pv["cavity_height"], pv["shell_thickness"]
+    if cr < 1 or ch < 2 or t < 1:
+        raise LegendaryError("%s: the perch cavity needs a radius of 1, a height of 2 and a shell of 1 or more" % rec["id"])
+    g = {"anchor": (mx, mz), "mouth_y": top, "floor_y": top, "ceiling_y": top + ch}
+    g["cavity"] = _box(mx - cr, top + 1, mz - cr, mx + cr, top + ch, mz + cr)
+    g["chamber"] = g["cavity"]
+    g["shell"] = _box(mx - cr - t, top - t + 1, mz - cr - t, mx + cr + t, top + ch + t, mz + cr + t)
+    g["bbox"] = g["shell"]
+    g["legendary"] = (mx, top + 1, mz)
+    g["pedestal"] = (mx, top, mz)
+    zm = pv["zone_margin"]
+    g["zone"] = _grow(g["shell"], zm)
+    g["gate_zone"] = _grow(g["shell"], zm * 2)
+    g["lanterns"] = []
     return g
 
 
@@ -357,7 +416,8 @@ def retire_restore_lines(rec, site, doc, ground):
     out = ["# Generated by tools/legendaries.py from data/legendaries.json: %s, retired site %s (%s)."
            % (rec["title"], site["id"], site["retired"]),
            "# chunks-loaded-by: %s (its forceload holds the retired site's whole hull)" % retire_parts(rec, site, doc)[0],
-           "# Run only while the pedestal still stands, so a second run writes nothing; it is also the LAST write, so a",
+           "# Run only while the pedestal still stands (or, taken by a player, its cell, the cell over it and the passage's",
+           "# floor all read air), so a second run writes nothing; the pedestal is also the LAST write, so a",
            "# run that stopped half way is run again. The retired chamber's open score is cleared first: the live",
            "# chamber elsewhere is unopened, and carve_once skips a chamber whose score is 1.",
            "scoreboard players set #%s %s 0" % (rec["id"], doc["objective"])]
@@ -379,6 +439,14 @@ def retire_restore_lines(rec, site, doc, ground):
     return out
 
 
+def gone_pedestal_probe(g):
+    """[(x, y, z)] three cells of a retired chamber that read air only once it was carved and its pedestal taken away: the
+    pedestal's own cell, the legendary's cell over it, and the passage's middle column at its floor level."""
+    px, py, pz = g["pedestal"]
+    p = g["passage"]
+    return [(px, py, pz), (px, py + 1, pz), ((p[0] + p[3]) // 2, p[1], (p[2] + p[5]) // 2)]
+
+
 def retire_functions(rec, site, doc, ground):
     """{'ns:path': lines} of one retired site's cleanup: a look-then-act chain (tools/chunk_look.py) that, once its
     hull shows its saved entities (or blind after the chain's limit), refuses if a player stands in a void, else
@@ -386,7 +454,12 @@ def retire_functions(rec, site, doc, ground):
 
     The kill is the chamber's own and nothing else: type cobblemon:pokemon, the record's tag, and the retired
     chamber's box. The live chamber's legendary carries the same tag and stands elsewhere, outside that box.
-    The chain counts the players it held (RETIRE_HELD); the step reads 0 back, so a refusal stops the run."""
+    The chain counts the players it held (RETIRE_HELD); the step reads 0 back, so a refusal stops the run.
+
+    A retired QUAKE CAVERN (2026-10-21) is tools/groudon_cavern.py's: the same shape over its own model."""
+    if site_kind(site) == "quake_cavern":
+        import groudon_cavern
+        return groudon_cavern.retire_functions(rec, site, doc, ground)
     import chunk_look as CL
     g = retired_geometry(rec, site, doc, ground)
     base, restore, holder, new_tag = retire_parts(rec, site, doc)
@@ -403,8 +476,16 @@ def retire_functions(rec, site, doc, ground):
            "# a player standing in a void is held, and nothing below is done while anyone is: the step reads the held count",
            "tag @a remove %s" % RETIRE_HELD]
     act += ["tag @a[%s] add %s" % (_vol(v), RETIRE_HELD) for v in voids]
+    # the restore runs while the old pedestal stands; and ALSO when a player opened the old chamber and took the pedestal
+    # away (review 2026-10-21): then the pedestal's cell, the old legendary's cell over it and the passage's floor-level
+    # cell all read air, three cells that natural rock (a world that never had the chamber) does not hollow together.
+    # Without it the old open score stays 1 and the live chamber's carve_once (which skips an opened chamber) never runs.
+    # The restore puts rock in all three, so neither line fires twice.
+    pp = gone_pedestal_probe(g)
     act += ["execute unless entity %s if block %d %d %d %s run function %s"
             % (held, px, py, pz, site["pedestal_block"], restore),
+            "execute unless entity %s %s run function %s"
+            % (held, " ".join("if block %d %d %d minecraft:air" % c for c in pp), restore),
             "execute unless entity %s run kill @e[%s]" % (held, scope)]
     fns = CL.chain(base, (bb[0], bb[2], bb[3], bb[5]), ["@e[%s]" % scope], act, [scope], new_tag,
                    "tag=%s" % RETIRE_HELD, holder, note="tools/legendaries.py")
@@ -453,6 +534,16 @@ def carve_lines(rec, doc, g):
     """The chamber, in the order that makes the seal true: solid first, then the void, then the water."""
     d = doc["defaults"]
     lake = rec["kind"] == "lake_grotto"
+    if rec["kind"] == "tree_crown":
+        px, py, pz = g["pedestal"]
+        out = ["# Generated by tools/legendaries.py from data/legendaries.json: %s" % rec["title"],
+               "# chunks-loaded-by: tools/reapply.py R14L (forceload add over RCON before this runs)",
+               "# the shell is barrier over AIR only (the tree's leaves are never replaced); the cavity is cleared of the",
+               "# barrier the shell's fill put there; the pedestal replaces the highest standable leaf, the legendary's floor"]
+        out += _fill(g["shell"], d["door_block"], " replace minecraft:air")
+        out += _fill(g["cavity"], "minecraft:air", " replace %s" % d["door_block"])
+        out.append("setblock %d %d %d %s" % (px, py, pz, d["pedestal_block"]))
+        return out
     out = ["# Generated by tools/legendaries.py from data/legendaries.json: %s" % rec["title"],
            "# chunks-loaded-by: tools/reapply.py R14L (forceload add over RCON before this runs)",
            "# the envelope is filled SOLID first and reaches %d blocks beyond every void: that is the seal"
@@ -537,9 +628,15 @@ def files(doc, ground):
         tag = doc["tag_prefix"] + rid
         g = geometry(rec, doc, ground)
         lake = rec["kind"] == "lake_grotto"
+        tree = rec["kind"] == "tree_crown"
         lx, ly, lz = g["legendary"]
         at = "%.1f %d %.1f" % (lx + 0.5, ly, lz + 0.5)
-        if lake:
+        if tree:
+            # driven from the perch: open writes the shell, so whoever trips the driver is within the reach the
+            # record declares, inside their own simulation radius (a player flies up; nothing is walked)
+            drive_x, drive_y, drive_z = lx, ly, lz
+            reach = int(rec["perch"]["gate_reach"])
+        elif lake:
             # driven from the CHAMBER's centre, not the mouth: open/close write the partition, so whoever
             # trips the driver has to be close enough to be holding those chunks loaded themselves
             cx0, cy0, cz0, cx1, cy1, cz1 = g["chamber"]
@@ -555,8 +652,8 @@ def files(doc, ground):
                     % (drive_x, drive_y, drive_z, reach, ns, rid))
 
         near = ["# %s. The gate is the advancement predicate on every line that can open this chamber." % rec["title"]]
-        gate_zone = g["zone"] if lake else _grow(_box(g["anchor"][0], g["mouth_y"], g["anchor"][1],
-                                                      g["anchor"][0], g["mouth_y"] + 2, g["anchor"][1]), 2)
+        gate_zone = g["gate_zone"] if tree else g["zone"] if lake else _grow(
+            _box(g["anchor"][0], g["mouth_y"], g["anchor"][1], g["anchor"][0], g["mouth_y"] + 2, g["anchor"][1]), 2)
         near.append("execute if entity %s unless score #%s %s matches 1 run function %s:legendary/%s/open"
                     % (_zone_sel(gate_zone, _sel(rec, ns)), rid, obj, ns, rid))
         if lake:
@@ -575,6 +672,9 @@ def files(doc, ground):
                  "scoreboard players set #%s %s 1" % (rid, obj)]
         if lake:
             open_ += _fill(g["door"], "minecraft:air", " replace %s" % doc["defaults"]["door_block"])
+        elif tree:
+            # the shell goes: barrier only, so the tree's own blocks and the pedestal stay. It is never closed again.
+            open_ += _fill(g["shell"], "minecraft:air", " replace %s" % doc["defaults"]["door_block"])
         else:
             open_ += _fill(g["plug"], "minecraft:air")
         open_ += ["data merge entity @e[tag=%s,limit=1] {%s}" % (tag, _nbt(AWAKE)),
@@ -785,6 +885,10 @@ def main(argv=None):
                 print("%-12s %-14s BLOCKED on %s" % (rec["id"], rec["kind"], rec["blocked_by"]))
                 continue
             g = geometry(rec, doc, g_)
+            if rec["kind"] == "tree_crown":
+                print("%-12s %-14s perch %s y%d  legendary %s  shell %s  cavity %s"
+                      % (rec["id"], rec["kind"], g["anchor"], g["mouth_y"], g["legendary"], g["shell"], g["cavity"]))
+                continue
             print("%-12s %-14s anchor %s ground y%d  floor y%d  ceiling y%d  envelope %s vol %d  "
                   "clearance %d  sleeve top y%d (mouth %+d)"
                   % (rec["id"], rec["kind"], g["anchor"], g["mouth_y"], g["floor_y"], g["ceiling_y"],
@@ -792,6 +896,10 @@ def main(argv=None):
                      g["env_footprint_min_ground"] - g["envelope"][4], g["sleeve_top"],
                      g["mouth_y"] - g["sleeve_top"] - 1))
         for rec, site in retired(doc):
+            if site_kind(site) == "quake_cavern":
+                print("%-12s RETIRED %-14s lip %s  cavern %s  (%s; python tools/groudon_cavern.py report)"
+                      % (rec["id"], site["id"], site["portal"], site["cavern"], site["retired"]))
+                continue
             g = retired_geometry(rec, site, doc, g_)
             print("%-12s RETIRED %-14s anchor %s ground y%d  floor y%d  hull %s  (%s)"
                   % (rec["id"], site["id"], g["anchor"], g["mouth_y"], g["floor_y"], g["bbox"], site["retired"]))

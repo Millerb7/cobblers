@@ -404,6 +404,11 @@ def main(argv=None):
                     raise SystemExit("%s: %d command(s) the server would refuse; not written" % (fn, len(refused)))
                 fn.write_text("\n".join(lines_out) + "\n", encoding="utf-8", newline="\n")
             print("wrote place_%s%s" % (rec["id"], " (checked at %s)" % (check,) if check else " (no check block)"))
+        # a donor that moved: its old seat's takedown, the guarded paste and the read-back (tools/donor_reseat.py,
+        # reapply R9DR), refused whole unless the heightmap is below every old seat
+        import donor_reseat
+        for rel in donor_reseat.write(out, placements):
+            print("wrote %s" % Path(rel).stem)
         (out / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description": "Cobblers donor structure placements (generated)"}}) + "\n", encoding="utf-8")
         return 0
     import runtime_guard

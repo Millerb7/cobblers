@@ -1,0 +1,54 @@
+{
+  "schema": "cobblers.world_tree_bird_species/1",
+  "generated_by": "hand (minecraft-systems-dev, 2026-10-21), the owner's set; replaces data/tree_bird_species_placeholder.json",
+  "status": "OWNER'S CHOICE (2026-10-21): \"make it the height of flying mons, should feel special or have classics, like pidgeot and staraptor, or altaria, not a pidove or pikipek\". Levels climb with height from the area's 21-23, so the higher birds are a reason to come back later.",
+  "tree": "world_tree_foothill_woods",
+  "ho_oh": "The very top is NOT a nest: Ho-Oh is a legendary encounter (data/legendaries.json 'hooh', kind tree_crown, data/world_tree_hooh.json), so this file has no band above the crown's.",
+  "exception_to_the_one_line_rule": "The world tree is the owner's deliberate exception to the one-line-per-tree rule of data/tree_bird_species.json and to its route-bird exclusion: it holds classics (Pidgeotto, Staravia, Pidgeot, Staraptor, Swellow, Noctowl, Corviknight are route lines; Swablu/Altaria is elder_foothill_grove_4's; Togekiss is a themed line's neighbour). tests/test_tree_bird_pools.py asserts this file's species exactly instead of the rule.",
+  "evolution_levels_checked_against": "Cobblemon-fabric-1.8.2+1.21.1.jar data/cobblemon/species (2026-10-21). Level-up evolution levels: Pidgeotto 18, Staravia 14, Noctowl 20, Swellow 22, Pidgeot 36, Staraptor 34, Altaria 35, Corviknight 38, Dragonite 55; Togekiss by item (Togetic, shiny stone); Swablu and Aerodactyl are base stages. Every species is implemented. A wild Cobblemon spawn does not check evolution levels, so every entry CAN spawn as listed; entries marked 'under_evolution_level' spawn below the level their pre-evolution evolves at, by the owner's list.",
+  "bands": {
+    "low": {
+      "height": "storeys 1-2: 57-101 over the ground, the roots' height and the lower trunk",
+      "levels": "22-26",
+      "entries": [
+        {"species": "pidgeotto", "family": "pidgey", "bucket": "common", "weight": 24, "note": "the owner's classic, low storeys"},
+        {"species": "staravia", "family": "starly", "bucket": "common", "weight": 24, "note": "the owner's classic, low storeys"},
+        {"species": "swablu", "family": "swablu", "bucket": "uncommon", "weight": 6, "note": "the owner's pick, low storeys; a base stage"},
+        {"species": "noctowl", "family": "hoothoot", "bucket": "uncommon", "weight": 6, "note": "the owner's pick, low storeys (evolves at 20)"}
+      ]
+    },
+    "mid": {
+      "height": "storeys 3-5: 133-215 over the ground, the mid branches",
+      "levels": "26-32",
+      "entries": [
+        {"species": "pidgeot", "family": "pidgey", "bucket": "uncommon", "weight": 6, "under_evolution_level": 36, "note": "the owner's classic, mid storeys; Pidgeotto evolves at 36, over this band's top 32"},
+        {"species": "staraptor", "family": "starly", "bucket": "uncommon", "weight": 6, "under_evolution_level": 34, "note": "the owner's classic, mid storeys; Staravia evolves at 34, over this band's top 32"},
+        {"species": "altaria", "family": "swablu", "bucket": "uncommon", "weight": 6, "under_evolution_level": 35, "note": "the owner's pick, mid storeys; Swablu evolves at 35, over this band's top 32"},
+        {"species": "swellow", "family": "taillow", "bucket": "common", "weight": 24, "note": "the owner's pick, mid storeys (evolves at 22)"}
+      ]
+    },
+    "high": {
+      "height": "storeys 6-8: 247-323 over the ground, the upper canopy",
+      "levels": "32-38",
+      "entries": [
+        {"species": "pidgeot", "family": "pidgey", "bucket": "common", "weight": 24, "under_evolution_level": 36, "note": "the owner's classic; 32-35 is under its evolution level 36"},
+        {"species": "staraptor", "family": "starly", "bucket": "common", "weight": 24, "under_evolution_level": 34, "note": "the owner's classic; 32-33 is under its evolution level 34"},
+        {"species": "altaria", "family": "swablu", "bucket": "common", "weight": 24, "under_evolution_level": 35, "note": "the owner's pick; 32-34 is under its evolution level 35 (the owner's '(common)' read as covering Pidgeot, Staraptor and Altaria)"},
+        {"species": "togekiss", "family": "togepi", "bucket": "rare", "weight": 2, "under_evolution_level": "item", "note": "the owner's pick; evolves from Togetic by shiny stone, never by level, so it is a wild-only spawn here"},
+        {"species": "corviknight", "family": "rookidee", "bucket": "rare", "weight": 2, "note": "the owner's pick; Corvisquire evolves at 38, so it is evolution-legal at the band's top level only"}
+      ]
+    },
+    "crown": {
+      "height": "the canopy's leaves: 345-418 over the ground",
+      "levels": "38-45",
+      "entries": [
+        {"species": "aerodactyl", "family": "aerodactyl", "bucket": "rare", "weight": 2, "note": "the owner's pick, the crown; a base (fossil) stage"},
+        {"species": "salamence", "family": "bagon", "bucket": "rare", "weight": 2, "under_evolution_level": 50, "note": "the owner's pick (added 2026-10-21), a rare crown spawn; Shelgon evolves at 50, over this band's top 45. The crown has no common entry, so 'rarer than the crown's commons' is moot; weight 2 equals Aerodactyl's and is above Dragonite's 1 and the trio's 0.25"},
+        {"species": "dragonite", "family": "dratini", "bucket": "ultra-rare", "weight": 1, "under_evolution_level": 55, "note": "the owner's pick, the crown; Dragonair evolves at 55, over this band's top 45"},
+        {"species": "articuno galarian", "family": "articuno", "bucket": "ultra-rare", "weight": 0.25, "levels": "40-45", "legendary_exemption": "OWNER, 2026-10-21 (relayed by the coordinator): 'Galarian Articuno, Galarian Zapdos and Galarian Moltres as VERY RARE spawns at the world tree ... crown-band nest spawns, not legendary encounters'. A named exemption for these three on the world tree's crown only; the jar labels them legendary", "note": "unobtainable otherwise: Cobbleverse spawns the Galarian birds only at cobbleverse:dyna_tree, in a disabled pack (docs/world-building/STRUCTURE_DECISIONS.md), so the world tree stands in for the Dyna Tree. Jar form: Galar, aspect galarian, psychic/flying"},
+        {"species": "zapdos galarian", "family": "zapdos", "bucket": "ultra-rare", "weight": 0.25, "levels": "40-45", "legendary_exemption": "OWNER, 2026-10-21: see articuno galarian", "note": "as Galarian Articuno; jar form Galar, aspect galarian, fighting/flying"},
+        {"species": "moltres galarian", "family": "moltres", "bucket": "ultra-rare", "weight": 0.25, "levels": "40-45", "legendary_exemption": "OWNER, 2026-10-21: see articuno galarian", "note": "as Galarian Articuno; jar form Galar, aspect galarian, dark/flying"}
+      ]
+    }
+  }
+}

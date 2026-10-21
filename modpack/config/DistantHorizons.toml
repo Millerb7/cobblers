@@ -24,7 +24,7 @@ _version = 5
 	serverKey = ""
 	#
 	# Defines the distance allowed to generate around the player.
-	maxGenerationRequestDistance = 0
+	maxGenerationRequestDistance = 4096
 	#
 	# Makes the server send level keys for each world.
 	# Disable this if you use alternative ways to send level keys.
@@ -278,7 +278,7 @@ _version = 5
 		# but may cause server/simulation lag. 
 		# Note: unlike other modes this option DOES save generated chunks to 
 		# Minecraft's region files.
-		chunkGeneratorMode = "FEATURES"
+		chunkGeneratorMode = "PRE_EXISTING_ONLY"
 		#
 		# Defines how LODs will be generated 
 		# outside the vanilla render distance. 

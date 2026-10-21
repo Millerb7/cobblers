@@ -1,0 +1,149 @@
+#!/usr/bin/env python
+"""Generate the bird trees' Slow Falling pack: no Pokemon dies falling off a nest tree.
+
+The owner, 2026-10-21, after watching Fletchling fall to their death from an elder: "slow falling for sure, thats all
+thats needed". Measured that day at elder_viltri_plateau_1 (nests y133-195): birds spawn on the branches, walk off, and
+land hurt on the ground at y121-123 (one at 1.2 HP); Cobblemon gives Pokemon fall damage and has no perching.
+
+THE RULE. Every bird tree is one Habitat Block pool in data/habitat_blocks.json whose blocks' ids start `elder_` (the
+world trees) or `sapling_` (the themed saplings): 66 on 2026-10-21. For each, a box around its nest column, from
+GROUND_MARGIN below the lowest nest to CROWN_MARGIN above the highest, HALF_WIDTH to every side. Every PERIOD ticks,
+every Pokemon in a box gets Slow Falling for DURATION seconds, particles hidden. A bird that steps off a branch floats
+down unhurt.
+
+It touches only `cobblemon:pokemon` entities inside those boxes: players are never given it, and a player's own Pokemon
+sent out under a tree only floats too (harmless). It writes no blocks, never force-loads (a box in an unloaded chunk
+selects nobody) and never reads or edits a Habitat Block, so it cannot reach the 2026-10-20 crash (a placed Habitat
+Block force-loaded with no player ticking it).
+
+What it does NOT cover: a Pokemon outside a tree's box (a bird that flew off and falls elsewhere), and the themed
+saplings' lower nests producing no birds at all (STATE "Bird trees", measured 2026-10-21; a separate fault).
+
+  python tools/bird_slowfall.py            # write build/datapacks/cobblers_bird_slowfall
+  python tools/bird_slowfall.py --check    # check only
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import shutil
+import sys
+from collections import defaultdict
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import function_limits  # noqa: E402
+
+PACK_FORMAT = 48  # Minecraft 1.21.1
+NS = "cobblers"
+FOLDER = "bird_slowfall"
+DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_bird_slowfall"
+HABITATS = ROOT / "data" / "habitat_blocks.json"
+TREE_PREFIXES = ("elder_", "sapling_")
+# the box round a tree's nest column. An elder's lowest nest is ground + 12 (data/habitat_blocks.json, SAPLING_BIRDS.md),
+# so 16 below it reaches 4 under the ground; the crown's leaves top out about 20 over the highest nest (the scorched
+# sapling's birds stood at y213-228 over a top nest at y210, 2026-10-21)
+GROUND_MARGIN = 16
+CROWN_MARGIN = 24
+HALF_WIDTH = 32
+WORLD_PREFIX = "tbird_world_tree_"
+WORLD_BELOW = 48            # the lowest world-tree nest is 62 over its ground: 48 + GROUND_MARGIN reaches the forest floor
+WORLD_HALF_WIDTH = 110     # the world tree's canopy reaches 101 from its trunk (tools/tree_grove.TIERS["world"])
+PERIOD = 40      # ticks between passes
+DURATION = 4     # seconds of Slow Falling: twice the period, so it never lapses between passes
+
+
+class SlowfallError(SystemExit):
+    pass
+
+
+def trees(doc=None):
+    """[(pool id, x0, x1, z0, z1, lowest nest y, highest nest y)] for every bird tree, sorted by pool."""
+    doc = doc or json.loads(HABITATS.read_text(encoding="utf-8"))
+    nests = defaultdict(list)
+    for b in doc["blocks"]:
+        if b["id"].startswith(TREE_PREFIXES) and b.get("position") and b.get("status", "placed") == "placed":
+            nests[b["pool"]].append(b["position"])
+    out = []
+    # the world tree (2026-10-21, tools/tree_birds.py): its nests, tbird_world_tree_*, stand over 20 x 40 blocks and its
+    # canopy is 160 wide and 420 tall, so one box round all of them reaches the canopy's edge (WORLD_HALF_WIDTH)
+    world = [b["position"] for b in doc["blocks"]
+             if b["id"].startswith(WORLD_PREFIX) and b.get("position") and b.get("status", "placed") in ("placed", "planned")]
+    if world:
+        xs, zs, ys = [p["x"] for p in world], [p["z"] for p in world], [p["y"] for p in world]
+        out.append(("world_tree", min(xs) - (WORLD_HALF_WIDTH - HALF_WIDTH), max(xs) + (WORLD_HALF_WIDTH - HALF_WIDTH),
+                    min(zs) - (WORLD_HALF_WIDTH - HALF_WIDTH), max(zs) + (WORLD_HALF_WIDTH - HALF_WIDTH),
+                    min(ys) - WORLD_BELOW, max(ys)))
+    for pool, ps in sorted(nests.items()):
+        xs, zs, ys = [p["x"] for p in ps], [p["z"] for p in ps], [p["y"] for p in ps]
+        # most trees' nests share one column; a few stand a step apart (sapling_crag_mt_vessu: two columns 6 apart),
+        # so the box spans every nest column, and a tree wider than one crown is refused
+        if max(xs) - min(xs) > HALF_WIDTH or max(zs) - min(zs) > HALF_WIDTH:
+            raise SlowfallError("%s: its nests spread %d x %d blocks; one tree's nests stand within %d"
+                                % (pool, max(xs) - min(xs), max(zs) - min(zs), HALF_WIDTH))
+        out.append((pool, min(xs), max(xs), min(zs), max(zs), min(ys), max(ys)))
+    if not out:
+        raise SlowfallError("data/habitat_blocks.json holds no bird tree (no block id starting %s)" % (TREE_PREFIXES,))
+    return out
+
+
+def box(x0, x1, z0, z1, lo, hi):
+    """The selector box arguments for one tree: HALF_WIDTH round its nest columns, GROUND_MARGIN under its lowest
+    nest to CROWN_MARGIN over its highest."""
+    return "x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d" % (x0 - HALF_WIDTH, lo - GROUND_MARGIN, z0 - HALF_WIDTH,
+                                                 (x1 - x0) + 2 * HALF_WIDTH, (hi + CROWN_MARGIN) - (lo - GROUND_MARGIN),
+                                                 (z1 - z0) + 2 * HALF_WIDTH)
+
+
+def files(tree_list=None):
+    tree_list = tree_list if tree_list is not None else trees()
+    head = "# Generated by tools/bird_slowfall.py from data/habitat_blocks.json; never edit (build/ is regenerated)."
+    tick = [head, "# every %d ticks: Slow Falling (%d s, no particles) for every Pokemon round a bird tree's nests"
+            % (PERIOD, DURATION)]
+    for pool, x0, x1, z0, z1, lo, hi in tree_list:
+        tick.append("effect give @e[type=cobblemon:pokemon,%s] minecraft:slow_falling %d 0 true"
+                    % (box(x0, x1, z0, z1, lo, hi), DURATION))
+    tick.append("schedule function %s:%s/tick %dt replace" % (NS, FOLDER, PERIOD))
+    load = [head, "schedule function %s:%s/tick %dt replace" % (NS, FOLDER, PERIOD)]
+    out = {
+        "pack.mcmeta": json.dumps({"pack": {"pack_format": PACK_FORMAT, "description":
+                                            "Cobblers: Slow Falling for Pokemon round the bird trees (tools/bird_slowfall.py)"}},
+                                  indent=2) + "\n",
+        "data/minecraft/tags/function/load.json": json.dumps({"values": ["%s:%s/load" % (NS, FOLDER)]}, indent=2) + "\n",
+    }
+    for name, lines in (("load", load), ("tick", tick)):
+        rel = "data/%s/function/%s/%s.mcfunction" % (NS, FOLDER, name)
+        refusals = function_limits.check_lines(lines, rel)
+        if refusals:
+            raise SlowfallError("%s: %d command(s) the server would refuse: %s" % (rel, len(refusals), refusals))
+        out[rel] = "\n".join(lines) + "\n"
+    return out
+
+
+def write(fs, out):
+    out = Path(out)
+    if out.exists():
+        shutil.rmtree(out)
+    for rel, text in fs.items():
+        p = out / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text, encoding="utf-8", newline="\n")
+
+
+def main(argv=None):
+    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    p.add_argument("--out", default=str(DEFAULT_OUT))
+    p.add_argument("--check", action="store_true", help="check only; write nothing")
+    a = p.parse_args(argv)
+    t = trees()
+    fs = files(t)
+    if not a.check:
+        write(fs, a.out)
+    print("bird_slowfall: %d bird trees, a pass every %d ticks%s" % (len(t), PERIOD, "" if a.check else "; wrote " + a.out))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

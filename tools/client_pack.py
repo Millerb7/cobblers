@@ -155,7 +155,7 @@ def client_plan(base: dict, overlay: dict | None, cfg: dict) -> dict:
             {
                 "path": opt["path"],
                 "hashes": {"sha1": opt["sha1"], "sha512": opt["sha512"]},
-                "env": {"client": "optional", "server": "unsupported"},
+                "env": {"client": "required" if opt.get("required") else "optional", "server": "unsupported"},
                 "downloads": [m["url"]],
                 "fileSize": opt["size"],
             }
@@ -232,7 +232,7 @@ def check_embeds(embeds: dict[str, Path], blocked_names: set[str]) -> None:
 
 
 # ------------------------------------------------------------------ write
-def write_mrpack(out: Path, index: dict, embeds: dict[str, Path]) -> dict:
+def write_mrpack(out: Path, index: dict, embeds: dict[str, Path], extra: dict[str, bytes] | None = None) -> dict:
     out.parent.mkdir(parents=True, exist_ok=True)
     tmp = out.with_suffix(out.suffix + ".part")
     with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as z:
@@ -245,6 +245,9 @@ def write_mrpack(out: Path, index: dict, embeds: dict[str, Path]) -> dict:
         put("modrinth.index.json", (json.dumps(index, indent=1, ensure_ascii=False) + "\n").encode("utf-8"))
         for dest in sorted(embeds):
             put(f"overrides/{dest}", embeds[dest].read_bytes())
+        for dest in sorted(extra or {}):
+            # a ROOT: key lands at the pack's top level, beside modrinth.index.json, not under overrides/
+            put(dest[len(ROOT_KEY):] if dest.startswith(ROOT_KEY) else f"overrides/{dest}", extra[dest])
     tmp.replace(out)
     return {"path": str(out), "size": out.stat().st_size, **{k: v for k, v in pm.hash_file(out).items() if k != "sha256"}}
 
@@ -317,6 +320,73 @@ def cmd_plan(a) -> int:
     return 0
 
 
+# --------------------------------------------------------------- bundle (the owner, 2026-10-20)
+DEFAULT_COBBLEVERSE_DIR = Path("C:/Users/wnd/Documents/github/cobblers/COBBLEVERSE")
+DEFAULT_ADDRESS_FILE = Path("C:/Users/wnd/Documents/cobblers-local/server-address.txt")
+# the pack's icon (the owner's sleeping Pikachu, 2026-10-21): local only, never committed (a screenshot of a Cobblemon
+# model). Packed as icon.png at the top level and in overrides/: the Modrinth App showed it on a local import (the owner
+# tested 2026-10-21), so a friend's instance has it without setting it by hand
+DEFAULT_ICON_FILE = Path("C:/Users/wnd/Documents/cobblers-local/pack-icon.png")
+ROOT_KEY = "ROOT:"
+
+
+def _nbt_str(s: str) -> bytes:
+    b = s.encode("utf-8")
+    return len(b).to_bytes(2, "big") + b
+
+
+def servers_dat(entries: list[tuple[str, str]]) -> bytes:
+    """An uncompressed NBT servers.dat: {servers: [{name, ip}, ...]} (Minecraft's own server-list file)."""
+    TAG_END, TAG_STRING, TAG_LIST, TAG_COMPOUND = bytes([0]), bytes([8]), bytes([9]), bytes([10])
+    body = TAG_LIST + _nbt_str("servers") + TAG_COMPOUND + len(entries).to_bytes(4, "big")
+    for name, ip in entries:
+        body += TAG_STRING + _nbt_str("name") + _nbt_str(name) + TAG_STRING + _nbt_str("ip") + _nbt_str(ip) + TAG_END
+    return TAG_COMPOUND + _nbt_str("") + body + TAG_END
+
+
+def bundle_files(plan: dict, cobbleverse: Path, address_file: Path, ours: list[Path]) -> dict[str, bytes]:
+    """`build --bundle`: every file a player would otherwise copy by hand, inside the pack (the owner chose this,
+    2026-10-20, for a private group: COBBLEVERSE's own no-redistribution files included, so the result is a local
+    file that is never committed or published). The MANUAL files (from an unpacked COBBLEVERSE instance), the
+    title screen's images, our own client zips, and a servers.dat naming the server, whose address is read from a
+    file outside the repository so it never enters git."""
+    out: dict[str, bytes] = {}
+    missing = []
+    for m in plan["manual"]:
+        src = cobbleverse / m["path"]
+        if src.exists():
+            out[m["path"]] = src.read_bytes()
+        else:
+            missing.append(m["path"])
+    for sub in ("assets", "slideshows"):
+        base = cobbleverse / "config" / "fancymenu" / sub
+        for f in sorted(base.rglob("*")) if base.exists() else []:
+            if f.is_file():
+                out["config/fancymenu/%s/%s" % (sub, f.relative_to(base).as_posix())] = f.read_bytes()
+    for z in ours:
+        if z.exists():
+            out["resourcepacks/" + z.name] = z.read_bytes()
+        else:
+            missing.append(str(z))
+    if not address_file.exists():
+        raise PackError("bundle: no server address file at %s (one line: the address players join)" % address_file)
+    addr = address_file.read_text(encoding="utf-8").strip()
+    # the server-list entry's name (data/client_pack.json server_name; the owner, 2026-10-21)
+    name = json.loads((Path(__file__).resolve().parent.parent / "data" / "client_pack.json").read_text(encoding="utf-8"))["pack"].get("server_name", "Cobblers")
+    out["servers.dat"] = servers_dat([(name, addr)])
+    if DEFAULT_ICON_FILE.exists():
+        icon = DEFAULT_ICON_FILE.read_bytes()
+        out["icon.png"] = icon
+        out[ROOT_KEY + "icon.png"] = icon
+    # the instance's own options.txt, so the first launch already has our resource packs on (2026-10-20: the
+    # defaultoptions copy under config/ did not apply to a Modrinth App import, and the owner's NPCs were dolls)
+    opts = Path(__file__).resolve().parent.parent / "modpack" / "config" / "defaultoptions" / "options.txt"
+    out["options.txt"] = opts.read_bytes()
+    if missing:
+        raise PackError("bundle: missing files: " + ", ".join(missing))
+    return out
+
+
 def cmd_build(a) -> int:
     try:
         cfg, plan, index, embeds = make(a)
@@ -324,11 +394,21 @@ def cmd_build(a) -> int:
         pm.log(str(exc))
         return 1
     out_dir = Path(a.out_dir) if a.out_dir else OUT_DIR
-    out = out_dir / f"cobblers-client-{index['versionId']}.mrpack"
-    built = write_mrpack(out, index, embeds)
+    extra = None
+    if getattr(a, "bundle", False):
+        try:
+            extra = bundle_files(plan, Path(a.cobbleverse_dir), Path(a.address_file),
+                                 [out_dir / "cobblers-client-AllTheMons-subset.zip"])
+        except PackError as exc:
+            pm.log(str(exc))
+            return 1
+    out = out_dir / f"cobblers-client-{index['versionId']}{'-bundle' if extra else ''}.mrpack"
+    built = write_mrpack(out, index, embeds, extra)
     rep = report(index, plan, embeds, built, cfg)
     pm.save_json(out.with_suffix(".report.json"), rep)
     print_summary(rep)
+    if extra:
+        print(f"  bundled under overrides/: {len(extra)} more files (the MANUAL files, menu images, our zip, servers.dat)")
     print(f"wrote {out} ({built['size']} bytes, sha1 {built['sha1']})")
     print(f"report {out.with_suffix('.report.json')}")
     return 0
@@ -477,6 +557,10 @@ def main(argv=None) -> int:
     b = sub.add_parser("build", help="write build/client/cobblers-client-<version>.mrpack and its report")
     common(b)
     b.add_argument("--out-dir", help=f"output folder (default {OUT_DIR.relative_to(ROOT)})")
+    b.add_argument("--bundle", action="store_true", help="put every hand-copied file inside the pack (private use only: "
+                   "includes COBBLEVERSE's no-redistribution files; never commit or publish the result)")
+    b.add_argument("--cobbleverse-dir", default=str(DEFAULT_COBBLEVERSE_DIR), help="an unpacked COBBLEVERSE 1.7.42 instance")
+    b.add_argument("--address-file", default=str(DEFAULT_ADDRESS_FILE), help="a file outside the repo holding the server address")
     b.set_defaults(func=cmd_build)
     pl = sub.add_parser("plan", help="print what the .mrpack would hold; writes nothing")
     common(pl)

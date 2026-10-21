@@ -1842,6 +1842,73 @@ def test_contract_c29_no_dollar_path_undercuts_the_trading_post():
         ["BUYER ARBITRAGE minecraft:feather"], control
 
 
+# C30: a live world rerouted by R9OCF runs the Fossick adit's earthwork and no town pass; a fresh export runs the town's
+# prep (which paves the plan's street) and then the same earthwork. They agree only while the earthwork paves every cell
+# of the street exactly as tools/town_plan.py grades it: the street's block at the graded height, air over it.
+def test_contract_c30_the_fossick_path_is_laid_as_the_town_pass_paves_it():
+    try:
+        import ground as G
+        g = G.Ground()
+        g(6757, 5807)
+    except Exception as exc:  # noqa: BLE001
+        pytest.skip("NOT_EXECUTED: the canonical heightmap is not readable here (%s)" % exc)
+    import town_plan as TP
+    import mining_caves_audit as MA
+    doc = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+    street = next(r for r in doc["settlements"]["fossick_adit"]["plan"]["streets"] if r["id"] == "path")
+    _p, _g, _t, cells = TP.graded_cells(street, lambda x, z: g(int(round(x)), int(round(z))))
+    rec = next(q for q in doc["placements"] if q["id"] == "fossick_adit_hill")
+    built = MA.apply_lines({}, rec["commands"])
+    surface = street["surface"].split("[")[0]
+    wrong = []
+    for (x, z), y in sorted(cells.items()):
+        if built.get((x, y, z)) != surface:
+            wrong.append(((x, y, z), built.get((x, y, z))))
+        for yy in range(y + 1, max(y + TP.HEADROOM, g(x, z)) + 1):
+            if built.get((x, yy, z), "minecraft:air" if yy > g(x, z) else None) not in MA.PASS:
+                wrong.append(((x, yy, z), built.get((x, yy, z))))
+    assert cells and not wrong, "%d cells of the path differ from the town pass's paving, e.g. %s" % (len(wrong), wrong[:3])
+
+
+# C31 (2026-10-21, the cavern undone): the quake cavern's cleanup (tools/groudon_cavern.py) and Groudon's sealed chamber
+# (tools/legendaries.py) share one score. If the cleanup cleared it on every run, a second R14L would re-seal a plug a player
+# had opened; if it never cleared it, carve_once would skip and the chamber would never come back; if its gate were a cell
+# the chamber writes, the gate would never close.
+def test_contract_c31_the_cavern_cleanup_clears_the_chamber_score_once():
+    try:
+        import ground as G
+        g = G.Ground()
+        g(6706, 5510)
+    except Exception as exc:  # noqa: BLE001
+        pytest.skip("NOT_EXECUTED: the canonical heightmap is not readable here (%s)" % exc)
+    import groudon_cavern as GC
+    import legendaries as LG
+    ldoc = LG.load()
+    rec = next(r for r in ldoc["encounters"] if r["id"] == "groudon")
+    assert rec["kind"] == "sealed_chamber"
+    site = next(s for s in rec["retired_sites"] if s["id"] == GC.SITE_ID)
+    _prog, leg = _c26_owner_files()
+    holder = "#%s %s" % (rec["id"], ldoc["objective"])
+    fdir = "data/cobblers/function/legendary/groudon/"
+    carve_once = leg[fdir + "carve_once.mcfunction"]
+    assert "execute unless score %s matches 1 run function cobblers:legendary/groudon/carve" % holder in carve_once
+    restore = [l for l in leg[fdir + "retire_%s_restore.mcfunction" % site["id"]].splitlines()
+               if l.strip() and not l.startswith("#")]
+    assert restore[0] == "scoreboard players set %s 0" % holder, restore[:2]
+    setters = [rel for rel, text in leg.items() if rel.endswith(".mcfunction")
+               and "scoreboard players set %s 0" % holder in text]
+    assert setters == [fdir + "retire_%s_restore.mcfunction" % site["id"]], setters
+    act = leg[fdir + "retire_%s_act.mcfunction" % site["id"]]
+    px, py, pz = site["pedestal"]
+    assert "if block %d %d %d %s run function" % (px, py, pz, site["pedestal_block"]) in act
+    assert "if score #built cobblers.gq matches 1 run function" in act
+    hull = LG.geometry(rec, ldoc, g)["bbox"]
+    assert not (hull[0] <= px <= hull[3] and hull[1] <= py <= hull[4] and hull[2] <= pz <= hull[5]), \
+        "the cleanup's gate is a cell the chamber writes"
+    assert restore[-1] == "scoreboard players set #quake cobblers.gq 0" and \
+        restore[-2] == "scoreboard players set #built cobblers.gq 0" and restore[-3].startswith("setblock %d %d %d " % (px, py, pz))
+
+
 def test_every_contract_names_existing_tests():
     for c in REGISTRY["contracts"]:
         assert c["tests"], c["id"]

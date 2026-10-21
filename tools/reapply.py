@@ -145,6 +145,8 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # after R16P (the dimension) and R18CW (the arch); world-local below
                 "cobblers_kyogre_cave",
                 "cobblers_kyogre_cave_build",
+                # (2026-10-21: Groudon's quake cavern, cobblers_groudon_cavern and its _build pack, is WITHDRAWN: see
+                # WITHDRAWN below. Its cleanup is in cobblers_legendaries, run by R14L)
                 # 2026-10-09: the Merian Ice Lodge (tools/ice_lodge.py, data/ice_lodge.json): the Merian cirque's frozen tarn,
                 # its shelters, lodge, racks and gear, and the holekeeper's class and dialogue; one block function and one
                 # NPC, run by R18IL
@@ -340,6 +342,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-08: the Beast Ball is the key to dungeon bosses (tools/key_ball.py, data/key_ball.json): two
                 # Cobblemon callbacks and the jar's beast_ball recipe closed; no blocks, no step; world-local below
                 "cobblers_key_ball",
+                # 2026-10-21: Slow Falling for Pokemon round the 66 bird trees (tools/bird_slowfall.py, the owner: birds
+                # walked off the branches and died of the fall); a load-started loop, no blocks, no step; world-local below
+                "cobblers_bird_slowfall",
                 # 2026-10-09: every Waystones recipe (placeable waystones, sharestones, portstones, the warp plate and the
                 # warp items) closed, so Oak's gift is a player's only waystone (tools/player_waystone.py,
                 # data/player_waystone.json): recipe and advancement overrides only; no function, no step; world-local below
@@ -478,6 +483,8 @@ EXCLUDED = {
     "cobblers_levelcap": "self-driving: a Cobblemon poke_ball_capture_calculated callback runs its check; its load tag makes the scores; its tick tag runs the over-cap party notice near trainers",
     "cobblers_rift_storm": "self-driving: its own minecraft load tag starts the storm loop (tools/rift_storm.py)",
     "cobblers_key_ball": "self-driving: two Cobblemon callbacks (pokemon_catch_rate_calculated, poke_ball_capture_calculated) run it and call key_ball/refused; its recipe overrides act at load; it writes no blocks (tools/key_ball.py)",
+    "cobblers_bird_slowfall": "self-driving: its own minecraft load tag starts a loop that gives Pokemon round the bird trees "
+                              "Slow Falling every 40 ticks; it writes no blocks and never force-loads (tools/bird_slowfall.py)",
     "cobblers_player_waystone": "load-time only: 54 Waystones recipes and their 54 unlock advancements written back closed "
                                 "(fabric:load_conditions that never pass); it ships no function and runs nothing "
                                 "(tools/player_waystone.py)",
@@ -510,6 +517,18 @@ EXCLUDED = {
     "cobblers_rift_mines_refill": "staging only: rock back into the Rift spur's retired gated section (tools/rift_mines.py, "
                                   "data/rift_mines.json retired_gated_section); a fresh export never had it",
 }
+
+# Packs a server may still hold that the repo no longer builds, each with the reason. `install` moves every one it finds
+# in either datapacks folder aside (replace_pack: under cobblers-server-retired, never deleted) and tools/install_check.py
+# reports one still installed. A pack dropped from SERVER_PACKS is otherwise left where it is and keeps running.
+WITHDRAWN = {
+    "cobblers_groudon_cavern": "2026-10-21, the owner undid Groudon's quake cavern and wanted the old chamber back: its runtime "
+                               "(the rumble, the stages that cut the ravine, the keeper that sends players out of the hall) "
+                               "must not run again. The cleanup that puts the cavern back to rock is in cobblers_legendaries "
+                               "(cobblers:legendary/groudon/retire_quake_cavern_v1, R14L) and also sets #built and #quake of "
+                               "cobblers.gq to 0, which every line of the old tick and rejoin needs to act",
+    "cobblers_groudon_cavern_build": "2026-10-21: the quake cavern's one-shot carve, never to run again (the same reason)",
+}
 # server packs installed into the target world's own datapacks folder, not the server's: they act without being called
 # (the scene runtime's tick; the trainers and event sites travel with it), and the global folder is loaded by every
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
@@ -540,6 +559,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_kyogre_cave", "cobblers_kyogre_cave_build",
                # 2026-10-08: refuses every ball but the Beast Ball at a dungeon boss and gives balls back: never global
                "cobblers_key_ball",
+               # 2026-10-21: effects on Pokemon round the bird trees on its own tick: world-local with the trees' nests
+               "cobblers_bird_slowfall",
                # 2026-10-09: closes the Waystones recipes; global would close them in the live world too
                "cobblers_player_waystone",
                # 2026-10-08: sets a gamerule and rewrites every player's recipe book: never global, or the live world
@@ -954,6 +975,14 @@ def prepare_jobs(a):
     # export's keep zone stops prepare here, before anything is installed
     add("legendaries", "legendaries.py")
     add("legendaries:audit", "legendaries_audit.py")
+    # Groudon's quake cavern, RETIRED 2026-10-21 (the owner undid it; the old chamber is back): no pack is built for it. The
+    # job writes the record of what the world received (build/groudon_cavern_applied, never installed) and refuses one whose
+    # sha256 is not the one frozen in data/legendaries.json; the cleanup itself is in cobblers_legendaries (built above).
+    # Then the independent audit, which REPLAYS that record and then the cleanup onto the heightmap and fails the prepare on
+    # a void, lava, a wall or a wrong surface left, a cleanup that does not hold for a player inside or writes an unloaded
+    # chunk, a chamber that is not rebuilt, or a withdrawn pack still listed
+    add("groudon_cavern:build", "groudon_cavern.py", "build", *src)
+    add("groudon_revert:audit", "groudon_revert_audit.py", *src)
     # Rayquaza's arch, island and pillar (data/rayquaza_sky.json): the runtime pack and its _build pack; it refuses a spawn
     # condition, a light block, a plinth past its cut and fill limits, an island within 8 of the cone, and probes that drifted
     add("rayquaza_sky:build", "rayquaza_sky.py", "build", *src)
@@ -1267,6 +1296,9 @@ def prepare_jobs(a):
     # the Beast Ball key (data/key_ball.json): fails closed if any boss tool's bind does not add the shared tag, if the
     # refusal message hints at the key, or if data/blackout.json can take a Beast Ball
     add("key_ball", "key_ball.py")
+    # Slow Falling round the bird trees (2026-10-21): fails closed if data/habitat_blocks.json holds no bird tree or one
+    # tree's nests spread wider than a crown
+    add("bird_slowfall", "bird_slowfall.py")
     # no craftable waystone or warp item (data/player_waystone.json): fails closed if the closed list is not the Waystones
     # jar's own, if the gift's recipe is left open, or if the quest, reward and Oak's dialogue do not agree
     add("player_waystone", "player_waystone.py", "build", "--require-jar")
@@ -1664,6 +1696,12 @@ def install(a):
     wdp = Path(a.world_dir) / "datapacks"
     wdp.mkdir(exist_ok=True)
     retired = Path(a.server_dir).resolve().parent / "cobblers-server-retired"
+    # a withdrawn pack is moved aside wherever it is installed (never deleted), before anything is copied
+    for name in sorted(WITHDRAWN):
+        for folder in (dp, wdp):
+            if (folder / name).exists():
+                replace_pack(folder / name, None, retired)
+                print("withdrew", folder / name, "(%s)" % WITHDRAWN[name].split(":", 1)[0])
     for name in SERVER_PACKS:
         # a pack that acts on its own (the scene runtime's tick) belongs to the world it was built for: the global
         # folder is loaded by every world this server runs, the live one included
@@ -2230,6 +2268,13 @@ def steps(with_spawns=False):
     out.append(("R8B", "the League's lot on the apex oval, levelled before its donor",
                 [("fn", "cobblers:league_tunnel/%s" % f)
                  for f in indexed("cobblers_league_tunnel", "league_tunnel")]))
+    # 2026-10-20, the re-seated donors (tools/donor_reseat.py; data/placements.json superseded_seats): BEFORE R9, each
+    # moved donor's old seat taken down to air (refused while a player stands on it; only while a probe still shows the
+    # old paste), then the paste at its new seat (only while no probe shows it there), read back from the world. A
+    # second run writes nothing. First and only so far: Newmoon Island raised from y141 to the build limit
+    import donor_reseat
+    out.append(("R9DR", "re-seated donors: the old seats taken down, the new pasted (%s)"
+                % ", ".join(sorted({q["id"] for q, _i, _s in donor_reseat.reseated(doc)})), donor_reseat.steps(doc)))
     out.append(("R9", "pack donors (%d)" % len(donors(doc)), r9))
     # the Deep is sunk into the Rift floor; Victory Road runs from its floor to the League's apron, so it needs
     # the Deep carved and the lot levelled first. Its backfill pack is staging-only and is excluded on purpose.
@@ -2312,6 +2357,26 @@ def steps(with_spawns=False):
     out.append(("R9OC", "the refillable mining caves: %s (data/mining_caves.json)" % ", ".join(
                     "%s with %d galleries" % (c["id"], len(c["galleries"])) for c in mining_caves.load()["caves"]),
                 [("fn", f) for f in mining_caves.build_functions()]))
+    # 2026-10-20, the Lower Galleries entered from the Route 1 old mine (data/mining_caves.json cave_old_mine entry.host,
+    # retired_entry): AFTER R9OC and after the towns (R8), whose old mine the passage is cut from. Hold the box, then the
+    # reroute: refused while a player stands where it writes (read back: 0 held), the old mouth, incline and frame back to
+    # the heightmap's terrain only while a probe shows the old frame, and the passage cut only while the hall's opening is
+    # not yet air. A fresh export (R8 already cut the passage, R9OC built no mouth) and a second run write nothing
+    out.append(("R9OCR", "the mining caves' retired mouths and their ways in from the host mine (%s)" % (
+                    ", ".join(c["id"] for c in mining_caves.load()["caves"] if c.get("retired_entry")
+                              and mining_caves.reroute_step(c) == "R9OCR") or "none"),
+                mining_caves.reroute_steps()))
+    # 2026-10-20, the owner: "make fossick like route 1". The Fossick Deep Galleries entered by the adit of a built hill
+    # (tools/fossick_adit.py, data/mining_caves.json cave_fossick entry.host, retired_entry.step R9OCF): AFTER R9OC and
+    # R9OCR, its own step so it runs alone. Hold the box, then: refused while a player stands where it writes (read back:
+    # 0 held); the old frame and shaft back to the heightmap's terrain only while a probe shows the old frame; then the
+    # hill and its adit, the whole earthwork (a world with the old frame has no hill), only while the portal's beam is
+    # missing. A fresh export (R8 built the hill, R9OC no mouth) and a second run write nothing. NEVER R9OC on the live
+    # world for this: R9OC rebuilds every gallery at variant 0 and resets the ore
+    out.append(("R9OCF", "the Fossick galleries' old frame and shaft retired and the adit hill built (%s)" % (
+                    ", ".join(c["id"] for c in mining_caves.load()["caves"] if c.get("retired_entry")
+                              and mining_caves.reroute_step(c) == "R9OCF") or "none"),
+                mining_caves.reroute_steps(step="R9OCF")))
     # the cave kit (tools/caves.py, data/caves.json; LEGENDARY_HOMES.md section 4): K1, K2 and K3, one block pass each held in a
     # forceload of its box, BEFORE R9E (each part's Habitat Block replaces a floor cell this writes). The gates' doors and the area
     # boss's keeper drive themselves (cobblers:caves/tick and /boss/<id>/keeper) and need no step

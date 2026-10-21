@@ -4,14 +4,14 @@
 # the file on boot and drops them, so keep this example as the documented copy.
 
 # --- identity / access --------------------------------------------------
-motd=Cobblers private campaign
+motd=who up cobbling they ish rn
 # online-mode=true: Mojang authentication. Keep true on any internet-reachable
 # server; it is what makes whitelist/ops UUIDs mean anything.
 online-mode=true
 # Friends-only server: whitelist on, enforce so removed players get kicked.
 white-list=true
 enforce-whitelist=true
-max-players=8
+max-players=20
 server-port=25565
 # RCON is off by default. Turn it on when the server is launched in the
 # background, because then it has no reachable stdin: without RCON the only
@@ -101,7 +101,7 @@ sync-chunk-writes=true
 # require-resource-pack=true: a player who declines the pack is disconnected.
 require-resource-pack=true
 resource-pack=
-resource-pack-sha1=dfdd4f8118a66ff854d23a1e5c2f7651ff042e97
+resource-pack-sha1=de36fb5d1d448c91925ec860d17b7e6949e0e95d
 resource-pack-id=43566b60-4e01-549a-95d3-2592c69f3454
 resource-pack-prompt={"text":"Cobblers model pack: AllTheMons models (Lvnatic and contributors) and Cobblemon 1.8 fixes. Without it, some Pokemon render as dolls."}
 # Datapacks are force-loaded by the Global Packs mod (config/global_packs.toml);

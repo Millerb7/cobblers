@@ -342,6 +342,14 @@
         "data/coldwater_station.json",
         "tools/coldwater_station.py"
       ]
+    },
+    "groudon_cavern": {
+      "what": "Groudon's quake cavern, RETIRED 2026-10-21: the cleanup that puts the ravine, tunnel and hall back to the heightmap's terrain before Groudon's sealed chamber is carved again (the cavern's runtime pack is withdrawn)",
+      "paths": [
+        "data/groudon_cavern.json",
+        "tools/groudon_cavern.py",
+        "tools/groudon_revert_audit.py"
+      ]
     }
   },
   "contracts": [
@@ -1303,7 +1311,7 @@
           "quote": "\"requires_met\": [\"kyogre\", \"groudon\"],"
         },
         {
-          "at": "tools/legendaries.py:638",
+          "at": "tools/legendaries.py:676",
           "quote": "\"advancement grant @s only %s:legendary/%s/met\" % (ns, rid),"
         },
         {
@@ -1534,6 +1542,50 @@
         "tests/test_economy_audit.py::test_the_real_trading_post_is_safe_by_its_emitted_lines",
         "tests/test_economy_audit.py::test_a_generator_that_doubles_a_crate_price_fails_the_spine_and_prints_money",
         "tests/test_economy_audit.py::test_a_generator_that_widens_a_crate_tag_is_arbitrage"
+      ]
+    },
+    {
+      "id": "C30",
+      "title": "The Fossick adit's earthwork lays its path exactly as the town pass paves it",
+      "owner": "towns",
+      "consumers": [
+        "mining_caves"
+      ],
+      "constrained_by": [],
+      "statement": "Every cell of the street 'path' in data/placements.json settlements.fossick_adit.plan, as tools/town_plan.py graded_cells grades and paves it, is left by the earthwork fossick_adit_hill with the street's block at the graded height and air over it. Step R9OCF builds that earthwork in the live world and runs no town pass; a fresh export runs the town's prep (which paves the street) and then the same earthwork; only this makes the two worlds end the same at the path.",
+      "stated_in": [
+        {
+          "at": "tools/fossick_adit.py:58",
+          "quote": "earthwork exactly as tools/town_plan.py grades a street (town_plan.graded_cells)"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c30_the_fossick_path_is_laid_as_the_town_pass_paves_it",
+        "tests/test_fossick_adit.py::test_the_recorded_adit_is_the_one_the_tool_builds"
+      ]
+    },
+    {
+      "id": "C31",
+      "title": "Groudon's retired quake cavern and its sealed chamber share one open score, cleared once",
+      "owner": "groudon_cavern",
+      "consumers": [
+        "legendaries"
+      ],
+      "constrained_by": [],
+      "statement": "The sealed chamber's open score (#groudon on data/legendaries.json's objective, cobblers.leg) gates its carve: tools/legendaries.py carve_once carves only while it is not 1. The quake set it to 1 when it opened (2026-10-21), so the cavern's cleanup (tools/groudon_cavern.py retire_functions, run by R14L before Groudon's carve_once) clears it to 0, as the restore's first line, and only while the cavern is there: #built of cobblers.gq is 1, or the dais's pedestal (6764, 66, 5638) holds smooth_basalt, a cell the chamber never writes. The restore puts rock in the pedestal and sets #built to 0 LAST, so a second run of R14L never clears the score of a chamber a player has opened since (which would re-seal it on the carve). A restore gated on a cell the chamber writes, a score cleared on every run, or a carve_once on another holder, and the chamber is either never rebuilt or re-sealed over a player's open plug.",
+      "stated_in": [
+        {
+          "at": "tools/groudon_cavern.py:1125",
+          "quote": "\"scoreboard players set #%s %s 0\" % (rec[\"id\"], leg_doc[\"objective\"])]"
+        },
+        {
+          "at": "tools/legendaries.py:662",
+          "quote": "\"execute unless score #%s %s matches 1 run function %s:legendary/%s/carve\" % (rid, obj, ns, rid)]"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c31_the_cavern_cleanup_clears_the_chamber_score_once",
+        "tests/test_groudon_revert.py::test_a_second_run_writes_nothing_and_keeps_a_chamber_opened_since"
       ]
     }
   ]

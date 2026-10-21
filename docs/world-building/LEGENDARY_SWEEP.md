@@ -130,7 +130,7 @@ Derive each expectation yourself; do not import `tools/legendary_sweep.py`, `too
 2. Search every jar and datapack in the snapshot, loaded and `extra`, for producers of the two items; confirm the only
    ones are the disabled Sinnoh recipes and `team_galactic_cyrus`, and that no loaded record seats Cyrus.
 3. `round(ground(x, z))` by your own loop: Giratina's box x4374..4415 z2862..2899 has min 72, max 80, its unique
-   cheapest seat y77, and cut 639 / fill 86 there; Newmoon's box x24..124 z5582..5681 has max 117, so y141 is 24 over.
+   cheapest seat y77, and cut 639 / fill 86 there; Newmoon's box x24..124 z5582..5681 has max 117; first placed at y141 (24 over), raised 2026-10-16/20 to y518 so its top layer is the build limit y575 (the owner: "where it touches the build limit"; R9DR takes the old seat down).
 4. Re-measure the rules with your own code: route paths (`data/route_paths.json`) edge distance >= 128; every activated
    Habitat Block's spawn range plus 28; every portal >= 120 from the edge; 800 centre to centre from every adopted,
    sweep and `data/legendaries.json` site and Hoopa's spot; 96 from every authored coordinate except the sites' own

@@ -22,9 +22,10 @@ tools/battle_sim.JAR_CANDIDATES) for species ids, implementation and evolution f
 
 What is asserted: 14 pins, the doc's 14 ids, 800 apart, 400 from every elder, 120 from every town centre, 100 from
 every placement position; every sapling pool (elder_*, route_1_sapling_crown, sapling_*) is one evolution family and
-no family sits on two saplings closer than 1,000 blocks (tree positions: the activated blocks that name the pool);
-each themed pool holds the plan's bird line at the plan's levels, with the status's three changes; each of the 9 elder
-swaps holds its new line at its levels; every species is a jar species implemented by the jar or a pack species
+no family sits on two saplings AT ALL (2026-10-21: the 1,000-block spacing is superseded by the owner's unique line a
+tree; every tbird_ storey pool counts as its tree); each themed tree holds the DESIGNER's line by band at the
+designer's levels (data/tree_bird_species.json replaced plan v2's table, which is now only parsed); each of the 9
+swapped elders holds the designer's crown band; every species is a jar species implemented by the jar or a pack species
 addition; each themed sapling has at least 3 activated nest blocks naming its own pool, holding at least 20 between
 them, and, placed as `place template` seats the prefab, each sits in a cell of the theme's own trunk or crown block,
 with all six face neighbours solid, and its mimic is that block; each prefab has a trunk column of its trunk material
@@ -339,51 +340,84 @@ def test_every_sapling_pool_is_one_evolution_line(compiled, families):
 # Without it the same bird line comes back within a walk of itself (rule 2; the owner: "It's okay to repeat but they
 # shouldn't be close"): the first pass put two Skarmory crags 250 apart. Distance is between the nearest blocks of the
 # two trees, across the whole map, themed trees, elders and the Route 1 sapling alike.
-def test_no_bird_line_sits_on_two_saplings_closer_than_1000(compiled, families):
+#
+# REWRITTEN 2026-10-21 (the owner: "for each sapling around give it a unique as possible spawn"): the 1,000-block
+# spacing rule is superseded by NO REPEAT AT ANY DISTANCE, so the old teeth ("lines do repeat on the map, >= 10") are
+# inverted: no evolution family may be on two trees, counting every band pool of a tree (`tbird_<tree>_low/_mid`) as
+# that tree, and the Route 1 sapling as its own tree. A distance rule would pass a repeat 1,001 blocks apart.
+def test_no_bird_line_sits_on_two_saplings_at_any_distance(compiled, families):
     pts = _tree_points()
     unplaced = [h for h in SAPLING_POOLS if h not in pts]
     assert not unplaced, ("sapling pools no activated block names", unplaced)
-    line = {h: {families.get(s["species"], "?" + s["species"]) for s in compiled[h]} for h in SAPLING_POOLS}
-    close, repeats = [], 0
-    for a, b in itertools.combinations(SAPLING_POOLS, 2):
-        if line[a] & line[b]:
-            repeats += 1
-            d = min(_dist(p, q) for p in pts[a] for q in pts[b])
-            if d < LINE_SPACING:
-                close.append((sorted(line[a] & line[b]), a, b, round(d)))
-    assert not close, close
-    # teeth: lines do repeat on the map (Swablu, Starly, Noctowl ...), so the distance check has cases to judge
-    assert repeats >= 10, repeats
+    tree_pools = {h: [h] for h in SAPLING_POOLS}
+    for h in compiled:
+        if h.startswith("tbird_"):
+            owner = next((t for t in SAPLING_POOLS if h.startswith("tbird_%s_" % t)), None)
+            if owner:                      # the world tree's pools are the owner's set, in tests/test_tree_bird_pools.py
+                tree_pools[owner].append(h)
+    tree_of = {}
+    for t, hs in tree_pools.items():
+        for h in hs:
+            tree_of[h] = t
+    assert len(tree_of) > len(SAPLING_POOLS) + 100      # teeth: the storey pools were counted too
+    fam_trees = {}
+    for h in tree_of:
+        for s in compiled[h]:
+            fam_trees.setdefault(families.get(s["species"], "?" + s["species"]), set()).add(tree_of[h])
+    shared = {f: sorted(ts) for f, ts in fam_trees.items() if len(ts) > 1}
+    assert not shared, shared
+    # teeth: the family function does tell the route lines of one tree apart from each other
+    assert families["pidgey"] != families["pidove"] and families["pidgey"] == families["pidgeot"]
 
 
-# Without it a themed tree's bird drifts from the plan: the wrong line for its country, a stage the plan does not
-# give (a Talonflame-only crater, Pelipper back on the level-cap-trap palm), or levels off the table (the crater's 51
-# and 52 over Blaine's cap). The status's three changes apply: Vullaby on the Long Isle desert tree, the crater at
-# 44-50, the Sunset west palm Wingull only at 16-20.
+DESIGN = json.loads((DATA / "tree_bird_species.json").read_text(encoding="utf-8"))["trees"]
+
+
+def _designer_levels(tid, band):
+    v = DESIGN[tid]
+    text = v.get("crown_levels") if band == "crown" and v.get("crown_levels") else v["levels"]
+    return tuple(int(x) for x in text.split("-"))
+
+
+def _band_pools(compiled, tid):
+    return {band: compiled[pid] for band, pid in (("low", "tbird_%s_low" % tid), ("mid", "tbird_%s_mid" % tid),
+                                                  ("crown", tid)) if pid in compiled}
+
+
+# REWRITTEN 2026-10-21: the plan-v2 table (Noibat, Swablu, Ducklett ... per themed tree) is the OLD mapping; each
+# themed tree now holds the species designer's line by band (data/tree_bird_species.json). Without it a themed tree's
+# pool drifts from the designer in any band: a species outside the tree's line, a band missing the stage the designer
+# placed (or holding one it did not), levels outside the designer's band (over the sub-region's cap), or a themed tree
+# with a missing storey pool. The expected species and levels are read from the designer's file, never the doc table.
 @pytest.mark.parametrize("sid", IDS)
-def test_each_themed_pool_holds_the_plans_bird_line_at_the_plans_levels(sid, compiled):
-    line, levels = _plan(sid)
-    pool = compiled[sid]
-    got = [s["species"] for s in pool]
-    assert line[0] in got, (sid, "the plan's bird missing", line[0], got)
-    base = next(s for s in pool if s["species"] == line[0])
-    assert base["bucket"] == "common", (sid, base)
-    assert set(got) <= set(line), (sid, "species the plan's line does not give", sorted(set(got) - set(line)))
-    off = [(s["species"], s["levelRange"]) for s in pool if s["levelRange"] != levels]
-    assert not off, (sid, "levels, plan", levels, off)
-    if sid == "sapling_palm_sunset_west":
-        assert got == ["wingull"], got
+def test_each_themed_tree_holds_the_designers_line_by_band_at_the_designers_levels(sid, compiled):
+    pools = _band_pools(compiled, sid)
+    assert sorted(pools) == ["crown", "low", "mid"], (sid, sorted(pools))
+    for band, pool in pools.items():
+        got = [s["species"] for s in pool]
+        assert sorted(set(got)) == sorted(DESIGN[sid]["bands"][band]), (sid, band, got, DESIGN[sid]["bands"][band])
+        assert set(got) <= set(DESIGN[sid]["line"]), (sid, band, "outside the line", got)
+        lo, hi = _designer_levels(sid, band)
+        spans = [tuple(int(x) for x in s["levelRange"].split("-")) for s in pool]
+        assert all(lo <= a <= b <= hi for a, b in spans), (sid, band, spans, (lo, hi))
+        assert max(b for _a, b in spans) == hi, (sid, band, "no entry reaches the band's top", spans, hi)
 
 
-# Without it an elder swap is undone or half done: the old bird back (a line repeated inside 1,000 blocks again), the
-# new line missing a stage the plan gives, or its levels off the table.
+# REWRITTEN 2026-10-21: the "Elders: 9 birds change" table is the old swap list. Without it one of the nine elders
+# plan v2 swapped regresses to the retired bird or loses its designer's species: each is checked against the
+# designer's crown band and levels (the crown pool is the tree's own id), and none of them holds the swap table's
+# species unless the designer's line has it too.
 @pytest.mark.parametrize("eid", sorted(SWAPS))
-def test_each_elder_swap_holds_its_new_line_at_its_levels(eid, compiled):
-    line, levels = SWAPS[eid]
+def test_each_swapped_elder_holds_the_designers_crown_band_at_its_levels(eid, compiled):
     pool = compiled[eid]
-    assert {s["species"] for s in pool} == set(line), (eid, sorted(s["species"] for s in pool), line)
-    off = [(s["species"], s["levelRange"]) for s in pool if s["levelRange"] != levels]
-    assert not off, (eid, levels, off)
+    assert sorted({s["species"] for s in pool}) == sorted(DESIGN[eid]["bands"]["crown"]), (
+        eid, [s["species"] for s in pool], DESIGN[eid]["bands"]["crown"])
+    lo, hi = _designer_levels(eid, "crown")
+    off = [(s["species"], s["levelRange"]) for s in pool
+           if not lo <= int(s["levelRange"].split("-")[0]) <= int(s["levelRange"].split("-")[1]) <= hi]
+    assert not off, (eid, (lo, hi), off)
+    retired = set(SWAPS[eid][0]) - set(DESIGN[eid]["line"])
+    assert not retired & {s["species"] for s in pool}, (eid, "a species of the retired plan-v2 swap is back", retired)
 
 
 # Without it a sapling pool names a species the server has no data for, or one Cobblemon ships unimplemented (no model;
@@ -407,8 +441,18 @@ def test_every_sapling_species_is_a_jar_species_something_implements(compiled, s
                     continue
                 if d.get("implemented") is True:
                     implemented.add((d.get("target") or n.rsplit("/", 1)[1][:-5]).split(":")[-1])
-    species = {s["species"] for h in SAPLING_POOLS for s in compiled[h]}
-    assert {"emolga", "noibat", "gligar", "tropius", "vullaby", "flamigo"} <= species
+    # REWRITTEN 2026-10-21: every sapling pool AND every added storey pool (tbird_*, the world tree's, the owner's
+    # set, included); the old teeth (Emolga, Noibat ... of plan v2) named species the designer replaced. The new teeth:
+    # every species the designer placed in any band is in some pool (a species dropped on the way would not be
+    # checked for implementation at all).
+    species = {s["species"] for h in list(SAPLING_POOLS) + [h for h in compiled if h.startswith("tbird_")]
+               for s in compiled[h]}
+    # (the 4 Foothill grove elders have a crown pool only: their low/mid bands have no nest, so Bounsweet, placed
+    # low and mid on elder_foothill_grove_2 and nowhere else, is a designer's species with no pool by design)
+    placed = {sp for t, v in DESIGN.items() for b, sp_list in v["bands"].items() for sp in sp_list
+              if b == "crown" or "grove" not in t}
+    assert len(placed) > 100, len(placed)
+    assert placed <= species, sorted(placed - species)
     bad_path = sorted(s for s in species if not RESOURCE_PATH.fullmatch(s))
     assert not bad_path, bad_path
     unknown = sorted(species - set(files))

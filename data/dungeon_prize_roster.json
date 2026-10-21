@@ -151,12 +151,12 @@
       "id": "ash_bell", "name": "The Ash Bell", "status": "proposed (new)", "theme": "nether_wastes (built theme)", "gate": "gym8_cleared (the Nether's gate, data/nether_gate.json)", "first_band": 5,
       "legendary_pool_by_band": {
         "5": ["raikou", "ragingbolt", "sandyshocks"],
-        "6": ["hooh", "raikou", "ragingbolt", "sandyshocks"]
+        "6": ["raikou", "ragingbolt", "sandyshocks"]
       },
       "paradox_added_2026_10_12": "Sandy Shocks (from the cut Zero Dig): an ancient electric/ground paradox of the arid waste, Raikou's thunder over scorched ground. Pool 2 -> 3, 3 -> 4",
       "rare_pool_by_band": {},
       "ub_boss": null,
-      "why": "The burned bell of the Entei story told in fire and coal: Ho-Oh (restricted, band 6), Raikou (Entei's sibling; the owner named it as a Nether boss: NETHER_DUNGEON_SCOPE.md 7), Raging Bolt (Raikou's ancient paradox)."
+      "why": "The burned bell of the Entei story told in fire and coal: Raikou (Entei's sibling; the owner named it as a Nether boss: NETHER_DUNGEON_SCOPE.md 7), Raging Bolt (Raikou's ancient paradox)."
     },
     {
       "id": "moth_cathedral", "name": "The Moth Cathedral", "status": "proposed (new)", "theme": "crimson_forest (built theme)", "gate": "gym8_cleared", "first_band": 5,
@@ -288,7 +288,7 @@
     "entei": {"kind": "legendary", "status": "placed", "where": "the Tower After the Fire, built (entei_boss.json)"},
     "suicune": {"kind": "legendary", "status": "to_dungeon", "home": "patriarch", "bands": ["4", "5", "6"], "why": "D18's lake pick for the Patriarch"},
     "lugia": {"kind": "legendary", "status": "blocked", "where": "legendaries.json, blocked on the owner (no trench)", "fallback": "flooded_ruin band 6"},
-    "hooh": {"kind": "legendary", "status": "to_dungeon", "home": "ash_bell", "bands": ["6"], "why": "the burned bell; restricted"},
+    "hooh": {"kind": "legendary", "status": "placed", "where": "the world tree's crown, data/legendaries.json hooh (tree_crown), gated on champion_cleared; moved out of the Ash Bell 2026-10-21 (the owner)"},
     "celebi": {"kind": "mythical", "status": "placed", "where": "Route 1 sapling (sapling_celebi.json) and celebi_wake"},
     "regirock": {"kind": "legendary", "status": "placed", "where": "legendaries.json sealed chamber, Scorched Plateau"},
     "regice": {"kind": "legendary", "status": "placed", "where": "legendaries.json sealed chamber, Glacial Tear"},

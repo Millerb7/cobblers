@@ -1,0 +1,36 @@
+{
+  "schema": "cobblers.world-tree-hooh/1",
+  "generated_by": "hand (minecraft-systems-dev, 2026-10-21); the measurements are from tools/tree_geometry.world_tree() (the built tree's own block list, tools/tree_grove.big_tree('oak','a','world') seated by tools/world_tree.CENTRE and GROUND), never from a world",
+  "status": "IMPLEMENTED AS DATA AND GENERATOR 2026-10-21, NOT BUILT AND NOT SEEN IN GAME. Ho-Oh is the legendaries.json record `hooh` (kind tree_crown, tools/legendaries.py perch_geometry, audited by tools/legendaries_audit.py _tree_crown), summoned by R14L like every other legendary. This file keeps the measurements it stands on and the decisions that shaped it; the record is the source of the numbers.",
+  "decisions": [
+    "the owner, 2026-10-21: the very top of the world tree is Ho-Oh, as a legendary encounter and not a nest spawn",
+    "the owner, 2026-10-21: \"ho oh doesnt need a way up, its flight\" -- players fly up on their mounts. The first design's ladder shaft, canopy walk and Slow Falling field are DROPPED and nothing here builds them",
+    "gate: champion_cleared (the coordinator's brief; the owner decided only the place). Level 100, the champion band (data/legendaries.json level_caps.upper_bound_by_badges 'champion'; as data/entei_boss.json)"
+  ],
+  "perch": {
+    "measured_from": "tools/tree_geometry.world_tree(): the tree's own block list within 80 of the trunk axis",
+    "tree_centre": [2016, 2280],
+    "ground_y": 116,
+    "highest_solid_y": 535,
+    "highest_columns": "35 columns at y535 on the canopy's top plateau, each one persistent oak-leaves block thick over air; (2045, 2283) is one, 29 blocks from the trunk axis",
+    "perch": [2045, 535, 2283],
+    "legendary_at": [2045, 536, 2283],
+    "shell": [2041, 535, 2279, 2049, 544, 2287],
+    "build_limit_y": 575
+  },
+  "mechanism": "tools/legendaries.py kind tree_crown: a hollow barrier shell (barrier over AIR only, so no leaf is replaced) round a 7x7x8 cavity, a pedestal block replacing the perch leaf, one tagged dormant Pokemon summoned by a macro line (EXP-046) from the look-then-act chain, the shell removed by cobblers:legendary/hooh/open when a champion_cleared player is within 12 of it, `met` granted to a qualifying player within 6. Barrier because Cobblemon ignores Invulnerable (EXP-023) and a barrier stops a ridden flyer as it stops a walker.",
+  "roster_move": {
+    "status": "APPLIED 2026-10-21",
+    "edits": [
+      "data/dungeon_prize_roster.json dungeons.ash_bell.legendary_pool_by_band['6'] -> [raikou, ragingbolt, sandyshocks]; its 'why' loses Ho-Oh; species.hooh -> status placed, the world tree's crown",
+      "data/dungeons.json ash_ring params.prize.legendary_by_band['6']: 'hooh' -> 'raikou'. Raging Bolt and Sandy Shocks are both held back by model_gate atm_subset, so the band-6 prize pool is Raikou alone until that subset is delivered (the band-6 pool had Ho-Oh and Raikou); the owner may prefer another single form",
+      "tests/test_dungeon_ash_bell.py: the band-6 prize spawns are spawn_b6 only (spawn_b6_2 is gone with the second member)"
+    ],
+    "not_needed": "tests/test_player_guide_dungeons.py names Ho-Oh as a needle of its name check, not as an Ash Bell fact: Ho-Oh is still a legendary-class species the guide must never name, so the test stands"
+  },
+  "not_verified": [
+    "everything in game: the shell, the pedestal, the summon, the gate, a ridden player held off by the barrier",
+    "that Ho-Oh's hitbox fits the 7x7x8 cavity (the Xerneas hitbox question of WORLD_TREE_PLAN.md U8)",
+    "that the tree in the live world matches the generator's block list at the top (the world tree was placed by fill functions from the same generator; no world was read)"
+  ]
+}

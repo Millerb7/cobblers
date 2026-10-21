@@ -1044,10 +1044,10 @@ def _memo_pack_boxes():
         return
     real = MC.pack_boxes
 
-    def pack_boxes(pack_dir):
-        k = str(Path(pack_dir).resolve())
+    def pack_boxes(pack_dir, skip=()):
+        k = (str(Path(pack_dir).resolve()), tuple(sorted(skip)))
         if k not in _PACK_BOXES:
-            _PACK_BOXES[k] = real(pack_dir)
+            _PACK_BOXES[k] = real(pack_dir, skip)
         return _PACK_BOXES[k]
     pack_boxes._sanct_memo = True
     MC.pack_boxes = pack_boxes

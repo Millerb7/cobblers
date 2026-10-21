@@ -3,7 +3,9 @@
  "generated_by": "hand. The cobbleverse_mrpack block was measured 2026-10-04 from the Modrinth API (GET /v2/version/4SKGla61) and from the .mrpack's own zip central directory and modrinth.index.json, read by HTTP range requests (nothing downloaded whole). The optional ATM x MSD v4.0 entry is copied from docs/research/CLIENT_MODEL_FIXES.md 'The file (VERIFIED, Modrinth API, fetched 2026-09-28)'.",
  "read_by": "tools/client_pack.py",
  "pack": {
-  "name": "Cobblers",
+  "name": "Cobbleverse Miller Edit",
+  "server_name": "yordy's happy place",
+  "server_name_why": "the owner, 2026-10-21: the pack is Cobbleverse Miller Edit and its server-list entry yordy's happy place",
   "version": "0.1.0",
   "summary": "Cobblers campaign client: COBBLEVERSE 1.7.42 moved to Cobblemon 1.8.0, with our overlay and configs. For joining the Cobblers server."
  },
@@ -18,7 +20,7 @@
  "optional_files": [
   {
    "path": "resourcepacks/ATM x MSD [v4.0].zip",
-   "label": "OPTIONAL, NOT ADOPTED: AllTheMons x Mega Showdown v4.0, the owner's chosen route for the 43 substitute-doll species (2026-09-28). Installed but NOT enabled: no pack-order config lists it, so it does nothing until a player turns it on. Adoption waits on an in-game look (docs/STATE.md 'Client models').",
+   "label": "ADOPTED 2026-10-20 (the owner played with it on and the textures looked right): AllTheMons x Mega Showdown v4.0, the models for the 43 substitute-doll species. Required and enabled in modpack/config/defaultoptions/options.txt just below our client zip, whose model fixes are built against a stack that holds it (tools/client_model_fix.py build --server-pack --no-donor).",
    "kind": "resourcepack",
    "mod_id": "allthemons-x-mega-showdown-legacy",
    "source": "docs/research/CLIENT_MODEL_FIXES.md",
@@ -29,7 +31,8 @@
    },
    "sha1": "05d411776564ec96934a3e5b7ed8aca8e3df780a",
    "sha512": "96e4b45e57c5183ff59cbe2d7ad2b743b4384ac393f4ed9c6a02e636af3b7c1f24d8fdcd99ac8a8769c1712f917ada936f7a92a0d91df47b3b0ddf498632f682",
-   "size": 8115647
+   "size": 8115647,
+   "required": true
   }
  ],
  "cobbleverse_mrpack": {
@@ -41,7 +44,10 @@
   "url": "https://cdn.modrinth.com/data/Jkb29YJU/versions/4SKGla61/COBBLEVERSE%201.7.42.mrpack",
   "sha1": "cb8aa247d5badacf84f7d40a65681440f0428128",
   "size": 238975006,
-  "index_dependencies": {"minecraft": "1.21.1", "fabric-loader": "0.18.4"},
+  "index_dependencies": {
+   "minecraft": "1.21.1",
+   "fabric-loader": "0.18.4"
+  },
   "measured": "2026-10-04: its modrinth.index.json lists 168 files; all 168 match modpack/manifest/base-cobbleverse-1.7.42.json exactly (path, sha1, sha512, size, URL). The base manifest has two Modrinth files the index does not: mods/IronChests-2.0.4.jar and datapacks/extra/Terralith-DP.zip (the latter is in the .mrpack's overrides).",
   "overrides_prefix": "overrides/",
   "override_files": {
@@ -78,15 +84,45 @@
  "embed": {
   "why": "Only plain-text config and licence notices are embedded: our own files and COBBLEVERSE's tracked config. Never a jar, a zip, an image or a no-redistribution file; the tool fails if one would be.",
   "sources": [
-   {"from": "base-pack/cobbleverse/config", "to": "config"},
-   {"from": "modpack/config", "to": "config"},
-   {"from": "base-pack/cobbleverse/shaderpacks", "to": "shaderpacks", "suffixes": [".txt"]},
-   {"from": "base-pack/cobbleverse/resourcepacks", "to": "resourcepacks", "suffixes": [".rpo"]},
-   {"from": "base-pack/cobbleverse/licenses", "to": "licenses", "suffixes": [".txt", ".md"]},
-   {"from": "modpack/overrides", "to": ""}
+   {
+    "from": "base-pack/cobbleverse/config",
+    "to": "config"
+   },
+   {
+    "from": "modpack/config",
+    "to": "config"
+   },
+   {
+    "from": "base-pack/cobbleverse/shaderpacks",
+    "to": "shaderpacks",
+    "suffixes": [
+     ".txt"
+    ]
+   },
+   {
+    "from": "base-pack/cobbleverse/resourcepacks",
+    "to": "resourcepacks",
+    "suffixes": [
+     ".rpo"
+    ]
+   },
+   {
+    "from": "base-pack/cobbleverse/licenses",
+    "to": "licenses",
+    "suffixes": [
+     ".txt",
+     ".md"
+    ]
+   },
+   {
+    "from": "modpack/overrides",
+    "to": ""
+   }
   ],
   "later_sources_win": true,
-  "skip_names": ["README.md"],
+  "skip_names": [
+   "README.md"
+  ],
   "exclude": {
    "config/defaultoptions/servers.dat": "A server list. We never ship an address; players add the one the owner gives them.",
    "config/cobblemonraiddens/": "Cobblemon Raid Dens is removed by the overlay (runtime-incompatible with Cobblemon 1.8)."

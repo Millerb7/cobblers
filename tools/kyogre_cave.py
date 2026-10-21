@@ -570,6 +570,14 @@ def build_model(doc):
         raise CaveError("kyogre.cage is not all air over the dais: barrier in water would show as a hole")
     M.solid(cg, BARRIER)
 
+    # ---- the wake shrine's marker: a sea lantern in the floor under its click (the owner, 2026-10-20: the click had
+    # nothing to show where it was, and the catcher's pedestal nearby read as the shrine)
+    kx, ky_, kz = shrine_click(doc)
+    s, _blk = M.at(kx, ky_ - 1, kz)
+    if s != SOLID:
+        raise CaveError("the shrine's marker at (%d, %d, %d) is not in the floor" % (kx, ky_ - 1, kz))
+    M.set(kx, ky_ - 1, kz, LANTERN)
+
     M.marks = {"cols": cols}
     return M
 

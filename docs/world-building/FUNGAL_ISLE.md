@@ -18,7 +18,7 @@ The owner's brief: *"MUSHROOM ISLAND: foliage and life. It is empty."* Mushroom 
   log, or podzol anywhere.
 - **Standing things:** Grandmother Cap's ring (`data/southern_residents.json` `fairy_ring`, (608, 5888), R9SR/R18SR); the
   Zapdos tower on the east shelf (`data/placements.json` `legendary_zapdos_tower`, corner (881, 67, 5569), 31 x 29); the
-  planned Newmoon island hung over the west end (`legendary_newmoon_island`, corner (24, 141, 5582), 101 x 100, its
+  planned Newmoon island hung over the west end (`legendary_newmoon_island`, corner (24, 518, 5582) since 2026-10-20 (was (24, 141, 5582)), 101 x 100, its
   bottom 24 over the highest ground, y117). Nothing else.
 - **Life:** the rosters exist and are mushroom-themed (`data/spawns.json` `fungal_north`: Paras anchor, Shroomish,
   Morelull, Foongus, Toedscool find, heart Parasect/Breloom/Shiinotic; `fungal_south`: Pumpkaboo, Venonat, Budew, Joltik,
@@ -140,7 +140,7 @@ their sub-region, not as new catch zones that would need a settlement title.
 ## Collisions and decisions for the owner
 
 - **R9FI shares the island with** R9SR (Grandmother Cap, kept 22 blocks clear), the Zapdos tower donor (16 clear) and the
-  planned Newmoon donor (its air from y141; this pack stays at or under y139 inside its footprint, and writes no giant
+  planned Newmoon donor (its air from y518 since 2026-10-20, y141 before; this pack stays at or under y139 inside its footprint, and writes no giant
   there, which leaves the "empty west end" under it with mediums and tufts only).
 - **Option, not built:** Cobblemon's native Fungal Dwelling (above). Placing it would give the island a house with the
   jar's own pool; it needs its pool re-leveled to tier 3 and a measured site.

@@ -1,0 +1,434 @@
+{
+  "schema": "cobblers.tree_bird_species/1",
+  "generated_by": "hand (trainer-balance-designer, 2026-10-21)",
+  "status": "PROPOSED",
+  "basis": {
+    "trees": "docs/world-building/TREE_BIRDS_NOW.txt (66 pool ids, nests, current bands)",
+    "rules": "docs/world-building/SAPLING_BIRDS.md (one line per sapling); the owner 2026-10-21: 'for each sapling around give it a unique as possible spawn, not like pidove or trumbeak'",
+    "area_check": "data/spawns.json surface.<subregion>.* , habitat.* and fishing.* ids, grepped 2026-10-21 at 27878f03. 'in area' in a why means the species or its family already spawns in the tree's own subregion.",
+    "excluded_lines": ["pidgey", "spearow", "starly", "pidove", "pikipek", "fletchling", "taillow", "rookidee", "wingull", "hoothoot"],
+    "tree_town_canopy": "The reserved grove-giant pool (sewaddle, aipom, pikipek, emolga, pachirisu, applin, combee, cutiefly) sits in the Foothill woods, so none of those lines is put on a Foothill grove or woods tree."
+  },
+  "conventions": {
+    "line": "The full evolutionary line, base first; branches listed in order (wurmple: silcoon>beautifly, cascoon>dustox).",
+    "bands": "low = ground+12 nest, mid = ground+35 (and +58 on an elder), crown = the top nest. An evolved stage is placed only in the crown, and only where its level evolution is at or under the band's top; it then spawns from its evolution level to the band's top.",
+    "levels": "The tree's current band, unchanged. crown_levels is kept only where the tree already had a higher crown band (two trees).",
+    "evolution_levels": "Mainline values, ASSUMED: not read from the Cobblemon 1.8.0 jar in this pass. Item, trade, friendship and move evolutions are never placed."
+  },
+  "trees": {
+    "elder_foothill_grove_1": {
+      "line": ["natu", "xatu"],
+      "bands": {"low": ["natu"], "mid": ["natu"], "crown": ["natu"]},
+      "levels": "21-23",
+      "why": "Kept: the sun-staring bird under the world tree; Xatu 25 is over the band, and this tree stays the Koga answer (levels into Xatu under cap 40)."
+    },
+    "elder_foothill_grove_2": {
+      "line": ["bounsweet", "steenee", "tsareena"],
+      "bands": {"low": ["bounsweet"], "mid": ["bounsweet"], "crown": ["steenee"]},
+      "levels": "21-23",
+      "why": "Fruit Pokemon round the world tree's elders; Steenee 18 fits, Tsareena (move) not placed. Not in Foothill (Steenee only on Long Isle south)."
+    },
+    "elder_foothill_grove_3": {
+      "line": ["volbeat"],
+      "bands": {"low": ["volbeat"], "mid": ["volbeat"], "crown": ["volbeat"]},
+      "levels": "21-23",
+      "why": "Fireflies lighting the grove at dusk under the world tree. Not in Foothill; Lake Viltri hollow next door has it in its roster."
+    },
+    "elder_foothill_grove_4": {
+      "line": ["swablu", "altaria"],
+      "bands": {"low": ["swablu"], "mid": ["swablu"], "crown": ["swablu"]},
+      "levels": "21-23",
+      "why": "Kept: cloud wings at the foot of a tree whose crown is in the clouds; now the only Swablu tree (was four). Altaria 35 over band."
+    },
+    "elder_foothill_woods_1": {
+      "line": ["mankey", "primeape", "annihilape"],
+      "bands": {"low": ["mankey"], "mid": ["mankey"], "crown": ["mankey"]},
+      "levels": "21-23",
+      "why": "A troop of treetop monkeys in the region's biggest wood (Dex: lives in groups in the treetops). Primeape 28 over band. Not in Foothill."
+    },
+    "elder_foothill_woods_2": {
+      "line": ["tarountula", "spidops"],
+      "bands": {"low": ["tarountula"], "mid": ["tarountula"], "crown": ["spidops"]},
+      "levels": "21-23",
+      "why": "Thread-ball spiders strung between the oak limbs; Spidops 15 fits. New to the map's trees (Spidops only at Glacier's foot)."
+    },
+    "elder_foothill_woods_3": {
+      "line": ["weedle", "kakuna", "beedrill"],
+      "bands": {"low": ["weedle"], "mid": ["kakuna"], "crown": ["beedrill"]},
+      "levels": "21-23",
+      "why": "A hornet tree under the Tri Peaks: cocoons on the limbs, Beedrill in the crown (7, 10 fit). Bug/Poison quarter-resists Grass: an Erika answer on leg 3. Not in Foothill."
+    },
+    "elder_foothill_woods_4": {
+      "line": ["ledyba", "ledian"],
+      "bands": {"low": ["ledyba"], "mid": ["ledyba"], "crown": ["ledian"]},
+      "levels": "21-23",
+      "why": "Kept: a ladybird swarm on an oak; Ledian 18 fits. In no roster anywhere else."
+    },
+    "elder_jungle_east_1": {
+      "line": ["hawlucha"],
+      "bands": {"low": ["hawlucha"], "mid": ["hawlucha"], "crown": ["hawlucha"]},
+      "levels": "25-30",
+      "why": "Kept: the wrestler diving from the canopy. The tree now stands on Long Isle south, whose roster lacks it (jungle_east's has it)."
+    },
+    "elder_jungle_east_2": {
+      "line": ["aipom", "ambipom"],
+      "bands": {"low": ["aipom"], "mid": ["aipom"], "crown": ["aipom"]},
+      "levels": "25-30",
+      "why": "Tail-handed monkeys swinging through the jungle edge; Ambipom (move) not placed. Not in Long Isle south (in jungle_west and the reserved Tree Town pool)."
+    },
+    "elder_jungle_west_1": {
+      "line": ["tropius"],
+      "bands": {"low": ["tropius"], "mid": ["tropius"], "crown": ["tropius"]},
+      "levels": "25-30",
+      "why": "Kept: the banana-necked flyer in the emergent canopy. Not in Long Isle south (in jungle_west, Tilpey east, Old Orchard)."
+    },
+    "elder_jungle_west_2": {
+      "line": ["passimian"],
+      "bands": {"low": ["passimian"], "mid": ["passimian"], "crown": ["passimian"]},
+      "levels": "25-30",
+      "crown_levels": "30-34",
+      "why": "A berry-throwing troop on the isle's high ground; the crown keeps Toucannon's 30-34. In no roster on the map. Pairs in lore with Oranguru on Long Isle south 2."
+    },
+    "elder_lake_viltri_hollow_1": {
+      "line": ["dewpider", "araquanid"],
+      "bands": {"low": ["dewpider"], "mid": ["dewpider"], "crown": ["dewpider"]},
+      "levels": "18-21",
+      "why": "Water-bubble spiders on the riparian oak's lake side; Araquanid 22 over band. Not in the hollow (River of Shrews vale, Foothill fishing)."
+    },
+    "elder_lake_viltri_hollow_2": {
+      "line": ["yanma", "yanmega"],
+      "bands": {"low": ["yanma"], "mid": ["yanma"], "crown": ["yanma"]},
+      "levels": "18-21",
+      "why": "Kept: dragonflies over the lake, the most visible elder on leg 2; Yanmega (move) not placed. Now the only Yanma tree."
+    },
+    "elder_long_isle_middle_1": {
+      "line": ["shroodle", "grafaiai"],
+      "bands": {"low": ["shroodle"], "mid": ["shroodle"], "crown": ["grafaiai"]},
+      "levels": "44-50",
+      "why": "Paint-tagging tree climbers marking the mossy wood's trunks; Grafaiai 28 fits. Not on Long Isle (Grafaiai only in jungle_east)."
+    },
+    "elder_long_isle_middle_2": {
+      "line": ["venonat", "venomoth"],
+      "bands": {"low": ["venonat"], "mid": ["venonat"], "crown": ["venomoth"]},
+      "levels": "44-50",
+      "why": "Moths drawn to the dark mossy wood; Venomoth 31 fits. Not on Long Isle."
+    },
+    "elder_long_isle_north_1": {
+      "line": ["wattrel", "kilowattrel"],
+      "bands": {"low": ["wattrel"], "mid": ["wattrel"], "crown": ["kilowattrel"]},
+      "levels": "44-50",
+      "why": "Storm petrels on a coastal spruce, replacing the Wingull line; Kilowattrel 25 fits. Not on Long Isle (West shore, South strand, Tilpey east, Route 8)."
+    },
+    "elder_long_isle_north_2": {
+      "line": ["noibat", "noivern"],
+      "bands": {"low": ["noibat"], "mid": ["noibat"], "crown": ["noivern"]},
+      "levels": "44-50",
+      "why": "A bat roost on a far coast; Noivern 48 fits the crown at 48-50. Not on Long Isle (the Crags, Fungal south). Replaces the rare Corviknight."
+    },
+    "elder_long_isle_south_1": {
+      "line": ["chatot"],
+      "bands": {"low": ["chatot"], "mid": ["chatot"], "crown": ["chatot"]},
+      "levels": "44-50",
+      "why": "Kept: the mimic bird on the jungle edge. Not in Long Isle south's roster (jungle_east, Tri Peaks)."
+    },
+    "elder_long_isle_south_2": {
+      "line": ["pansage", "simisage"],
+      "bands": {"low": ["pansage"], "mid": ["pansage"], "crown": ["pansage"]},
+      "levels": "44-50",
+      "why": "A leaf monkey sharing the canopy; Simisage (Leaf Stone) not placed. In no roster. Replaces Squawkabilly, which Long Isle south's own roster already gives."
+    },
+    "elder_long_isle_south_3": {
+      "line": ["oranguru"],
+      "bands": {"low": ["oranguru"], "mid": ["oranguru"], "crown": ["oranguru"]},
+      "levels": "44-50",
+      "why": "The treetop sage on the highest, most remote elder on the map. In no roster. Oricorio moves to the Sunset east palm, its warm-isle home."
+    },
+    "elder_marshy_marsh_1": {
+      "line": ["surskit", "masquerain"],
+      "bands": {"low": ["surskit"], "mid": ["surskit"], "crown": ["masquerain"]},
+      "levels": "34-39",
+      "why": "Pond skaters on the mangrove pools, eyespot moths in the crown; Masquerain 22 fits. Not in the marsh. Flamigo moves to the Tilpey south lakeshore tree."
+    },
+    "elder_marshy_marsh_2": {
+      "line": ["bombirdier"],
+      "bands": {"low": ["bombirdier"], "mid": ["bombirdier"], "crown": ["bombirdier"]},
+      "levels": "34-39",
+      "why": "Kept: the Dark/Flying Sabrina answer near leg 6. In no roster elsewhere."
+    },
+    "elder_marshy_marsh_3": {
+      "line": ["cramorant"],
+      "bands": {"low": ["cramorant"], "mid": ["cramorant"], "crown": ["cramorant"]},
+      "levels": "34-39",
+      "why": "Kept: fishes the drowned swamp; a Water/Flying Blaine answer. Not in the marsh (Shrew Lakes, Tilpey waters)."
+    },
+    "elder_north_pine_isle_1": {
+      "line": ["snom", "frosmoth"],
+      "bands": {"low": ["snom"], "mid": ["snom"], "crown": ["snom"]},
+      "levels": "25-30",
+      "why": "Frost larvae clinging to snow-loaded pine limbs; Frosmoth (friendship, night) not placed. Not on North Pine (South Pine, the troughs, Frostpeak strand)."
+    },
+    "elder_north_pine_isle_2": {
+      "line": ["zubat", "golbat", "crobat"],
+      "bands": {"low": ["zubat"], "mid": ["zubat"], "crown": ["golbat"]},
+      "levels": "25-30",
+      "why": "Bats wintering in the pine's hollows; Golbat 22 fits, Crobat (friendship) not placed. No wild Zubat anywhere on the map (Golbat only in Wedge south)."
+    },
+    "elder_northgate_east_1": {
+      "line": ["nincada", "ninjask", "shedinja"],
+      "bands": {"low": ["nincada"], "mid": ["nincada"], "crown": ["ninjask"]},
+      "levels": "25-30",
+      "why": "Root-dwelling nymphs at the trunk, Ninjask buzzing the crown; 20 fits, Shedinja (special) not placed. Not on Northgate."
+    },
+    "elder_northgate_east_2": {
+      "line": ["pachirisu"],
+      "bands": {"low": ["pachirisu"], "mid": ["pachirisu"], "crown": ["pachirisu"]},
+      "levels": "25-30",
+      "why": "Electric squirrels in a northern spruce (its Sinnoh home). Not on Northgate (Foothill roster, Tree Town reserve)."
+    },
+    "elder_northgate_west_1": {
+      "line": ["grubbin", "charjabug", "vikavolt"],
+      "bands": {"low": ["grubbin"], "mid": ["grubbin"], "crown": ["charjabug"]},
+      "levels": "25-30",
+      "why": "Bark-chewing larvae and battery pupae in the thicket; Charjabug 20 fits, Vikavolt (item/location) not placed. In no roster on the map."
+    },
+    "elder_northgate_west_2": {
+      "line": ["pumpkaboo", "gourgeist"],
+      "bands": {"low": ["pumpkaboo"], "mid": ["pumpkaboo"], "crown": ["pumpkaboo"]},
+      "levels": "25-30",
+      "why": "Lantern spirits glowing in a dark spruce thicket; Gourgeist (trade) not placed. Not on Northgate (Wedge north, Fungal south). Its trade partner Phantump is in Northgate west's roster."
+    },
+    "elder_peak_pond_hollow_1": {
+      "line": ["pineco", "forretress"],
+      "bands": {"low": ["pineco"], "mid": ["pineco"], "crown": ["forretress"]},
+      "levels": "30-32",
+      "why": "Bagworms hanging like cones in old-growth spruce; Forretress 31 fits the crown at 31-32. Bug/Steel resists Grass and is immune to Poison: Erika and Koga answer, 68 off leg 4. Not at Peak Pond."
+    },
+    "elder_peak_pond_hollow_2": {
+      "line": ["burmy", "mothim", "wormadam"],
+      "bands": {"low": ["burmy"], "mid": ["burmy"], "crown": ["mothim"]},
+      "levels": "30-32",
+      "why": "Cloaked bagworms on the limbs, Mothim in the crown; 20 fits. Replaces Fletchinder's Erika role with a Bug/Flying. In no roster on the map."
+    },
+    "elder_peak_pond_hollow_3": {
+      "line": ["skwovet", "greedent"],
+      "bands": {"low": ["skwovet"], "mid": ["skwovet"], "crown": ["greedent"]},
+      "levels": "30-32",
+      "why": "Squirrels hoarding cones up the trunk; Greedent 24 fits. Not at Peak Pond (Viltri's Path, Route 1 maze, Greedent at Tilpey east)."
+    },
+    "elder_shrew_lake_shores_1": {
+      "line": ["cutiefly", "ribombee"],
+      "bands": {"low": ["cutiefly"], "mid": ["cutiefly"], "crown": ["cutiefly"]},
+      "levels": "10-15",
+      "why": "Pollen flies working the blossom; Ribombee 25 over band. Not in the Shrew vale (Arrow Lake, Tilpey west, Long Isle south, Tree Town reserve)."
+    },
+    "elder_shrew_lake_shores_2": {
+      "line": ["combee", "vespiquen"],
+      "bands": {"low": ["combee"], "mid": ["combee"], "crown": ["combee"]},
+      "levels": "10-15",
+      "why": "Kept: bees at the blossom; Vespiquen 21 over band. Not in the vale (Route 1 maze)."
+    },
+    "elder_shrew_lake_shores_3": {
+      "line": ["hoppip", "skiploom", "jumpluff"],
+      "bands": {"low": ["hoppip"], "mid": ["hoppip"], "crown": ["hoppip"]},
+      "levels": "10-15",
+      "why": "Kept: seeds drifting round the blossom; Skiploom 18 over band. Not in the vale (Pallet meadows)."
+    },
+    "elder_south_pine_isle_1": {
+      "line": ["sneasel", "weavile"],
+      "bands": {"low": ["sneasel"], "mid": ["sneasel"], "crown": ["sneasel"]},
+      "levels": "25-30",
+      "why": "The egg thief that climbs trees to raid nests: right on a nest tree. Weavile (Razor Claw, night) not placed. Not on South Pine (North Pine, Frostpeak, the troughs)."
+    },
+    "elder_south_pine_isle_2": {
+      "line": ["spinarak", "ariados"],
+      "bands": {"low": ["spinarak"], "mid": ["spinarak"], "crown": ["ariados"]},
+      "levels": "25-30",
+      "why": "Frosted webs in a snow pine; Ariados 22 fits. Not on South Pine (Fungal south, Route 1 maze, Northgate west, jungle_east)."
+    },
+    "elder_south_pine_isle_3": {
+      "line": ["rowlet", "dartrix", "decidueye"],
+      "bands": {"low": ["rowlet"], "mid": ["dartrix"], "crown": ["decidueye"]},
+      "levels": "25-30",
+      "crown_levels": "36-40",
+      "why": "Kept unchanged, the one owl line left: the owl isle's grown owl as the crown rare. IN AREA: South Pine's roster has Dartrix and Decidueye."
+    },
+    "elder_tilpey_east_shore_1": {
+      "line": ["slakoth", "vigoroth", "slaking"],
+      "bands": {"low": ["slakoth"], "mid": ["vigoroth"], "crown": ["slaking"]},
+      "levels": "41-43",
+      "why": "Sloths hanging from the lakeside oaks, the whole line (18, 36 fit). Replaces the owl. Not at Tilpey (Slaking only in jungle_west)."
+    },
+    "elder_tilpey_east_shore_2": {
+      "line": ["woobat", "swoobat"],
+      "bands": {"low": ["woobat"], "mid": ["woobat"], "crown": ["woobat"]},
+      "levels": "41-43",
+      "why": "Bats leaving the copse at dusk over the lake; Swoobat (friendship) not placed. Ground-immune for Giovanni. In no roster on the map."
+    },
+    "elder_tilpey_north_shore_1": {
+      "line": ["ducklett", "swanna"],
+      "bands": {"low": ["ducklett"], "mid": ["ducklett"], "crown": ["swanna"]},
+      "levels": "39-41",
+      "why": "Kept: the tree the owner called 'way better'; now the only Ducklett tree. IN AREA: Tilpey north's roster has Ducklett and Swanna."
+    },
+    "elder_tilpey_north_shore_2": {
+      "line": ["drifloon", "drifblim"],
+      "bands": {"low": ["drifloon"], "mid": ["drifloon"], "crown": ["drifblim"]},
+      "levels": "39-41",
+      "why": "Balloons snagged in the birch crown; Drifblim 28 fits. Ghost/Flying takes over Staraptor's Ground-immune Giovanni role. Not at Tilpey (Drifblim in the Wedge)."
+    },
+    "elder_viltri_plateau_1": {
+      "line": ["scatterbug", "spewpa", "vivillon"],
+      "bands": {"low": ["scatterbug"], "mid": ["spewpa"], "crown": ["vivillon"]},
+      "levels": "12-15",
+      "why": "The first elder most players see: a full butterfly line, Vivillon wings in the crown (9, 12 fit). Not on the plateau."
+    },
+    "elder_viltri_plateau_2": {
+      "line": ["wurmple", "silcoon", "beautifly", "cascoon", "dustox"],
+      "bands": {"low": ["wurmple"], "mid": ["silcoon", "cascoon"], "crown": ["beautifly", "dustox"]},
+      "levels": "12-15",
+      "why": "Cocoons hung on birch limbs, both branches grown in the crown (7, 10 fit). Not on the plateau (Route 1 maze, Foothill)."
+    },
+    "elder_viltri_plateau_3": {
+      "line": ["seedot", "nuzleaf", "shiftry"],
+      "bands": {"low": ["seedot"], "mid": ["seedot"], "crown": ["nuzleaf"]},
+      "levels": "12-15",
+      "why": "Acorns hanging from branches, Nuzleaf 14 in the crown; Shiftry (Leaf Stone) not placed. Not on the plateau (River of Shrews vale)."
+    },
+    "elder_viltris_path_valley_1": {
+      "line": ["caterpie", "metapod", "butterfree"],
+      "bands": {"low": ["caterpie"], "mid": ["metapod"], "crown": ["butterfree"]},
+      "levels": "15-20",
+      "why": "Kanto's butterfly grown in the far valley (7, 10 fit). Not in the valley (plateau, Pallet, Route 1 maze)."
+    },
+    "elder_viltris_path_valley_2": {
+      "line": ["farfetchd"],
+      "bands": {"low": ["farfetchd"], "mid": ["farfetchd"], "crown": ["farfetchd"]},
+      "levels": "15-20",
+      "why": "Kept: the leek bird in the reeds, the map's first 'find'. Not in the valley (North shore downs)."
+    },
+    "elder_wedge_north_1": {
+      "line": ["murkrow", "honchkrow"],
+      "bands": {"low": ["murkrow"], "mid": ["murkrow"], "crown": ["murkrow"]},
+      "levels": "25-30",
+      "why": "Kept: crows in the ghost wood, a Sabrina answer; now the only Murkrow tree (was two). Honchkrow (Dusk Stone) not placed. Not in Wedge north's roster today."
+    },
+    "elder_wedge_north_2": {
+      "line": ["phantump", "trevenant"],
+      "bands": {"low": ["phantump"], "mid": ["phantump"], "crown": ["phantump"]},
+      "levels": "25-30",
+      "why": "Stump spirits in the dark wood, Ghost for Sabrina; Trevenant (trade) not placed. Not in Wedge north; Wedge south's heart is Trevenant."
+    },
+    "elder_wedge_south_1": {
+      "line": ["vullaby", "mandibuzz"],
+      "bands": {"low": ["vullaby"], "mid": ["vullaby"], "crown": ["vullaby"]},
+      "levels": "25-30",
+      "why": "Kept: vultures over a broken wood, a Sabrina answer; now the only Vullaby tree. Mandibuzz 54 over band."
+    },
+    "elder_wedge_south_2": {
+      "line": ["morelull", "shiinotic"],
+      "bands": {"low": ["morelull"], "mid": ["morelull"], "crown": ["shiinotic"]},
+      "levels": "25-30",
+      "why": "Glowing mushrooms up a dead dark-oak trunk; Shiinotic 24 fits. Not in the Wedge (Fungal north)."
+    },
+    "sapling_crag_mt_vessu": {
+      "line": ["rufflet", "braviary"],
+      "bands": {"low": ["rufflet"], "mid": ["rufflet"], "crown": ["rufflet"]},
+      "levels": "24-26",
+      "why": "The mountain eagle on the high pine at y244 (moved from Foothill woods 3). Braviary 54 over band. Not on Mt Vessu (Tri Peaks, Mt Clay, Sunset west)."
+    },
+    "sapling_crag_the_crags": {
+      "line": ["skarmory"],
+      "bands": {"low": ["skarmory"], "mid": ["skarmory"], "crown": ["skarmory"]},
+      "levels": "28-30",
+      "why": "Kept: the steel bird of the crags. Not in the_crags' roster today (crater and plateau rosters)."
+    },
+    "sapling_desert_long_isle_north": {
+      "line": ["trapinch", "vibrava", "flygon"],
+      "bands": {"low": ["trapinch"], "mid": ["vibrava"], "crown": ["flygon"]},
+      "levels": "44-50",
+      "why": "Antlion pits under the bone tree, the desert spirit in the crown (35; Flygon 45 at 45-50). Not on Long Isle (dunes, moor, plateau south). Replaces Vullaby, now on Wedge south 1 only."
+    },
+    "sapling_desert_south_east_dunes": {
+      "line": ["gligar", "gliscor"],
+      "bands": {"low": ["gligar"], "mid": ["gligar"], "crown": ["gligar"]},
+      "levels": "25-30",
+      "why": "Kept: the dune glider; Gliscor (Razor Fang, night) not placed. Not in the SE dunes (Long Isle middle, Mt Clay, plateaus)."
+    },
+    "sapling_frost_frostpeak": {
+      "line": ["delibird"],
+      "bands": {"low": ["delibird"], "mid": ["delibird"], "crown": ["delibird"]},
+      "levels": "25-30",
+      "why": "Kept: the only non-legendary ice bird, the frost tree's promise. IN AREA: Frostpeak's roster has it; every ice tree-dweller (Snom, Sneasel, Snover) is in it too."
+    },
+    "sapling_frost_glacier_foot_fields": {
+      "line": ["snover", "abomasnow"],
+      "bands": {"low": ["snover"], "mid": ["snover"], "crown": ["snover"]},
+      "levels": "34-36",
+      "why": "The Frost Tree Pokemon round a frost tree; Abomasnow 40 over band. Not at the Glacier's foot."
+    },
+    "sapling_lakeshore_arrow_lake_shores": {
+      "line": ["lotad", "lombre", "ludicolo"],
+      "bands": {"low": ["lotad"], "mid": ["lotad"], "crown": ["lombre"]},
+      "levels": "10-15",
+      "why": "Lily-pad Pokemon in the skin's own lily pads; Lombre 14 fits, Ludicolo (Water Stone) not placed. Not at Arrow Lake (Lake Viltri hollow, fishing)."
+    },
+    "sapling_lakeshore_tilpey_south_shore": {
+      "line": ["flamigo"],
+      "bands": {"low": ["flamigo"], "mid": ["flamigo"], "crown": ["flamigo"]},
+      "levels": "42-44",
+      "why": "Kept: a wading flock under the weeping tree, the review's best fit; now the only Flamigo tree. Not in Tilpey south (Tilpey north, Arrow creeks)."
+    },
+    "sapling_palm_east_coast_dunes": {
+      "line": ["exeggcute", "exeggutor"],
+      "bands": {"low": ["exeggcute"], "mid": ["exeggcute"], "crown": ["exeggcute"]},
+      "levels": "25-30",
+      "why": "Eggs fallen under a palm, the palm Pokemon's seed; Exeggutor (Leaf Stone) not placed. Not in the east coast dunes (Long Isle south, Viltri's Path)."
+    },
+    "sapling_palm_sunset_east": {
+      "line": ["oricorio"],
+      "bands": {"low": ["oricorio"], "mid": ["oricorio"], "crown": ["oricorio"]},
+      "levels": "25-30",
+      "why": "Kept: the warm isles' dancer on their palm, and now its only tree (Long Isle south 3 gave it up). Not in Sunset east's roster (Sunset west, South strand)."
+    },
+    "sapling_palm_sunset_west": {
+      "line": ["kecleon"],
+      "bands": {"low": ["kecleon"], "mid": ["kecleon"], "crown": ["kecleon"]},
+      "levels": "16-20",
+      "why": "A chameleon hidden in the fronds; single stage, so the trap band stays under Brock's 20. Not in Sunset west (Long Isle south)."
+    },
+    "sapling_scorched_great_crater": {
+      "line": ["larvesta", "volcarona"],
+      "bands": {"low": ["larvesta"], "mid": ["larvesta"], "crown": ["larvesta"]},
+      "levels": "44-50",
+      "why": "The sun moth's larvae on the crater rim; Volcarona 59 over band. Larvesta is in no roster, but Volcarona is Great Crater's heart: the tree holds the heart's young."
+    },
+    "sapling_storm_rift_foot": {
+      "line": ["joltik", "galvantula"],
+      "bands": {"low": ["joltik"], "mid": ["joltik"], "crown": ["galvantula"]},
+      "levels": "49-51",
+      "why": "Static-feeding spiders webbing a struck tree; Galvantula 36 fits. Not at the Rift foot (marsh, moor, Fungal south). Kilowattrel stays on Route 8."
+    },
+    "sapling_storm_rift_trunk": {
+      "line": ["emolga"],
+      "bands": {"low": ["emolga"], "mid": ["emolga"], "crown": ["emolga"]},
+      "levels": "55-57",
+      "why": "Kept: the electric glider under the standing storm. Not in the Rift trunk's roster (Peak Pond, Tree Town reserve)."
+    }
+  },
+  "answer_check": {
+    "A4_erika_grass_cap35": "Beedrill (Foothill woods 3, leg 3), Forretress (Peak Pond 1, 68 off leg 4), Mothim (Peak Pond 2), Natu, Swablu. Replaces Fletchinder and Staravia.",
+    "A5_koga_poison_cap40": "Natu into Xatu (grove 1, unchanged), Forretress (Poison-immune, Peak Pond 1), Skarmory (the Crags). The wild Xatu of Wedge north 2 is gone.",
+    "A6_sabrina_psychic_cap45": "Bombirdier (Marsh 2), Murkrow (Wedge north 1), Vullaby (Wedge south 1), Phantump (Wedge north 2), Drifblim (Tilpey north 2), Sneasel and Pumpkaboo (remote isles).",
+    "A7_blaine_fire_cap50": "Swanna (Tilpey north 1), Cramorant (Marsh 3), unchanged.",
+    "A8_giovanni_ground_cap55": "Drifblim, Woobat, Swanna, Cramorant, Masquerain (Ground-immune or hitting back); Slaking (Tilpey east 1) for raw damage. Staraptor and Pidgeot are no longer wild on a tree.",
+    "A1_to_A3": "Lotad (Arrow Lake) and Seedot (plateau 3) are Grass before Brock, but Lotad and Seedot already spawn nearby (Lake Viltri hollow, River of Shrews vale, fishing): no new early answer. Surge's Ground gap is unchanged."
+  },
+  "not_verified": [
+    "Every species is implemented and modelled in Cobblemon 1.8.0: not checked against the jar. New to any pool here: tarountula, spidops, mankey, weedle, kakuna, dewpider, scatterbug, spewpa, wurmple, silcoon, cascoon, seedot, nuzleaf, caterpie, metapod, butterfree, bounsweet, steenee, volbeat, burmy, mothim, skwovet, greedent, pineco, forretress, surskit, masquerain, drifloon, drifblim, slakoth, vigoroth, slaking, woobat, phantump, morelull, shiinotic, grubbin, charjabug, pumpkaboo, nincada, ninjask, pachirisu, snom, zubat, golbat, sneasel, spinarak, ariados, wattrel, kilowattrel, noibat, noivern, shroodle, grafaiai, venonat, venomoth, pansage, oranguru, aipom, passimian, trapinch, vibrava, flygon, snover, lotad, lombre, exeggcute, kecleon, larvesta, joltik, galvantula, cutiefly.",
+    "Evolution levels are mainline values, not read from the 1.8.0 jar.",
+    "Client models: not checked against the 2026-09-26 client model audit lists (docs/research/COBBLEVERSE_COMPATIBILITY.md); Vullaby and Skarmory were on them.",
+    "Mothim and Volbeat are male-only and Burmy's crown stage assumes a male spawn; whether a pool entry for mothim forces the gender is not verified.",
+    "Wurmple's split (Silcoon or Cascoon) is random by personality in the games; both cocoons and both adults are listed to show it.",
+    "Spacing rule 2 (a line 1,000 apart) is met trivially: no line repeats."
+  ]
+}

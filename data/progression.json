@@ -695,6 +695,16 @@
       "why": "data/legendaries.json. Blocked: the trench has no seabed."
     },
     {
+      "id": "quest.legendary_hooh.met",
+      "quest_id": "legendary_hooh",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/hooh/met in cobblers_legendaries",
+      "why": "data/legendaries.json. Ho-Oh at the top of the world tree; gate champion_cleared."
+    },
+    {
       "id": "quest.legendary_celebi_wake.met",
       "quest_id": "legendary_celebi_wake",
       "field": "met",

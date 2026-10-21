@@ -45,9 +45,9 @@
       {"id": "zapdos_tower", "kind": "box", "source": "data/placements.json legendary_zapdos_tower", "margin": 16,
        "why": "the east-coast storm tower, template cobbleverse:legendary/zapdos, size [31, 66, 29] at its corner"},
       {"id": "newmoon_island", "kind": "box", "source": "data/placements.json legendary_newmoon_island", "margin": 16, "giants_only": true,
-       "why": "LumyMon's floating Nightmare island hung 24 over the west end's highest ground (placements.json, adopted_legendary_sites.json sweep_newmoon_island); the template writes air through its whole volume from y141. Giant caps stay out of the footprint; nothing written may reach y139 inside it (rules.newmoon_ceiling)"}
+       "why": "LumyMon's floating Nightmare island over the west end (placements.json, adopted_legendary_sites.json sweep_newmoon_island); the template writes air through its whole volume from its bottom, y518 since the owner had it raised to the build limit on 2026-10-20 (y141 before; its old seat is taken down to air by reapply R9DR). Giant caps stay out of the footprint; nothing written may reach y516 inside it (rules.newmoon_ceiling, the island's bottom less 2)"}
     ],
-    "newmoon_ceiling": 139,
+    "newmoon_ceiling": 516,
     "map_margin": 12,
     "map_margin_why": "the heightmap and the world end at x 0 (data/world.json grid origin); nothing is written within 12 blocks of that edge, where a cap would cross into chunks the export never wrote",
     "glade_scatter_margin": 10,

@@ -1,44 +1,54 @@
-# Handover: session 2312d085, 2026-10-16 (launch and first live fixes; far past the context line)
+# Handover: session 7698338d, ended 2026-10-21 ~01:50
 
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
 
 ## 1. Branch
-`build/2026-10-16-gyms` in worktree `.claude/worktrees/mods-182` (holds `derived/`, `build/`, hydrated kits). Pushed with
-a draft PR (re-read with `gh pr list --head build/2026-10-16-gyms`). It stacks on `build/2026-10-15-launch-fixes`
-(PR #141, draft, head d1badbcb, FROZEN: do not push to it). PR #139 and #140 are merged. Re-read heads after
-`git fetch --prune` before quoting them: the owner merges while sessions work.
+`build/2026-10-20-fossick` (worktree `.claude/worktrees/mods-182`, holds `derived/`, `build/`, kits). Contains main and
+PR #151's head; adds Fossick (R9OCF), the client pack fixes, the Kyogre lantern, Groudon's quake cavern and its review
+fixes, STATE. Pushed as ONE draft PR that replaces #151 (the owner: "combine all of them"); #151 is left open for the
+owner to close. Head and PR number: see the PR; re-read with `git fetch --prune` and `gh pr list`.
 
 ## 2. Where it stopped
-- **LIVE is UP** at 12G, started with `server/scripts/start-live.ps1` (hidden window, console to
-  `logs/console-*.log`; stop with RCON `stop`). Last install 2026-10-16 10:56: prepare 242/242, install_check 0,
-  R17L 12 bosses 0 problems, watchdog back at max-tick-time=60000 (a `reapply.py run` needs -1 while it runs).
-- The coordination lock is held by `claude-launch-2026-10-15d`
-  (`C:\Users\wnd\Documents\github\.cobblers-server-agent.lock`). Release it when no session is working the server.
-- Whitelist: the owner's two names (in the server's whitelist only, never in the repo).
-- The client files for friends: `C:\Users\wnd\Documents\cobblers-client\` (the .mrpack, sha1 adb0bce6, and the
-  subset zip, sha1 b43635df, which now carries the NPC looks and the rip oval). Steps: `docs/launch/CLIENT_PACK.md`.
+- **LIVE is UP at 12G since 01:41** (pid 49280), launched as a Bash background task OF THIS SESSION: it dies when the
+  session ends. The next session must check the PROCESS first and, if it is down, start it durably (section 3).
+- Install done and verified (STATE "Live install 2026-10-21 01:41"). The coordination lock is RELEASED.
+- Friends' bundle: `C:/Users/wnd/Documents/cobblers-client/cobblers-client-0.1.0-bundle.mrpack` sha1 fa8febab (client
+  zip c7a58c9f inside; AllTheMons v4.0 required). Private.
+
+## 2b. After the handover (2026-10-21 morning, session 71451c17)
+- The owner now runs the server from THEIR OWN PowerShell window (`java -Xmx12G ... *> logs\console-own.log`, pid 36832
+  at start). Durable while that window stays open; stop it by RCON `stop`. The session-owned server was killed when the
+  previous session ended (07:55:58, unclean). A duplicate the owner started was killed before it reached the world.
+- Live hand-fixes to Groudon's cavern (water pockets plugged, lake walls removed, Groudon moved onto the lava by the
+  owner): STATE "Groudon's cavern, seen and hand-fixed live". **Next unit:** carry all three into
+  `tools/groudon_cavern.py`, its data, audit and probes (lake without walls, Groudon's spot on the lava, the cut plugging
+  exposed water), so a rebuild matches. Branch `build/2026-10-21-followups` (docs only so far).
+- The owner's profile "cobblers-client-0.1.0-bundle (1)" was imported from an OLD bundle; the new client zip was copied
+  in; the owner must enable it and AllTheMons in the menu.
 
 ## 3. Waiting on the owner
-- A cast test: fishing in a few areas (Lake Viltri, West Shore, the Windward shallows); before 2026-10-16 no area
-  hooked a Pokemon.
-- Dungeon fishing: deepen one canal slot's pool by RCON with the owner present and cast (STATE has the coordinates).
-- Lance's single leader (needs the challenge audit's R:summon rule widened: reviewer's call); the Agatha/Bruno/Lorelei
-  floor overlaps (open decision).
-- More NPC looks (only Brock's witness has one), the Trading Post as a CobbleDollars bank screen (integer per-item
-  prices block cheap bulk goods), near-player rip weighting (not built), faster elder-tree refill (offered, not done).
+- The big western crater (~(6118, 213, 5527)): the owner declined a Heatran lair; leave it alone unless asked.
+- **A durable launch:** a one-shot Task Scheduler start (asked; needs a yes), or the owner runs
+  `server/scripts/start-live.ps1` from their own PowerShell window. The WMI launch died after 44 min.
+- Raise the owner's level cap (RCT records through Giovanni) to catch Kyogre/Groudon? Unanswered.
+- Groudon's blackout exemption (no item loss if it wins a full-party battle), as Kyogre has? Unanswered; not applied.
+- Mod updates: 17 on Modrinth (STATE Runtime line). Batch later with a bundle rebuild.
+- In game: the Groudon quake (log in with gym8_cleared, go to the eastern Craters bowl ~(6706, 5510)); Fossick's hill
+  adit at (6764, 5804); the Kyogre shrine lantern; enable the client zip at the TOP of packs and name any Steve NPCs.
 
 ## 4. Do not rediscover
-- rctapi 0.16.2 Text reads only `literal`/`translatable`; a `text` key is blank, and under speech bubbles a crash
-  (`route_trainers.rct_line`). rctmod speech bubbles stay off.
-- A Cobblemon NPC look = a client variation (`assets/<ns>/bedrock/npcs/variations/`) + the class
-  `resourceIdentifier`; `ForcedResourceIdentifier` on the entity overrides it live. No look in the client = the
-  substitute doll.
-- Lootr chests naming a missing loot table: Pallet's eight were set to `minecraft:empty` on live only; the
-  `place_town.py` source fix is open.
-- The 2026-10-15 watchdog stop was a blocked console write, not a datapack (no tick function is slow).
-- RCON `execute if block` in an unloaded chunk fails: forceload around probes, then remove.
-- Shell heredocs turn `\\x..` escapes into raw bytes; write binary literals without escapes (bytes([...])).
-- Strip refuses while ANY java runs, the owner's client included.
+- The owner's account holds GRANTED flags (dive/surf, gym8_cleared, champion_cleared, kyogre attuned, groudon met); RCT's
+  defeat records were not changed, so they disagree for that account.
+- install and strip refuse a world inside the runtime: stop, `mv cobblers-server/cobblers-10240 cobblers-server-next/`,
+  run, move back. `strip` needs `--world-dir`.
+- `presence_audit.py` with no `--only` ran past 15 min; its `--only` names (arena,gulch,dens,relic,extra) do not include
+  world_probes places by name: probe a place's blocks directly (data/world_probes.json places.<id>).
+- A prepare refuses itself if data/ or tools/ change while it runs (happened once tonight); it also needs the lock env.
+- `tests/test_training_grounds.py::test_shared_records_are_in_step_with_the_generator` fails on main too.
+- Steve NPCs left: dungeon bosses/probes/fights (`tools/dungeon*.py` NPC_RESOURCE) and arenas.
+- Groudon review's open item: a blackout-rebuilt legendary loses our tag, so a later R14L could summon a second one
+  (all legendaries, not fixed).
 
 ## 5. Cost
-`python tools/session_cost.py`. This session ran far past the hand-over line at the owner's request; start fresh.
+~960 turns, context over 300k at the end, weighted ~50M (`tools/session_cost.py`). Agents: Groudon builder (Sonnet),
+Opus review, Opus fixer.

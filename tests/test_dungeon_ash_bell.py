@@ -17,7 +17,7 @@ the record to, the owner's standing asks for every dungeon (DUNGEON_PASS2.md, DU
             three secrets with relics; a shortcut; four distinct variants;
   variety   the per-run rotation pools: two teams a band for every trainer, a species pool for the mini-boss, an
             alternate crew list for the boss (DUNGEON_ROOMS.md 14);
-  prize     exactly the roster's species: Raikou (band 5), Ho-Oh and Raikou (band 6), Raging Bolt held back by its model
+  prize     exactly the roster's species: Raikou (band 5), Raikou (band 6; Ho-Oh moved to the world tree 2026-10-21), Raging Bolt and Sandy Shocks held back by their model
             gate; the Beast Ball key from band 4; nothing below band 5;
   walk      the room kit's own checks (every variant and branch);
   species   every species named is in the Cobblemon 1.8.0 jar, none a doll or a mis-assembled model, no legendary
@@ -378,13 +378,16 @@ def test_the_prize_spawns_at_the_lower_cap_with_the_beast_ball_key_and_the_model
     hab = next(r for r in records() if r["kind"] == "habitat")
     base = "data/cobblers/function/dungeons/room/ash_bell/%s/s%d/" % (hab["id"], s["g"])
     spawns = {k[len(base):]: v for k, v in files.items() if k.startswith(base + "prize/spawn_")}
-    assert sorted(spawns) == ["prize/spawn_b5.mcfunction", "prize/spawn_b6.mcfunction", "prize/spawn_b6_2.mcfunction"]
+    # band 6 is Raikou alone since Ho-Oh moved to the world tree (2026-10-21): Raging Bolt and Sandy Shocks are held back
+    # by the same model gate, so the pool has one member and there is no spawn_b6_2
+    assert sorted(spawns) == ["prize/spawn_b5.mcfunction", "prize/spawn_b6.mcfunction"]
     caps = {b["band"]: b["caps"][0] for b in D.bands(DOC)}
     for name, body in spawns.items():
         band = int(re.search(r"_b(\d)", name).group(1))
         assert "level=%d no_ai" % caps[band] in body, name
         assert body.rstrip().endswith("prize/bind"), name
         assert "ragingbolt" not in body, "Raging Bolt's model is the AllTheMons subset's: gated until delivered"
+        assert "sandyshocks" not in body, "Sandy Shocks is gated by the same model subset"
     tag = "tag @s add %s" % KB.boss_tag()
     assert tag in files[base + "prize/bind.mcfunction"].split("\n")
     assert KB.boss_problems(KB.load()) == []
