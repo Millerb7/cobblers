@@ -290,6 +290,24 @@ def audit(doc, ground, pack, water=None, progression=None, landmarks=None, world
     checked_gates = 0
     for rec in sited:
         rid = rec["id"]
+        if rec["kind"] == "quake_cavern":
+            # not a box chain (2026-10-21): its geometry, seal, walk, quake and keeper are tools/groudon_cavern_audit.py's,
+            # which replays the emitted functions. What this audit still owns for it: levels and gate (section 3 above),
+            # the retired site (4b below), and that the pack carries NO carve, plug or open function for it.
+            fnq = fn_dir / rid
+            for stale in ("carve", "carve_once", "open"):
+                rep.check(not (fnq / ("%s.mcfunction" % stale)).exists(),
+                          "%s: a quake cavern has no %s in the legendaries pack (tools/groudon_cavern.py writes carve_once "
+                          "into its own build pack)" % (rid, stale))
+            for need_f in ("near", "keep", "met", "wake", "dress", "dress_new", "spawn_new", "spawn_at"):
+                rep.check((fnq / ("%s.mcfunction" % need_f)).is_file(), "%s: the pack has no %s" % (rid, need_f))
+            rep.check(isinstance(rec.get("cavern"), str) and (ROOT / rec["cavern"]).is_file(),
+                      "%s: cavern %r names no data file" % (rid, rec.get("cavern")))
+            checked_writes += 1
+            checked_gates += 1
+            rep.check(_met_is_reachable(rec, doc, rep),
+                      "%s: a sited chamber whose gate can never open, unadmitted" % rid)
+            continue
         g = L.geometry(rec, doc, ground)
         lake = rec["kind"] == "lake_grotto"
         env, sleeve = g["envelope"], g["sleeve"]

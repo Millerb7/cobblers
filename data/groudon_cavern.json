@@ -1,0 +1,103 @@
+{
+  "schema": "cobblers.groudon_cavern/1",
+  "status": "authored 2026-10-21 for the owner's request of 2026-10-20 ('this crater should just have a large cave mouth that opens up after gym 8 is beaten, call it an earthquake or something'). Built offline only: the generator, its independent audit and their tests run; nothing has been applied to staging or the live world and no part of it has been seen in a game.",
+  "record": "groudon",
+  "record_why": "The cavern is the SHAPE of the encounter data/legendaries.json calls groudon (kind quake_cavern): that record keeps the species, level, gate, `met` advancement (cobblers:legendary/groudon/met, which data/rayquaza_sky.json gate.requires_met reads), the Red Orb cache and R14L's look-then-act summon. This file keeps everything geometric and the quake.",
+  "seed": 2026102101,
+  "margin": 4,
+  "margin_why": "defaults.shell_margin of data/legendaries.json (WATER_BUILD_PLAN 4.5 audit 1): every carved void sits at least this many blocks inside a stone envelope filled first, so the seal is arithmetic and not a hope.",
+  "box": {
+    "x": [6690, 6815],
+    "y": [54, 164],
+    "z": [5500, 5663],
+    "why": "The model's grid and R14L's hold: every block the carve writes and every cell the quake opens lies inside it. 8 by 11 chunks (x6690-6815 is chunks 418-425, z5500-5663 is chunks 343-353: the east and south edges are the last block of their chunk, so the box costs no extra chunk and leaves the hall 15 blocks of room). It meets neither the retired chamber's hull (x6658-6686, y65-108, z5503-5548: this box starts at x6690) nor the Mining Town (square z5688-5711) nor Fossick's hill (rect x6755-6795 z5786-5823)."
+  },
+  "spine": {
+    "lip": [6706, 5510],
+    "ravine_end": [6706, 5556],
+    "turn": [6706, 5564],
+    "hall_entry": [6744, 5614],
+    "lip_y": 108,
+    "ravine_run": 2,
+    "tunnel_run": 3,
+    "why": "The way in, as a polyline from the surface: the ravine runs south from the lip 46 blocks, the plug (the quake's last cut) is the next 8, the tunnel bends 37 degrees toward the hall and enters it. The floor falls one block per `ravine_run` blocks of path in the ravine and one per `tunnel_run` below, so every step is a single block both ways. lip_y is the ground at the lip (tools/ground.py 6706,5510 = 108); the cut starts where the floor profile drops under the ground."
+  },
+  "ravine": {
+    "half_width": 8.5,
+    "wobble": 1.5,
+    "top_pad": 3,
+    "why": "17 wide at the mean, 14 to 20 with the walls' wobble (a smooth value noise, per side, a knot every 4 blocks). Open to the sky: each row is cleared from its floor to 3 above the highest ground in that row, so trees and the like go too. The walls are the terrain as it stands."
+  },
+  "tunnel": {
+    "half_width": 4.5,
+    "wobble": 0.7,
+    "height_edge": 4,
+    "height_mid": 7,
+    "why": "9 wide, an arched roof 4 high at the walls and 7 on the axis: headroom is never under 4, the audit holds it to 2."
+  },
+  "hall": {
+    "centre": [6764, 5624],
+    "radius": 28,
+    "floor_y": 64,
+    "wall": 4,
+    "dome": 20,
+    "wobble": 1.5,
+    "why": "The magma hall: 56 across (Kyogre's basin is 45), a floor at y64 and a dome to y88 over the middle. The ground over it is y131-146, so 40 to 50 blocks of rock. The tunnel reaches the floor level at the hall's edge (the profile gives y64 at path length 109 of 110.6)."
+  },
+  "lake": {
+    "centre": [6764, 5614],
+    "radius": 10,
+    "depth": 3,
+    "why": "The magma lake: lava in the floor, y62-64, its top the floor's own level, a stone bottom (inside the envelope, 4 thick). Every neighbouring floor cell, diagonals included, carries a blackstone wall one block high, so a walker meets a wall that is 1.5 tall before any lava: the lake is seen and never entered by accident. Nothing at the lake's level has an open side, so the lava cannot spread."
+  },
+  "dais": {
+    "centre": [6764, 5638],
+    "outer_radius": 7,
+    "inner_radius": 4.5,
+    "why": "Groudon's basalt dais at the dome's south: a ring one block over the floor, a step of two, the smooth_basalt pedestal (data/legendaries.json defaults.pedestal_block, the Red Orb's container) in the middle. Groudon stands at (6764, 67, 5638). The ground steps up in single blocks all the way."
+  },
+  "palette": {
+    "envelope": "minecraft:stone",
+    "floor": ["minecraft:blackstone", "minecraft:basalt", "minecraft:polished_blackstone", "minecraft:smooth_basalt"],
+    "wall": ["minecraft:blackstone", "minecraft:blackstone", "minecraft:basalt", "minecraft:polished_blackstone", "minecraft:deepslate"],
+    "light": "minecraft:shroomlight",
+    "light_chance": 0.015,
+    "magma": "minecraft:magma_block",
+    "magma_chance": 0.06,
+    "parapet": "minecraft:blackstone_wall",
+    "dais_ring": "minecraft:polished_blackstone",
+    "dais_inner": "minecraft:polished_basalt",
+    "patch": 3,
+    "why": "The skin is the first solid layer next to the void: patches of blackstone, basalt and deepslate 3 blocks across (so runs merge into fills), magma blocks and shroomlights only in WALLS AND ROOFS, never in a floor and never under a wall-top a player stands on: a magma block hurts the one who stands on it. 'Lights are lanterns, never light blocks' (docs/STATE.md) is about invisible `minecraft:light` blocks; a shroomlight is a visible block and the cavern is lit by it and by the lake, not by lanterns, because a lantern is a town's."
+  },
+  "guard": {
+    "box": [6724, 62, 5588, 6796, 100, 5656],
+    "stand": [6706, 5504],
+    "yaw": 0,
+    "why": "The keeper's box: the hall (x6734-6794 z5594-5654 with its wobble) and the last stretch of the tunnel before it. Anyone inside without gym8_cleared is sent to `stand`, the bowl floor in front of the ravine, by the keeper's pass (once a second). Creative and spectator are left alone. It does not cover the ravine or the upper tunnel: anyone may walk in and see; the hall is where the sleeper is."
+  },
+  "quake": {
+    "objective": "cobblers.gq",
+    "flag": "gym8_cleared",
+    "trigger_pad": 48,
+    "sim_chunks": 6,
+    "sim_chunks_why": "server/config/server.properties.example simulation-distance=6 (the live server.properties is not read by agents, so this is the example's number, not a measurement). A stage runs only while a player stands inside its write box grown by trigger_pad blocks: the farthest chunk it writes is then at most 5 chunks from the player's chunk (tools/groudon_cavern.py chunk_gap computes it per stage from the box's own extent and refuses 6 or more; with a pad of 64 the lower ravine stage came to 6). The stage also holds its own chunks (forceload add in the function, tools/function_limits.py ensure_loaded) and only moves the state on after a read-back of a cell it cut.",
+    "left_objective": "cobblers.gq.left",
+    "left_why": "minecraft.custom:minecraft.leave_game, as tools/kyogre_cave.py's keeper uses it: a player who logged out over the ravine's footprint and is back after the cut would load in over air; slow falling for slow_falling_seconds if they stand in the cut's column when the keeper next sees them, and the count cleared.",
+    "ravine_split_z": 5533,
+    "slow_falling_seconds": 30,
+    "why": "States of #quake in the objective: 0 sealed, 1 rumbled (a player holds gym8_cleared: heard everywhere, nothing cut), 2 tremor played, 3 the ravine's upper half cut, 4 its lower half cut, 5 the plug cut = open for good (and #groudon cobblers.leg is set to 1)."
+  },
+  "messages": {
+    "rumble": " has beaten the eighth gym. Far off to the east the ground shudders, once, long and low.",
+    "tremor": "The Craters groan. The bowl floor shivers.",
+    "split": "A crack runs south across the bowl.",
+    "fall": "The slope gives way.",
+    "breach": "Rock shears away at the bottom of the cleft, and a hot wind comes up out of the dark.",
+    "opened": "The Craters have opened. A ravine in the eastern bowl leads down into the mountain.",
+    "turned_back": "The heat and the dark press you back. The sleeper under the Craters answers only to a trainer who has earned the Earth Badge."
+  },
+  "probes": {
+    "why": "data/world_probes.json places.groudon_cavern is written from the model by `python tools/groudon_cavern.py probes`: blocks that hold whether or not the quake has happened (the hall's floor, the lake's lava, the parapet, the dais, the pedestal, the tunnel's first interior floor), and Groudon (at most one tagged cobblers_leg_groudon)."
+  }
+}

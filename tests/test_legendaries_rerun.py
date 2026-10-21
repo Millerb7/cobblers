@@ -76,6 +76,14 @@ def functions(doc, ground):
         m = re.match(r"data/([^/]+)/function/(.+)\.mcfunction$", rel)
         if m:
             out["%s:%s" % m.groups()] = text.splitlines()
+    # a quake cavern's carve_once is defined by tools/groudon_cavern.py's build pack, not by this one (2026-10-21), and is
+    # replayed block by block by tools/groudon_cavern_audit.py; R14L's step order still calls it, so it stands here as an
+    # empty function. If removed: every run of these simulations stops at "unknown function".
+    for rec in L.emitted(doc):
+        if rec["kind"] == "quake_cavern":
+            import groudon_cavern
+            out["%s:legendary/%s/carve_once" % (doc["namespace"], rec["id"])] = []
+            out[groudon_cavern.LOAD] = []        # the cavern's own load, R14L runs it first (tools/legendaries.py)
     return out
 
 

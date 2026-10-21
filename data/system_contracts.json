@@ -342,6 +342,14 @@
         "data/coldwater_station.json",
         "tools/coldwater_station.py"
       ]
+    },
+    "groudon_cavern": {
+      "what": "Groudon's quake cavern: the rumble on the first gym-8 win, the opening of the ravine, the carve of the tunnel and hall, and the keeper that turns away anyone in the hall without the flag",
+      "paths": [
+        "data/groudon_cavern.json",
+        "tools/groudon_cavern.py",
+        "tools/groudon_cavern_audit.py"
+      ]
     }
   },
   "contracts": [
@@ -1303,7 +1311,7 @@
           "quote": "\"requires_met\": [\"kyogre\", \"groudon\"],"
         },
         {
-          "at": "tools/legendaries.py:638",
+          "at": "tools/legendaries.py:672",
           "quote": "\"advancement grant @s only %s:legendary/%s/met\" % (ns, rid),"
         },
         {
@@ -1554,6 +1562,30 @@
       "tests": [
         "tests/test_system_contracts.py::test_contract_c30_the_fossick_path_is_laid_as_the_town_pass_paves_it",
         "tests/test_fossick_adit.py::test_the_recorded_adit_is_the_one_the_tool_builds"
+      ]
+    },
+    {
+      "id": "C31",
+      "title": "Groudon's quake and its legendary agree on the flag and on the one open score",
+      "owner": "groudon_cavern",
+      "consumers": [
+        "legendaries",
+        "progression"
+      ],
+      "constrained_by": [],
+      "statement": "The earthquake is set off by cobblers:flag/gym8_cleared, the advancement tools/progression_pack.py writes and tools/legendaries.py gates the Groudon record on (gate.flags[0]); the cavern's tick polls it and must name the record's own flag. The legendary's open score (#groudon on data/legendaries.json's objective, cobblers.leg) is written to 1 by exactly one line, the cavern's `opened` function, called only by the last stage after its read-back; tools/legendaries.py reads it (the wake, the dormant keep) and its retired site's restore clears it to 0, which is safe only because the restore's probe is the OLD pedestal, a block position the new cavern never writes. carve_once, in the cavern's build pack, skips on the same holder. A different flag, a second writer, or a new pedestal on the old one and the sleeper wakes early, never wakes, or the new cavern is taken down by the cleanup.",
+      "stated_in": [
+        {
+          "at": "tools/groudon_cavern.py:670",
+          "quote": "# open score (tools/legendaries.py): 1 means the gate has opened, so a re-run of R14L carves nothing and Groudon is"
+        },
+        {
+          "at": "tools/legendaries.py:580",
+          "quote": "execute if score #%s %s matches 1 as @e[tag=%s,tag=!%s.awake,limit=1] run function %s:legendary/%s/wake"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c31_the_quake_and_the_legendary_agree_on_the_flag_and_the_open_score"
       ]
     }
   ]
