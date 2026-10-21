@@ -1304,7 +1304,11 @@
     "tbird_elder_foothill_woods_3_low",
     "tbird_elder_foothill_woods_3_mid",
     "tbird_elder_foothill_woods_4_low",
-    "tbird_elder_foothill_woods_4_mid"
+    "tbird_elder_foothill_woods_4_mid",
+    "tbird_world_tree_foothill_woods_crown",
+    "tbird_world_tree_foothill_woods_high",
+    "tbird_world_tree_foothill_woods_low",
+    "tbird_world_tree_foothill_woods_mid"
    ]
   },
   {
@@ -2242,7 +2246,7 @@
   },
   {
    "zone": "elder_* / sapling_*",
-   "what": "191 placed elder-tree and sapling Habitat Block pools",
+   "what": "195 placed elder-tree and sapling Habitat Block pools",
    "why": "a few blocks inside the sub-region each is named for: an encounter there is that sub-region's, listed under its zone's \"sites\""
   },
   {
