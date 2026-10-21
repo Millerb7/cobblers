@@ -37,6 +37,7 @@ from pathlib import Path
 import numpy as np
 
 import function_limits
+import loot_fix
 import nbt
 from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
@@ -85,6 +86,7 @@ def template_info(path):
     pal = doc["palette"]
     size = doc["size"]
     jigsaws, loot, entrance, entrance_pos, waystones = [], [], None, None, []
+    containers = []
     for b in doc["blocks"]:
         p = pal[b["state"]]
         n = b.get("nbt") or {}
@@ -95,6 +97,11 @@ def template_info(path):
                 entrance_pos = b["pos"]
         if n.get("LootTable"):
             loot.append(b["pos"])
+        lootr = loot_fix.container_block(p["Name"])
+        if lootr:
+            # every container Lootr can instance, with its own table (or none) and whether the template stocks it
+            containers.append({"pos": list(b["pos"]), "name": p["Name"], "lootr": lootr, "props": dict(p.get("Properties") or {}),
+                               "table": n.get("LootTable") or None, "items": bool(n.get("Items"))})
         if p["Name"].startswith("waystones:"):
             waystones.append(b["pos"])
     if entrance is None and jigsaws:
@@ -123,7 +130,8 @@ def template_info(path):
             base[(x, z)] = min(base.get((x, z), y), y)
     grade_cols = {(b["pos"][0], b["pos"][2]) for b in doc["blocks"] if b["pos"][1] == grade and is_floor(pal[b["state"]]["Name"])}
     return {"grade_cols": grade_cols, "size": size, "jigsaws": jigsaws, "loot": loot, "entrance": entrance, "entrance_pos": entrance_pos,
-            "grade_layer": grade, "base": base, "waystones": waystones}
+            "grade_layer": grade, "base": base, "waystones": waystones,
+            "containers": containers}
 
 
 def strip_waystones(src, dest):
@@ -243,7 +251,7 @@ def forceload_commands(box, verb, limit=256):
     return out
 
 
-def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
+def build(settlement, doc, ground_at, legs_doc=None, out_dir=None, buildings_only=False):
     """ground_at(x, z) -> Y of the world's ground (the highest block that is not air, water, a plant or a tree)."""
     s = doc["settlements"][settlement]
     plan = s.get("plan") or {}
@@ -384,9 +392,15 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
             if state.split("[")[0] in materials:
                 state = materials[state.split("[")[0]] + state[len(state.split("[")[0]):]
             cmds.append("setblock %d %d %d %s" % (wx, oy + jy, wz, state))
-        for (lx, ly, lz) in ([] if ruined else info["loot"]):
-            wx, wz = world_xz(lx, lz)
-            cmds.append("data remove block %d %d %d LootTable" % (wx, oy + ly, wz))
+        # Every container Lootr can instance gets a table that exists on the server, instanced per player (tools/loot_fix.py,
+        # data/loot_remap.json). This replaces `data remove ... LootTable`, which left every town container empty and
+        # which does not stick on a Lootr chest. world_xz() is the transform that seats the building; loot_fix reads the
+        # same positions back from report["containers"], so the repair and the rebuild cannot disagree.
+        for c in ([] if ruined else info["containers"]):
+            wx, wz = world_xz(c["pos"][0], c["pos"][2])
+            rec = loot_fix.build_record(c, (wx, oy + c["pos"][1], wz), rot, "none", p, "place_town", p["template"], True, None)
+            report.setdefault("containers", []).append(rec)
+            cmds.extend(loot_fix.source_commands(rec))
         stripped = [list(q) for q in info["waystones"]]
         # foundation: under every column the building stands on, down to the ground
         material = p.get("foundation") or "minecraft:stone_bricks"
@@ -423,6 +437,11 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
                                     "cut_into_ground_max": cut_max, "waystones_stripped_from_template": stripped, "template_placed": template_id,
                                     "columns": [[c[0], c[1], c[2]] for c in cols], "corners": corners,
                                     "command_position": [px, oy, pz], **({"ruin": ruined} if ruined else {})})
+
+    if buildings_only:
+        # tools/loot_fix.py reads the containers each building seats; the roads and the legs it needs are not its business
+        report["after_donors"] = []
+        return cmds, report
 
     def surface(x, z):
         return seated.get((x, z), ground_at(x, z))
@@ -741,7 +760,7 @@ def main(argv=None):
     rep.parent.mkdir(parents=True, exist_ok=True)
     rep.write_text(json.dumps(dict(report, ground_from="heightmap (tools/ground.py, rounded)", ground_bounds=[bx0, bz0, bx1, bz1]), indent=1), encoding="utf-8")
     print(json.dumps({"buildings": [{k: v for k, v in b.items() if k not in ("columns", "corners")} for b in report["buildings"]],
-                      **{k: v for k, v in report.items() if k not in ("buildings", "route_points")}}, indent=1))
+                      **{k: v for k, v in report.items() if k not in ("buildings", "route_points", "containers")}}, indent=1))
     if a.install:
         import runtime_guard
         dest = runtime_guard.check(a.install, "install into") / out.name

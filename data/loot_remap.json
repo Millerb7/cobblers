@@ -1,0 +1,78 @@
+{
+  "schema": "cobblers.loot_remap/1",
+  "generated_by": "hand (tools/loot_fix.py reads it; the placers reach it through tools/loot_fix.py)",
+  "why": "Every container we place becomes a Lootr container with a loot table that exists on the server. A template's own table is kept only when it exists and no stage table is in force; a table from a mod we do not run, `minecraft:empty`, or no table at all on an empty chest or barrel is mapped here by the container's KIND and the area's STAGE. The owner, 2026-10-21: 'make sure every chest is instanced if it can be', 'the instance chests just need to be made with items', 'do map wide changes', 'fun loot for every stage of the game'.",
+  "mechanism": "Cobblers loot tables are cobblers:chests/<stage>/<kind>, emitted by `python tools/loot_fix.py tables` from data/stage_loot.json. Until that file exists the table is the PLACEHOLDER of the kind (below): an existing COBBLEVERSE-Loot-DP-v11 village table (it overrides vanilla's chest tables with Cobblemon items). A placeholder is marked placeholder=true in data/loot_fixes.json and is replaced by regenerating, with no code change.",
+  "lootr_blocks": {
+    "why": "read from lootr-fabric-1.21.1-1.11.38.127.jar assets/lootr/blockstates and data/lootr/loot_table/blocks: lootr_chest, lootr_trapped_chest, lootr_barrel (facing, open), lootr_shulker (one block, no colour), lootr_inventory (a minecart/boat holder, not placeable by us), trophy, decorated_pot, suspicious_sand and suspicious_gravel variants",
+    "minecraft:chest": "lootr:lootr_chest",
+    "minecraft:trapped_chest": "lootr:lootr_trapped_chest",
+    "minecraft:barrel": "lootr:lootr_barrel",
+    "minecraft:shulker_box": "lootr:lootr_shulker",
+    "kept_properties": {
+      "lootr:lootr_chest": ["facing", "type", "waterlogged"],
+      "lootr:lootr_trapped_chest": ["facing", "type", "waterlogged"],
+      "lootr:lootr_barrel": ["facing"],
+      "lootr:lootr_shulker": []
+    },
+    "cannot_instance": "sophisticatedstorage:*barrel (a storage mod's own container: its items live in storageWrapper, Lootr has no block for it), cobblemon:gilded_chest and gimmighoul_chest, minecraft:decorated_pot, minecraft:suspicious_gravel (brushable loot, already per-player by vanilla's brushing), furnaces, smokers, brewing stands, campfires, chiseled bookshelves, lecterns"
+  },
+  "placeholder_by_kind": {
+    "house": "minecraft:chests/village/village_plains_house",
+    "lab": "minecraft:chests/village/village_temple",
+    "shop": "minecraft:chests/village/village_temple",
+    "smith": "minecraft:chests/village/village_toolsmith",
+    "mine": "minecraft:chests/abandoned_mineshaft",
+    "farm": "minecraft:chests/village/village_shepherd",
+    "tower": "minecraft:chests/simple_dungeon",
+    "legendary_site": "minecraft:chests/simple_dungeon",
+    "ruin": "minecraft:chests/ruined_portal",
+    "other": "minecraft:chests/village/village_plains_house"
+  },
+  "placeholder_house_flavours": {
+    "why": "a house keeps its biome's village table when the template's own table named one that is gone: the template's old table, matched by these words, picks the flavour",
+    "desert": "minecraft:chests/village/village_desert_house",
+    "savanna": "minecraft:chests/village/village_savanna_house",
+    "snowy": "minecraft:chests/village/village_snowy_house",
+    "taiga": "minecraft:chests/village/village_taiga_house"
+  },
+  "placeholder_smith_flavours": {
+    "weapon": "minecraft:chests/village/village_weaponsmith",
+    "armorer": "minecraft:chests/village/village_armorer",
+    "armour": "minecraft:chests/village/village_armorer",
+    "armor": "minecraft:chests/village/village_armorer"
+  },
+  "kind_rules": {
+    "why": "first match wins; `placement_id` and `template` are regexes over the placement id and the template id, `old_table` over the template's own table, `placement_kind` is data/placements.json kind. Order matters.",
+    "rules": [
+      {"kind": "legendary_site", "placement_id": "^legendary_|^adopted_|^sweep_", "why": "the adopted legendary towers and shrines: no feather, summon item or legendary key may be in an instanced chest there (the owner, 2026-10-21)"},
+      {"kind": "legendary_site", "template": "legendary/|mythical/|crown_|dawn_tower|dusk_tower|newmoon", "why": "the same templates, however they were seated"},
+      {"kind": "ruin", "placement_id": "(?<![a-z])(ruin|ruined|wreck|crushed)(?![a-z])"},
+      {"kind": "mine", "template": "(?<![a-z])(mines?|miners?|mining|quarry)(?![a-z])", "old_table": "mineshaft"},
+      {"kind": "smith", "template": "(?<![a-z])(smith|armorer|forge|foundry)(?![a-z])", "old_table": "village_(armorer|toolsmith|weaponsmith|mason)"},
+      {"kind": "lab", "template": "(?<![a-z])(lab|laboratory|research|observatory|temple|shrine|chapel|church|library)(?![a-z])", "placement_kind": "^lab$", "old_table": "village_temple|stronghold_library"},
+      {"kind": "shop", "template": "(?<![a-z])(pokemart|mart|shop|store|market|department|stall|cartographer|tannery|fletcher|fisher|pokecenter|center)(?![a-z])", "old_table": "village_(cartographer|tannery|fletcher|fisher)|pokecenters", "placement_kind": "^service$"},
+      {"kind": "farm", "template": "(?<![a-z])(farm|barn|stable|ranch|greenhouse|shepherd|butcher)(?![a-z])", "old_table": "village_(shepherd|butcher)"},
+      {"kind": "tower", "template": "(?<![a-z])(tower|watchtower|lookout|lighthouse|keep|outpost)(?![a-z])"},
+      {"kind": "house", "placement_kind": "^house$"}
+    ],
+    "default": "other"
+  },
+  "default_stage_ladder": {
+    "why": "used only when data/stage_loot.json is absent or names no tiers. A tier is the encounter table's tier of the sub-region the container stands in (data/encounter_design.json rules.tiers, data/nuzlocke_zones.json zones[].tier), whose caps are 20..60. The six stages are the dungeon sigil bands (DUNGEONS.md 7.4, data/dungeons.json engine.sigils.ladder): band 1 caps 20/25, band 2 30/35, band 3 40/45, band 4 50/55, band 5 60/62, band 6 the League and Rift (cap 100).",
+    "ids": ["stage1", "stage2", "stage3", "stage4", "stage5", "stage6"],
+    "tier_to_stage": {"1": "stage1", "2": "stage1", "3": "stage2", "4": "stage2", "5": "stage3", "6": "stage3", "7": "stage4", "8": "stage4", "9": "stage5"},
+    "kind_overrides": {"league": "stage6"},
+    "placement_kind_overrides": {"league": "stage6"}
+  },
+  "forbidden_in_instanced_loot": {
+    "why": "the owner, 2026-10-21 (3): no feather, summon item or legendary key may be in an instanced chest at a legendary site; a stage table is checked for these too, wherever it is placed",
+    "item_regex": "feather|lumymon:|summon|_key$|^cobblemon:.*_key|tower_ash|ancient_dna|origin_fossil|crown"
+  },
+  "not_touched": [
+    "data/rewards.json containers and tools/rewards_pack.py (per-player claims by function, ADR-002): told apart because they are written by `setblock`/`data` commands from data/rewards.json at positions that file lists, and no template or placement record carries them; this tool never reads those commands and refuses a container whose position is in data/rewards.json",
+    "dungeon vault chests (tools/dungeon_puzzles.py, tools/dungeon_extras.py, tools/dungeon_resources.py): their tick sees `unless data block x y z LootTable` to credit a claim, which a Lootr conversion would change; they are placed by generated setblock, never by a template",
+    "tools/portals.py chests (cobblers:portals/<id>): already a loot table of our own that Lootr converts by itself",
+    "tools/sea_town.py's boat-rack barrel: literal Items, already handled by the sea-town verify"
+  ]
+}

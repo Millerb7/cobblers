@@ -2331,9 +2331,14 @@ def emit(cv, services, plan):
                     rx, rz = PT.rotate(jx, jz, s["rotation"])
                     state = final if final != "minecraft:structure_void" else "minecraft:air"
                     lines.append("setblock %d %d %d %s" % (px + rx, oy + jy, pz + rz, state))
-                for (lx, ly, lz) in info["loot"]:
-                    rx, rz = PT.rotate(lx, lz, s["rotation"])
-                    lines.append("data remove block %d %d %d LootTable" % (px + rx, oy + ly, pz + rz))
+                # every container Lootr can instance gets a table that exists on the server (tools/loot_fix.py), in place of
+                # `data remove ... LootTable`, which left them empty and does not stick on a Lootr chest
+                import loot_fix
+                for c in info["containers"]:
+                    rx, rz = PT.rotate(c["pos"][0], c["pos"][2], s["rotation"])
+                    rec = loot_fix.build_record(c, (px + rx, oy + c["pos"][1], pz + rz), s["rotation"], "none",
+                                                {"id": s.get("id") or s["template"], "kind": "service"}, "deep_city", s["template"], True, None)
+                    lines.extend(loot_fix.source_commands(rec))
                 lines.append("fill %d %d %d %d %d %d minecraft:air replace #minecraft:flowers" % (x0, y0, z0, x1, y1, z1))
             out = FL.ensure_loaded(lines)
             probs = FL.check_lines(out, "services")
