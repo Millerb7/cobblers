@@ -9907,103 +9907,103 @@
         "expect": true
       }
     ],
-    "groudon_cavern": [
+    "groudon_revert": [
       {
-        "what": "groudon_cavern: the lake's lava",
+        "what": "groudon_revert: the hall's lava lake, filled",
         "block": [
           6764,
           64,
           5614,
-          "minecraft:lava"
+          "minecraft:stone"
         ],
         "expect": true
       },
       {
-        "what": "groudon_cavern: the lake's wall (one block over the floor)",
-        "block": [
-          6775,
-          65,
-          5614,
-          "minecraft:blackstone_wall"
-        ],
-        "expect": true
-      },
-      {
-        "what": "groudon_cavern: the hall floor between the lake and the dais",
+        "what": "groudon_revert: the hall floor between the lake and the dais, filled",
         "block": [
           6764,
           64,
           5626,
-          "minecraft:smooth_basalt"
+          "minecraft:stone"
         ],
         "expect": true
       },
       {
-        "what": "groudon_cavern: the dais ring",
-        "block": [
-          6769,
-          65,
-          5638,
-          "minecraft:polished_blackstone"
-        ],
-        "expect": true
-      },
-      {
-        "what": "groudon_cavern: the dais top",
-        "block": [
-          6761,
-          66,
-          5638,
-          "minecraft:polished_basalt"
-        ],
-        "expect": true
-      },
-      {
-        "what": "groudon_cavern: the pedestal (the Red Orb's container)",
+        "what": "groudon_revert: the dais's pedestal (the cleanup's probe), rock",
         "block": [
           6764,
           66,
           5638,
-          "minecraft:smooth_basalt"
+          "minecraft:stone"
         ],
         "expect": true
       },
       {
-        "what": "groudon_cavern: air over the dais where Groudon stands",
+        "what": "groudon_revert: the air over the dais, filled",
         "block": [
           6764,
           67,
           5638,
-          "minecraft:air"
+          "minecraft:stone"
         ],
         "expect": true
       },
       {
-        "what": "groudon_cavern: the tunnel's floor at its first bend",
-        "block": [
-          6712,
-          80,
-          5572,
-          "minecraft:basalt"
-        ],
-        "expect": true
-      },
-      {
-        "what": "groudon_cavern: the tunnel's air above it",
+        "what": "groudon_revert: the tunnel at its first bend, filled",
         "block": [
           6712,
           81,
           5572,
-          "minecraft:air"
+          "minecraft:stone"
         ],
         "expect": true
       },
       {
-        "what": "groudon_cavern: Groudon (one tagged cobblers_leg_groudon: dormant until the quake, awake after)",
+        "what": "groudon_revert: the ravine's upper cut, filled (3 under the ground)",
+        "block": [
+          6706,
+          98,
+          5533,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "groudon_revert: the ravine's lower cut, filled (3 under the ground)",
+        "block": [
+          6706,
+          86,
+          5556,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "groudon_revert: the plug, filled (3 under the ground)",
+        "block": [
+          6706,
+          84,
+          5564,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "groudon_revert: the sealed chamber's pedestal, carved again by R14L",
+        "block": [
+          6672,
+          68,
+          5542,
+          "minecraft:smooth_basalt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "groudon_revert: Groudon (one tagged cobblers_leg_groudon, in the sealed chamber)",
         "hold": [
-          6764,
-          67,
-          5638
+          6672,
+          69,
+          5542
         ],
         "entity": "@e[type=cobblemon:pokemon,tag=cobblers_leg_groudon]",
         "count_max": 1

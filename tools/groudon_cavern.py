@@ -1,6 +1,27 @@
 #!/usr/bin/env python
 """Groudon's quake cavern under the Craters' eastern bowl, from data/groudon_cavern.json
-(docs/world-building/GROUDON_QUAKE_CAVERN.md).
+(docs/world-building/GROUDON_QUAKE_CAVERN.md). RETIRED 2026-10-21: this module now only UNDOES it.
+
+THE RETIREMENT (the owner, 2026-10-21: "undo groudon cave", then "Old chamber back"). R14L applied the cavern to the live
+world at 01:16 that day and the quake opened it fully. Groudon's record in data/legendaries.json is a sealed_chamber at
+(6672, 5508) again, and the cavern is that record's retired site `quake_cavern_v1`. This module emits:
+  - the cleanup (retire_functions), which tools/legendaries.py puts in cobblers_legendaries and R14L runs BEFORE any
+    summon, in the retired-site shape (tools/chunk_look.py look-then-act): it refuses while a player stands in the ravine,
+    the plug, the tunnel or the hall (and the step reads the held count back, so R14L stops); kills the cavern's tagged
+    Groudon in the model box; and, only while the cavern is there (#built is 1, or its pedestal stands), puts every cell
+    the carve and the three cuts wrote at or under the ground back to the heightmap's terrain (`terrain` of the retired
+    site), clears the rim's walls with `replace` (nothing else above the ground is written: the hand-placed stones that
+    stopped the water stay), clears the chamber's open score so its carve_once re-cuts it, and sets #built and #quake to 0
+    LAST, after the pedestal, so a run cut short runs again and a second run writes nothing;
+  - `build`: the record of what the world RECEIVED (build/groudon_cavern_applied/, never a datapack and never installed):
+    the carve and the three stages exactly as R14L and the quake ran them. Its sha256 is frozen in the retired site
+    (`applied.sha256`), so a later edit to the model below cannot silently change what the cleanup thinks it undoes;
+    tools/groudon_revert_audit.py replays it, then the cleanup, onto the heightmap;
+  - `probes`: data/world_probes.json places.groudon_revert, blocks that read rock once the cleanup ran.
+The runtime pack (rumble, stages, keeper) and the carve's build pack are no longer emitted or installed
+(tools/reapply.py WITHDRAWN moves an installed copy aside).
+
+What follows is the cavern as it was built, kept verbatim because the cleanup must undo exactly that.
 
 The owner, 2026-10-20: "this crater should just have a large cave mouth that opens up after gym 8 is beaten, call it an
 earthquake or something". Chosen: the FIRST player on the server to hold gym8_cleared sets it off for the whole world; it
@@ -25,19 +46,20 @@ envelope filled FIRST that reaches `margin` blocks beyond every void in all six 
 construction). The quake's air (`qa`: the open-sky ravine and the plug) is cut at play time from natural terrain. Ground is
 tools/ground.py's, rounded, never a world.
 
-  python tools/groudon_cavern.py build [--source-root R] [--out DIR]   write both packs
+  python tools/groudon_cavern.py build [--source-root R] [--out DIR]   write the record of what the world received
   python tools/groudon_cavern.py report                                the numbers; nothing written
-  python tools/groudon_cavern.py probes                                write data/world_probes.json places.groudon_cavern
+  python tools/groudon_cavern.py probes                                write data/world_probes.json places.groudon_revert
 
 What it does NOT cover: the surface blocks and sub-surface strata of the natural terrain (the heightmap has heights, not
 block ids: the ravine's walls and floor are whatever is there; nothing here assumes a block), a player who logs out inside
 the hall and back in after losing nothing (the keeper's pass sends an unqualified one out whenever it sees them), a Groudon
-caught and released elsewhere, and anything in a running game. tools/groudon_cavern_audit.py is the independent audit: it
-does not import this module.
+caught and released elsewhere, and anything in a running game. tools/groudon_revert_audit.py is the independent audit of the
+cleanup: it does not import this module.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import shutil
 import sys
@@ -52,8 +74,11 @@ import function_limits as FL  # noqa: E402
 DATA = ROOT / "data" / "groudon_cavern.json"
 LEGENDARIES = ROOT / "data" / "legendaries.json"
 PROBES = ROOT / "data" / "world_probes.json"
-PACK = "cobblers_groudon_cavern"
-OUT = ROOT / "build" / "datapacks" / PACK
+PACK = "cobblers_groudon_cavern"          # WITHDRAWN 2026-10-21 (tools/reapply.py): never emitted or installed again
+APPLIED = ROOT / "build" / "groudon_cavern_applied"   # the record of what the world received; not a datapack
+OUT = APPLIED
+SITE_ID = "quake_cavern_v1"               # data/legendaries.json groudon retired_sites
+RETIRE_HELD = "cobblers_leg_retire_held"  # tools/legendaries.py RETIRE_HELD (tests/test_groudon_revert.py holds them equal)
 SCHEMA = "cobblers.groudon_cavern/1"
 NS = "cobblers"
 FOLDER = "groudon_cavern"
@@ -63,7 +88,7 @@ CARVE_ONCE = "%s:legendary/groudon/carve_once" % NS
 LOAD = "%s/load" % F
 BUILT_READ = "%s/built_read" % F
 BUILT_HOLDER = "groudon_cavern_built"     # #<holder> of tools/chunk_look.py's objective: R14L's read-back of #built
-CL_OBJ = "cobblers_chunk_look"            # tools/chunk_look.py OBJ (tests/test_groudon_cavern.py holds the two equal)
+CL_OBJ = "cobblers_chunk_look"            # tools/chunk_look.py OBJ
 PACK_FORMAT = 48
 PART_COMMANDS = 4000
 FILL_LIMIT = 32768
@@ -137,11 +162,16 @@ def static_problems(doc, leg_doc=None):
     rec = next((r for r in leg_doc["encounters"] if r["id"] == doc["record"]), None)
     if rec is None:
         return ["data/legendaries.json has no encounter %r" % doc["record"]]
-    if rec.get("kind") != "quake_cavern":
-        bad.append("%s: kind must be quake_cavern (it is %r)" % (rec["id"], rec.get("kind")))
+    # retired 2026-10-21: the record is a sealed chamber again and the cavern is its retired site
+    site = next((s for s in rec.get("retired_sites") or [] if s.get("id") == SITE_ID), None)
+    if site is None or site.get("kind") != "quake_cavern":
+        bad.append("%s: no retired site %s of kind quake_cavern" % (rec["id"], SITE_ID))
+        return bad
+    if rec.get("kind") == "quake_cavern":
+        bad.append("%s: the record is still a quake_cavern; the cavern is retired" % rec["id"])
     sp = doc["spine"]
-    if list(rec.get("portal") or []) != list(sp["lip"]):
-        bad.append("%s: portal %s is not the spine's lip %s" % (rec["id"], rec.get("portal"), sp["lip"]))
+    if list(site.get("portal") or []) != list(sp["lip"]):
+        bad.append("%s %s: portal %s is not the spine's lip %s" % (rec["id"], SITE_ID, site.get("portal"), sp["lip"]))
     h, lk, ds = doc["hall"], doc["lake"], doc["dais"]
     hx, hz = h["centre"]
     reff = h["radius"] - h["wobble"]
@@ -171,27 +201,20 @@ def static_problems(doc, leg_doc=None):
 
 
 def retired_problems(doc, leg_doc, ground):
-    """The retired chamber's whole hull must stay clear of this model's box: R14L's cleanup restores that hull to terrain, and
-    the cavern's carve must never stand in it (a restore after the carve would take the cavern out)."""
+    """The LIVE sealed chamber's whole hull must stay clear of this model's box (2026-10-21, the other way round from
+    before): R14L runs the cavern's cleanup first and then carves the chamber, and the cleanup must never write a cell of
+    the chamber, nor its kill box hold the chamber's Groudon."""
     import legendaries as L
     bad = []
     b = doc["box"]
     box = (b["x"][0], b["y"][0], b["z"][0], b["x"][1], b["y"][1], b["z"][1])
-    for rec, site in L.retired(leg_doc):
+    for rec in L.emitted(leg_doc):
         if rec["id"] != doc["record"]:
             continue
-        hull = L.retired_geometry(rec, site, leg_doc, ground)["bbox"]
+        hull = L.geometry(rec, leg_doc, ground)["bbox"]
         if all(box[i] <= hull[i + 3] and hull[i] <= box[i + 3] for i in range(3)):
-            bad.append("the model box %s meets the retired site %s's hull %s" % (box, site["id"], hull))
-        if hull[0] <= doc["spine"]["lip"][0] <= hull[3] and hull[2] <= doc["spine"]["lip"][1] <= hull[5]:
-            bad.append("the lip stands inside the retired hull")
+            bad.append("the model box %s meets the live chamber's hull %s" % (box, hull))
     return bad
-
-
-def built_condition(doc=None):
-    """The execute clause that holds a line to a world the carve has finished in (#built is set by build/state, LAST)."""
-    doc = doc or load()
-    return "if score #built %s matches 1" % doc["quake"]["objective"]
 
 
 def hall_box(doc):
@@ -203,26 +226,16 @@ def hall_box(doc):
     return (hx - r, f + 1, hz - r, hx + r, f + int(h["wall"]) + int(h["dome"]) + 1, hz + r)
 
 
-def legendary_geometry(rec, legdoc, ground):
-    """tools/legendaries.py geometry() for a quake_cavern record: the keys files() and the audit read. Pure arithmetic on the
-    data and the heightmap; no model is built."""
-    doc = load()
-    sp, ds, h = doc["spine"], doc["dais"], doc["hall"]
-    f = int(h["floor_y"])
-    px, pz = ds["centre"]
-    ped_y = f + 2
-    hb = hall_box(doc)
+def model_box(doc):
+    """The model's box as inclusive (x0, y0, z0, x1, y1, z1): every block the carve and the cuts wrote lies inside it."""
     b = doc["box"]
-    lx, lz = sp["lip"]
-    g = {"floor_y": f, "ceiling_y": f + int(h["wall"]) + int(h["dome"]), "corr_y0": f, "mouth_y": ground(lx, lz),
-         "anchor": (lx, lz), "axis": (0, 1),
-         "chamber": hb, "zone": hb,
-         "legendary": (px, ped_y + 1, pz), "pedestal": (px, ped_y, pz),
-         "bbox": (b["x"][0], b["y"][0], b["z"][0], b["x"][1], b["y"][1], b["z"][1]),
-         "guard": tuple(doc["guard"]["box"])}
-    g["envelope"] = g["bbox"]
-    g["lanterns"] = []
-    return g
+    return (b["x"][0], b["y"][0], b["z"][0], b["x"][1], b["y"][1], b["z"][1])
+
+
+def pedestal(doc):
+    """The dais's pedestal cell (the smooth_basalt the Red Orb sat in): the cleanup's probe, and its last block write."""
+    cx, cz = doc["dais"]["centre"]
+    return (int(cx), int(doc["hall"]["floor_y"]) + 2, int(cz))
 
 
 # ----------------------------------------------------------------------------------------------------- the model
@@ -885,7 +898,7 @@ def plan(doc, ground=None):
 
 
 def model_problems(doc, M, D):
-    """The builder's own fail-closed guards (the independent proof is tools/groudon_cavern_audit.py)."""
+    """The builder's own fail-closed guards (the cleanup's independent proof is tools/groudon_revert_audit.py)."""
     bad = []
     x0, y0, z0 = M.o
     if D[0].any() or D[-1].any() or D[:, 0].any() or D[:, -1].any() or D[:, :, 0].any() or D[:, :, -1].any():
@@ -905,50 +918,9 @@ def model_problems(doc, M, D):
     return bad
 
 
-def probe_records(doc, M, B, names, ground):
-    """data/world_probes.json places.groudon_cavern: blocks that hold whether or not the quake has happened, and Groudon."""
-    h, lk, ds = doc["hall"], doc["lake"], doc["dais"]
-    f = int(h["floor_y"])
-    x0, y0, z0 = M.o
-    out = []
-    leg = _j(LEGENDARIES)
-    tag = leg["tag_prefix"] + doc["record"]
-
-    def blk(what, x, y, z):
-        i, j, k = x - x0, y - y0, z - z0
-        if M.lava[i, j, k]:
-            name = LAVA
-        elif M.ia[i, j, k]:
-            name = AIR
-        elif B[i, j, k] == 0:
-            raise CavernError("probe %s at (%d, %d, %d) is neither carved nor placed" % (what, x, y, z))
-        else:
-            name = names[B[i, j, k]]
-        out.append({"what": "groudon_cavern: " + what, "block": [x, y, z, name], "expect": True})
-
-    lx, lz = lk["centre"]
-    cx, cz = ds["centre"]
-    blk("the lake's lava", lx, f, lz)
-    blk("the lake's wall (one block over the floor)", lx + int(lk["radius"]) + 1, f + 1, lz)
-    blk("the hall floor between the lake and the dais", cx, f, (lz + cz) // 2)
-    blk("the dais ring", cx + int(ds["inner_radius"]) + 1, f + 1, cz)
-    blk("the dais top", cx - 3, f + 2, cz)
-    blk("the pedestal (the Red Orb's container)", cx, f + 2, cz)
-    blk("air over the dais where Groudon stands", cx, f + 3, cz)
-    ix, iz = 6712, 5572
-    col = np.nonzero(M.ia[ix - x0, :, iz - z0])[0]
-    if not len(col):
-        raise CavernError("the tunnel probe column (%d, %d) is not carved" % (ix, iz))
-    fy = int(col[0]) + y0
-    blk("the tunnel's floor at its first bend", ix, fy - 1, iz)
-    blk("the tunnel's air above it", ix, fy, iz)
-    out.append({"what": "groudon_cavern: Groudon (one tagged %s: dormant until the quake, awake after)" % tag,
-                "hold": [cx, f + 3, cz], "entity": "@e[type=cobblemon:pokemon,tag=%s]" % tag, "count_max": 1})
-    return out
-
-
 def functions(doc, p, ground):
-    """(runtime {id: lines}, info, build {id: lines}) of the whole cavern."""
+    """(runtime {id: lines}, info, build {id: lines}) of the whole cavern AS IT WAS BUILT: only applied_functions() reads it
+    now (the record of what the world received). Nothing here is emitted as a datapack any more."""
     M, leg = p["M"], p["leg"]
     sx, sz = doc["guard"]["stand"]
     rfns, info = runtime_files(doc, M, leg["objective"], int(ground(sx, sz)) + 1)
@@ -956,82 +928,332 @@ def functions(doc, p, ground):
     return run, info, build_files(doc, M, p["B"], p["names"], leg)
 
 
-def write_pack(doc, p, ground, out=None):
-    import pack_split
-    out = Path(out or OUT)
-    run, info, bld = functions(doc, p, ground)
-    allf = dict(run)
-    allf.update(bld)
-    for fid, body in allf.items():
-        bad = FL.check_lines(body, fid)
-        if bad:
-            raise CavernError("%s would be refused: %s" % (fid, bad[:2]))
+# ------------------------------------------------------------------------------ the record of what the world received
+
+
+def applied_functions(doc, p, ground):
+    """{function id: lines}: every function that WROTE BLOCKS into the world, as it ran: the carve (R14L, 2026-10-21 01:16,
+    through carve_once, its parts and its state) and the three cuts (the quake's stages 2, 3 and 4). Stage 1, the rumble,
+    the keeper and the rejoin wrote no block and are not in it."""
+    run, _info, bld = functions(doc, p, ground)
+    out = dict(bld)
+    for st in (2, 3, 4):
+        fid = "%s/stage/%d" % (F, st)
+        out[fid] = run[fid]
+    return out
+
+
+def applied_files(fns):
+    """{relative path: text}: the record laid out as a datapack's function tree, WITHOUT pack.mcmeta, so nothing loads it."""
+    out = {}
+    for fid, body in fns.items():
+        ns, path = fid.split(":", 1)
+        out["data/%s/function/%s.mcfunction" % (ns, path)] = "\n".join(body) + "\n"
+    return out
+
+
+def digest(files):
+    """sha256 over the record's files sorted by path: each path, a newline, its text (utf-8). tools/groudon_revert_audit.py
+    computes the same from the files on disk and holds it to the retired site's applied.sha256."""
+    h = hashlib.sha256()
+    for rel in sorted(files):
+        h.update(rel.encode("utf-8") + b"\n" + files[rel].encode("utf-8"))
+    return h.hexdigest()
+
+
+# ------------------------------------------------------------------------------------------ the cleanup (2026-10-21)
+
+
+def retired_site(leg_doc, doc=None):
+    """(record, site) of the cavern's retired site in data/legendaries.json."""
+    doc = doc or load()
+    rec = next(r for r in leg_doc["encounters"] if r["id"] == doc["record"])
+    site = next(s for s in rec.get("retired_sites") or [] if s.get("id") == SITE_ID)
+    return rec, site
+
+
+def touched_masks(doc, M, B):
+    """(carve, cut, walls) as 3-D masks over the model: every cell the carve wrote (envelope, skin, lake wall, dais and
+    pedestal, interior air, lava), every cell the three cuts made air (the ravine and the plug), and every rim wall standing
+    after the last cut. The stages also cleared to air the few walls an earlier stage had stood on ground a later cut took
+    away: those cells are over the ground, air before the quake and air after it, so nothing restores them."""
+    carve = (B > 0) | M.ia | M.lava
+    cut = M.qa_r | M.qa_p
+    walls = stage_guards(doc, M)[4][4]
+    return carve, cut, walls
+
+
+def terrain_band(rel):
+    """1 deep, 2 under, 3 surface for a cell `rel` blocks above its column's ground (rel <= 0): tools/legendaries.py
+    terrain_lines' convention (deep to three under the ground, under to one under, the surface block at the ground)."""
+    rel = np.asarray(rel)
+    return np.where(rel == 0, 3, np.where(rel >= -2, 2, 1))
+
+
+def restore_targets(doc, M, B, terrain, masks=None):
+    """(ids, names): the terrain block every written cell AT OR UNDER its column's ground goes back to (id 0: not written by
+    the restore). Over the ground nothing is written but the rim's walls (restore_commands): the cut left air there, and the
+    stones the owner placed by hand to stop the water stay as they are."""
+    carve, cut, _walls = masks or touched_masks(doc, M, B)
+    ys = M.o[1] + np.arange(M.shape[1])[None, :, None]
+    rel = ys - M.G[:, None, :]
+    over = carve & (rel > 0)
+    if over.any():
+        raise CavernError("the carve wrote %d cell(s) over the ground; this restore writes nothing there" % int(over.sum()))
+    names = [None]
+    for n in (terrain["deep"], terrain["under"], terrain["surface"]):
+        if n not in names:
+            names.append(n)
+    lut = np.array([0, names.index(terrain["deep"]), names.index(terrain["under"]), names.index(terrain["surface"])],
+                   np.int16)
+    w = (carve | cut) & (rel <= 0)
+    ids = np.where(w, lut[terrain_band(np.minimum(rel, 0))], 0).astype(np.int16)
+    return ids, names
+
+
+def pedestal_block_after(doc, M, terrain):
+    """The terrain block the pedestal's cell goes back to (the restore's LAST block write)."""
+    px, py, pz = pedestal(doc)
+    rel = py - int(M.G[px - M.o[0], pz - M.o[2]])
+    return {1: terrain["deep"], 2: terrain["under"], 3: terrain["surface"]}[int(terrain_band(min(rel, 0)))]
+
+
+def restore_commands(doc, M, B, terrain, masks=None):
+    """[command]: every written cell at or under the ground back to terrain (merged fills, the pedestal's cell left out: the
+    restore writes it last), then the rim's walls cleared to air with `replace <the wall block>`, so a wall is the only thing
+    over the ground the restore can change."""
+    masks = masks or touched_masks(doc, M, B)
+    ids, names = restore_targets(doc, M, B, terrain, masks)
+    px, py, pz = pedestal(doc)
+    ids[px - M.o[0], py - M.o[1], pz - M.o[2]] = 0
+    cmds = [command(b[:6], names[b[6]]) for b in merge_boxes(ids, M.o)]
+    guard = doc["palette"]["rim_guard"]
+    cmds += ["fill %d %d %d %d %d %d %s replace %s" % (tuple(b[:6]) + (AIR, guard))
+             for b in merge_boxes(masks[2].astype(np.int16), M.o)]
+    return FL.split_fills(cmds)
+
+
+def held_boxes(doc, M):
+    """[(what, box)]: the voids a player can stand in, each its own box (one hull would hold the whole plateau): the
+    ravine's two cuts and the plug from their floors to the cut's top, the tunnel outside the hall's square, and the hall
+    with its lake. A player in any of them holds the cleanup, and R14L reads the held count back as 0 or stops."""
+    cells = stage_cells(doc, M)
+    hb = hall_box(doc)
+    xs = M.o[0] + np.arange(M.shape[0])
+    zs = M.o[2] + np.arange(M.shape[2])
+    in_hall = ((xs >= hb[0]) & (xs <= hb[3]))[:, None, None] & ((zs >= hb[2]) & (zs <= hb[5]))[None, None, :]
+    return [("the ravine's upper cut", mask_box(M, cells[2])), ("the ravine's lower cut", mask_box(M, cells[3])),
+            ("the plug", mask_box(M, cells[4])), ("the tunnel", mask_box(M, M.ia & ~in_hall)),
+            ("the hall", mask_box(M, (M.ia | M.lava) & in_hall))]
+
+
+def chunk_count(box):
+    x0, _y0, z0, x1, _y1, z1 = box
+    return (x1 // 16 - x0 // 16 + 1) * (z1 // 16 - z0 // 16 + 1)
+
+
+_PLANS = {}
+
+
+def cached_plan(doc, ground):
+    """plan(), once per heightmap, data and model code: tools/legendaries.py files() asks for it on every build. The key
+    holds the model functions themselves, so a test that mutates the generator never gets the unmutated plan."""
+    key = (id(ground), json.dumps(doc, sort_keys=True), build_model, classify, stage_guards, _j(LEGENDARIES).__repr__())
+    if key not in _PLANS:
+        _PLANS.clear()
+        _PLANS[key] = plan(doc, ground)
+    return _PLANS[key]
+
+
+def retire_functions(rec, site, leg_doc, ground, p=None):
+    """{'ns:path': lines} of the cavern's cleanup, in tools/legendaries.py's retired-site shape: a look-then-act chain
+    (tools/chunk_look.py) over the whole model box that, once the box shows its saved entities (or blind after the chain's
+    limit), refuses while a player stands in a void (held_boxes), else kills the cavern's Groudon (type cobblemon:pokemon,
+    the record's tag, inside the model box: the live chamber's Groudon stands outside it, tools/legendaries.py) and, only
+    while the cavern is there, runs the restore. The chain counts the held players; R14L reads 0 back or stops.
+
+    CHUNKS: the chain's entry force-loads the model box (x and z) and its _done releases it; the restore and its parts write
+    nothing outside that box and carry no forceload of their own (a forceload is per chunk, not counted: a part's release
+    would drop the chain's hold). So the whole cleanup holds chunk_count(model_box) chunks at once, for the chain's life."""
+    import chunk_look as CL
+    import legendaries as L
+    doc = load()
+    p = p or cached_plan(doc, ground)
+    M, B = p["M"], p["B"]
+    base, restore, holder, new_tag = L.retire_parts(rec, site, leg_doc)
+    box = model_box(doc)
+    nch = chunk_count(box)
+    tag = leg_doc["tag_prefix"] + rec["id"]
+    scope = "type=cobblemon:pokemon,tag=%s,%s" % (tag, sel_box(box))
+    held = "@a[tag=%s]" % RETIRE_HELD
+    q = doc["quake"]["objective"]
+    px, py, pz = pedestal(doc)
+    act = ["# the cleanup of %s's retired site %s (tools/groudon_cavern.py retire_functions)" % (rec["id"], site["id"]),
+           "# a player standing in the ravine, the plug, the tunnel or the hall is held, and nothing below is done while anyone",
+           "# is: the step reads the held count back",
+           "tag @a remove %s" % RETIRE_HELD]
+    act += ["tag @a[%s] add %s" % (sel_box(b), RETIRE_HELD) for _w, b in held_boxes(doc, M)]
+    act += ["# the cavern's objective, so the gate below reads a score and not an unknown objective in a world it never reached",
+            "scoreboard objectives add %s dummy" % q,
+            "# the cavern's Groudon first, wherever it stands in the box (the owner moved it onto the lava), before rock fills",
+            "execute unless entity %s run kill @e[%s]" % (held, scope),
+            "# the restore only while the cavern is there: #built is 1 (its carve finished), or its pedestal stands. The",
+            "# restore sets the pedestal's cell to rock and #built to 0 last, so neither line runs twice",
+            "execute unless entity %s if score #built %s matches 1 run function %s" % (held, q, restore),
+            "execute unless entity %s if block %d %d %d %s run function %s" % (held, px, py, pz, site["pedestal_block"], restore)]
+    fns = CL.chain(base, (box[0], box[2], box[3], box[5]), ["@e[%s]" % scope], act, [scope], new_tag,
+                   "tag=%s" % RETIRE_HELD, holder, note="tools/groudon_cavern.py")
+    masks = touched_masks(doc, M, B)
+    cmds = restore_commands(doc, M, B, site["terrain"], masks)
+    parts = [cmds[i:i + PART_COMMANDS] for i in range(0, len(cmds), PART_COMMANDS)]
+    by = ("# chunks-loaded-by: %s (its forceload holds the cavern's whole model box, x%d-%d z%d-%d, %d chunks, for the "
+          "chain's life)" % (base, box[0], box[3], box[2], box[5], nch))
+    names = []
+    for n, part in enumerate(parts):
+        name = "%s_p_%02d" % (restore, n)
+        names.append(name)
+        fns[name] = [HEAD, by, "# part %d of %d of the restore: cells back to terrain, then the rim's walls cleared"
+                     % (n + 1, len(parts))] + part
+    t = site["terrain"]
+    fns[restore] = ([HEAD, by,
+                     "# the quake cavern put back: every cell the carve and the cuts wrote at or under the ground back to the",
+                     "# heightmap's terrain (%s at the ground, %s under it, %s deeper), the rim's walls cleared, nothing else over"
+                     % (t["surface"], t["under"], t["deep"]),
+                     "# the ground written. First the chamber's open score (the quake set it to 1; the live chamber's carve_once",
+                     "# skips a chamber whose score is 1, and it is to be carved again); the pedestal LAST, then #built and #quake,",
+                     "# so a run cut short is run again and a second run writes nothing",
+                     "scoreboard players set #%s %s 0" % (rec["id"], leg_doc["objective"])]
+                    + ["function %s" % n for n in names]
+                    + ["setblock %d %d %d %s" % (px, py, pz, pedestal_block_after(doc, M, t)),
+                       "scoreboard players set #built %s 0" % q,
+                       "scoreboard players set #quake %s 0" % q])
+    return fns
+
+
+# ------------------------------------------------------------------------------------------------------- the probes
+
+
+def revert_probe_records(doc, p, leg_doc, ground):
+    """data/world_probes.json places.groudon_revert: blocks that read rock once the cleanup has run (deep cells only: the
+    surface block is a guess, the retired site's terrain.surface_verified), the rebuilt chamber's pedestal, and Groudon."""
+    import legendaries as L
+    rec, site = retired_site(leg_doc, doc)
+    M, B = p["M"], p["B"]
+    ids, names = restore_targets(doc, M, B, site["terrain"])
+    o = M.o
+    out = []
+
+    def blk(what, x, y, z):
+        i, j, k = x - o[0], y - o[1], z - o[2]
+        if (x, y, z) == pedestal(doc):
+            name = pedestal_block_after(doc, M, site["terrain"])
+        elif ids[i, j, k] == 0:
+            raise CavernError("probe %s at (%d, %d, %d) is not a cell the restore writes" % (what, x, y, z))
+        else:
+            name = names[ids[i, j, k]]
+        if y > int(M.G[i, k]) - 3:
+            raise CavernError("probe %s at (%d, %d, %d) is not 3 under the ground (the surface block is a guess)"
+                              % (what, x, y, z))
+        out.append({"what": "groudon_revert: " + what, "block": [x, y, z, name], "expect": True})
+
+    h, lk, ds = doc["hall"], doc["lake"], doc["dais"]
+    f = int(h["floor_y"])
+    lx, lz = lk["centre"]
+    cx, cz = ds["centre"]
+    blk("the hall's lava lake, filled", lx, f, lz)
+    blk("the hall floor between the lake and the dais, filled", cx, f, (lz + cz) // 2)
+    blk("the dais's pedestal (the cleanup's probe), rock", *pedestal(doc))
+    blk("the air over the dais, filled", cx, f + 3, cz)
+    ix, iz = 6712, 5572
+    col = np.nonzero(M.ia[ix - o[0], :, iz - o[2]])[0]
+    if not len(col):
+        raise CavernError("the tunnel probe column (%d, %d) is not carved" % (ix, iz))
+    blk("the tunnel at its first bend, filled", ix, int(col[0]) + o[1], iz)
+    cells = stage_cells(doc, M)
+    for st, what in ((2, "the ravine's upper cut"), (3, "the ravine's lower cut"), (4, "the plug")):
+        blk("%s, filled (3 under the ground)" % what, *probe_cell(M, cells[st], doc["spine"]["lip"][0]))
+    g = L.geometry(rec, leg_doc, ground)
+    out.append({"what": "groudon_revert: the sealed chamber's pedestal, carved again by R14L",
+                "block": list(g["pedestal"]) + [leg_doc["defaults"]["pedestal_block"]], "expect": True})
+    tag = leg_doc["tag_prefix"] + rec["id"]
+    out.append({"what": "groudon_revert: Groudon (one tagged %s, in the sealed chamber)" % tag,
+                "hold": list(g["legendary"]), "entity": "@e[type=cobblemon:pokemon,tag=%s]" % tag, "count_max": 1})
+    return out
+
+
+# ------------------------------------------------------------------------------------------------------------- CLI
+
+
+def write_applied(doc, p, ground, out=None):
+    """Write the record of what the world received; return its digest."""
+    out = Path(out or APPLIED)
+    files = applied_files(applied_functions(doc, p, ground))
     if out.exists():
         shutil.rmtree(out)
-    files = {"pack.mcmeta": json.dumps({"pack": {"pack_format": PACK_FORMAT, "description":
-                                                 "Cobblers: Groudon's quake cavern (tools/groudon_cavern.py, "
-                                                 "data/groudon_cavern.json)"}}, indent=2) + "\n",
-             "data/minecraft/tags/function/load.json": json.dumps({"values": ["%s/load" % F]}, indent=2) + "\n"}
-    for fid, body in allf.items():
-        ns, path = fid.split(":", 1)
-        files["data/%s/function/%s.mcfunction" % (ns, path)] = "\n".join(body) + "\n"
     for rel, txt in files.items():
         f = out / rel
         f.parent.mkdir(parents=True, exist_ok=True)
         f.write_text(txt, encoding="utf-8", newline="\n")
-    moved, bout = pack_split.split(out, lambda fid: fid.startswith(BUILD_PREFIX) or fid == CARVE_ONCE,
-                                   "Cobblers: Groudon's quake cavern, the one-shot carve (tools/groudon_cavern.py; "
-                                   "stripped after R14L)")
-    return {"files": len(files), "moved": moved, "build_pack": str(bout), "info": info}
+    return digest(files), len(files)
 
 
-def line_counts(pack_dir):
-    n = 0
-    for f in Path(pack_dir).rglob("*.mcfunction"):
-        n += sum(1 for ln in f.read_text(encoding="utf-8").splitlines() if ln.strip() and not ln.startswith("#"))
-    return n
-
-
-def report(doc, p, info):
+def report(doc, p, leg_doc, ground):
     M = p["M"]
-    return {"box": [M.o[0], M.o[1], M.o[2], M.o[0] + M.shape[0] - 1, M.o[1] + M.shape[1] - 1, M.o[2] + M.shape[2] - 1],
-            "interior_air": int(M.ia.sum()), "ravine_air": int(M.qa_r.sum()), "plug_air": int(M.qa_p.sum()),
-            "lava": int(M.lava.sum()), "solid": int((p["B"] > 0).sum()),
-            "stages": {str(k): {"write_box": list(v["write_box"]), "probe": list(v["probe"]), "trigger": list(v["trigger"]),
-                                "chunk_gap": v["chunk_gap"]} for k, v in info.items()}}
+    rec, site = retired_site(leg_doc, doc)
+    masks = touched_masks(doc, M, p["B"])
+    cmds = restore_commands(doc, M, p["B"], site["terrain"], masks)
+    ids, _names = restore_targets(doc, M, p["B"], site["terrain"], masks)
+    return {"box": list(model_box(doc)), "chunks_held": chunk_count(model_box(doc)),
+            "carve_cells": int(masks[0].sum()), "cut_cells": int(masks[1].sum()), "rim_wall_cells": int(masks[2].sum()),
+            "restored_cells": int((ids > 0).sum()) + 1, "restore_commands": len(cmds),
+            "restore_parts": -(-len(cmds) // PART_COMMANDS),
+            "held_boxes": {w: list(b) for w, b in held_boxes(doc, M)}, "pedestal": list(pedestal(doc))}
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("action", choices=("build", "report", "probes"))
     ap.add_argument("--source-root")
-    ap.add_argument("--out", default=str(OUT))
+    ap.add_argument("--out", default=str(APPLIED))
     a = ap.parse_args(argv)
     import ground as G
     doc = load()
     ground = G.Ground(a.source_root)
     p = plan(doc, ground)
+    leg = p["leg"]
     if a.action == "probes":
         wp = _j(PROBES)
-        wp["places"]["groudon_cavern"] = probe_records(doc, p["M"], p["B"], p["names"], ground)
+        wp["places"].pop("groudon_cavern", None)
+        wp["places"]["groudon_revert"] = revert_probe_records(doc, p, leg, ground)
         PROBES.write_text(json.dumps(wp, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
-        print("wrote %d probes to %s" % (len(wp["places"]["groudon_cavern"]), PROBES))
+        print("wrote %d probes to %s" % (len(wp["places"]["groudon_revert"]), PROBES))
         return 0
     if a.action == "report":
-        _run, info, bld = functions(doc, p, ground)
-        print(json.dumps(report(doc, p, info), indent=1))
-        print("carve parts: %d" % sum(1 for k in bld if "/p_" in k))
+        print(json.dumps(report(doc, p, leg, ground), indent=1))
         return 0
-    want = probe_records(doc, p["M"], p["B"], p["names"], ground)
-    have = _j(PROBES)["places"].get("groudon_cavern")
-    if have != want:
-        raise CavernError("data/world_probes.json places.groudon_cavern differs from the model: run python "
-                          "tools/groudon_cavern.py probes")
-    res = write_pack(doc, p, ground, a.out)
-    print("wrote %s (%d runtime lines) and %s (%d build lines, %d functions moved)"
-          % (a.out, line_counts(a.out), res["build_pack"], line_counts(res["build_pack"]), res["moved"]))
+    want = revert_probe_records(doc, p, leg, ground)
+    places = _j(PROBES)["places"]
+    if places.get("groudon_revert") != want or "groudon_cavern" in places:
+        raise CavernError("data/world_probes.json places.groudon_revert differs from the model (or places.groudon_cavern is "
+                          "still there): run python tools/groudon_cavern.py probes")
+    # the two packs this tool used to build are withdrawn (tools/reapply.py WITHDRAWN): a copy an earlier prepare left in
+    # build/datapacks would be read as a pack no step runs, and could be installed by hand
+    for stale in (PACK, PACK + "_build"):
+        d = ROOT / "build" / "datapacks" / stale
+        if d.is_dir():
+            shutil.rmtree(d)
+            print("removed %s (withdrawn 2026-10-21)" % d)
+    sha, n = write_applied(doc, p, ground, a.out)
+    _rec, site = retired_site(leg, doc)
+    frozen = (site.get("applied") or {}).get("sha256")
+    if sha != frozen:
+        raise CavernError("the model no longer reproduces what the world received: the record's sha256 is %s, the retired "
+                          "site froze %s (data/legendaries.json groudon %s applied). The cleanup would undo a different "
+                          "cavern from the one that was built." % (sha, frozen, SITE_ID))
+    print("wrote %s (%d functions the world received, sha256 %s, the frozen one); the cleanup itself is emitted into "
+          "cobblers_legendaries by tools/legendaries.py" % (a.out, n, sha[:12]))
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    sys.exit(main())

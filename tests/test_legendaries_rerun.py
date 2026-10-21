@@ -76,19 +76,6 @@ def functions(doc, ground):
         m = re.match(r"data/([^/]+)/function/(.+)\.mcfunction$", rel)
         if m:
             out["%s:%s" % m.groups()] = text.splitlines()
-    # a quake cavern's carve_once is defined by tools/groudon_cavern.py's build pack, not by this one (2026-10-21), and is
-    # replayed block by block by tools/groudon_cavern_audit.py; R14L's step order still calls it, so it stands here as an
-    # stand-in that does what the real one ends with: #built set (build/state, the carve's last line). If removed: every run
-    # of these simulations stops at "unknown function", and the summon (held to #built since 2026-10-21) never fires.
-    # built_read is the real generator's, so the step's read-back runs as R14L runs it.
-    for rec in L.emitted(doc):
-        if rec["kind"] == "quake_cavern":
-            import groudon_cavern
-            obj = groudon_cavern.load()["quake"]["objective"]
-            out["%s:legendary/%s/carve_once" % (doc["namespace"], rec["id"])] = [
-                "scoreboard objectives add %s dummy" % obj, "scoreboard players set #built %s 1" % obj]
-            out[groudon_cavern.LOAD] = []        # the cavern's own load, R14L runs it first (tools/legendaries.py)
-            out[groudon_cavern.BUILT_READ] = groudon_cavern.built_read_lines(groudon_cavern.load())
     return out
 
 

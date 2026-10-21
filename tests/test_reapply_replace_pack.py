@@ -152,7 +152,8 @@ def test_install_replaces_packs_only_through_replace_pack():
     assert not _calls(tree_, "shutil", {"copytree", "move"}), "install() copies packs itself"
     replaced = [ast.unparse(c.args[0]) for c in ast.walk(tree_)
                 if isinstance(c, ast.Call) and isinstance(c.func, ast.Name) and c.func.id == "replace_pack"]
-    assert sorted(replaced) == sorted(["stale", "dest", "wdp / src.name", "wdp / name"]), replaced
+    # "folder / name": a WITHDRAWN pack moved aside from either folder (2026-10-21, Groudon's quake cavern)
+    assert sorted(replaced) == sorted(["stale", "dest", "wdp / src.name", "wdp / name", "folder / name"]), replaced
 
 
 # Without it the retired copies land inside the server tree, where the next install (or the live world's datapack
@@ -160,7 +161,7 @@ def test_install_replaces_packs_only_through_replace_pack():
 def test_the_retired_root_is_outside_the_server_tree():
     src = _install_source()
     assert 'retired = Path(a.server_dir).resolve().parent / "cobblers-server-retired"' in src
-    assert src.count("replace_pack(") == 4 and all(", retired)" in l for l in src.splitlines() if "replace_pack(" in l)
+    assert src.count("replace_pack(") == 5 and all(", retired)" in l for l in src.splitlines() if "replace_pack(" in l)
 
 
 @pytest.fixture

@@ -23,7 +23,7 @@ work.
 | **Regice** | The Glacial Tear's Upper Trough, portal (3900, 2050), y101 | `gym6_cleared` *(proposed)* | **emitted** |
 | **Registeel** | The Rift's anomalous chamber, upper Rift, portal (4195, 3896) | `gym7_cleared` *(proposed)* | **sited and emitted** (`data/legendaries.json`; was "blocked: the Rift plan", corrected 2026-10-12) |
 | **Regigigas** | The North Pine Isle's eastern plateau, portal (7720, 552), y97 (**moved 2026-10-12** from beside the Displaced City, portal (3560, 1760), see section 4b) | `gym8_cleared` *(proposed)* **and the three golems met** | **emitted; reachable now that Registeel is sited**; the old chamber has a fail-closed cleanup |
-| **Groudon** | The Craters' eastern bowl, the ravine's lip (6706, 5510), y108 (**moved 2026-10-21** from the sealed chamber at (6672, 5508), kept as retired site `sealed_chamber_v1`; now a `quake_cavern`, see `docs/world-building/GROUDON_QUAKE_CAVERN.md`) | `gym8_cleared` *(proposed badge; the quake trigger and the keeper are the owner's, 2026-10-20)* | **sited and emitted; built offline only** |
+| **Groudon** | The Craters' eastern bowl, portal (6672, 5508), y108: the sealed chamber, **back on 2026-10-21** (the owner undid the quake cavern; its cleanup is retired site `quake_cavern_v1`, run by R14L first, see `docs/world-building/GROUDON_QUAKE_CAVERN.md`) | `gym8_cleared` *(the owner's, 2026-10-20)* | **emitted; the revert written offline only, not applied** |
 | **Lugia** | The Maelstrom Trench | Dive **and** `champion_cleared` | **blocked: no seabed** |
 | **Celebi's wake** | The Route 1 sapling | `gym8_cleared` *(proposed)* | **gate built, trigger open** |
 

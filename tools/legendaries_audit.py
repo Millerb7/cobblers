@@ -290,24 +290,6 @@ def audit(doc, ground, pack, water=None, progression=None, landmarks=None, world
     checked_gates = 0
     for rec in sited:
         rid = rec["id"]
-        if rec["kind"] == "quake_cavern":
-            # not a box chain (2026-10-21): its geometry, seal, walk, quake and keeper are tools/groudon_cavern_audit.py's,
-            # which replays the emitted functions. What this audit still owns for it: levels and gate (section 3 above),
-            # the retired site (4b below), and that the pack carries NO carve, plug or open function for it.
-            fnq = fn_dir / rid
-            for stale in ("carve", "carve_once", "open"):
-                rep.check(not (fnq / ("%s.mcfunction" % stale)).exists(),
-                          "%s: a quake cavern has no %s in the legendaries pack (tools/groudon_cavern.py writes carve_once "
-                          "into its own build pack)" % (rid, stale))
-            for need_f in ("near", "keep", "met", "wake", "dress", "dress_new", "spawn_new", "spawn_at"):
-                rep.check((fnq / ("%s.mcfunction" % need_f)).is_file(), "%s: the pack has no %s" % (rid, need_f))
-            rep.check(isinstance(rec.get("cavern"), str) and (ROOT / rec["cavern"]).is_file(),
-                      "%s: cavern %r names no data file" % (rid, rec.get("cavern")))
-            checked_writes += 1
-            checked_gates += 1
-            rep.check(_met_is_reachable(rec, doc, rep),
-                      "%s: a sited chamber whose gate can never open, unadmitted" % rid)
-            continue
         g = L.geometry(rec, doc, ground)
         lake = rec["kind"] == "lake_grotto"
         env, sleeve = g["envelope"], g["sleeve"]
@@ -615,14 +597,24 @@ def _retired_sites(doc, ground, pack, fn_dir, rep):
     for rec, site in sites:
         for suf in ("", "_look", "_act", "_done", "_restore"):
             declared.add("%s/retire_%s%s.mcfunction" % (rec["id"], site["id"], suf))
+        if L.site_kind(site) == "quake_cavern":
+            # its restore is split into parts (tools/groudon_cavern.py retire_functions)
+            declared |= {f for f in files if re.match(r"^%s/retire_%s_restore_p_\d\d\.mcfunction$" % (rec["id"], site["id"]), f)}
     stray = [f for f in files if "/retire_" in f and f not in declared]
     rep.check(not stray, "the pack carries retire functions no record declares: %s" % stray)
-    steps = None
     for rec, site in sites:
         rid, sid = rec["id"], site["id"]
         where = "%s retired site %s" % (rid, sid)
         for f in sorted(d for d in declared if d.startswith(rid + "/retire_%s" % sid)):
             rep.check(f in files, "%s: the pack has no %s" % (where, f))
+        if L.site_kind(site) == "quake_cavern":
+            # 2026-10-21: a retired quake cavern is not a box chain; tools/groudon_revert_audit.py replays the cavern as the
+            # world received it and then this cleanup onto the heightmap. What this audit still holds: the files above,
+            # and that R14L runs the cleanup first, read back as 0 held (below, shared with every site)
+            rep.check(any(re.match(r"^%s/retire_%s_restore_p_\d\d\.mcfunction$" % (rid, sid), f) for f in files),
+                      "%s: the pack has no part of the restore" % where)
+            _retire_step_order(doc, ground, rep, rec, site, where)
+            continue
         restore_f = fn_dir / rid / ("retire_%s_restore.mcfunction" % sid)
         act_f = fn_dir / rid / ("retire_%s_act.mcfunction" % sid)
         done_f = fn_dir / rid / ("retire_%s_done.mcfunction" % sid)
@@ -780,23 +772,30 @@ def _retired_sites(doc, ground, pack, fn_dir, rep):
             rep.check(not hit, "%s: %s still reaches the old hull %s: %s" % (where, f, hull, hit[:2]))
 
         # ---- it is run first, read back as 0 held, and the live chamber is elsewhere --------------------------
-        if steps is None:
-            steps = L.placement_steps(doc, ground)
-        want_fn = ("fn", base)
-        rep.check(want_fn in steps, "%s: R14L's steps do not run the cleanup" % where)
-        if want_fn in steps:
-            i = steps.index(want_fn)
-            chk = steps[i + 2] if i + 2 < len(steps) else None
-            rep.check(steps[i + 1][0] == "wait" and chk and chk[0] == "check" and chk[1][0] == "chunk_look"
-                      and chk[1][2] == 0 and chk[1][1] == "legret_%s_%s" % (rid, sid),
-                      "%s: the cleanup is not followed by its wait and a read-back of 0 held" % where)
-            firsts = [j for j, s_ in enumerate(steps) if s_[0] == "cmd" and s_[1].startswith("forceload add")
-                      or s_[0] == "fn" and s_[1].endswith("/place")]
-            rep.check(not firsts or i < min(firsts), "%s: the cleanup does not run before the first chamber step" % where)
+        _retire_step_order(doc, ground, rep, rec, site, where)
         if rec.get("status") == "sited":
             live_hull = L.geometry(rec, doc, ground)["bbox"]
             rep.check(not _meets(live_hull, hull), "%s: the live chamber's hull %s meets the retired hull %s"
                       % (where, live_hull, hull))
+
+
+
+def _retire_step_order(doc, ground, rep, rec, site, where):
+    """R14L runs the retired site's cleanup, waits for its chain, reads 0 held back, all before the first chamber step."""
+    rid, sid = rec["id"], site["id"]
+    base = "%s:legendary/%s/retire_%s" % (doc["namespace"], rid, sid)
+    steps = L.placement_steps(doc, ground)
+    want_fn = ("fn", base)
+    rep.check(want_fn in steps, "%s: R14L's steps do not run the cleanup" % where)
+    if want_fn in steps:
+        i = steps.index(want_fn)
+        chk = steps[i + 2] if i + 2 < len(steps) else None
+        rep.check(steps[i + 1][0] == "wait" and chk and chk[0] == "check" and chk[1][0] == "chunk_look"
+                  and chk[1][2] == 0 and chk[1][1] == "legret_%s_%s" % (rid, sid),
+                  "%s: the cleanup is not followed by its wait and a read-back of 0 held" % where)
+        firsts = [j for j, s_ in enumerate(steps) if s_[0] == "cmd" and s_[1].startswith("forceload add")
+                  or s_[0] == "fn" and s_[1].endswith("/place")]
+        rep.check(not firsts or i < min(firsts), "%s: the cleanup does not run before the first chamber step" % where)
 
 
 def _keep_covers(rec, g, doc, water, landmarks, ground, rep):
