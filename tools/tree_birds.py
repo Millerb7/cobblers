@@ -300,12 +300,26 @@ class Jar:
     def implemented(self, sid):
         return bool(self.get(sid).get("implemented"))
 
+    def form(self, sid):
+        """The species file's `forms` entry a spawn id like "articuno galarian" names (by aspect), or None for the plain
+        species. A form that does not exist in the jar is an error: a spawn naming it would never load."""
+        parts = sid.split(" ", 1)
+        if len(parts) == 1:
+            return None
+        hit = [f for f in self.get(parts[0]).get("forms") or [] if parts[1] in (f.get("aspects") or [])]
+        if not hit:
+            raise TreeBirdsError("species %r has no form with the aspect %r in the Cobblemon jar" % (parts[0], parts[1]))
+        return hit[0]
+
     def types(self, sid):
-        d = self.get(sid)
-        return [t.lower() for t in (d.get("primaryType"), d.get("secondaryType")) if t]
+        d = self.get(sid.split(" ", 1)[0])
+        f = self.form(sid) or {}
+        return [t.lower() for t in (f.get("primaryType") or d.get("primaryType"),
+                                    f.get("secondaryType") or (None if f.get("primaryType") else d.get("secondaryType"))) if t]
 
     def name(self, sid):
-        return self.get(sid)["name"]
+        d = self.get(sid.split(" ", 1)[0])
+        return d["name"] if " " not in sid else "%s (%s)" % (d["name"], sid.split(" ", 1)[1].capitalize())
 
     def evolves_into_at(self, sid):
         """The minimum level `sid` is reached at by a level-up evolution of its pre-evolution, or None (it is a base
@@ -409,8 +423,12 @@ def world_pool_defs(jar):
         flat, rich = [], []
         for e in spec["entries"]:
             sid = e["species"]
-            f = {"species": sid, "bucket": e["bucket"], "level": spec["levels"], "weight": float(e["weight"]), "ambient": True,
-                 "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): %s" % e["note"]}
+            jar.form(sid)            # a form the jar does not have is an error here, not a spawn that never loads
+            why = "the owner's set (data/world_tree_bird_species.json): %s" % e["note"]
+            if e.get("legendary_exemption"):
+                why += " | NAMED EXEMPTION to 'no legendary in a nest pool': %s" % e["legendary_exemption"]
+            f = {"species": sid, "bucket": e["bucket"], "level": e.get("levels", spec["levels"]), "weight": float(e["weight"]),
+                 "ambient": True, "eligibility_reason": why}
             flat.append(f)
             rich.append(dict(f, pokemon=sid, species=jar.name(sid), types=jar.types(sid), family=e["family"],
                              family_priority="anchor"))

@@ -287,22 +287,28 @@ WORLD_POOLS = ["tbird_%s_%s" % (WORLD, b) for b in ("low", "mid", "high", "crown
 # above (it shares Pidgey, Starly, Taillow, Hoothoot, Rookidee and Swablu lines with route birds and a grove elder), so
 # what is asserted is the set itself, the levels climbing with height from the area's 21-23, and that the small birds the
 # owner named as unwanted (Pidove, Pikipek) are absent.
+def _full(s):
+    """A compiled habitat spawn's species and its form: Cobblemon's HabitatSpawn takes the form as `modifiers`."""
+    return s["species"] + (" " + s["modifiers"] if s.get("modifiers") else "")
+
+
 OWNERS_SET = {
     "low": ({"pidgeotto", "staravia", "swablu", "noctowl"}, (22, 26)),
     "mid": ({"pidgeot", "staraptor", "altaria", "swellow"}, (26, 32)),
     "high": ({"pidgeot", "staraptor", "altaria", "togekiss", "corviknight"}, (32, 38)),
-    "crown": ({"aerodactyl", "dragonite"}, (38, 45)),
+    "crown": ({"aerodactyl", "salamence", "dragonite", "articuno galarian", "zapdos galarian", "moltres galarian"}, (38, 45)),
 }
 
 
 def test_the_world_trees_pools_are_the_owners_classics_at_the_owners_levels(compiled):
     for band, (species, (lo, hi)) in OWNERS_SET.items():
         pool = compiled["tbird_%s_%s" % (WORLD, band)]
-        assert {s["species"] for s in pool} == species, (band, sorted(s["species"] for s in pool))
+        assert {_full(s) for s in pool} == species, (band, sorted(_full(s) for s in pool))
         for s in pool:
             a, b = (int(x) for x in s["levelRange"].split("-"))
-            assert (a, b) == (lo, hi), (band, s["species"], s["levelRange"])
-    got = {sp for b in OWNERS_SET for sp in _species(compiled, "tbird_%s_%s" % (WORLD, b))}
+            want = (40, 45) if _full(s).endswith(" galarian") else (lo, hi)    # the owner: the Galarian birds 40-45
+            assert (a, b) == want, (band, _full(s), s["levelRange"])
+    got = {_full(s) for b in OWNERS_SET for s in compiled["tbird_%s_%s" % (WORLD, b)]}
     assert not got & {"pidove", "tranquill", "unfezant", "pikipek", "trumbeak", "toucannon"}, got
     # levels climb with height: each band's floor is at or above the one under it, starting at the area's 22
     floors = [OWNERS_SET[b][1][0] for b in ("low", "mid", "high", "crown")]
@@ -316,13 +322,29 @@ def test_the_world_trees_rarities_are_the_owners(compiled):
     rows = {}
     for band in OWNERS_SET:
         for s in compiled["tbird_%s_%s" % (WORLD, band)]:
-            rows[(band, s["species"])] = s["bucket"]
+            rows[(band, _full(s))] = s["bucket"]
     want = {("low", "pidgeotto"): "common", ("low", "staravia"): "common", ("low", "swablu"): "uncommon",
             ("low", "noctowl"): "uncommon", ("mid", "swellow"): "common", ("mid", "pidgeot"): "uncommon",
             ("mid", "staraptor"): "uncommon", ("mid", "altaria"): "uncommon", ("high", "pidgeot"): "common",
             ("high", "staraptor"): "common", ("high", "altaria"): "common", ("high", "togekiss"): "rare",
-            ("high", "corviknight"): "rare", ("crown", "aerodactyl"): "rare", ("crown", "dragonite"): "ultra-rare"}
+            ("high", "corviknight"): "rare", ("crown", "aerodactyl"): "rare", ("crown", "salamence"): "rare",
+            ("crown", "dragonite"): "ultra-rare", ("crown", "articuno galarian"): "ultra-rare",
+            ("crown", "zapdos galarian"): "ultra-rare", ("crown", "moltres galarian"): "ultra-rare"}
     assert rows == want, rows
+
+
+# Without it the owner's 2026-10-21 exemption widens: the three Galarian legendary birds are crown spawns of the world
+# tree ONLY (the Dyna Tree's stand-in), and no other tree's pool, the world tree's other bands included, holds one. Their
+# weight stays well under Dragonite's, which stays under Salamence's (the owner: "very rare", "rare").
+def test_the_galarian_legendary_birds_are_the_world_trees_crown_and_nothing_else(compiled):
+    trio = {"articuno galarian", "zapdos galarian", "moltres galarian"}
+    for pid, spawns in compiled.items():
+        if not (pid.startswith("tbird_") or pid in DESIGN):
+            continue
+        got = {_full(s) for s in spawns} & trio
+        assert got == (trio if pid == "tbird_%s_crown" % WORLD else set()), (pid, sorted(got))
+    w = {_full(s): s["weight"] for s in compiled["tbird_%s_crown" % WORLD]}
+    assert max(w[t] for t in trio) * 2 <= w["dragonite"] < w["salamence"], w
 
 
 # Without it the world tree's pools go unwatched on the properties that do not depend on the species chosen: its

@@ -43,7 +43,11 @@
       "levels": "38-45",
       "entries": [
         {"species": "aerodactyl", "family": "aerodactyl", "bucket": "rare", "weight": 2, "note": "the owner's pick, the crown; a base (fossil) stage"},
-        {"species": "dragonite", "family": "dratini", "bucket": "ultra-rare", "weight": 1, "under_evolution_level": 55, "note": "the owner's pick, the crown; Dragonair evolves at 55, over this band's top 45"}
+        {"species": "salamence", "family": "bagon", "bucket": "rare", "weight": 2, "under_evolution_level": 50, "note": "the owner's pick (added 2026-10-21), a rare crown spawn; Shelgon evolves at 50, over this band's top 45. The crown has no common entry, so 'rarer than the crown's commons' is moot; weight 2 equals Aerodactyl's and is above Dragonite's 1 and the trio's 0.25"},
+        {"species": "dragonite", "family": "dratini", "bucket": "ultra-rare", "weight": 1, "under_evolution_level": 55, "note": "the owner's pick, the crown; Dragonair evolves at 55, over this band's top 45"},
+        {"species": "articuno galarian", "family": "articuno", "bucket": "ultra-rare", "weight": 0.25, "levels": "40-45", "legendary_exemption": "OWNER, 2026-10-21 (relayed by the coordinator): 'Galarian Articuno, Galarian Zapdos and Galarian Moltres as VERY RARE spawns at the world tree ... crown-band nest spawns, not legendary encounters'. A named exemption for these three on the world tree's crown only; the jar labels them legendary", "note": "unobtainable otherwise: Cobbleverse spawns the Galarian birds only at cobbleverse:dyna_tree, in a disabled pack (docs/world-building/STRUCTURE_DECISIONS.md), so the world tree stands in for the Dyna Tree. Jar form: Galar, aspect galarian, psychic/flying"},
+        {"species": "zapdos galarian", "family": "zapdos", "bucket": "ultra-rare", "weight": 0.25, "levels": "40-45", "legendary_exemption": "OWNER, 2026-10-21: see articuno galarian", "note": "as Galarian Articuno; jar form Galar, aspect galarian, fighting/flying"},
+        {"species": "moltres galarian", "family": "moltres", "bucket": "ultra-rare", "weight": 0.25, "levels": "40-45", "legendary_exemption": "OWNER, 2026-10-21: see articuno galarian", "note": "as Galarian Articuno; jar form Galar, aspect galarian, dark/flying"}
       ]
     }
   }

@@ -28815,6 +28815,19 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "habitat.tbird_world_tree_foothill_woods_crown.salamence",
+      "species": "salamence",
+      "bucket": "rare",
+      "level": "38-45",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "tbird_world_tree_foothill_woods_crown",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick (added 2026-10-21), a rare crown spawn; Shelgon evolves at 50, over this band's top 45. The crown has no common entry, so 'rarer than the crown's commons' is moot; weight 2 equals Aerodactyl's and is above Dragonite's 1 and the trio's 0.25",
+      "spawnable_position": "grounded"
+    },
+    {
       "id": "habitat.tbird_world_tree_foothill_woods_crown.dragonite",
       "species": "dragonite",
       "bucket": "ultra-rare",
@@ -28825,6 +28838,45 @@
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick, the crown; Dragonair evolves at 55, over this band's top 45",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.tbird_world_tree_foothill_woods_crown.articuno galarian",
+      "species": "articuno galarian",
+      "bucket": "ultra-rare",
+      "level": "40-45",
+      "weight": 0.25,
+      "ambient": true,
+      "scope": "tbird_world_tree_foothill_woods_crown",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): unobtainable otherwise: Cobbleverse spawns the Galarian birds only at cobbleverse:dyna_tree, in a disabled pack (docs/world-building/STRUCTURE_DECISIONS.md), so the world tree stands in for the Dyna Tree. Jar form: Galar, aspect galarian, psychic/flying | NAMED EXEMPTION to 'no legendary in a nest pool': OWNER, 2026-10-21 (relayed by the coordinator): 'Galarian Articuno, Galarian Zapdos and Galarian Moltres as VERY RARE spawns at the world tree ... crown-band nest spawns, not legendary encounters'. A named exemption for these three on the world tree's crown only; the jar labels them legendary",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.tbird_world_tree_foothill_woods_crown.zapdos galarian",
+      "species": "zapdos galarian",
+      "bucket": "ultra-rare",
+      "level": "40-45",
+      "weight": 0.25,
+      "ambient": true,
+      "scope": "tbird_world_tree_foothill_woods_crown",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): as Galarian Articuno; jar form Galar, aspect galarian, fighting/flying | NAMED EXEMPTION to 'no legendary in a nest pool': OWNER, 2026-10-21: see articuno galarian",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.tbird_world_tree_foothill_woods_crown.moltres galarian",
+      "species": "moltres galarian",
+      "bucket": "ultra-rare",
+      "level": "40-45",
+      "weight": 0.25,
+      "ambient": true,
+      "scope": "tbird_world_tree_foothill_woods_crown",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): as Galarian Articuno; jar form Galar, aspect galarian, dark/flying | NAMED EXEMPTION to 'no legendary in a nest pool': OWNER, 2026-10-21: see articuno galarian",
       "spawnable_position": "grounded"
     },
     {
@@ -88783,6 +88835,21 @@
           "family_priority": "anchor"
         },
         {
+          "species": "Salamence",
+          "bucket": "rare",
+          "level": "38-45",
+          "weight": 2.0,
+          "ambient": true,
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): the owner's pick (added 2026-10-21), a rare crown spawn; Shelgon evolves at 50, over this band's top 45. The crown has no common entry, so 'rarer than the crown's commons' is moot; weight 2 equals Aerodactyl's and is above Dragonite's 1 and the trio's 0.25",
+          "pokemon": "salamence",
+          "types": [
+            "dragon",
+            "flying"
+          ],
+          "family": "bagon",
+          "family_priority": "anchor"
+        },
+        {
           "species": "Dragonite",
           "bucket": "ultra-rare",
           "level": "38-45",
@@ -88795,6 +88862,51 @@
             "flying"
           ],
           "family": "dratini",
+          "family_priority": "anchor"
+        },
+        {
+          "species": "Articuno (Galarian)",
+          "bucket": "ultra-rare",
+          "level": "40-45",
+          "weight": 0.25,
+          "ambient": true,
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): unobtainable otherwise: Cobbleverse spawns the Galarian birds only at cobbleverse:dyna_tree, in a disabled pack (docs/world-building/STRUCTURE_DECISIONS.md), so the world tree stands in for the Dyna Tree. Jar form: Galar, aspect galarian, psychic/flying | NAMED EXEMPTION to 'no legendary in a nest pool': OWNER, 2026-10-21 (relayed by the coordinator): 'Galarian Articuno, Galarian Zapdos and Galarian Moltres as VERY RARE spawns at the world tree ... crown-band nest spawns, not legendary encounters'. A named exemption for these three on the world tree's crown only; the jar labels them legendary",
+          "pokemon": "articuno galarian",
+          "types": [
+            "psychic",
+            "flying"
+          ],
+          "family": "articuno",
+          "family_priority": "anchor"
+        },
+        {
+          "species": "Zapdos (Galarian)",
+          "bucket": "ultra-rare",
+          "level": "40-45",
+          "weight": 0.25,
+          "ambient": true,
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): as Galarian Articuno; jar form Galar, aspect galarian, fighting/flying | NAMED EXEMPTION to 'no legendary in a nest pool': OWNER, 2026-10-21: see articuno galarian",
+          "pokemon": "zapdos galarian",
+          "types": [
+            "fighting",
+            "flying"
+          ],
+          "family": "zapdos",
+          "family_priority": "anchor"
+        },
+        {
+          "species": "Moltres (Galarian)",
+          "bucket": "ultra-rare",
+          "level": "40-45",
+          "weight": 0.25,
+          "ambient": true,
+          "eligibility_reason": "the owner's set (data/world_tree_bird_species.json): as Galarian Articuno; jar form Galar, aspect galarian, dark/flying | NAMED EXEMPTION to 'no legendary in a nest pool': OWNER, 2026-10-21: see articuno galarian",
+          "pokemon": "moltres galarian",
+          "types": [
+            "dark",
+            "flying"
+          ],
+          "family": "moltres",
           "family_priority": "anchor"
         }
       ],
