@@ -22486,6 +22486,24 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.mt_clay_outflow.wooper",
+      "species": "wooper",
+      "bucket": "common",
+      "level": "24-30",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "mt_clay_outflow",
+      "mechanism": "waterway_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "base stage; the owner, 2026-10-21: \"should only be wooper, paldean wooper, quagsire as rare and clodsire as rare\"",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
       "id": "surface.mt_clay_outflow.wooper_paldean",
       "species": "wooper paldean",
       "bucket": "common",
@@ -22506,9 +22524,9 @@
     {
       "id": "surface.mt_clay_outflow.quagsire",
       "species": "quagsire",
-      "bucket": "uncommon",
+      "bucket": "rare",
       "level": "24-30",
-      "weight": 6.0,
+      "weight": 2.0,
       "ambient": true,
       "scope": "mt_clay_outflow",
       "mechanism": "waterway_coordinate_boxes",
@@ -22517,7 +22535,7 @@
           "minecraft:water"
         ]
       },
-      "eligibility_reason": "evolves from Wooper at 20; the band begins at 24",
+      "eligibility_reason": "evolves from Wooper at 20; the band begins at 24; rare, the owner, 2026-10-21: \"should only be wooper, paldean wooper, quagsire as rare and clodsire as rare\"",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -22538,230 +22556,6 @@
       "eligibility_reason": "Paldean Wooper's evolution (level 20 in the Cobblemon 1.8.0 jar, Paldea form); an adult of the creek's Wooper line, so rare; the owner, 2026-10-09: \"clodsire should be in wooper creek as well\"",
       "biomes": [],
       "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.mt_clay_outflow.barboach",
-      "species": "barboach",
-      "bucket": "common",
-      "level": "24-30",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "mt_clay_outflow",
-      "mechanism": "waterway_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "the creek's whiskered fish (a Ground answer for Gym 3); the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\"",
-      "biomes": [],
-      "spawnable_position": "submerged"
-    },
-    {
-      "id": "surface.mt_clay_outflow.goldeen",
-      "species": "goldeen",
-      "bucket": "common",
-      "level": "24-30",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "mt_clay_outflow",
-      "mechanism": "waterway_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "the creek's common fish; the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\"",
-      "biomes": [],
-      "spawnable_position": "submerged"
-    },
-    {
-      "id": "surface.mt_clay_outflow.poliwhirl",
-      "species": "poliwhirl",
-      "bucket": "uncommon",
-      "level": "25-30",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "mt_clay_outflow",
-      "mechanism": "waterway_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Poliwag at 25; the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\"",
-      "biomes": [],
-      "spawnable_position": "submerged",
-      "held_items": [
-        {
-          "item": "cobblemon:kings_rock",
-          "percentage": 2
-        }
-      ]
-    },
-    {
-      "id": "surface.mt_clay_outflow.psyduck",
-      "species": "psyduck",
-      "bucket": "uncommon",
-      "level": "24-30",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "mt_clay_outflow",
-      "mechanism": "waterway_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "a duck on the creek; the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\"",
-      "biomes": [],
-      "spawnable_position": "surface"
-    },
-    {
-      "id": "surface.mt_clay_outflow.marill",
-      "species": "marill",
-      "bucket": "uncommon",
-      "level": "24-30",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "mt_clay_outflow",
-      "mechanism": "waterway_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "a creek mouse; the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\"",
-      "biomes": [],
-      "spawnable_position": "surface"
-    },
-    {
-      "id": "surface.mt_clay_outflow.basculin",
-      "species": "basculin",
-      "bucket": "uncommon",
-      "level": "24-30",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "mt_clay_outflow",
-      "mechanism": "waterway_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "a fierce creek fish; the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\"",
-      "biomes": [],
-      "spawnable_position": "submerged"
-    },
-    {
-      "id": "surface.mt_clay_outflow.feebas",
-      "species": "feebas",
-      "bucket": "rare",
-      "level": "24-30",
-      "weight": 2.0,
-      "ambient": true,
-      "scope": "mt_clay_outflow",
-      "mechanism": "waterway_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "the creek's rare fish; the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\"",
-      "biomes": [],
-      "spawnable_position": "submerged"
-    },
-    {
-      "id": "surface.mt_clay_outflow.corphish",
-      "species": "corphish",
-      "bucket": "rare",
-      "level": "24-30",
-      "weight": 2.0,
-      "ambient": true,
-      "scope": "mt_clay_outflow",
-      "mechanism": "waterway_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "a rare crayfish in the creek bed; the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\"",
-      "biomes": [],
-      "spawnable_position": "submerged"
-    },
-    {
-      "id": "surface.mt_clay_outflow.drednaw",
-      "species": "drednaw",
-      "bucket": "ultra-rare",
-      "level": "26-30",
-      "weight": 1.0,
-      "ambient": true,
-      "scope": "mt_clay_outflow",
-      "mechanism": "waterway_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "the creek's rarest: a grown snapping turtle (Chewtle evolves at 22); the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\"",
-      "biomes": [],
-      "spawnable_position": "submerged"
-    },
-    {
-      "id": "surface.mt_clay_outflow.heart.whiscash",
-      "species": "whiscash",
-      "bucket": "uncommon",
-      "level": "30-35",
-      "weight": 3.0,
-      "ambient": true,
-      "scope": "mt_clay_outflow",
-      "mechanism": "waterway_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "heart presence: the grown catfish; the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\"",
-      "heart": {
-        "kind": "focus",
-        "x": 712,
-        "z": 1880,
-        "radius": 176,
-        "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the outflow's heart, its segment box farthest from every route corridor at (712, 1880), radius 176: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 761 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
-      },
-      "biomes": [],
-      "spawnable_position": "submerged",
-      "alpha": true
-    },
-    {
-      "id": "surface.mt_clay_outflow.heart.seaking",
-      "species": "seaking",
-      "bucket": "uncommon",
-      "level": "33-35",
-      "weight": 3.0,
-      "ambient": true,
-      "scope": "mt_clay_outflow",
-      "mechanism": "waterway_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "heart presence: the grown goldfish; the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\"",
-      "heart": {
-        "kind": "focus",
-        "x": 712,
-        "z": 1880,
-        "radius": 176,
-        "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the outflow's heart, its segment box farthest from every route corridor at (712, 1880), radius 176: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 761 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
-      },
-      "biomes": [],
-      "spawnable_position": "submerged",
-      "alpha": true
-    },
-    {
-      "id": "surface.mt_clay_outflow.heart.golduck",
-      "species": "golduck",
-      "bucket": "uncommon",
-      "level": "33-35",
-      "weight": 3.0,
-      "ambient": true,
-      "scope": "mt_clay_outflow",
-      "mechanism": "waterway_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "heart presence: the grown duck; the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\"",
-      "heart": {
-        "kind": "focus",
-        "x": 712,
-        "z": 1880,
-        "radius": 176,
-        "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the outflow's heart, its segment box farthest from every route corridor at (712, 1880), radius 176: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 761 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
-      },
-      "biomes": [],
-      "spawnable_position": "surface",
-      "alpha": true
-    },
-    {
-      "id": "surface.mt_clay_outflow.heart.basculin",
-      "species": "basculin",
-      "bucket": "uncommon",
-      "level": "27-30",
-      "weight": 3.0,
-      "ambient": true,
-      "scope": "mt_clay_outflow",
-      "mechanism": "waterway_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "heart local alpha: the outflow's strongest local, alpha, from the base band's upper half (27-30), under its top; the owner, 2026-10-05: \"the boss pokemon are alphas, so it should sometimes be the pokemon in the area as well right?\"; rules.hearts.local_alpha: the highest base-stat total among the area's common and uncommon base species",
-      "heart": {
-        "kind": "focus",
-        "x": 712,
-        "z": 1880,
-        "radius": 176,
-        "clear_of_path_blocks": 128,
-        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the outflow's heart, its segment box farthest from every route corridor at (712, 1880), radius 176: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 761 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
-      },
-      "biomes": [],
-      "spawnable_position": "submerged",
-      "alpha": true
     },
     {
       "id": "habitat.vrc_cave.rhyperior",
