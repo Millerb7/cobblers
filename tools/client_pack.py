@@ -155,7 +155,7 @@ def client_plan(base: dict, overlay: dict | None, cfg: dict) -> dict:
             {
                 "path": opt["path"],
                 "hashes": {"sha1": opt["sha1"], "sha512": opt["sha512"]},
-                "env": {"client": "optional", "server": "unsupported"},
+                "env": {"client": "required" if opt.get("required") else "optional", "server": "unsupported"},
                 "downloads": [m["url"]],
                 "fileSize": opt["size"],
             }

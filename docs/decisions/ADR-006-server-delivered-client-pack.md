@@ -176,3 +176,7 @@ campaign repository stays private.
 - Singleplayer or offline testing still uses `tools/client_model_fix.py install`.
 - The disabled `ATMxMSD RP.zip` stays disabled; only the subset is delivered.
 - To revisit: the Rift CTM decision, Cobblemon or pack updates (rerun `scan`), and any public release.
+
+**Addendum 2026-10-20.** The zip now travels inside the bundle mrpack instead of from the server (`resource-pack=`
+stays empty on the live server), rebuilt without the ATMxMSD donor subset because AllTheMons v4.0 is required in the
+bundle: sha1 `c7a58c9fb2332ee7a21f93a0d102bf102e79b58c` (`docs/research/CLIENT_MODEL_FIXES.md`, 2026-10-20).

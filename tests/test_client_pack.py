@@ -296,7 +296,11 @@ def test_real_plan_never_lists_a_no_redistribution_file_by_url(real):
     assert not unresolved & {f["path"] for f in plan["files"]}
     assert all(f["downloads"][0].startswith("https://cdn.modrinth.com/") for f in plan["files"])
     assert "resourcepacks/ATMxMSD RP.zip" not in {f["path"] for f in plan["files"]}
-    assert [f["path"] for f in plan["files"] if f["env"]["client"] == "optional"] == ["resourcepacks/ATM x MSD [v4.0].zip"]
+    # AllTheMons v4.0 was adopted 2026-10-20 (data/client_pack.json "required": true): our client zip's model fixes are
+    # built against a stack that holds it, so a player without it would see the 43 substitute dolls again
+    assert [f["path"] for f in plan["files"] if f["env"]["client"] == "optional"] == []
+    atm = [f for f in plan["files"] if f["path"] == "resourcepacks/ATM x MSD [v4.0].zip"]
+    assert len(atm) == 1 and atm[0]["env"]["client"] == "required"
 
 
 def test_real_every_manual_file_is_in_the_cobbleverse_mrpack_record(real):

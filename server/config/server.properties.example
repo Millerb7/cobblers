@@ -101,7 +101,7 @@ sync-chunk-writes=true
 # require-resource-pack=true: a player who declines the pack is disconnected.
 require-resource-pack=true
 resource-pack=
-resource-pack-sha1=dfdd4f8118a66ff854d23a1e5c2f7651ff042e97
+resource-pack-sha1=c7a58c9fb2332ee7a21f93a0d102bf102e79b58c
 resource-pack-id=43566b60-4e01-549a-95d3-2592c69f3454
 resource-pack-prompt={"text":"Cobblers model pack: AllTheMons models (Lvnatic and contributors) and Cobblemon 1.8 fixes. Without it, some Pokemon render as dolls."}
 # Datapacks are force-loaded by the Global Packs mod (config/global_packs.toml);

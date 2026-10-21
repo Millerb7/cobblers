@@ -438,3 +438,14 @@ python tools/client_model_fix.py build --server-pack --instance "C:/Users/wnd/Ap
    - a Hisuian Samurott, whose animation is the part at risk.
 3. Confirm Alolan Persian still renders.
 4. Record the result in `experiments/`.
+
+## 2026-10-20: rebuilt without the donor, against the bundle's stack
+
+AllTheMons x Mega Showdown v4.0 is now required and enabled in the bundle (`data/client_pack.json`), so the zip no
+longer carries the ATMxMSD RP subset: `tools/client_model_fix.py build --server-pack --no-donor --instance <bundle
+instance>` writes the model fixes for that stack, the 98 NPC looks and the rip, sha1
+`c7a58c9fb2332ee7a21f93a0d102bf102e79b58c`. `build` now also restores forms whose texture is not Cobblemon's: the
+Mega Showdown Megas on COBBLEVERSE RP's 1.7 models get Mega Showdown's own models, and a pack texture on Cobblemon's
+model at a path Cobblemon also ships gets Cobblemon's texture back. Scanned on the owner's bundle instance with the
+zip simulated on top: uv_mismatch 89 -> 2 (Beautifly and Dustox, the male forms; a texture shared by a pack model and
+Cobblemon's female model), crash 6 -> 0, missing 0. Not yet seen in game.
