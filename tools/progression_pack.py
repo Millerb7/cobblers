@@ -16,7 +16,8 @@ the unlock for its town's waystone, so both read the same data. The pack:
   function/flag/<id>/granted           reward: re-sync this player's waystones, offer that player a
                                        Xaero's waypoint to the next gym (gym_markers, one gym ahead), and
                                        give the leader's rewards once (loot_table/first_win/<trainer>), and
-                                       call carry when the flag declares one
+                                       call carry when the flag declares one; a Challenge player also gets
+                                       that badge's voucher step in cash (voucher_grants)
   function/flag/<id>/carry             carries_stage flags only (the gym badges): `runmolang` on THIS player's
                                        q.player.data() moves the reveal's stage up to the badge's stage, never
                                        down (the owner, 2026-10-05: playable end to end). NOT yet run in game
@@ -182,7 +183,36 @@ def plan(doc: dict, series: str | None = None, placements: dict | None = None) -
     return {"namespace": ns, "series": active, "flags": flags,
             "waystones": waystones, "unplaced": sorted(unplaced), "markers": markers,
             "empty_loot_tables": empty_loot, "empty_functions": empty_fn, "first_win": first_win,
+            "voucher": voucher_grants(flags) if active == "kanto" else {"tag": None, "by_flag": {}},
             "waystone_gate": bool(_obj(doc.get("waystone_gate") or {"enforced": True}, "waystone_gate").get("enforced", True))}
+
+
+CHALLENGE = ROOT / "data" / "challenge_mode.json"
+
+
+def voucher_grants(flags, path: Path = CHALLENGE, strict: bool = False) -> dict:
+    """{"tag": the Challenge player's tag, "by_flag": {gym flag: dollars}}: the Challenge voucher's gym-clear steps
+    (data/challenge_mode.json voucher.computed.schedule, every step but Oak's, which the Challenge confirm pays).
+    Paid in CASH, the step's whole value (the owner, 2026-10-21: "just give him money i dont care"), not the kits of
+    materials voucher.delivery describes. strict (the real build, main): a step naming a flag this series does not
+    have is a fault; otherwise (a test fixture with a few flags) that step is left out."""
+    if not path.exists():
+        return {"tag": None, "by_flag": {}}
+    doc = json.loads(path.read_text(encoding="utf8"))
+    tag = doc["mode"]["tag"]
+    have = {f["id"] for f in flags}
+    by_flag = {}
+    for step in doc["voucher"]["computed"]["schedule"]:
+        if step["at"] == "oak_mode_choice":
+            continue
+        if step["at"] not in have:
+            if not strict:
+                continue
+            raise ProgressionError("challenge voucher: step %r names no flag of data/progression.json" % step["at"])
+        if not isinstance(step["value"], int) or step["value"] <= 0:
+            raise ProgressionError("challenge voucher: step %r has no positive value" % step["at"])
+        by_flag[step["at"]] = step["value"]
+    return {"tag": tag, "by_flag": by_flag}
 
 
 def _carry(fid: str, spec, doc: dict) -> dict:
@@ -349,6 +379,14 @@ def files(p: dict) -> dict:
             if fw["one_of"]:
                 pools.append({"rolls": 1, "entries": [{"type": "minecraft:item", "name": i} for i in fw["one_of"]]})
             out["data/%s/loot_table/first_win/%s.json" % (ns, tid)] = json.dumps({"pools": pools}, indent=2) + "\n"
+        cash = p.get("voucher", {}).get("by_flag", {}).get(flag["id"])
+        if cash:
+            # a Challenge player's voucher step for this badge, once (this reward runs only when the flag is first
+            # granted), in cash (voucher_grants)
+            tag = p["voucher"]["tag"]
+            granted += ["execute if entity @s[tag=%s] run cobbledollars give @s %d" % (tag, cash),
+                        "execute if entity @s[tag=%s] run tellraw @s " % tag + json.dumps(
+                            {"text": "Challenge Fund: $%s for this badge." % format(cash, ","), "color": "gold"})]
         if flag.get("carries_stage"):
             # the badge carries the reveal forward (data/progression.json flags[].carries_stage): runs once, as the
             # winner, because a held advancement never re-runs its reward. Its own function, so the reward reads as
@@ -484,6 +522,8 @@ def main(argv=None) -> int:
     args = ap.parse_args(argv)
     try:
         p = plan(load(args.data), args.series, json.loads(args.placements.read_text(encoding="utf8")))
+        if p["series"] == "kanto":
+            voucher_grants(p["flags"], strict=True)     # every voucher step's badge flag exists, or nothing is written
         if args.report:
             return report(p, args.report)
         written = write(p, args.out)

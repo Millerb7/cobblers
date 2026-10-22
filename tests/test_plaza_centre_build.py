@@ -100,7 +100,8 @@ def test_stall_ids_unique_across_towns():
 
 def test_stall_counts_follow_the_size_class():
     """The survey's rule: small 2, medium 4, large 6; Pallet (intact), Steepside (the survey's 2) and the hamlets (one
-    stall each, 2026-10-05) excepted."""
+    stall each, 2026-10-05) excepted, and Viltri Quay's fifth, the Berry Grower (the owner, 2026-10-21: "we need a held
+    item berry trainer in town 2")."""
     want = {"small": 2, "medium": 4, "large": 6}
     for town, rec in DATA["towns"].items():
         n = len(rec["stalls"])
@@ -110,6 +111,8 @@ def test_stall_counts_follow_the_size_class():
             assert n == 1
         elif town == "tea_town":
             assert n == 2
+        elif town == "gym2_town":
+            assert n == want[rec["class"]] + 1
         else:
             assert n == want[rec["class"]], "%s: %d stalls for a %s square" % (town, n, rec["class"])
 
