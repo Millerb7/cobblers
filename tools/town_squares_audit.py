@@ -1186,8 +1186,9 @@ def item_checks(markets_doc, spawn, ids):
             # at or above its gate_badge, the counter may sell T (gym N's town tier N-1, gym 8's also 8; an off-path
             # counter at the line's own badge), and one unit costs at least the rule's share of what the PATH pays in
             # the leg played holding T badges (income_basis.path, read from the data and recomputed here)
-            if not gated and kind == "counter" and it.get("price_rule") == "tm_tier":
-                pol = (markets_doc.get("price_policies") or {}).get("tm_tier") or {}
+            if kind == "counter" and it.get("price_rule") == "tm_tier":
+                gated = False    # the tier is this line's gate, even where a dropped badge gate is also recorded
+                pol =(markets_doc.get("price_policies") or {}).get("tm_tier") or {}
                 path_leg = ((markets_doc.get("income_basis") or {}).get("path") or {}).get("leg_by_badges_held") or {}
                 t, n, b = it.get("tier"), it.get("count") or 1, rec.get("badge")
                 may = ({b - 1} | ({8} if b == 8 else set())) if rec.get("path") == "critical" and isinstance(b, int) \

@@ -1210,14 +1210,14 @@
       "constrained_by": [
         "markets"
       ],
-      "statement": "Every advancement the generated TM gate tests is cobblers:flag/gymB_cleared for a badge B some gated recipe needs, an advancement tools/progression_pack.py writes with a real trigger (not minecraft:impossible) for a trainer_defeat flag that data/markets.json `badges` names; and a shelf line's gate_badge B is the badge of the leader whose first-win pool holds that TM, so the gate's B is the shelf's B. A renamed flag (every crafted TM locked for ever), a flag the progression pack stops writing, or a shelf line priced on another leader's badge breaks it without touching data/tm_gate.json.",
+      "statement": "Every advancement the generated TM gate tests is cobblers:flag/gymB_cleared for a badge B some gated recipe needs, an advancement tools/progression_pack.py writes with a real trigger (not minecraft:impossible) for a trainer_defeat flag that data/markets.json `badges` names; and a shelf line's gate_badge B is the badge of the leader whose first-win pool holds that TM, or, for a TM in no leader's pool (the tier shelves' answers since 2026-10-22, data/markets.json price_policies.tm_tier), its power-rule badge in the committed score table, so the gate's B is the shelf's B and no answer line moves a craft badge. A renamed flag (every crafted TM locked for ever), a flag the progression pack stops writing, or a shelf line priced on another leader's badge breaks it without touching data/tm_gate.json.",
       "stated_in": [
         {
           "at": "data/tm_gate.json:12",
           "quote": "minecraft:tick with the player holding cobblers:flag/<flag> (tools/progression_pack.py)"
         },
         {
-          "at": "data/markets.json:77",
+          "at": "data/markets.json:86",
           "quote": "gates on the badge its leader gives"
         }
       ],
