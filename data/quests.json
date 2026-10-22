@@ -1578,7 +1578,7 @@
             {
               "kind": "challenge_voucher",
               "at": "oak_mode_choice",
-              "cash": 4000,
+              "cash": 9000,
               "why": "the owner, 2026-10-15: Oak hands out the voucher's first step at the mode choice; the cash must equal that step of data/challenge_mode.json voucher.computed.schedule (tools/challenge_voucher.py --check), paid once because this transition is written once"
             },
             {

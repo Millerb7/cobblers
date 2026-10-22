@@ -97,6 +97,7 @@ import re
 import shutil
 import sys
 import zipfile
+from fractions import Fraction
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -620,9 +621,9 @@ def price_policy_problems(doc, progression=None, bank=None):
     leaders = leader_badges(progression)
     ceiling, ceiling_id = ball_ceiling(doc)
     for c, it in [(c, it) for c in doc.get("counters") or [] for it in c.get("stock") or []
-                  if "gate_badge" in it and it.get("price_rule") != POLICY]:
-        out.append("counter %s item %s: gate_badge without price_rule income_gate (its price would be hand-typed)"
-                   % (c["id"], it.get("id")))
+                  if "gate_badge" in it and it.get("price_rule") not in (POLICY, TM_POLICY)]:
+        out.append("counter %s item %s: gate_badge without price_rule income_gate or tm_tier (its price would be "
+                   "hand-typed)" % (c["id"], it.get("id")))
     seen = {}
     for c, it, held in lines:
         where = "counter %s %s %s" % (c["id"], "held line" if held else "item", it.get("id"))
@@ -658,12 +659,124 @@ def price_policy_problems(doc, progression=None, bank=None):
     for item, ws in seen.items():
         if len(ws) > 1:
             out.append("%s is under the income-gate rule twice: %s" % (item, "; ".join(ws)))
-    return out
+    return out + tm_tier_problems(doc, progression)
 
 
 def price_table(doc, bank=None):
     """[(counter, line, held, price, exchange count)] for every income-gate line."""
     return [(c, it, held) + policy_price(doc, it, bank) for c, it, held in policy_lines(doc)]
+
+
+# data/markets.json price_policies.tm_tier (2026-10-22, docs/mechanics/ECONOMY_V3.md section 3.3): TM shelves for
+# both modes, a tier a town. A line carrying price_rule "tm_tier" declares tier T (the badges a path player holds when
+# the shelf is reached) and gate_badge B (the TM's craft badge, which tools/tm_gate.py takes from the shelf); its unit
+# price is the smallest multiple of round_to AT OR ABOVE fraction x income_basis.path.leg_by_badges_held[T]. B <= T,
+# so no shelf sells a TM before a player at its tier could craft it.
+TM_POLICY = "tm_tier"
+TM_TIERS = range(0, 9)
+
+
+def tm_tier_policy(doc):
+    return ((doc.get("price_policies") or {}).get(TM_POLICY)) or {}
+
+
+def tm_tier_lines(doc):
+    """[(counter, line, held)] for every counter line under the tm_tier rule."""
+    return [(c, it, held) for c in doc.get("counters") or [] for held, key in ((False, "stock"), (True, "held_stock"))
+            for it in c.get(key) or [] if it.get("price_rule") == TM_POLICY]
+
+
+def tm_tier_unit(doc, tier):
+    """The tm_tier rule's unit price at one tier."""
+    pol = tm_tier_policy(doc)
+    step = int(pol.get("round_to") or 0)
+    if step <= 0:
+        raise MarketError("price_policies.tm_tier.round_to must be a positive whole number")
+    leg = ((doc.get("income_basis") or {}).get("path") or {}).get("leg_by_badges_held") or {}
+    if str(tier) not in leg:
+        raise MarketError("income_basis.path.leg_by_badges_held has no tier %r (python tools/income_model.py --write)"
+                          % (tier,))
+    want = Fraction(str(pol["fraction"])) * int(leg[str(tier)])
+    return int(-(-want // step)) * step
+
+
+def tm_tier_price(doc, it):
+    t = it.get("tier")
+    if isinstance(t, bool) or t not in TM_TIERS:
+        raise MarketError("line %s: tier %r is not a whole tier 0-8" % (it.get("id"), t))
+    return tm_tier_unit(doc, t) * (it.get("count") or 1)
+
+
+def tm_tier_allowed(c, it):
+    """The tiers a counter may sell a line at (price_policies.tm_tier.where): a critical-path counter of gym N's town
+    sells tier N-1, the badges a path player holds on arrival, and gym 8's town also tier 8 (the League's answers); an
+    off-path counter sells a line at its own gate_badge, so a TM costs the same wherever it is sold."""
+    b = c.get("badge")
+    if c.get("path") == "critical" and isinstance(b, int) and b >= 1:
+        return {b - 1} | ({8} if b == 8 else set())
+    gb = it.get("gate_badge")
+    return {gb} if isinstance(gb, int) else set()
+
+
+def tm_tier_problems(doc, progression=None, gate_doc=None, gate_scores=None):
+    out = []
+    lines = tm_tier_lines(doc)
+    pol = tm_tier_policy(doc)
+    if lines and not pol:
+        return ["%d line(s) name price_rule tm_tier but data/markets.json has no price_policies.tm_tier" % len(lines)]
+    if not lines:
+        return out
+    leaders = leader_badges(progression)
+    income_gated = {it.get("item") for _c, it, _h in policy_lines(doc)}
+    tier_of = {}
+    for c, it, held in lines:
+        where = "counter %s %s %s" % (c["id"], "held line" if held else "item", it.get("id"))
+        if held:
+            out.append("%s: a tm_tier line is sold, never held" % where)
+        item, gb, t = it.get("item", ""), it.get("gate_badge"), it.get("tier")
+        if not item.startswith("tmcraft:tm_"):
+            out.append("%s: tm_tier prices TMCraft TMs only, not %r" % (where, item))
+        try:
+            price = tm_tier_price(doc, it)
+        except MarketError as e:
+            out.append("%s: %s" % (where, e))
+            continue
+        if isinstance(gb, bool) or gb not in GATE_BADGES:
+            out.append("%s: gate_badge %r is not a whole badge 1-8" % (where, gb))
+            continue
+        if gb > t:
+            out.append("%s: gate_badge %d above its tier %d: the shelf would sell a TM before a player at that tier "
+                       "could craft it" % (where, gb, t))
+        if t not in tm_tier_allowed(c, it):
+            out.append("%s: tier %d, but this counter sells tier %s (price_policies.tm_tier.where)"
+                       % (where, t, sorted(tm_tier_allowed(c, it))))
+        if it.get("price") != price:
+            out.append("%s: price %r is not the tm_tier rule's $%d (run tools/markets.py prices --write)"
+                       % (where, it.get("price"), price))
+        if not it.get("gate_why"):
+            out.append("%s: no gate_why (why badge %s is this TM's craft badge)" % (where, gb))
+        if it.get("strand") != "power":
+            out.append("%s: a TM line is strand power" % where)
+        lb = leaders.get(item)
+        if lb is not None and lb != gb:
+            out.append("%s: a leader's TM gates on the badge its leader gives (gym %s), not %r" % (where, lb, gb))
+        if item in income_gated:
+            out.append("%s: %s is also under the income-gate rule" % (where, item))
+        if tier_of.setdefault(item, t) != t:
+            out.append("%s: %s is sold at tier %d here and tier %d elsewhere: one TM, one price"
+                       % (where, item, t, tier_of[item]))
+    # the craft badge: tools/tm_gate.py takes every shelf line's gate_badge as the TM's badge (the shelf wins), and
+    # fails a shelf badge the power rule disagrees with unless data/tm_gate.json lists it. Run here on the committed
+    # score table, so a line at the wrong badge fails offline too (the chain check still needs the server's recipes)
+    try:
+        import tm_gate as TG
+        gdoc = gate_doc if gate_doc is not None else TG.load()
+        scores = gate_scores if gate_scores is not None else TG.load_scores(gdoc)
+        _tms, gp = TG.place(gdoc, scores, TG.shelf_badges(doc))
+        out += ["tm_gate: %s" % p for p in gp]
+    except (OSError, ValueError, KeyError) as e:   # reported, never skipped silently
+        out.append("tm_gate: the craft badges could not be checked: %s" % e)
+    return out
 
 
 def write_prices(path, doc, bank=None):
@@ -673,6 +786,7 @@ def write_prices(path, doc, bank=None):
     rows = text.split("\n")
     changed = 0
     table = price_table(doc, bank)
+    table += [(c, it, held, tm_tier_price(doc, it), None) for c, it, held in tm_tier_lines(doc)]
     if curve_policy(doc):
         _scales, cp = curve_prices(doc)
         table += [(c, it, False, cp[(c["id"], it["id"])], None) for c, it in curve_lines(doc)
@@ -1769,6 +1883,9 @@ def main(argv=None):
                 " = %d x %s" % (n, it["exchange_for"]["item"]) if n is not None else "",
                 "HELD (%s)" % (it.get("held") or {}).get("reason") if held else "stock"))
         print("ball ceiling: %s at $%s" % (ceiling_id, money(ceiling) if ceiling is not None else "?"))
+        for c, it, _held in tm_tier_lines(doc):
+            print("%-18s %-22s tier %d, craft badge %d  $%s  (price_policies.tm_tier)" % (
+                c["id"], it["id"], it["tier"], it["gate_badge"], money(tm_tier_price(doc, it))))
         if curve_policy(doc):
             scales, cp = curve_prices(doc)
             print("curve rule (price_policies.curve_scale), scale by leg: %s"

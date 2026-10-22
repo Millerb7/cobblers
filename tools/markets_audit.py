@@ -247,6 +247,35 @@ def trainer_income(markets_doc):
     return out
 
 
+PATH_LEGS = ["1", "2", "3", "4", "5", "6", "7", "8", "vr"]
+
+
+def path_income(markets_doc):
+    """{badges held: Normal path income of the leg played} (2026-10-22, docs/mechanics/ECONOMY_V3.md section 2): data/
+    markets.json income_basis.path, re-derived here from the block's own path level sums at PAYOUT_PER_S2 * S^2 a
+    battle, both modes, the legs and the cumulative figures: a hand-edited figure fails. Which battles the path counts
+    is checked against the rosters and the seat files by tests/test_services_voucher_audit.py, not here."""
+    ib = (markets_doc.get("income_basis") or {}).get("path")
+    if not ib:
+        raise AuditError("income_basis.path is missing: python tools/income_model.py --write")
+    out = {}
+    for mode, block in (("normal", ib), ("challenge", ib.get("challenge") or {})):
+        sums = (ib.get("level_sums") or {}).get(mode) or {}
+        leg, cum, run = block.get("leg_by_badges_held") or {}, block.get("cumulative_by_badge") or {}, 0.0
+        for held, key in enumerate(PATH_LEGS):
+            if key not in sums:
+                raise AuditError("income_basis.path.level_sums.%s has no leg %s" % (mode, key))
+            v = sum(PAYOUT_PER_S2 * int(s) ** 2 for s in sums[key])
+            run += v
+            if leg.get(str(held)) != round(v) or cum.get(key) != round(run):
+                raise AuditError("income_basis.path (%s) leg %s: %s / cumulative %s is not the %.5f*S^2 sum of its "
+                                 "own level sums (%d / %d)" % (mode, key, leg.get(str(held)), cum.get(key),
+                                                               PAYOUT_PER_S2, round(v), round(run)))
+            if mode == "normal":
+                out[held] = int(leg[str(held)])
+    return out
+
+
 def curve_terms(markets_doc, effort_doc, blackout_doc):
     """R2's terms per badge 1-8, each CUMULATIVE: (fights, produce, gather, problems). Every number is read from
     data/markets.json curve_rule (the values the design declares), data/bank.json effort_model and buys (the tier and
@@ -1189,6 +1218,10 @@ def audit(doc, pack, overlay_text, base_text, progression, towns, bank, income=N
         except AuditError as e:
             F.append("curve: %s" % e)
             income = None
+    try:
+        path_income(doc)
+    except AuditError as e:
+        F.append("path income: %s" % e)
     effort = effort if effort is not None else read_json(DATA_BANK)
     blackout = blackout if blackout is not None else read_json(BLACKOUT)
     tb = town_badges(progression, towns)

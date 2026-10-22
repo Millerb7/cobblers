@@ -25,6 +25,19 @@ SHELF_GEM = {
     "psywave": "psychic", "calmmind": "psychic", "skillswap": "psychic",
     "overheat": "fire", "fireblast": "fire", "fissure": "ground", "earthquake": "ground",
 }
+# the 29 answer TMs the tier shelves sell since 2026-10-22 (data/markets.json price_policies.tm_tier, ECONOMY_V3.md 3.3),
+# each at its power-rule badge, so the shelf moves no craft badge: with their recipes here the fixture server crafts
+# every shelf TM, as the real one does
+SHELF_GEM.update({
+    "absorb": "grass", "dig": "ground", "sandtomb": "ground", "mudslap": "ground",
+    "flamecharge": "fire", "aerialace": "flying", "wingattack": "flying", "icywind": "ice", "bugbite": "bug",
+    "acidspray": "poison", "psybeam": "psychic", "bulldoze": "ground", "mudshot": "ground", "confusion": "psychic",
+    "crunch": "dark", "darkpulse": "dark", "shadowclaw": "ghost", "signalbeam": "bug",
+    "surf": "water", "liquidation": "water", "stoneedge": "rock", "powergem": "rock",
+    "icepunch": "ice", "energyball": "grass", "leafblade": "grass",
+    "dracometeor": "dragon", "moonblast": "fairy", "closecombat": "fighting", "psyshock": "psychic",
+})
+LEADER_SHELF = 23   # the eight leaders' first-win pools; the rest of SHELF_GEM are the tier shelves' answers
 # discs chosen so the grade envelope is easy to state: diamond 3 (Thunder), emerald 5 (Toxic), netherite 7 (Overheat)
 SHELF_DISC = {"thunder": "diamond", "earthquake": "diamond", "overheat": "netherite", "fissure": "netherite",
               "toxic": "emerald", "calmmind": "emerald"}

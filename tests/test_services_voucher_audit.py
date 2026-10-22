@@ -1,18 +1,25 @@
-"""Independent audit of 8a2e911: the services' price rule, services against craft routes, and the Challenge voucher.
+"""Independent audit of the services' price rule, services against craft routes, and the Challenge voucher.
 
-Written by the test author, not the builder. Expectations come from sources the builder's tools do not use for the
-same number:
-  - the fight hour from the rosters through tools/income_model.py measure() (not data/markets.json income_basis);
+Rewritten 2026-10-22 for the owner's changed rules, each cited where it bites:
+  - the owner, 2026-10-21: service prices RISE WITH BADGES (the 2026-10-10 rule, "a service is the convenience that
+    costs more than the play it saves", one leg-8 fight hour = $17,200, is reversed for the three services);
+  - the owner, 2026-10-21: "so far no one is doing optional fights just the gym trainers and leaders": prices read
+    the PATH income (data/markets.json income_basis.path), not the road's;
+  - the owner, 2026-10-22: "i dont see enough cushion for challenge players, they should have it easier": the voucher
+    covers a team's training and two answer TMs per badge, x1.5 (data/challenge_mode.json voucher.rule).
+This session also built what it audits (one session did both; CLAUDE.md asks for different agents: a test-author pass
+over this file is owed).
+
+Expectations come from sources the builder's tools do not use for the same number:
+  - the path income from the rosters through tools/income_model.py measure()'s per-battle level sums, with WHICH
+    battles count decided here from the seat files' eye_contact and the row kind, not from the tool's on_path;
   - EV yields from the Cobblemon jar's own tooltips and recipes from the jars (economy_audit's reader);
-  - input prices from every emitted shelf and counter (economy_audit's cheapest(), reading the snapshot's templates);
-  - the voucher's kit value from modpack/config/cobbledollars/bank.json (the file the server runs), not bank.prices().
+  - the TM shelf's tier price from the committed counter lines' own prices, not from tools/markets.py's rule.
 Mutation tests change the GENERATOR (tools/training_services.py, tools/income_model.py, tools/challenge_voucher.py),
 never data/.
 
-NOT COVERED (needs a running server or an experiment): that the services charge what the data says in game; that one
-brewing-stand ingredient serves three bottles (vanilla, ASSUMED for Cobblemon's recipe type); that berry plants regrow
-(the craft routes count a berry once per stat); the hours_saved = 1 assumption itself (an EXP timing); that a
-Challenge grant is ever paid (nothing grants the voucher yet: BUILD LIST U6).
+NOT COVERED (needs a running server or an experiment): that the services charge what the data says in game; that a
+grant is paid; that one brewing-stand ingredient serves three bottles; learnsets of the answer TMs.
 """
 from __future__ import annotations
 
@@ -41,12 +48,17 @@ HAVE_SNAP = bool(SNAP) and Path(SNAP).is_dir()
 HAVE_JARS = HAVE_SNAP and bool(VANILLA) and Path(VANILLA).is_file()
 needs_jars = pytest.mark.skipif(not HAVE_JARS, reason="no snapshot + vanilla jar (COBBLERS_SNAPSHOT_DIR)")
 
-SERVICES = json.loads((ROOT / "data" / "training_services.json").read_text(encoding="utf-8"))
-BANK_DOC = json.loads((ROOT / "data" / "bank.json").read_text(encoding="utf-8"))
-MARKETS = json.loads((ROOT / "data" / "markets.json").read_text(encoding="utf-8"))
-CHALLENGE = json.loads((ROOT / "data" / "challenge_mode.json").read_text(encoding="utf-8"))
-EMITTED_BANK = {e["item"]: int(e["price"]) for e in json.loads(
-    (ROOT / "modpack" / "config" / "cobbledollars" / "bank.json").read_text(encoding="utf-8"))["bank"]}
+
+def _j(rel):
+    return json.loads((ROOT / rel).read_text(encoding="utf-8"))
+
+
+SERVICES = _j("data/training_services.json")
+MARKETS = _j("data/markets.json")
+CHALLENGE = _j("data/challenge_mode.json")
+QUESTS = _j("data/quests.json")
+TIERS = range(0, 9)
+PAYOUT = Fraction(9, 32)          # 0.28125 S^2 a win, CobbleDollars battleVictory at multiplier 1.25
 
 
 def mutant(name, *pairs):
@@ -62,59 +74,90 @@ def mutant(name, *pairs):
     return mod
 
 
+def eyes():
+    """{trainer id: eye_contact} read here from the four seat files."""
+    out = {}
+    for rel in ("data/route_trainers.json", "data/late_route_trainers.json", "data/vr_trainers.json",
+                "data/gym_junior_trainers.json"):
+        for s in _j(rel)["trainers"]:
+            out[s["id"]] = s.get("eye_contact") is True
+    return out
+
+
+def forced(row, ey):
+    """The path's battles, in this file's words: the leader, and a route/VR/junior trainer that has eye contact."""
+    return row["kind"] == "leader" or (row["kind"] in ("route", "junior") and ey.get(row["id"]) is True)
+
+
 @pytest.fixture(scope="module")
-def legs():
-    """{leg: (normal, challenge)} income, from the rosters (income_model.measure), not from data/markets.json."""
+def path_legs():
+    """{badges held: (normal, challenge) path income of the leg played}, from the rosters' level sums."""
     m = I.measure()
-    n, _ = I.totals(m, "normal")
-    c, _ = I.totals(m, "challenge")
-    return {k: (n[k], c[k]) for k in n}
+    ey = eyes()
+    order = [1, 2, 3, 4, 5, 6, 7, 8, "vr"]
+    legs = {L["leg"]: L["trainers"] for L in m["legs"]}
+    out = {}
+    for held, leg in enumerate(order):
+        rows = [r for r in legs[leg] if forced(r, ey)]
+        out[held] = tuple(float(sum(PAYOUT * r[mode]["S"] ** 2 for r in rows)) for mode in ("normal", "challenge"))
+    return out
 
 
-def strictly_above(x, step):
-    return (math.floor(x / step) + 1) * step
+def up(x, step):
+    return int(math.ceil(Fraction(x) / step)) * step
 
 
-def rule_expectation(leg_income):
-    """The price the owner's rule gives: the smallest $100 multiple strictly above one hour saved x the fight hour."""
-    hour = Fraction(round(leg_income)) / Fraction(BANK_DOC["effort_model"]["max_leg_hours"])
-    return strictly_above(hour, 100)
+# ============================================================================================ the path income
+# Without it the path figure every price reads could drift from what the path actually pays: re-summed here from the
+# rosters with this file's own reading of which fights are forced, it must equal data/markets.json income_basis.path,
+# and it must be what ECONOMY_V3.md section 2 measured by hand (leg 1 $1,932 ... Victory Road $49,341).
+def test_the_path_income_is_the_forced_fights_from_the_rosters(path_legs):
+    got = MARKETS["income_basis"]["path"]["leg_by_badges_held"]
+    assert {int(k): v for k, v in got.items()} == {t: int(round(path_legs[t][0])) for t in TIERS}
+    ch = MARKETS["income_basis"]["path"]["challenge"]["leg_by_badges_held"]
+    assert {int(k): v for k, v in ch.items()} == {t: int(round(path_legs[t][1])) for t in TIERS}
+    assert [int(round(path_legs[t][0])) for t in TIERS] == [1932, 2468, 6210, 8619, 15443, 21471, 26734, 41026, 49341]
+
+
+# Without it a mutated income model (the mansion counted as forced) could write a path figure nobody re-derives.
+def test_a_mutated_path_rule_moves_off_the_independent_figure(path_legs):
+    m = mutant("income_model", ('    if kind in ("leader", "league"):\n        return True',
+                                '    if kind in ("leader", "league", "mansion"):\n        return True'))
+    block = m.path_block(m.measure())
+    assert block["leg_by_badges_held"]["0"] != int(round(path_legs[0][0]))
 
 
 # ============================================================================================ the price rule
-# Without it the EV and IV prices could drift from "one hour of the richest badge leg's fighting": the expectation is
-# re-derived from the rosters (leg 8 is the largest of the eight badge legs, 68,505 / 4 = 17,126.25 -> $17,200).
-def test_the_ev_and_iv_prices_are_one_richest_leg_fight_hour_from_the_rosters(legs):
-    badge = {k: v[0] for k, v in legs.items() if isinstance(k, int)}
-    assert sorted(badge) == list(range(1, 9))
-    richest = max(badge, key=badge.get)
-    assert richest == SERVICES["price_rule"]["anchor_badge"] == 8
-    want = rule_expectation(badge[8])
-    assert want == 17200
-    assert SERVICES["services"]["ev"]["price"] == want
-    assert SERVICES["services"]["iv"]["price_per_stat"] == want
+def _rule(key, t, path_legs):
+    frac = {"raise": "0.05", "ev": "0.15", "iv": "0.025"}[key]
+    assert str(SERVICES["price_rule"]["fractions"][T.RULE_FIELDS[key][0]]) == frac
+    return up(Fraction(frac) * Fraction(round(path_legs[t][0])), 100)
+
+
+# Without it a service could be priced flat again, or off the path: every tier of every service is the rule's price
+# (the owner, 2026-10-21: RISES WITH BADGES), re-derived here, and the table is ECONOMY_V3.md 3.2's (tiers 1-8) with
+# tier 0 by the same rule. A re-measured income has to move these on purpose.
+def test_every_service_tier_is_its_share_of_the_path_leg(path_legs):
+    s = SERVICES["services"]
+    for key, field in (("raise", "price_by_tier"), ("ev", "price_by_tier"), ("iv", "price_per_stat_by_tier")):
+        assert {int(t): v for t, v in s[key][field].items()} == {t: _rule(key, t, path_legs) for t in TIERS}, key
+    assert [s["raise"]["price_by_tier"][str(t)] for t in TIERS] == [100, 200, 400, 500, 800, 1100, 1400, 2100, 2500]
+    assert [s["ev"]["price_by_tier"][str(t)] for t in TIERS] == [300, 400, 1000, 1300, 2400, 3300, 4100, 6200, 7500]
+    assert [s["iv"]["price_per_stat_by_tier"][str(t)] for t in TIERS] == [100, 100, 200, 300, 400, 600, 700, 1100, 1300]
     assert T.price_rule_problems(SERVICES) == []
 
 
-# Without it the services' audit could be a rubber stamp: tools/training_services.py's rule with "strictly above"
-# turned into "at or below" (floor) or reading leg 7 must name the real prices as wrong; the data is untouched.
+# Without it the services' audit could be a rubber stamp: tools/training_services.py's rule rounded down, or read from
+# the road's leg instead of the path's, must name the real prices as wrong; the data is untouched.
 @pytest.mark.parametrize("why,old,new", [
-    ("floor instead of strictly above", '// step + 1) * step', '// step) * step'),
-    ("the leg before the anchor", 'leg_by_badge"][str(r["anchor_badge"])]', 'leg_by_badge"][str(r["anchor_badge"] - 1)]'),
+    ("rounded down", "return int(-(-want // step)) * step", "return int(want // step) * step"),
+    ("the road's leg", 'markets["income_basis"]["path"]["leg_by_badges_held"][str(t)]',
+     'markets["income_basis"]["leg_by_badge"][str(max(t, 1))]'),
 ])
 def test_a_mutated_price_rule_names_the_real_prices(why, old, new):
     m = mutant("training_services", (old, new))
     probs = m.price_rule_problems(SERVICES)
-    assert any(p.startswith("services.ev.price is $17200") for p in probs), (why, probs)
-    assert any(p.startswith("services.iv.price_per_stat is $17200") for p in probs), (why, probs)
-
-
-# Without it this file's own expectation could secretly be data/markets.json: an income model paying 10% more per
-# battle (the GENERATOR mutated) moves the independent price off $17,200, so the data's price would fail here.
-def test_the_independent_expectation_follows_the_income_model_not_the_record():
-    m = mutant("income_model", ("* Fraction(9, 4) * Fraction(mult))", "* Fraction(9, 4) * Fraction(mult) * Fraction(11, 10))"))
-    n, _ = m.totals(m.measure(), "normal")
-    assert rule_expectation(n[8]) != SERVICES["services"]["ev"]["price"]
+    assert any(p.startswith("services.ev.price_by_tier") for p in probs), (why, probs)
 
 
 # ===================================================================================== services against craft routes
@@ -142,23 +185,28 @@ def market():
 
 
 def _spread_ev_need():
-    """[EVs per stat] of the largest spread the EV service sells."""
     spreads = SERVICES["services"]["ev"]["spreads"]
     big = max(spreads, key=lambda s: sum(s["evs"].values()))
     return sorted(big["evs"].values(), reverse=True)
 
 
-# Without it the "crafting is the route" decision could invert unseen: every craft route to one EV spread must cost
-# fewer dollars than the service, counting each input at its cheapest seller per use (a berry once per stat: the plant
-# regrows, ASSUMED), and an input with no seller must be farmable or a gathered material. Measured 2026-10-08:
-# vitamins $2,800, mochi $9,500, feathers $10,200, two Mart power items $3,000, against $17,200.
+def _top(key):
+    s = SERVICES["services"][key]
+    return max((s["price_per_stat_by_tier"] if key == "iv" else s["price_by_tier"]).values())
+
+
+# REWRITTEN 2026-10-22. Until then this asserted every craft route to one EV spread cost FEWER dollars than the
+# service (the 2026-10-10 rule: the service costs more than the play it saves). The owner reversed that on 2026-10-21
+# (prices rise with badges, cheap early), so the service now undercuts the routes early on purpose: it sells time,
+# and EV power was always free by battle. What still holds, and what this protects: the routes are what the jars and
+# the shelves say (measured 2026-10-08: vitamins $2,800, mochi $9,500, feathers $10,200, two Mart power items $3,000),
+# and every route is still OPEN (an input with no seller is farmable or gathered), so the service is never the only way.
 @needs_jars
-def test_no_ev_craft_route_costs_more_dollars_than_the_service(market):
+def test_every_ev_craft_route_is_measured_and_open(market):
     best, farm, evs = market
     assert evs["cobblemon:hp_up"] == 10 and evs["cobblemon:health_mochi"] == 4
     assert evs["cobblemon:health_feather"] == 1 and evs["cobblemon:power_weight"] == 8
     need = _spread_ev_need()
-    price = SERVICES["services"]["ev"]["price"]
 
     def per_use(item):
         if item in best:
@@ -177,153 +225,97 @@ def test_no_ev_craft_route_costs_more_dollars_than_the_service(market):
     feather_crafts = sum(math.ceil(n / (3 * evs["cobblemon:health_feather"])) for n in need)
     feathers = feather_crafts * 3 * per_use("minecraft:feather")
     power = 2 * best["cobblemon:power_bracer"][0]
-    routes = {"vitamins": vitamins, "mochi": mochi, "feathers": feathers, "power items": power}
-    assert routes == {"vitamins": 2800, "mochi": 9500, "feathers": 10200, "power items": 3000}, routes
-    assert all(v < price for v in routes.values()), routes
+    assert {"vitamins": vitamins, "mochi": mochi, "feathers": feathers, "power items": power} == \
+        {"vitamins": 2800, "mochi": 9500, "feathers": 10200, "power items": 3000}
 
 
-# Without it a shelf could undercut the service: the finished items for one spread, bought outright with no effort,
-# must cost more than the service, or nobody would pay for it (shelf vitamins 53 x $3,500, mochi 127 x $800).
+# Without it a shelf could undercut the service at some tier: the finished items for one spread, bought outright with
+# no effort, must cost more than the service at its DEAREST tier (shelf vitamins 53 x $3,500, mochi 127 x $800), so
+# the shelf ordering ECONOMY_V3.md 3.2 keeps holds at every badge.
 @needs_jars
-def test_no_shelf_sells_a_spread_for_less_than_the_service(market):
+def test_no_shelf_sells_a_spread_for_less_than_the_service_at_any_tier(market):
     best, _farm, evs = market
     need = _spread_ev_need()
-    price = SERVICES["services"]["ev"]["price"]
     for item in ("cobblemon:hp_up", "cobblemon:health_mochi", "cobblemon:health_feather"):
         if item not in best:
             continue
         n = sum(math.ceil(x / evs[item]) for x in need)
-        assert n * best[item][0] > price, (item, n, best[item])
+        assert n * best[item][0] > _top("ev"), (item, n, best[item])
 
 
-# Without it a bottle cap on some shelf could undercut the IV service: no seller sells a cap of any kind, so the
-# only routes to a perfect IV are fished caps (no dollars) and the $17,200 a stat service.
+# Without it a bottle cap on some shelf could undercut the IV service at some tier.
 @needs_jars
-def test_no_bottle_cap_is_sold_for_less_than_the_iv_service(market):
+def test_no_bottle_cap_is_sold_for_less_than_the_iv_service_at_any_tier(market):
     best, _farm, _evs = market
-    price = SERVICES["services"]["iv"]["price_per_stat"]
     caps = {i: b for i, b in best.items() if i.startswith("obc:bottle_cap")}
-    assert all(b[0] >= price for b in caps.values()), caps
+    assert all(b[0] >= _top("iv") for b in caps.values()), caps
 
 
 # ============================================================================================ the Challenge voucher
-def _mart_power_prices():
-    shelf = {}
-    for tier in json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))["stock_policy"]["mart"]["training"]["tiers"]:
-        for it in tier["items"]:
-            shelf[it["item"]] = int(it["price"])
-    return shelf
+def shelf_tm_unit():
+    """{tier: one TM's price} from the committed tm_tier counter lines' own prices; every line of a tier agrees."""
+    out = {}
+    for c in MARKETS["counters"]:
+        for it in c.get("stock") or []:
+            if it.get("price_rule") == "tm_tier" and it.get("answers"):
+                out.setdefault(it["tier"], set()).add(it["price"] // (it.get("count") or 1))
+    assert all(len(v) == 1 for v in out.values()), out
+    return {t: v.pop() for t, v in out.items()}
 
 
-def voucher_problems(c, legs_income, cdoc=CHALLENGE):
-    """Every way `c` (a computed voucher block) breaks the owner's shape, judged from independent sources."""
-    v = cdoc["voucher"]
+def voucher_problems(c):
+    """Every way `c` (a computed voucher block) breaks the owner's 2026-10-22 rule, judged from the data's prices."""
     out = []
-    gated = [int(l["price"]) for r in MARKETS["counters"] for l in r.get("stock") or [] if l.get("price_rule") == "income_gate"]
-    oak = (min(gated) - 1) // 100 * 100
-    kits = {}
-    for k in v["kits"]:
-        kits[k["for_leg"]] = sum(EMITTED_BANK[i] * n for part in ("tm", "held", "extra") for i, n in (k.get(part) or {}).items())
-    shelf = _mart_power_prices()
-    power = sum(shelf[i] for i in v["power_kit"]["items"])
-    total = oak + sum(kits.values()) + power
-    s = c["schedule"]
+    s = SERVICES["services"]
+    tm = shelf_tm_unit()
+    want_at = ["oak_mode_choice"] + ["gym%d_cleared" % n for n in range(1, 9)]
+    if [g["at"] for g in c["schedule"]] != want_at:
+        out.append("the steps are %s" % [g["at"] for g in c["schedule"]])
+        return out
+    total = 0
+    for t, g in enumerate(c["schedule"]):
+        one = s["raise"]["price_by_tier"][str(t)] + s["ev"]["price_by_tier"][str(t)] \
+            + 6 * s["iv"]["price_per_stat_by_tier"][str(t)]
+        basket = 6 * one + 2 * tm.get(t, 0)
+        want = up(Fraction(3, 2) * basket, 50)
+        total += want
+        if (g["basket"], g["value"], g["cash"]) != (basket, want, want):
+            out.append("%s: basket %s value %s cash %s, independently %d -> %d" % (g["at"], g["basket"], g["value"],
+                                                                                g["cash"], basket, want))
     if c["total"] != total:
-        out.append("total %d, independently %d (Oak %d + kits %d + power kit %d)" % (c["total"], total, oak,
-                                                                                    sum(kits.values()), power))
-    if sum(g["value"] for g in s) != total:
-        out.append("the grants sum to %d, not the total %d" % (sum(g["value"] for g in s), total))
-    if s[0]["at"] != "oak_mode_choice" or s[0]["value"] != oak or s[0]["kits"]:
-        out.append("Oak's grant is not $%d cash" % oak)
-    gyms = s[1:]
-    if [g["at"] for g in gyms] != ["gym%d_cleared" % n for n in range(1, 9)]:
-        out.append("the gym grants are not gyms 1-8 in order")
-    vals = [g["value"] for g in gyms]
-    if any(b > a for a, b in zip(vals, vals[1:])):
-        out.append("not front-loaded: %s" % vals)
-    seen = []
-    for i, g in enumerate(s):
-        if g["cash"] < 0 or g["value"] != g["cash"] + sum(kits[k] for k in g["kits"]):
-            out.append("%s: value %d is not cash %d + its kits" % (g["at"], g["value"], g["cash"]))
-        for k in g["kits"]:
-            seen.append(k)
-            if i > k - 1:
-                out.append("the kit for leg %d arrives at %s, after gym %d" % (k, g["at"], k - 1))
-    if sorted(seen) != sorted(kits):
-        out.append("kits delivered %s, not each of %s once" % (sorted(seen), sorted(kits)))
-    # inverse to the Challenge income each grant opens, from the rosters: gym n opens leg n+1, gym 8 VR + the League
-    opens = [legs_income[n + 1][1] for n in range(1, 8)] + [legs_income["vr"][1] + legs_income["league"][1]]
-    w = [1 / x for x in opens]
-    rest = total - oak
-    for n, (g, wi) in enumerate(zip(gyms, w), 1):
-        ideal = rest * wi / sum(w)
-        slack = 50 * 8 if n == 1 else 50          # each grant rounds down to $50; gym 1 takes the remainder
-        if not (ideal - slack <= g["value"] <= ideal + slack):
-            out.append("gym %d grant %d, inverse-income share %.0f" % (n, g["value"], ideal))
+        out.append("total %d, independently %d" % (c["total"], total))
     return out
 
 
-# Without it the voucher could drift from the owner's shape: the committed schedule, judged from the rosters, the
-# emitted bank and the Mart shelf, sums to its total ($23,748), pays Oak $4,000 cash, never grows after gym 1, follows
-# the inverse Challenge income, and puts every kit in hand by the gym before the leg it answers.
-def test_the_committed_voucher_keeps_the_owners_shape(legs):
+# Without it the voucher could drift from the owner's 2026-10-22 rule ("they should have it easier"): each grant
+# covers, at the prices of the badge it opens, six Pokemon's raise + EV spread + six IVs and two answer TMs, x1.5;
+# Oak's is the first leg's (tier 0, where no shelf sells TMs). Replaces the 2026-10-10 front-loaded $23,748.
+def test_the_committed_voucher_keeps_the_owners_rule():
     c = CHALLENGE["voucher"]["computed"]
-    assert voucher_problems(c, legs) == []
-    assert c["total"] == 23748
+    assert voucher_problems(c) == []
+    assert [g["value"] for g in c["schedule"]] == [9000, 13500, 30000, 41700, 66900, 94800, 115500, 177300, 212100]
+    assert c["total"] == 760800
     assert CV.compute() == c          # the committed block is the tool's output (its --check)
+    oak = [e for q in QUESTS["quests"] for t in q.get("transitions") or [] for e in t.get("effects") or []
+           if e.get("kind") == "challenge_voucher"]
+    assert [(e["at"], e["cash"]) for e in oak] == [("oak_mode_choice", 9000)]
 
 
-# Without it voucher_problems could pass anything: each mutation of tools/challenge_voucher.py (data untouched) that
-# slips past the tool's own guards must be named here.
+# Without it voucher_problems could pass anything: each mutation of tools/challenge_voucher.py (data untouched) must be
+# named here.
 @pytest.mark.parametrize("why,old,new", [
-    ("the rounding remainder dropped", "vals[0] += rest - sum(vals)", "vals[0] += 0"),
-    ("kits valued at half", "total += prices[item] * int(n)", "total += prices[item] * int(n) // 2"),
-    ("a power item left out", "return sum(have[i] for i in want)", "return sum(have[i] for i in want[1:])"),
-    ("weighted by the Normal income", 'ch = markets["income_basis"]["challenge"]["leg_by_badge"]',
-     'ch = markets["income_basis"]["leg_by_badge"]'),
+    ("the multiplier ignored", 'mult = Fraction(str(rule["multiplier"]))\n    step', 'mult = Fraction(1)\n    step'),
+    ("a team of five", 'team, tms = int(rule["team"]), int(rule["answer_tms"])',
+     'team, tms = int(rule["team"]) - 1, int(rule["answer_tms"])'),
+    ("the TMs never counted", "return (n * M.tm_tier_unit(markets, t), len(answers)) if answers else (0, 0)",
+     "return (0, 0)"),
+    ("one IV, not six", '+ 6 * int(s["iv"]["price_per_stat_by_tier"][str(t)])', '+ int(s["iv"]["price_per_stat_by_tier"][str(t)])'),
 ])
-def test_a_mutated_voucher_generator_is_named(legs, why, old, new):
+def test_a_mutated_voucher_generator_is_named(why, old, new):
     m = mutant("challenge_voucher", (old, new))
-    try:
-        c = m.compute()
-    except SystemExit as e:
-        pytest.fail("the mutant tripped the tool's own guard, so it does not test this check: %s (%s)" % (why, e))
-    assert voucher_problems(c, legs), why
+    assert voucher_problems(m.compute()), why
 
-
-def _liquidation(mats, conv):
-    """Dollars a bundle of materials can be turned into at the emitted bank, each unit by itself or by one
-    single-input furnace or crafting conversion of it (multi-input crafts such as the netherite ingot are NOT
-    counted: 4 scrap + 4 gold at bank value is $888 against the ingot's $900, a further $12 an ingot)."""
-    unit = {}
-    for m in mats:
-        best = EMITTED_BANK.get(m, 0)
-        for _name, _kind, ings, rid, rc in conv:
-            if len(ings) == 1 and m in ings[0][0] and rid in EMITTED_BANK:
-                best = max(best, EMITTED_BANK[rid] * rc / ings[0][1])
-        unit[m] = best
-    return sum(unit[m] * n for m, n in mats.items())
-
-
-# DEFECT (recorded, not fixed): a grant can be sold back for more than the voucher says it is worth. The kits are
-# valued at the bank's price for each material as given, but raw iron smelts to an iron ingot the bank buys for $9
-# against raw iron's $8 (data/bank.json; minecraft:iron_ingot_from_smelting_raw_iron in the vanilla jar). The gym-1
-# grant's 344 raw iron liquidate $344 above its $7,298, gym 2's 64 another $64. Small, but the voucher's total is not
-# what it pays. Fix is the tool's valuation or the kits (data/challenge_mode.json), not this test.
-# strict: when no grant liquidates above its value, this xfail fails and the marker goes.
-@needs_jars
-@pytest.mark.xfail(strict=True, reason="raw iron in the kits smelts to a $9 ingot against its $8 valuation")
-def test_no_grant_sells_back_for_more_than_its_value():
-    conv = E.load_jars(SNAP, VANILLA).conversions()
-    kits = {k["for_leg"]: k for k in CHALLENGE["voucher"]["kits"]}
-    over = []
-    for g in CHALLENGE["voucher"]["computed"]["schedule"]:
-        mats = {}
-        for leg in g["kits"]:
-            for part in ("tm", "held", "extra"):
-                for i, n in (kits[leg].get(part) or {}).items():
-                    mats[i] = mats.get(i, 0) + n
-        got = g["cash"] + _liquidation(mats, conv)
-        if got > g["value"]:
-            over.append("%s: worth %d, sells for %.0f" % (g["at"], g["value"], got))
-    assert not over, over
+# Removed 2026-10-22: test_no_grant_sells_back_for_more_than_its_value (a strict xfail: the gym-1 kit's raw iron
+# smelted to a $9 ingot against its $8 valuation). Every grant has been cash since the owner's 2026-10-21 "just give
+# him money", and the kit valuation is superseded (data/challenge_mode.json voucher.superseded_kits_basis), so no
+# grant carries a material to sell back.

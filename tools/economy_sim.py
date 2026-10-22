@@ -756,17 +756,26 @@ def sinks(w):
     caps = sorted({c for caps in w.band_caps.values() for c in caps if c <= max_cap})
     ash = 2 * w.price["minecraft:netherite_ingot"]
     shelf_all = sum(p for p, _a, _i, _path in w.late_shelf)
+    # the services' prices rise with badges (the owner, 2026-10-21; data/training_services.json price_rule): one price
+    # a tier 0-8, so each row is its cheapest tier (low) to its dearest (high); a raise at a cap step is priced at the
+    # tier whose cap that is (price_rule.cap_by_badges_held, else tier 8)
+    tcap = {int(t): int(c) for t, c in w.docs["services"]["price_rule"]["cap_by_badges_held"].items()}
+    tier_of = lambda c: next((t for t in sorted(tcap) if tcap[t] >= c), 8)   # noqa: E731
+    rp = {int(t): int(p) for t, p in sv["raise"]["price_by_tier"].items()}
+    ep = {int(t): int(p) for t, p in sv["ev"]["price_by_tier"].items()}
+    ip = {int(t): int(p) for t, p in sv["iv"]["price_per_stat_by_tier"].items()}
+    raises = sum(6 * rp[tier_of(c)] for c in caps)
+    team = [6 * (ep[t] + 6 * ip[t]) for t in sorted(ep)]
     rows = [
         ("The late shelf: every counter line not on the curve (off-path counters, critical power, stretch), one of each",
          shelf_all, shelf_all, "data/markets.json counters; includes one Beast Ball. The Master Ball and the top tier "
                                "are not on it: barter only, priced in hours in T12"),
-        ("Level-raise service for a team of six at every cap step (%d steps x 6 x $%d)" % (len(caps), sv["raise"]["price"]),
-         len(caps) * 6 * sv["raise"]["price"], len(caps) * 6 * sv["raise"]["price"], "optional; STATE says ~$30,000"),
-        ("Effort training, one Pokemon (EV spread)", sv["ev"]["price"], sv["ev"]["price"], "per Pokemon"),
-        ("Perfect IVs, all six stats of one Pokemon", 6 * sv["iv"]["price_per_stat"], 6 * sv["iv"]["price_per_stat"],
-         "per stat, bought again at full price even at 31 (services.iv.repeat_rule)"),
-        ("EV + IV for a team of six", 6 * (sv["ev"]["price"] + 6 * sv["iv"]["price_per_stat"]),
-         6 * (sv["ev"]["price"] + 6 * sv["iv"]["price_per_stat"]), "STATE's '~$50,000 if fully used' predates the per-hour pricing rule"),
+        ("Level-raise service for a team of six at every cap step (%d steps x 6, each at its cap's tier)" % len(caps),
+         raises, raises, "optional; priced by badges (price_rule)"),
+        ("Effort training, one Pokemon (EV spread)", min(ep.values()), max(ep.values()), "per Pokemon, by tier"),
+        ("Perfect IVs, all six stats of one Pokemon", 6 * min(ip.values()), 6 * max(ip.values()),
+         "per stat, by tier, bought again at full price even at 31 (services.iv.repeat_rule)"),
+        ("EV + IV for a team of six", min(team), max(team), "by tier: tier 0 to tier 8"),
         ("Beast Balls for ONE boss catch (Entei, built)", BEAST_THROWS[0] * w.beast_ball, BEAST_THROWS[1] * w.beast_ball,
          "4 throws asleep at 1 HP .. 19 at full HP; a failed throw spends the ball (key_ball.json)"),
         ("Tower Ash for an Entei attempt (2 netherite ingots at the bank)", ash, ash,

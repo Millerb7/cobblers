@@ -17,62 +17,73 @@
   "cooldown_ticks": 20,
   "cooldown_why": "a second submit of the same click (the dialogue can deliver one) must not buy twice: the ferry's per-player cooldown score, set only once the charge is about to be taken",
   "price_rule": {
+    "decision": "the owner, 2026-10-21: service prices RISE WITH BADGES ('the iv/ev system costing 17k feels bad early game ... so far no one is doing optional fights just the gym trainers and leaders'), and 2026-10-22: 'make every change global, not just what players have done so far'. Built from docs/mechanics/ECONOMY_V3.md section 3.2 (its proposal_v3 numbers, unchanged at tiers 1-8) on 2026-10-22",
+    "supersedes": "the owner's decision (4) after the 2026-10-10 overnight ('a service is the convenience that costs more than the play it saves': one hour of the leg-8 fight hour, $17,200, EV from badge 2 and IV from badge 8). Kept below as superseded_price_rule; reversed for these three services by the 2026-10-21 choice",
+    "rule": "price(service, t) = the smallest multiple of round_to AT OR ABOVE fractions[service] x data/markets.json income_basis.path.leg_by_badges_held[t]: what the path (gym juniors, leaders, the eye-contact route and Victory Road trainers; tools/income_model.py) pays in the leg a player holding t badges is playing. tools/training_services.py audit refuses any price_by_tier that is not the rule's, so a re-measured income re-prices every tier",
+    "round_to": 100,
+    "fractions": {
+      "raise": "0.05",
+      "ev": "0.15",
+      "iv_per_stat": "0.025"
+    },
+    "fractions_why": "a whole team (six EV spreads, thirty-six IV stats) bought across legs 2-5 lands near 55% of what the path pays by badge 5, leaving the rest for the Mart and one TM a leg (ECONOMY_V3.md 3.2 cash walk); six raises a leg cost 30% of the leg. Written as strings so the rule is exact (Fraction), not a float",
+    "tiers": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "tiers_why": "every badge count, 0 to 8 (the owner, 2026-10-22: global): tier 8 is a player holding eight badges, priced against Victory Road's ten (income_basis.path.leg_by_badges_held '8'), and after the Champion the raise stops at max_cap while EV and IV stay at tier 8",
+    "tier": {
+      "raise": "t = badges held (the raise writes the player's own cap)",
+      "ev_and_iv": "t = max(badges held, the slot's level band). The level band of a slot at level L is the smallest t whose cap_by_badges_held[t] >= L, else 8. So a high-level Pokemon traded to a low-badge friend is priced as the high tier it is (the co-op arbitrage a badge-only price opens)",
+      "badges_held": "the highest N whose advancement cobblers:flag/gymN_cleared the player holds (tools/progression_pack.py flags), 0 when none, read again in the function at every purchase; the dialogue shows each tier's price only to a player at that tier, by the same flags (compile_dialogue's flag/all/not conditions)"
+    },
+    "cap_by_badges_held": {
+      "0": 20,
+      "1": 25,
+      "2": 30,
+      "3": 35,
+      "4": 40,
+      "5": 45,
+      "6": 50,
+      "7": 55,
+      "8": 60
+    },
+    "cap_source": "data/legendaries.json level_caps.upper_bound_by_badges 0..8 (the next leader's ace, then Lorelei's): tools/training_services.py audit fails if the two differ"
+  },
+  "superseded_price_rule": {
+    "superseded_by": "price_rule above (the owner, 2026-10-21: RISES WITH BADGES)",
     "decision": "the owner, after the 2026-10-10 overnight (docs/STATE.md 'Owner decisions after the 2026-10-10 overnight' (4)): price the services and the craftables against each other, one way. Taken: CRAFTING (and training by battle) IS THE ROUTE; a service is the convenience that costs more than the play it saves. Reasoning and the numbers: docs/mechanics/SERVICES_AND_CRAFTING.md",
     "rule": "a named service's price is the smallest multiple of round_to STRICTLY above hours_saved x the fight hour of anchor_badge's leg. The fight hour is data/markets.json income_basis.leg_by_badge[anchor_badge] / data/bank.json effort_model.max_leg_hours: the same exchange rate between an hour of play and money that R5 (effort_model.rules parity) already prices gathering against. tools/training_services.py audit refuses any other price, so a re-measured income re-prices the service",
     "anchor_badge": 8,
-    "anchor_why": "a flat price must hold where money is most plentiful: leg 8 has the largest fight hour of the eight badge legs (68,505 / 4 = $17,126, measured by tools/income_model.py), above Victory Road's ($12,335). Every earlier leg then finds the service dearer still, in hours of fighting, which pushes crafting hardest where crafting is cheapest. The League (5 battles, $175,051) is not a leg of play hours and is not used",
-    "round_to": 100,
-    "round_to_why": "data/markets.json price_policies.income_gate round_to: the same 'smallest multiple strictly above' shape",
     "applies_to": {
-      "ev": {"field": "price", "hours_saved": 1, "why": "ASSUMED, never timed (EXP timing replaces it): one Pokemon's two-stat spread by battle at a training ground is about 64 wild fights with a power item held (252 / 8 = 32 a stat, EV_IV_TRAINING.md 4.2), and by brewing it is 52 vitamins = 18 brewing-stand batches of three (one leek, one vivichoke, one EV berry a batch. The three steps medicinal_brew, pp_up and the vitamin are cobblemon:brewing_stand recipes read from Cobblemon-fabric-1.8.0+1.21.1.jar; that one ingredient serves three bottles is vanilla brewing-stand behaviour, ASSUMED to hold for Cobblemon's recipe type)"},
-      "iv": {"field": "price_per_stat", "hours_saved": 1, "why": "ASSUMED: one stat's cap is a silver Bottle Cap plus eight mint leaves of that stat's colour (obc:bottle_cap_<stat>, read from Only Bottle Caps-1.5.0-fabric.jar). The silver cap is 3% of vanilla fishing treasure and 5% of Poke Rod treasure (obc-common.toml, measured); at vanilla's treasure share and cast time (ASSUMED) that is about 0.7 h with Luck of the Sea III and Lure III, about 3.5 h with a plain rod. One hour is the lower, enchanted figure"}
+      "ev": {
+        "hours_saved": 1,
+        "why": "ASSUMED, never timed (EXP timing replaces it): one Pokemon's two-stat spread by battle at a training ground is about 64 wild fights with a power item held (252 / 8 = 32 a stat, EV_IV_TRAINING.md 4.2), and by brewing it is 52 vitamins = 18 brewing-stand batches of three (one leek, one vivichoke, one EV berry a batch. The three steps medicinal_brew, pp_up and the vitamin are cobblemon:brewing_stand recipes read from Cobblemon-fabric-1.8.0+1.21.1.jar; that one ingredient serves three bottles is vanilla brewing-stand behaviour, ASSUMED to hold for Cobblemon's recipe type)"
+      },
+      "iv": {
+        "hours_saved": 1,
+        "why": "ASSUMED: one stat's cap is a silver Bottle Cap plus eight mint leaves of that stat's colour (obc:bottle_cap_<stat>, read from Only Bottle Caps-1.5.0-fabric.jar). The silver cap is 3% of vanilla fishing treasure and 5% of Poke Rod treasure (obc-common.toml, measured); at vanilla's treasure share and cast time (ASSUMED) that is about 0.7 h with Luck of the Sea III and Lure III, about 3.5 h with a plain rod. One hour is the lower, enchanted figure"
+      }
     },
-    "not_applied": {
-      "raise": "the raise competes with the training grounds (free, Audino at cap-3 to cap-1), not with a craftable: Exp. Candies are cut by design (docs/mechanics/ITEM_ROUTES.md section 3 row 5) and no other item sets a level. Its $500 is the owner's figure; whether it holds late is owner question 7 (ECONOMY_OVERHAUL.md section 10), not this decision"
-    }
-  },
-  "proposal_v3": {
-    "status": "PROPOSAL 2026-10-22, docs/mechanics/ECONOMY_V3.md section 3.2. NOT built and read by no tool: every live field of this file (price_rule, services.*.price, gates, messages) is unchanged. Building it is ECONOMY_V3.md build list units V3-1 and V3-2",
-    "owner_brief": "the owner, 2026-10-21: 'the iv/ev system costing 17k feels bad early game ... so far no one is doing optional fights just the gym trainers and leaders'; the shape chosen the same night: RISES WITH BADGES, cheap early, one Pokemon's IV/EV affordable by gym 1-2",
-    "supersedes_if_taken": "price_rule (the owner's decision (4) after the 2026-10-10 overnight: a service costs more than the hour of play it saves, at the leg-8 fight hour, $17,200). Tonight's choice replaces it for these three services; the shelf ordering (a bought spread of vitamins or mochi costs more than the service) still holds at every tier",
-    "basis": {
-      "what": "the Normal income of the leg a player is playing while holding t badges, counting ONLY the fights the path forces: gym juniors (eye contact, data/gym_junior_trainers.json), the leader, Route 1's one eye-contact trainer (data/route_trainers.json route_01_trainer_01) and, holding 8, Victory Road's ten (all eye contact). Summed from data/markets.json income_basis.level_sums.normal at 0.28125 x S^2 a win (income_basis.formula); the split of each leg's list into route, junior and leader rows is tools/income_model.py legs() order (route rows by walked distance, then juniors, then the leader)",
-      "relayed": false,
-      "computed_by": "hand, 2026-10-22, from the committed level sums; tools/income_model.py does not emit it yet (unit V3-0)",
-      "path_leg_normal_by_badges_held": {"0": 1932, "1": 2468, "2": 6210, "3": 8619, "4": 15443, "5": 21471, "6": 26735, "7": 41026, "8": 49341}
+    "prices_were": {
+      "raise": 500,
+      "ev": 17200,
+      "iv_per_stat": 17200,
+      "ev_gate": "gym2_cleared",
+      "iv_gate": "gym8_cleared"
     },
-    "rule": "price(service, t) = the smallest multiple of round_to at or above fraction[service] x basis.path_leg_normal_by_badges_held[t]",
-    "round_to": 100,
-    "fractions": {"raise": 0.05, "ev": 0.15, "iv_per_stat": 0.025},
-    "fractions_why": "a whole team (six EV spreads, thirty-six IV stats) bought across legs 2-5 lands near 55% of what the path pays by badge 5, leaving the rest for the Mart and one TM a leg (ECONOMY_V3.md 3.2 cash walk); six raises a leg cost 30% of the leg",
-    "tier": {
-      "raise": "t = badges held (the raise writes the player's own cap)",
-      "ev_and_iv": "t = max(badges held, the slot's level band). The level band of a slot at level L is the smallest t whose cap_by_badges_held[t] >= L, else 8. So a high-level Pokemon traded to a low-badge friend is priced as the high tier it is",
-      "cap_by_badges_held": {"0": 20, "1": 25, "2": 30, "3": 35, "4": 40, "5": 45, "6": 50, "7": 55, "8": 60},
-      "cap_source": "data/markets.json price_policies.income_gate.gate_badges.memory (the next leader's ace, 20..55); 60 holding 8 is Lorelei's ace (data/arena_fights.json band league_eve)",
-      "badges_read_by": "the highest cobblers:flag/gymN_cleared advancement the player holds (tools/progression_pack.py flags; the probe-into-a-tag pattern tools/compile_dialogue.py already emits, MARKET_GATING.md section 1, VERIFIED there)"
-    },
-    "gates": {"raise": null, "ev": "gym1_cleared", "iv": "gym1_cleared"},
-    "gates_why": "the owner's 'affordable by gym 1-2'. EV was gym2_cleared and IV gym8_cleared (services.ev.gate, services.iv.gate)",
-    "prices": {
-      "raise": {"0": 100, "1": 200, "2": 400, "3": 500, "4": 800, "5": 1100, "6": 1400, "7": 2100, "8": 2500},
-      "ev": {"1": 400, "2": 1000, "3": 1300, "4": 2400, "5": 3300, "6": 4100, "7": 6200, "8": 7500},
-      "iv_per_stat": {"1": 100, "2": 200, "3": 300, "4": 400, "5": 600, "6": 700, "7": 1100, "8": 1300},
-      "iv_all_six": {"1": 600, "2": 1200, "3": 1800, "4": 2400, "5": 3600, "6": 4200, "7": 6600, "8": 7800}
-    },
-    "one_pokemon_package": {
-      "what": "one EV spread plus all six IVs at the same tier",
-      "by_tier": {"1": 1000, "2": 2200, "3": 3100, "4": 4800, "5": 6900, "6": 8300, "7": 12800, "8": 15300},
-      "was": "EV $17,200 from badge 2; IV $17,200 a stat ($103,200 all six) from badge 8 only"
-    },
-    "unchanged": "raise max_cap 62; IV value 31 and repeat_rule; the EV spreads; zero_first; every refusal; the charge and refund macros",
-    "dialogue": "one option per tier, each visible only to a player at that tier (isVisible from a per-player tag, the MARKET_GATING.md section 1 pattern, VERIFIED in EXP-022), so the price on the button is the price charged. The function re-derives t and charges that tier's price by the existing macro; it never trusts the button",
-    "not_verified": "nothing here has run. The tier read (badge probe plus the slot's level by testpartyslot level=1..100) reuses parts built for the raise and the ferry, not run together"
+    "kept_why": "the hours-saved estimates are the only record of what each service saves; the shelf ordering they fed (a bought spread of vitamins or mochi costs more than the service) still holds at every tier"
   },
   "services": {
     "raise": {
-      "price": 500,
-      "price_why": "the owner's figure (2026-10-09), ECONOMY_OVERHAUL.md section 5 table",
+      "price_why": "price_rule, tier = badges held. Was a flat $500 (the owner's figure, 2026-10-09)",
       "gate": null,
       "gate_why": "from the first cap (20) onward, the design's `From` column",
       "max_cap": 62,
@@ -86,13 +97,23 @@
         "the balance is short: nothing is charged",
         "the charge did not take exactly the price: the service does nothing",
         "the slot does not read back at the cap after the edit: the price is given back"
-      ]
+      ],
+      "price_by_tier": {
+        "0": 100,
+        "1": 200,
+        "2": 400,
+        "3": 500,
+        "4": 800,
+        "5": 1100,
+        "6": 1400,
+        "7": 2100,
+        "8": 2500
+      }
     },
     "ev": {
-      "price": 17200,
-      "price_why": "price_rule (docs/mechanics/SERVICES_AND_CRAFTING.md): one hour of training saved, at the leg-8 fight hour. Was $2,000 (ECONOMY_OVERHAUL.md section 5), which cost less than the bought inputs of either crafted route and 7 minutes of leg-8 fighting",
-      "gate": "gym2_cleared",
-      "gate_why": "badge 2, the power items' Mart tier (the design's `From` column)",
+      "price_why": "price_rule, tier = max(badges held, the slot's level band). Was $17,200 from badge 2 (superseded_price_rule)",
+      "gate": null,
+      "gate_why": "open from the first cap, every tier priced (the owner, 2026-10-22: global, badges 0-8). Was gym2_cleared; ECONOMY_V3.md proposed gym1_cleared, and tier 0 is priced by the same rule so the first leg is not left out. Setting a flag here closes it again: the dialogue and the function both read services.ev.gate",
       "zero_first": true,
       "zero_why": "EVs.canSet refuses a set that would pass 510 (note A1), and a set names only the stats it lists, so all six are zeroed in one command and the spread is set in a second; every spread below totals 508",
       "spreads": [
@@ -153,28 +174,47 @@
       ],
       "spreads_why": "the design's `two stats to 252 and HP to 4`; where HP is one of the two, the 4 goes to the stat the spread most needs next",
       "refuses": [
-        "the player has not cleared gym 2: nothing is charged",
         "the slot is empty (no level 1..max_level matches): nothing is charged",
         "the balance is short: nothing is charged",
         "the charge did not take exactly the price: the service does nothing"
       ],
-      "not_verified_after": "the spread is not read back: whether testpartyslot matches <stat>_ev properties was not read from bytecode (note A1 covers level= and species= only), and a read-back that never matches would refund every purchase. EXP-062 S4 reads the EVs in the summary screen"
+      "not_verified_after": "the spread is not read back: whether testpartyslot matches <stat>_ev properties was not read from bytecode (note A1 covers level= and species= only), and a read-back that never matches would refund every purchase. EXP-062 S4 reads the EVs in the summary screen",
+      "price_by_tier": {
+        "0": 300,
+        "1": 400,
+        "2": 1000,
+        "3": 1300,
+        "4": 2400,
+        "5": 3300,
+        "6": 4100,
+        "7": 6200,
+        "8": 7500
+      }
     },
     "iv": {
-      "price_per_stat": 17200,
-      "price_why": "price_rule (docs/mechanics/SERVICES_AND_CRAFTING.md): one hour saved per stat (fishing a silver Bottle Cap and gathering the eight mint leaves that make it a stat cap), at the leg-8 fight hour; all six $103,200. Was $1,000 a stat (ECONOMY_OVERHAUL.md section 5)",
+      "price_why": "price_rule, tier = max(badges held, the slot's level band); all six cost six times a stat. Was $17,200 a stat from badge 8 only (superseded_price_rule)",
       "value": 31,
-      "gate": "gym8_cleared",
-      "gate_why": "badge 8, the retired gold cap's gate (the design's `From` column)",
+      "gate": null,
+      "gate_why": "open from the first cap, as the EV service (the owner, 2026-10-22: global). Was gym8_cleared",
       "all_six": true,
       "refuses": [
-        "the player has not cleared gym 8: nothing is charged",
         "the slot is empty: nothing is charged",
         "the balance is short: nothing is charged",
         "the charge did not take exactly the price: the service does nothing"
       ],
       "repeat_rule": "bought again at full price, even on a stat already at 31: the dialogue says so (ECONOMY_OVERHAUL.md section 5 `Limits`)",
-      "not_verified_after": "as the EV service: not read back (testpartyslot's IV matching is unread)"
+      "not_verified_after": "as the EV service: not read back (testpartyslot's IV matching is unread)",
+      "price_per_stat_by_tier": {
+        "0": 100,
+        "1": 100,
+        "2": 200,
+        "3": 300,
+        "4": 400,
+        "5": 600,
+        "6": 700,
+        "7": 1100,
+        "8": 1300
+      }
     }
   },
   "party_over_cap": "NOT a refusal here, a deliberate departure from the design table's last clause: a raise writes exactly the cap, so it cannot put a party over it, and a party already over is told by tools/levelcap_pack.py's own notice. Checking it would make this pack call cobblers:levelcap/battle_check, and a `function` line naming a function another pack may not ship fails this pack's function at load",
@@ -269,18 +309,18 @@
     }
   ],
   "messages": {
-    "greeting": "Want a shortcut? I can train one of your Pokemon to your level cap for ${raise_price}. After your second badge I teach effort training, and after your eighth I can perfect a stat.",
+    "greeting": "Want a shortcut? I train a Pokemon to your level cap, train in its effort, or perfect its stats. My prices rise with your badges.",
     "raise_option": "Train a Pokemon to my cap (${raise_price})",
-    "ev_option": "Effort training (${ev_price} a Pokemon)",
-    "iv_option": "Perfect a stat (${iv_price} a stat)",
+    "ev_option": "Effort training (${ev_price} a Pokemon at your badges)",
+    "iv_option": "Perfect a stat (${iv_price} a stat at your badges)",
     "leave": "Not today.",
     "back": "Back.",
     "raise_page": "Which one? I train it straight to your cap. Moves it would learn on the way are worth checking afterwards.",
-    "ev_page": "Pick a training plan. I clear what it had first, then train the plan in.",
+    "ev_page": "Pick a training plan. I clear what it had first, then train the plan in. A Pokemon above your badges' level costs the price of the badges its level needs.",
     "ev_slot_page": "{spread}: which Pokemon?",
-    "iv_page": "Which stat? A stat already perfect costs the same: I do not check.",
+    "iv_page": "Which stat? A stat already perfect costs the same: I do not check. A Pokemon above your badges' level costs the price of the badges its level needs.",
     "iv_slot_page": "{stat}: which Pokemon?",
-    "iv_all": "All six (${iv_all_price})",
+    "iv_all": "All six (six times a stat)",
     "slot": "Slot {slot}",
     "cap_unread": "I can't read your level cap right now. Nothing was charged; try again in a moment.",
     "cap_closed": "Your cap is past what I train to. Nothing was charged.",
@@ -299,6 +339,7 @@
     "the slot's moves and evolutions after a level set: setLevel fires no level-up event (note A2), so whether moves are learned or an evolution is offered is EXP-062 S2; the raise page warns the player",
     "the slot's level is read by testing level=1..max_level one at a time (testpartyslot has no range syntax, note A1): up to 200 commands a purchase, well inside maxCommandChainLength",
     "the postgame per-level price (owner question 7): not built",
-    "the keepers are placed by tools/reapply.py R17TS over RCON from this file; a world that has not run that step has no keepers"
+    "the keepers are placed by tools/reapply.py R17TS over RCON from this file; a world that has not run that step has no keepers",
+    "the tier read (the highest gymN_cleared advancement, then the slot's level band) is offline-modelled only (tests/test_training_services_audit.py); EXP-062 has not run it in game"
   ]
 }

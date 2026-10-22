@@ -33,14 +33,32 @@ DOC = json.loads((ROOT / "data" / "training_services.json").read_text(encoding="
 GROUNDS = json.loads((ROOT / "data" / "training_grounds.json").read_text(encoding="utf-8"))
 NS = "cobblers:training_services/"
 STATS = ("hp", "attack", "defence", "special_attack", "special_defence", "speed")
-RAISE = DOC["services"]["raise"]["price"]
-EV = DOC["services"]["ev"]["price"]
-IV1 = DOC["services"]["iv"]["price_per_stat"]
+# The prices RISE WITH BADGES (the owner, 2026-10-21; data/training_services.json price_rule, built 2026-10-22): one
+# price a tier, 0-8. Before, one flat price per service (the 2026-10-10 rule), and these were three constants.
+RAISE_T = {int(t): v for t, v in DOC["services"]["raise"]["price_by_tier"].items()}
+EV_T = {int(t): v for t, v in DOC["services"]["ev"]["price_by_tier"].items()}
+IV1_T = {int(t): v for t, v in DOC["services"]["iv"]["price_per_stat_by_tier"].items()}
+CAPS = {int(t): v for t, v in DOC["price_rule"]["cap_by_badges_held"].items()}
+RAISE = RAISE_T[0]            # every raise check below runs with no badge: tier 0
 MAX_CAP = DOC["services"]["raise"]["max_cap"]
-# A balance that buys any one EV or IV purchase twice (the double-click check pays twice), read from the data so a
-# re-priced service (data/training_services.json price_rule) cannot turn the purchase checks into refusal checks. The
-# fixed $5,000 / $9,000 / $50,000 balances stood below the rule's $17,200 EV and $103,200 all-six IV prices.
-BAL = 2 * max(RAISE, EV, 6 * IV1) + 1000
+# A balance that buys any one purchase at any tier twice (the double-click check pays twice), read from the data so a
+# re-priced service cannot turn the purchase checks into refusal checks.
+BAL = 2 * max(max(RAISE_T.values()), max(EV_T.values()), 6 * max(IV1_T.values())) + 1000
+
+
+def badges_held(flags):
+    """The highest N of the gymN_cleared flags held, 0 with none: the rule's own words, written here from the data's
+    description (price_rule.tier.badges_held), not from the generator."""
+    return max([int(m.group(1)) for f in flags for m in [re.fullmatch(r"gym(\d)_cleared", f)] if m] or [0])
+
+
+def level_band(level):
+    """The smallest tier whose cap holds the level, else 8 (price_rule.tier.ev_and_iv)."""
+    return next((t for t in sorted(CAPS) if CAPS[t] >= level), 8)
+
+
+def stat_tier(flags, level):
+    return max(badges_held(flags), level_band(level))
 
 
 # ----------------------------------------------------------------------------------------------- reading the pack
@@ -470,8 +488,8 @@ def check_raise_edit_that_does_not_take_is_refunded_once(pack):
 
 def check_double_click_buys_once(pack):
     out = []
-    for page, price, flags in (("raise", RAISE, ()), ("ev_physical_sweeper", EV, ("gym2_cleared",)),
-                               ("iv_all", 6 * IV1, ("gym8_cleared",))):
+    for page, price, flags in (("raise", RAISE, ()), ("ev_physical_sweeper", EV_T[2], ("gym2_cleared",)),
+                               ("iv_all", 6 * IV1_T[8], ("gym8_cleared",))):
         p = Player("A", BAL, 30, [mon(5)] + [None] * 5, flags)
         g = Game(pack)
         click(g, pack, p, page, 1)
@@ -512,14 +530,14 @@ def check_ev_spread_replaces_the_old_one(pack):
         click(g, pack, p, "ev_%s" % sp["id"], 1)
         want = {s: sp["evs"].get(s, 0) for s in STATS}
         got = {s: p.party[0]["evs"].get(s, 0) for s in STATS}
-        if got != want or p.balance != BAL - EV:
+        if got != want or p.balance != BAL - EV_T[stat_tier(("gym2_cleared",), 20)]:
             out.append("%s: evs %s balance %d" % (sp["id"], got, p.balance))
     return out
 
 
 def check_iv_sets_only_what_was_bought(pack):
     out = []
-    for oid, stats, price in [(s, (s,), IV1) for s in STATS] + [("all", STATS, 6 * IV1)]:
+    for oid, stats, price in [(s, (s,), IV1_T[8]) for s in STATS] + [("all", STATS, 6 * IV1_T[8])]:
         p = Player("A", BAL, 30, [mon(20, ivs={s: 3 for s in STATS})] + [None] * 5, ("gym8_cleared",))
         g = Game(pack)
         click(g, pack, p, "iv_%s" % oid, 1)
@@ -530,20 +548,57 @@ def check_iv_sets_only_what_was_bought(pack):
 
 
 def check_ev_iv_gates_and_refusals_charge_nothing(pack):
+    """Changed 2026-10-22 (the owner, 2026-10-21: prices RISE WITH BADGES; 2026-10-22: every change global, badges
+    0-8): EV and IV are no longer gated on gym 2 and gym 8, so "without its badge" is no longer a refusal. A gate in
+    the data still refuses (checked when one is set); an empty slot and a balance one short of THE TIER'S price
+    still charge nothing."""
     out = []
-    for page, flags in (("ev_bulky_special", ()), ("ev_bulky_special", ("gym8_cleared",)),
-                        ("iv_speed", ("gym2_cleared",)), ("iv_all", ())):
-        p = Player("A", BAL, 30, [mon(20)] + [None] * 5, flags)
-        g = Game(pack)
-        click(g, pack, p, page, 1)
-        if p.balance != BAL or p.party[0] != mon(20):
-            out.append("%s without its badge (%s): charged or edited" % (page, flags))
-    for page, flag in (("ev_bulky_special", "gym2_cleared"), ("iv_speed", "gym8_cleared")):
-        for p in (Player("A", BAL, 30, None, (flag,)), Player("A", 10, 30, [mon(20)] + [None] * 5, (flag,))):
-            g = Game(pack)
-            click(g, pack, p, page, 1)
-            if p.balance not in (BAL, 10):
-                out.append("%s empty or short: charged" % page)
+    for key, page in (("ev", "ev_bulky_special"), ("iv", "iv_speed")):
+        gate = DOC["services"][key].get("gate")
+        if gate:
+            p = Player("A", BAL, 30, [mon(20)] + [None] * 5, ())
+            click(Game(pack), pack, p, page, 1)
+            if p.balance != BAL or p.party[0] != mon(20):
+                out.append("%s without %s: charged or edited" % (page, gate))
+        flags = (gate,) if gate else ("gym3_cleared",)
+        need = (EV_T if key == "ev" else IV1_T)[stat_tier(flags, 20)]
+        for p in (Player("A", BAL, 30, None, flags), Player("A", need - 1, 30, [mon(20)] + [None] * 5, flags)):
+            before = p.balance
+            click(Game(pack), pack, p, page, 1)
+            if p.balance != before or (p.party[0] is not None and p.party[0] != mon(20)):
+                out.append("%s empty or one short of $%d: charged or edited" % (page, need))
+    return out
+
+
+def check_ev_iv_charge_the_tier_price(pack):
+    """The owner, 2026-10-21 (RISES WITH BADGES) and ECONOMY_V3.md 3.2's co-op rule: an EV or IV purchase costs the
+    tier max(badges held, the slot's level band), whatever the dialogue showed. Swept over every badge count, the
+    level-band edges, and a player holding a later badge without an earlier one."""
+    out = []
+    flag_sets = [tuple("gym%d_cleared" % n for n in range(1, h + 1)) for h in range(0, 9)] + [("gym5_cleared",)]
+    levels = sorted({5} | {c for c in CAPS.values()} | {c + 1 for c in CAPS.values()} | {100})
+    for flags in flag_sets:
+        for lv in levels:
+            t = stat_tier(flags, lv)
+            for page, price in (("ev_physical_sweeper", EV_T[t]), ("iv_hp", IV1_T[t]), ("iv_all", 6 * IV1_T[t])):
+                p = Player("A", BAL, 30, [mon(lv)] + [None] * 5, flags)
+                click(Game(pack), pack, p, page, 1)
+                if BAL - p.balance != price:
+                    out.append("%s, %d badge(s) %s, level %d: paid %d, tier %d price %d"
+                               % (page, badges_held(flags), flags[-1:] or "-", lv, BAL - p.balance, t, price))
+    return out
+
+
+def check_raise_charges_the_badge_tier_price(pack):
+    """The raise's tier is the badges held alone (price_rule.tier.raise): the slot's level does not move it."""
+    out = []
+    for h in range(0, 9):
+        flags = tuple("gym%d_cleared" % n for n in range(1, h + 1))
+        for lv in (1, 19):
+            p = Player("A", BAL, 20, [mon(lv)] + [None] * 5, flags)
+            click(Game(pack), pack, p, "raise", 1)
+            if BAL - p.balance != RAISE_T[h]:
+                out.append("raise with %d badge(s), slot level %d: paid %d, not %d" % (h, lv, BAL - p.balance, RAISE_T[h]))
     return out
 
 
@@ -569,7 +624,8 @@ ALL_CHECKS = [check_raise_sets_exactly_the_cap, check_raise_never_leaves_a_slot_
               check_raise_edit_that_does_not_take_is_refunded_once, check_double_click_buys_once,
               check_players_do_not_share_a_purchase, check_ev_spread_replaces_the_old_one,
               check_iv_sets_only_what_was_bought, check_ev_iv_gates_and_refusals_charge_nothing,
-              check_every_option_maps_to_its_slot]
+              check_every_option_maps_to_its_slot, check_ev_iv_charge_the_tier_price,
+              check_raise_charges_the_badge_tier_price]
 
 
 # ------------------------------------------------------------------------------------------------- the tests
@@ -618,9 +674,35 @@ def test_an_iv_purchase_sets_only_the_stats_bought(pack):
     assert check_iv_sets_only_what_was_bought(pack) == []
 
 
-# Removing this lets a player without the badge, with an empty slot or short of money be charged for EV/IV.
+# Removing this lets a player with an empty slot or short of the tier's price (or, if a gate is set, without it) be
+# charged for EV/IV.
 def test_ev_and_iv_refusals_charge_nothing(pack):
     assert check_ev_iv_gates_and_refusals_charge_nothing(pack) == []
+
+
+# Removing this lets an EV or IV purchase charge a flat price, the badges' price for a Pokemon above their level band
+# (a traded high-level Pokemon trained cheap), or the wrong tier for a player missing an earlier badge.
+def test_ev_and_iv_charge_the_tier_of_badges_and_level_band(pack):
+    assert check_ev_iv_charge_the_tier_price(pack) == []
+
+
+# Removing this lets the raise charge a price other than the one its badges name.
+def test_the_raise_charges_the_price_of_the_badges_held(pack):
+    assert check_raise_charges_the_badge_tier_price(pack) == []
+
+
+# Removing this lets a keeper's hub show a player some other tier's price, or no option for some badge count.
+def test_each_tier_has_one_hub_option_per_service_showing_its_price(pack):
+    m = DOC["messages"]
+    for did, d in pack["dialogues"].items():
+        hub = next(pg for pg in d["pages"] if pg["id"] == "hub")
+        texts = [o["text"] for o in hub["input"]["options"]]
+        for t in range(0, 9):
+            for tmpl, key, v in (("raise_option", "raise_price", RAISE_T[t]), ("ev_option", "ev_price", EV_T[t]),
+                                 ("iv_option", "iv_price", IV1_T[t])):
+                want = m[tmpl].replace("{%s}" % key, str(v))
+                assert want in texts, (did, t, want)
+        assert len(texts) == 3 * 9 + 1, (did, len(texts))
 
 
 # Removing this lets "Slot 3" in some keeper's dialogue edit a different slot.
@@ -631,9 +713,9 @@ def test_every_slot_option_of_every_keeper_edits_that_slot(pack):
 # DEFECT (recorded, not fixed): the EV and IV runs charge, then edit without reading the edit back, then print
 # "Done" unconditionally. An edit that fails after the charge keeps the player's money and tells them it worked.
 # strict: when the generator gains a read-back and refund, this xfail turns into a failure, and the marker goes.
-@pytest.mark.xfail(strict=True, reason="tools/training_services.py:241-248 stat_run: no read-back, no refund")
-@pytest.mark.parametrize("page,flag,price", [("ev_physical_sweeper", "gym2_cleared", EV),
-                                             ("iv_all", "gym8_cleared", 6 * IV1)])
+@pytest.mark.xfail(strict=True, reason="tools/training_services.py stat_pay: no read-back, no refund")
+@pytest.mark.parametrize("page,flag,price", [("ev_physical_sweeper", "gym2_cleared", EV_T[2]),
+                                             ("iv_all", "gym8_cleared", 6 * IV1_T[8])])
 def test_an_ev_or_iv_edit_that_does_not_take_keeps_the_players_money(pack, page, flag, price):
     p = Player("A", BAL, 30, [mon(20)] + [None] * 5, (flag,))
     click(Game(pack, edit="fail"), pack, p, page, 1)
@@ -741,6 +823,17 @@ MUTATIONS = {
     "the IV option writes every stat": (
         [('props=iv_props(stats, int(iv["value"]))', 'props=iv_props(STATS, int(iv["value"]))')],
         check_iv_sets_only_what_was_bought),
+    "the level band is dropped": (
+        [("+ badge_tier_lines() + band_lines(doc)", "+ badge_tier_lines()")],
+        check_ev_iv_charge_the_tier_price),
+    "the badges are never read": (
+        [('"execute if entity @s[advancements={%s:flag/gym%d_cleared=true}] run scoreboard players set #tier %s %d"',
+          '"execute if entity @s[advancements={%s:flag/gym%d_never=true}] run scoreboard players set #tier %s %d"')],
+        check_raise_charges_the_badge_tier_price),
+    "every tier pays the tier-0 price": (
+        [('files[fn_path("raise/pay_%d" % t)] = raise_pay(doc, price)',
+          'files[fn_path("raise/pay_%d" % t)] = raise_pay(doc, tier_prices(doc, "raise")[0])')],
+        check_raise_charges_the_badge_tier_price),
 }
 
 

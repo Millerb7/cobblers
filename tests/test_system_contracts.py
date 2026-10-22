@@ -1423,8 +1423,14 @@ def test_contract_c23_the_tm_gate_unlocks_on_the_flags_the_progression_pack_gran
             for line in counter.get(k) or []:
                 if str(line.get("item", "")).startswith("tmcraft:tm_") and isinstance(line.get("gate_badge"), int):
                     shelf[line["item"]] = line["gate_badge"]
-    assert shelf and all(item in pools and pools[item] == b for item, b in shelf.items()), \
-        {i: (b, pools.get(i)) for i, b in shelf.items() if pools.get(i) != b}
+    # changed 2026-10-22: the tier shelves (data/markets.json price_policies.tm_tier, the TM shops for both modes) also
+    # sell answer TMs in no leader's pool; such a line carries the TM's power-rule badge from the committed score table
+    # (docs/mechanics/TM_POWER_GATE.json, read here), so the shelf moves no craft badge
+    power = {k: v["power_badge"] for k, v in json.loads(
+        (ROOT / "docs" / "mechanics" / "TM_POWER_GATE.json").read_text(encoding="utf-8"))["tms"].items()}
+    want = {item: pools[item] if item in pools else power.get(item) for item in shelf}
+    assert shelf and shelf == want, {i: (b, want[i]) for i, b in shelf.items() if want[i] != b}
+    assert any(i in pools for i in shelf) and any(i not in pools for i in shelf)
 
 
 def _walk_values(obj, key):

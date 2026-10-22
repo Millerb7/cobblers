@@ -195,12 +195,29 @@ def test_counter_lines_are_the_sited_stock_and_only_that(raw):
                     refused.add(line["item"])
         for key in ("held_stock", "superseded_stock"):
             refused |= {line["item"] for line in c.get(key) or [] if line["item"].startswith("tmcraft:tm_")}
-    assert len(want) == 10, want  # the sited shelf today; a change here is a change to this page's claim
+    # the sited shelf today; a change here is a change to this page's claim. Was 10 (Fossick's alone); since
+    # 2026-10-22 the tier shelves (data/markets.json price_policies.tm_tier, TM shops for both modes) sell 52 TMs
+    assert len(want) == 52, want
     for item, r in rows.items():
         got = {li for li in r["lis"] if li.startswith("Counter in")}
         assert got == want.get(item, set()), (item, got, want.get(item))
-    assert refused - set(want), "no held line to refuse: the check is vacuous"
     assert "northlight" not in raw.lower(), "a held counter is named"
+    # Changed 2026-10-22: the thirteen Northlight held TM lines were released to the tier shelves, so the data holds no
+    # held TM line any more and the refusal is proven on a synthetic one instead: a held line and an unsited
+    # counter's line, added to a copy of the data, are never a source in the sources the page is built from.
+    if not (refused - set(want)):
+        import copy
+        import player_guide_items as PI
+        syn = copy.deepcopy(mk)
+        sited = next(c for c in syn["counters"] if c.get("status") == "sited")
+        sited.setdefault("held_stock", []).append({"id": "syn_held", "item": "tmcraft:tm_tackle", "price": 1})
+        unsited = copy.deepcopy(sited)
+        unsited.update(id="syn_unsited", status="planned", held_stock=[],
+                       stock=[{"id": "syn_un", "item": "tmcraft:tm_growl", "price": 1}])
+        syn["counters"].append(unsited)
+        shops, not_sold = PI.shop_sources(syn, PI.place_names(syn))
+        assert {"tmcraft:tm_tackle", "tmcraft:tm_growl"} <= {line["item"] for _r, _k, line in not_sold}
+        assert not {"tmcraft:tm_tackle", "tmcraft:tm_growl"} & set(shops), "a held or unsited line became a source"
 
 
 # ------------------------------------------------------------------------------------------------ leaders

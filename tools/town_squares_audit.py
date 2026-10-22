@@ -1180,7 +1180,34 @@ def item_checks(markets_doc, spawn, ids):
             # still needs a badge gate
             why = "is not badge-gated and declares no gate_badge"
             gb = it.get("gate_badge")
-            if not gated and kind == "counter" and "gate_badge" in it:
+            # changed 2026-10-22 (docs/mechanics/ECONOMY_V3.md 3.3, the TM shelves for both modes; the owner 2026-10-21:
+            # prices rise with badges and the economy is priced for the path a player actually walks): a counter TM
+            # line under price_rule tm_tier is gated by its TIER, not the road's income. It passes when its tier T is
+            # at or above its gate_badge, the counter may sell T (gym N's town tier N-1, gym 8's also 8; an off-path
+            # counter at the line's own badge), and one unit costs at least the rule's share of what the PATH pays in
+            # the leg played holding T badges (income_basis.path, read from the data and recomputed here)
+            if kind == "counter" and it.get("price_rule") == "tm_tier":
+                gated = False    # the tier is this line's gate, even where a dropped badge gate is also recorded
+                pol =(markets_doc.get("price_policies") or {}).get("tm_tier") or {}
+                path_leg = ((markets_doc.get("income_basis") or {}).get("path") or {}).get("leg_by_badges_held") or {}
+                t, n, b = it.get("tier"), it.get("count") or 1, rec.get("badge")
+                may = ({b - 1} | ({8} if b == 8 else set())) if rec.get("path") == "critical" and isinstance(b, int) \
+                    else {gb}
+                try:
+                    floor = math.ceil(float(pol["fraction"]) * int(path_leg[str(t)]) / int(pol["round_to"])) * int(pol["round_to"])
+                except (KeyError, TypeError, ValueError):
+                    floor = None
+                if floor is None:
+                    why = "is a tm_tier line with no readable price_policies.tm_tier or income_basis.path tier %r" % (t,)
+                elif not (isinstance(gb, int) and isinstance(t, int) and gb <= t):
+                    why = "is a tm_tier line at tier %r with gate_badge %r: a TM sold before its craft badge" % (t, gb)
+                elif t not in may:
+                    why = "is a tm_tier line at tier %d on a counter that sells tier %s" % (t, sorted(may))
+                elif isinstance(it.get("price"), (int, float)) and it["price"] >= floor * n:
+                    gated = True
+                else:
+                    why = "is a tm_tier line at tier %d costing %r, under the rule's $%d" % (t, it.get("price"), floor)
+            if not gated and kind == "counter" and "gate_badge" in it and it.get("price_rule") != "tm_tier":
                 inc = ((markets_doc.get("income_basis") or {}).get("cumulative_by_badge") or {})
                 n = it.get("count") or 1
                 if isinstance(gb, bool) or not isinstance(gb, int) or str(gb) not in inc:
