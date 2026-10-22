@@ -118,11 +118,13 @@ def test_r17_places_every_trainer_at_its_seat(steps):
     HQ = json.loads((ROOT / "data" / "hq_trainers.json").read_text(encoding="utf-8"))["trainers"]
     # and the Haven Compact's seven route fighters (data/compact_route_trainers.json, 2026-10-11)
     COMPACT = json.loads((ROOT / "data" / "compact_route_trainers.json").read_text(encoding="utf-8"))["trainers"]
+    # and the mine crews (data/mine_crew_trainers.json, 2026-10-22): twelve in each long mine network, after R9MN carves them
+    MINE = json.loads((ROOT / "data" / "mine_crew_trainers.json").read_text(encoding="utf-8"))["trainers"]
     want = [(t["id"], tuple(t["seat"]), t["yaw"])
-            for t in SEATS + LATE + GUARDIANS + VR_SEATS + SEATED_ARENA + JUNIORS + HQ + COMPACT]
-    assert (len(SEATS), len(LATE), len(GUARDIANS), len(VR_SEATS), len(ARENA), len(JUNIORS), len(HQ), len(COMPACT)) == \
-        (13, 28, 5, 10, 7, 26, 7, 7)
-    assert len(want) == len(set(want)) == 96
+            for t in SEATS + LATE + GUARDIANS + VR_SEATS + SEATED_ARENA + JUNIORS + HQ + COMPACT + MINE]
+    assert (len(SEATS), len(LATE), len(GUARDIANS), len(VR_SEATS), len(ARENA), len(JUNIORS), len(HQ), len(COMPACT), len(MINE)) == \
+        (13, 28, 5, 10, 7, 26, 7, 7, 36)
+    assert len(want) == len(set(want)) == 132
     assert sorted(_acts(steps, "R17", "trainer")) == sorted(want)
 
 

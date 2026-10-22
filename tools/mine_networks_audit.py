@@ -62,7 +62,7 @@ OPEN_BASES = ("minecraft:air", "minecraft:ladder", "minecraft:rail", "minecraft:
 NUM = r"(-?\d+)"
 FILL = re.compile(r"fill %s %s %s %s %s %s (\S+)(?: replace (\S+))?$" % ((NUM,) * 6))
 SET = re.compile(r"setblock %s %s %s (\S+)$" % ((NUM,) * 3))
-SKIP_FILES = {"mine_networks.json", "world.json", "regions.json", "cells.json"}
+SKIP_FILES = {"mine_networks.json", "mine_crew_trainers.json", "world.json", "regions.json", "cells.json"}
 
 
 def base(b):
