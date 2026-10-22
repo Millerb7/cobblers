@@ -863,7 +863,7 @@ def test_a_tm_tier_line_is_gated_by_its_tier_and_the_path_income():
     power = lambda d: [m for c, k, m in A.item_checks(d, set(), set())[0] if c == "power" and "tmcraft:" in m]  # noqa: E731
     assert power(doc) == []
     tm = [(c, it) for c in doc["counters"] for it in c.get("stock") or [] if it.get("price_rule") == "tm_tier"]
-    assert len(tm) == 62
+    assert len(tm) == 80        # 62 + the 18 utility lines of 2026-10-22 (price_policies.tm_tier.utility)
     for mutate, why in ((lambda it: it.update(price=it["price"] - 100), "under the rule"),
                         (lambda it: it.update(tier=it["tier"] + 1), "on a counter that sells tier"),
                         (lambda it: it.update(gate_badge=it["tier"] + 1), "before its craft badge")):
