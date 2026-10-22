@@ -34,9 +34,10 @@ PACK_FORMAT = 48  # Minecraft 1.21.1
 NS = "cobblers"
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_no_beans"
 SWEEP_TICKS = 20
-# the BeanItem items (read from the jar's item models, 2026-10-21)
-BEANS = ("red_bean", "orange_bean", "yellow_bean", "green_bean", "blue_bean", "indigo_bean", "violet_bean",
-         "patterned_indigo_bean", "patterned_violet_bean")
+# the BeanItem items: the seven the live server's item registry knows (each tested with `clear @a <id> 0` over RCON,
+# 2026-10-22). The jar also ships models for patterned_indigo_bean and patterned_violet_bean, but no such items are
+# registered, and one unknown id makes the server refuse the whole sweep function (it did, at the 2026-10-22 install)
+BEANS = ("red_bean", "orange_bean", "yellow_bean", "green_bean", "blue_bean", "indigo_bean", "violet_bean")
 # every recipe in the jar whose name names a bean (read 2026-10-21): the bean dishes and cakes
 BEAN_RECIPES = ("bean_ham_salad", "bean_medley_curry", "beanburger_curry", "cake_bean_blue", "cake_bean_green",
                 "cake_bean_orange", "cake_bean_red", "cake_bean_yellow")
