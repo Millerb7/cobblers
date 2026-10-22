@@ -280,16 +280,18 @@ def test_every_default_is_confirmed_by_the_owner():
 
 
 def test_the_owners_proposal_is_what_the_file_says():
-    # 6-9 open (the owner, 2026-10-16: "we need more rifts"; job D proposed 3-5), an hour of play each, closed once
-    # entered, anywhere including gated, a chat line naming the region
-    assert (V["open_min"], V["open_max"]) == (6, 9)
+    # 10-14 open (the owner, 2026-10-21: "more rift spawns, no one has come close to one yet"; 6-9 from 2026-10-16, job D
+    # proposed 3-5), half of them drawn near a player ("focus some closer to players, not all though"), an hour of play
+    # each, closed once entered, anywhere including gated, a chat line naming the region
+    assert (V["open_min"], V["open_max"]) == (10, 14)
+    assert V["near_player_share"] == 2 and V["near_player_radius"] == 768
     assert V["lifetime_minutes"] == 60 and V["close_when_entered"] is True
     assert V["sites"] == "anywhere" and V["gated_sites"] == "allow"
     assert "{region}" in V["announce"]
 
 
 @pytest.mark.parametrize("key,val,needle", [
-    ("open_min", 10, "above open_max"), ("open_max", 0, "open_max"), ("lifetime_jitter_minutes", 60, "jitter"),
+    ("open_min", 15, "above open_max"), ("open_max", 0, "open_max"), ("lifetime_jitter_minutes", 60, "jitter"),
     ("gated_sites", "maybe", "gated_sites"), ("announce", "A rift has opened.", "announce"), ("pass_seconds", 0, "pass_seconds"),
     ("sites", "nearby", "sites"), ("enabled", "yes", "enabled")])
 def test_a_setting_out_of_range_is_named_and_the_build_refuses(key, val, needle):
@@ -339,13 +341,14 @@ def synthetic(ddoc, n):
 
 @pytest.mark.parametrize("n", [1, 7, 20, 60])
 def test_the_pool_is_the_rips_list_whatever_its_length(n):
-    # three functions a candidate (open, close, kill polls) and seven fixed; the pass and the pick name every candidate once
+    # three functions a candidate (open, close, kill polls) and eleven fixed (seven, and the near pick's four: choose,
+    # pick_near, near_roll, near_open); the pass and the pick name every candidate once
     d = synthetic(DDOC, n)
     rd = copy.deepcopy(RDOC)
     rd["settings"]["open_min"]["value"] = min(3, n)         # a pool smaller than the minimum is refused (the next test)
     rd["settings"]["open_max"]["value"] = min(5, n)
     fns = RS.functions(d, rd)
-    assert len(fns) == 3 * n + 7
+    assert len(fns) == 3 * n + 11
     for i in range(1, n + 1):
         assert {"o%d" % i, "c%d" % i, "x%d" % i} <= set(fns)
     pass_text = "\n".join(fns["pass"])
@@ -372,7 +375,7 @@ def test_the_real_pool_builds_clean_and_every_function_passes_the_servers_own_li
     files = RS.pack_files(DDOC, RDOC)                       # raises on a command the server would refuse or drop
     assert files["pack.mcmeta"] and json.loads(files["data/minecraft/tags/function/load.json"])["values"] == ["cobblers:rips/load"]
     n = len(D.rips(DDOC))
-    assert RS.measure(files)[1] == 3 * n + 7
+    assert RS.measure(files)[1] == 3 * n + 11
     assert RS.build_problems(DDOC, RDOC) == []
 
 
@@ -829,7 +832,9 @@ def test_the_chat_line_names_the_region_plainly_and_goes_to_every_player():
 
 def test_the_pick_is_uniform_over_the_pool_and_every_candidate_can_be_drawn():
     d = synthetic(DDOC, 6)
-    w = build_world(ddoc=d, seed=2)
+    # the real open_min (10) is above a six-candidate pool, which build_problems refuses; the draw is what is tested
+    w = build_world(ddoc=d, seed=2, rdoc_edit=lambda r: (r["settings"]["open_min"].update(value=3),
+                                                        r["settings"]["open_max"].update(value=5)))
     far_player(w)
     w.call("init")
     seen = {}

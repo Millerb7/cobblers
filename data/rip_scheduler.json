@@ -10,14 +10,14 @@
       "origin": "builder: a switch for the scheduler as a whole. Set false and the pass does nothing (no rip opens; open ones close at their timers). At runtime: scoreboard players set #on rp.v 0|1."
     },
     "open_min": {
-      "value": 6,
+      "value": 10,
       "owner_confirmed": true,
-      "origin": "the owner, 2026-10-16: 'we need more rifts ... there wasnt many early game' (was 3, job D's '3-5 open at once'); 6 and 9 are Claude's numbers, set live by RCON the same day. Below this many open, the scheduler opens one every pass (5 s) until it is reached."
+      "origin": "the owner, 2026-10-21: 'more rift spawns, no one has come close to one yet' (was 6; 10 and 14 are Claude's numbers, set live by RCON the same day). Before: the owner, 2026-10-16: 'we need more rifts ... there wasnt many early game' (was 3, job D's '3-5 open at once'); 6 and 9 are Claude's numbers, set live by RCON the same day. Below this many open, the scheduler opens one every pass (5 s) until it is reached."
     },
     "open_max": {
-      "value": 9,
+      "value": 14,
       "owner_confirmed": true,
-      "origin": "the owner, 2026-10-16: more rifts (was 5); Claude's number. The cap: nothing opens while this many are open. Between open_min and open_max a further one opens at random (extra_open_every_minutes)."
+      "origin": "the owner, 2026-10-21: more rifts (was 9); Claude's number, under the 20 regions one_open_per_region allows. Before: the owner, 2026-10-16: more rifts (was 5). The cap: nothing opens while this many are open. Between open_min and open_max a further one opens at random (extra_open_every_minutes)."
     },
     "lifetime_minutes": {
       "value": 60,
@@ -73,6 +73,16 @@
       "value": 560,
       "owner_confirmed": true,
       "origin": "builder: the height of the SKY HOLD where a rip's original blocks wait while it is open (tools/dungeon.py rip_save_lines). The overworld here is min_y -64, height 640 (modpack/datapacks/cobblers_height), so y 575 is the top; the canopy of the world tree peaks at y535 (tools/reapply.py CROWN). The hold is in the rip's own chunks, 560 to 564."
+    },
+    "near_player_share": {
+      "value": 2,
+      "owner_confirmed": true,
+      "origin": "the owner, 2026-10-21: 'maybe focus some closer to players, not all though'. One opening in this many is drawn near a player (pick_near): one online overworld player at random, then a uniform random candidate within near_player_radius of them that is closed and whose region has none open; with none, the ordinary uniform pick. 2 (half) is Claude's number; 0 turns it off, 1 makes every opening a near one."
+    },
+    "near_player_radius": {
+      "value": 768,
+      "owner_confirmed": true,
+      "origin": "Claude's number for the owner's 'closer to players' (2026-10-21): a horizontal square, this many blocks to each side of the player, every height. Three quarters of a 1024-block cell, so a near rift is a short trip, not one on the player's doorstep."
     }
   }
 }
