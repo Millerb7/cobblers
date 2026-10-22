@@ -423,6 +423,11 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # blocks run by R9CK BEFORE R9E (a Habitat Block stands in each part's floor); the gates' barrier doors and the
                 # area boss's keeper act on their own (tick drivers, a capture callback), so world-local below
                 "cobblers_caves",
+                # 2026-10-22: the cave systems (tools/cave_systems.py, data/cave_systems.json): three thousand-block natural
+                # networks west of x 4032, blocks only (shell, carve, ore, lanterns), run by R9CS in 192-block tiles, each held by its
+                # own forceload. Nothing in it acts on its own, so it is global and `strip` takes it out of the heap after the run.
+                # OFFLINE: built and audited, never yet applied to any world
+                "cobblers_cave_systems",
                 # 2026-10-12: the legendary sanctuaries (tools/sanctuaries.py, data/sanctuaries.json), the open-air set pieces that
                 # replace the cave kit's K2-K6: blocks and the retired caves' restore run by R9SY (after R9CK, BEFORE R9E); the
                 # gates' barrier doors and the area bosses' keeper act on their own (tick drivers, a capture callback), so
@@ -1349,6 +1354,12 @@ def prepare_jobs(a):
     # closed and open, the gate, the keeper's guardian safety and clocks, the records, and the keep-clear distances. Fail-closed
     add("caves:build", "caves.py", "build", *src)
     add("caves_audit", "caves_audit.py", "--inputs-root", str(ROOT), *src)
+    # the cave systems (data/cave_systems.json, 2026-10-22): three networks of passage a few thousand blocks long, carved in 192-block
+    # tiles. Built from the heightmap and data alone (no other pack's writes are read: see the tool's "does not cover"), then its
+    # audit REPLAYS the written pack against the heightmap and the data (cover, water, authored clearance, the shell and its order,
+    # the walk from every mouth) and fails the prepare on any breach. Fail-closed
+    add("cave_systems:build", "cave_systems.py", "build", *src)
+    add("cave_systems_audit", "cave_systems_audit.py", *src)
     # the legendary sanctuaries (data/sanctuaries.json): the same reason (their siting keeps clear of every other built pack's
     # writes), and the Habitat Blocks, pools and probes they keep in data/ are refused if they drifted. Its audit
     # (tools/sanctuaries_audit.py) replays the pack over the heightmap: the walk with the door closed and open, nothing floating,
@@ -2417,6 +2428,13 @@ def steps(with_spawns=False):
     import caves
     out.append(("R9CK", "the cave kit: %s (data/caves.json)" % ", ".join("%s %s" % (c["kind"], c["id"]) for c in caves.load()["caves"]),
                 caves.placement_steps()))
+    # the cave systems (tools/cave_systems.py, data/cave_systems.json): per 192-block tile hold its box, run its function, release
+    # it; every tile's SHELL (water and lava in and round the carve become stone) first, then every tile's CARVE (air, the shell
+    # again, air again, ore, lanterns), so no pocket beside a tile edge can flood a passage that is already open. Independent of
+    # R9E (no Habitat Block stands in these caves) and of every other block pass: they keep 32 blocks clear of what data/ authors
+    import cave_systems
+    out.append(("R9CS", "the cave systems: %s (data/cave_systems.json)" % ", ".join(s_["id"] for s_ in cave_systems.load()["systems"]),
+                cave_systems.placement_steps()))
     # the legendary sanctuaries (tools/sanctuaries.py, data/sanctuaries.json; 2026-10-12, the open-air set pieces that replace the
     # cave kit's K2-K6): AFTER R9CK and BEFORE R9E. Per retired cave (K1-K6, applied in staging by R9CK before they were retired):
     # hold its box and its successor's, restore every column it wrote to the heightmap's terrain, read back that nobody stood in it

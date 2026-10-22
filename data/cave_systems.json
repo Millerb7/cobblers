@@ -1,0 +1,349 @@
+{
+  "schema": "cobblers.cave_systems/1",
+  "status": "authored offline 2026-10-22; nothing is applied to any world",
+  "generated_by": "hand, from the owner's brief of 2026-10-21; read by tools/cave_systems.py, replayed by tools/cave_systems_audit.py",
+  "owner_words": "\"with no caves people wont be incentivized to mine at all ... i need some to be thousands long or just somehow carve out caves underground, really need that\" / \"a few hunderd block caves wont be enoughfor 10 people\" / \"its looking more like 6 now\" (2026-10-21)",
+  "design": "tools/cave_systems.py docstring; the picture is docs/world-building/CAVE_SYSTEMS.md",
+  "step": "R9CS (tools/reapply.py), prepare jobs cave_systems:build and cave_systems_audit",
+  "rules": {
+    "west_limit_x": 64,
+    "east_limit_x": 4000,
+    "east_limit_why": "the eastern half (x >= 4096) belongs to another agent building mines the same night: every WRITE of the pack (carve, shell, ore, lantern) must stay at least 64 blocks west of x 4096, that is x <= 4032. Carving stops at 4000 so that the shell, which reaches at most 5 cells beyond a carved cell, cannot pass 4005",
+    "write_limit_x": 4032,
+    "north_limit_z": 150,
+    "south_limit_z": 8040,
+    "cover_min": 8,
+    "cover_min_why": "the brief: at least 8 blocks of rock over every carved cell except at a mouth. Cover is ground (round(h), tools/ground.py) minus the cell's y",
+    "plan_cover": 11,
+    "plan_slack": {
+      "authored": 4,
+      "water": 4
+    },
+    "water_reach": 12,
+    "authored_clearance": 32,
+    "authored_why": "the brief: a margin of 32 from every x/z, footprint, route and the Rift that data/ authors",
+    "exclusion_discs": [
+      {
+        "x": 3366,
+        "z": 1755,
+        "r": 520,
+        "why": "the Displaced City (data/placements.json settlement centre 3366,1755): a cavern 60 to 100 blocks under the surface whose plan, derived/cavern/plan.json, is not in a fresh checkout, so its extent is not known: keep a disc of 520"
+      },
+      {
+        "x": 2970,
+        "z": 1710,
+        "r": 260,
+        "why": "the same town's footprint in data/towns.json (2904..3035, 1645..1776), which disagrees with the placement's centre by about 400 blocks; both are kept clear until the owner settles which is right"
+      },
+      {
+        "x": 1092,
+        "z": 5532,
+        "r": 380,
+        "why": "Relic Island and its relic area under the sea floor (data/relic_underground.json): carved rock the points do not outline"
+      }
+    ],
+    "shell": 2,
+    "shell_block": 4,
+    "shell_block_why": "the shell is written in 4 x 4 x 4 blocks aligned to the world (a superset of the two-cell ring, never more than 5 cells past a carved cell): it only turns water and lava to stone, and meshing the exact ring cost as many lines as the carve",
+    "shell_why": "every water and lava block within two cells of any carved cell becomes stone (deepslate under y0), before and in the middle of the carve; the carve is then run again so the passage is never refilled",
+    "tile": 192,
+    "tile_why": "12 x 12 chunks = 144 chunks, under forceload's 256; every function writes only inside its own tile so a held tile is all it needs",
+    "min_floor_y": -42,
+    "mouth_zone": 46,
+    "mouth_zone_why": "inside this horizontal distance of a mouth the passage may rise to the surface (cover is only required to be >= 0); everywhere else cover_min holds. The audit allows the same radius and no more",
+    "width": [
+      3.0,
+      7.0
+    ],
+    "height": [
+      4.0,
+      7.0
+    ],
+    "slope_max": 0.5,
+    "separation": 11,
+    "separation_v": 12,
+    "turn_sigma": 0.055,
+    "fork_flat": 14,
+    "fork_flat_why": "a branch keeps its parent's floor for its first 14 blocks, so two tubes that overlap at a fork share one floor level and no ledge of two or more is cut where they part",
+    "join_chance": 0.25,
+    "join_after": 140,
+    "child_rate": 0.06,
+    "child_spacing": 30,
+    "trunk_len": [
+      300,
+      520
+    ],
+    "descent_len": [
+      300,
+      600
+    ],
+    "side_len": [
+      55,
+      420
+    ],
+    "side_len_mean": 170,
+    "level_share": [
+      0.3,
+      0.36,
+      0.24,
+      0.1
+    ],
+    "level_base": {
+      "side": 0.6,
+      "descent": 0.3,
+      "ascent": 0.1
+    },
+    "level_pull": 6.0,
+    "level_why": "a child branch picks its level from the one it forks from and the two beside it, by a weight that grows with how far that level is short of its share of the system's centreline (level_share, upper to abyss)",
+    "hall_chance": 0.55,
+    "cavern": {
+      "across": [
+        34,
+        80
+      ],
+      "tall": [
+        15,
+        40
+      ],
+      "spacing": 130
+    },
+    "levels": [
+      {
+        "id": "upper",
+        "y": 66,
+        "spread": 5
+      },
+      {
+        "id": "middle",
+        "y": 30,
+        "spread": 6
+      },
+      {
+        "id": "deep",
+        "y": -8,
+        "spread": 6
+      },
+      {
+        "id": "abyss",
+        "y": -30,
+        "spread": 4
+      }
+    ],
+    "light": {
+      "at_nodes": [
+        3,
+        8,
+        14,
+        20
+      ],
+      "why": "a lantern on the floor at four points inside each mouth passage, no other light anywhere: the caves are dark by design"
+    },
+    "ore": {
+      "min_cover": 5,
+      "centre_rate": 0.0042,
+      "rich_base": 0.6,
+      "rich_depth": 1.1,
+      "rich_far": 1.3,
+      "rich_why": "a vein centre's chance is centre_rate x (rich_base + rich_depth x depth below the surface / 140, capped + rich_far x distance from the nearest town / 1000, capped): richer deeper and farther from towns; the ore type is weighted by its weight and, for the rare ores, by depth_gain x (richness - 1)",
+      "types": [
+        {
+          "id": "coal",
+          "stone": "minecraft:coal_ore",
+          "deepslate": "minecraft:deepslate_coal_ore",
+          "y_min": -30,
+          "y_max": 130,
+          "weight": 30,
+          "vein": 8,
+          "depth_gain": 0
+        },
+        {
+          "id": "iron",
+          "stone": "minecraft:iron_ore",
+          "deepslate": "minecraft:deepslate_iron_ore",
+          "y_min": -42,
+          "y_max": 100,
+          "weight": 24,
+          "vein": 6,
+          "depth_gain": 0.2
+        },
+        {
+          "id": "copper",
+          "stone": "minecraft:copper_ore",
+          "deepslate": "minecraft:deepslate_copper_ore",
+          "y_min": -30,
+          "y_max": 110,
+          "weight": 18,
+          "vein": 7,
+          "depth_gain": 0
+        },
+        {
+          "id": "lapis",
+          "stone": "minecraft:lapis_ore",
+          "deepslate": "minecraft:deepslate_lapis_ore",
+          "y_min": -42,
+          "y_max": 40,
+          "weight": 5,
+          "vein": 4,
+          "depth_gain": 0.8
+        },
+        {
+          "id": "gold",
+          "stone": "minecraft:gold_ore",
+          "deepslate": "minecraft:deepslate_gold_ore",
+          "y_min": -42,
+          "y_max": 34,
+          "weight": 4,
+          "vein": 4,
+          "depth_gain": 1.0
+        },
+        {
+          "id": "redstone",
+          "stone": "minecraft:redstone_ore",
+          "deepslate": "minecraft:deepslate_redstone_ore",
+          "y_min": -42,
+          "y_max": 18,
+          "weight": 8,
+          "vein": 5,
+          "depth_gain": 0.8
+        },
+        {
+          "id": "diamond",
+          "stone": "minecraft:diamond_ore",
+          "deepslate": "minecraft:deepslate_diamond_ore",
+          "y_min": -42,
+          "y_max": 6,
+          "weight": 2.6,
+          "vein": 3,
+          "depth_gain": 1.4
+        }
+      ],
+      "emerald": "not placed: vanilla emerald is a mountain-biome ore only",
+      "bank": "data/bank.json buys coal, iron, copper, gold, lapis, redstone, diamond (and emerald) in the forms these ores drop"
+    }
+  },
+  "systems": [
+    {
+      "id": "old_seams",
+      "name": "The Old Seams",
+      "seed": 11,
+      "centre": [
+        2100,
+        5000
+      ],
+      "radius": 520,
+      "target_length": 3400,
+      "caverns": 5,
+      "why": "Pallet country, east of the river: the first mining place a new group finds. Its three mouths stand 85 to 90 blocks from the Great Oak and the Route 1 mansion; the ore is plainest near them and richest at the far deep end",
+      "mouths": [
+        {
+          "id": "seams_oak_n",
+          "x": 1914,
+          "z": 5142,
+          "near": "great_oak_pallet"
+        },
+        {
+          "id": "seams_mansion",
+          "x": 1650,
+          "z": 4950,
+          "near": "route1_mansion"
+        },
+        {
+          "id": "seams_oak_s",
+          "x": 1806,
+          "z": 5302,
+          "near": "great_oak_pallet"
+        }
+      ]
+    },
+    {
+      "id": "hollow_reach",
+      "name": "The Hollow Reach",
+      "seed": 23,
+      "centre": [
+        2300,
+        3300
+      ],
+      "radius": 540,
+      "target_length": 3700,
+      "caverns": 7,
+      "why": "The midland between Brock's town, Tea Town and route 2: six mouths, each 85 to 115 blocks from a town edge or the route path",
+      "mouths": [
+        {
+          "id": "reach_tea_n",
+          "x": 2486,
+          "z": 3410,
+          "near": "tea_town"
+        },
+        {
+          "id": "reach_tea_e",
+          "x": 2678,
+          "z": 3394,
+          "near": "tea_town"
+        },
+        {
+          "id": "reach_tea_s",
+          "x": 2446,
+          "z": 3610,
+          "near": "tea_town"
+        },
+        {
+          "id": "reach_brock",
+          "x": 1930,
+          "z": 3490,
+          "near": "gym1_town"
+        },
+        {
+          "id": "reach_r2",
+          "x": 1878,
+          "z": 3202,
+          "near": "route_02_brock_to_misty"
+        },
+        {
+          "id": "reach_r2n",
+          "x": 1894,
+          "z": 3010,
+          "near": "route_02_brock_to_misty"
+        }
+      ]
+    },
+    {
+      "id": "frostpeak_deeps",
+      "name": "The Frostpeak Deeps",
+      "seed": 37,
+      "centre": [
+        904,
+        616
+      ],
+      "radius": 520,
+      "target_length": 3500,
+      "caverns": 7,
+      "why": "The far north-west under Frostpeak Point, where the ground stands 130 to 310 and the passages can go deepest and richest: farthest from every town but the shrine, so the ore is thickest here. Four mouths 85 blocks round the Frostpeak shrine",
+      "mouths": [
+        {
+          "id": "peak_e",
+          "x": 806,
+          "z": 478,
+          "near": "frostpeak_shrine"
+        },
+        {
+          "id": "peak_s",
+          "x": 610,
+          "z": 518,
+          "near": "frostpeak_shrine"
+        },
+        {
+          "id": "peak_n",
+          "x": 766,
+          "z": 246,
+          "near": "frostpeak_shrine"
+        },
+        {
+          "id": "peak_w",
+          "x": 542,
+          "z": 334,
+          "near": "frostpeak_shrine"
+        }
+      ]
+    }
+  ]
+}

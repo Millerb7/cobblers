@@ -569,6 +569,22 @@
     },
     {
       "blocks": [
+        "minecraft:coal_ore",
+        "minecraft:deepslate_coal_ore",
+        "minecraft:iron_ore",
+        "minecraft:deepslate_iron_ore",
+        "minecraft:redstone_ore",
+        "minecraft:deepslate_redstone_ore",
+        "minecraft:diamond_ore",
+        "minecraft:deepslate_diamond_ore"
+      ],
+      "scope": "the cave systems (cave_systems: tools/cave_systems.py, data/cave_systems.json, pack cobblers_cave_systems): the old_seams, hollow_reach and frostpeak_deeps networks west of x 4032, and only the ore their dress step sets in exposed wall cells",
+      "why": "the owner, 2026-10-21: 'with no caves people wont be incentivized to mine at all'. Vanilla ore the bank buys is the point of a cave system; coal, iron, redstone and diamond are also spawn conditions, copper, lapis and gold are not",
+      "consequence": "data/spawn_blocks.json: coal ore draws Rolycoly, Carkol, Coalossal and Torkoal; iron ore Aron, Lairon, Aggron, the Alolan Geodude line and Orthworm; deepslate redstone ore Klink, Klang and Klinklang; deepslate diamond ore Carbink, Sableye, Glimmet and Glimmora; each as a nearby-block condition, in unlit rock passages 8 or more blocks under the surface. Not covered here: those Pokemon's levels in the caves (the level-cap refusal applies as everywhere, and no spawn-free zone or Habitat Block is placed in these caves). Several thousand ore blocks across three systems make this the largest set of spawn-condition blocks the campaign places, so it is on the review list",
+      "decided": "the implementing session, 2026-10-22, under the owner's standing allowance (this file's owner_decision_2026_10_05: spawn-condition blocks ALLOWED, each entry naming where); offline only, nothing applied; the owner has not yet seen the numbers"
+    },
+    {
+      "blocks": [
         "minecraft:water"
       ],
       "scope": "the Drowned Quarry (drowned_quarry: tools/drowned_quarry.py, data/drowned_quarry.json, pack cobblers_drowned_quarry): the flooded working under Lake Tilpey's east wall, x6337-6540 z4105-4150, carved rock filled with water and joined to the lake at one open cutting",
