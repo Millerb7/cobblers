@@ -416,6 +416,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # ECONOMY_OVERHAUL.md section 3): blocks run by R9OC; the galleries' restore on approach acts on its own
                 # (a tick driver, tools/mines.py's), so world-local below
                 "cobblers_mining_caves",
+                # 2026-10-22: the long mine networks (tools/mine_networks.py, data/mine_networks.json): one-shot carves run by
+                # R9MN, no tick or load, so server-wide like the towns and not world-local
+                "cobblers_mine_networks",
                 # 2026-10-12: the cave kit's first three caves (tools/caves.py, data/caves.json, LEGENDARY_HOMES.md section 4):
                 # blocks run by R9CK BEFORE R9E (a Habitat Block stands in each part's floor); the gates' barrier doors and the
                 # area boss's keeper act on their own (tick drivers, a capture callback), so world-local below
@@ -1335,6 +1338,11 @@ def prepare_jobs(a):
     # other built pack's writes and reads them from build/datapacks; it fails closed on a write where a cave may not
     # stand. Before mines_audit, which lists reapply's steps (R9OC's build functions come from the data)
     add("mining_caves:build", "mining_caves.py", "build", *src)
+    # the long mine networks (data/mine_networks.json, 2026-10-22): grown on the canonical heightmap and the committed data
+    # alone (it reads no built pack), so its place here is only "before mines_audit"; its audit re-reads the BUILT
+    # functions and fails closed on cover, water, authored margin, shell, walk and scale
+    add("mine_networks:build", "mine_networks.py", "build", *src)
+    add("mine_networks_audit", "mine_networks_audit.py", *src)
     # the cave kit (data/caves.json; LEGENDARY_HOMES.md section 4): the same reason, and the Habitat Blocks and pools it keeps in
     # data/habitat_blocks.json and data/spawns.json are refused here if they drifted from the geometry. Its audit (tools/caves_audit.py)
     # re-derives every cell from the rules text and replays the pack: cells both ways, the seal, the cover, the walk with the door
@@ -2396,6 +2404,13 @@ def steps(with_spawns=False):
                     ", ".join(c["id"] for c in mining_caves.load()["caves"] if c.get("retired_entry")
                               and mining_caves.reroute_step(c) == "R9OCF") or "none"),
                 mining_caves.reroute_steps(step="R9OCF")))
+    # 2026-10-22, the long mine networks (the owner, 2026-10-21: "really really large and long mines every so often in the
+    # world"; tools/mine_networks.py, data/mine_networks.json): one function a 128-block tile, named from the pack's own
+    # index. Each carves, replaces water and lava with stone 2 blocks round the carve, carves again, then fits timber, rails,
+    # stairs, ladders and ore. AFTER the towns (R8), the donors (R9) and R9OC, whose writes the siting keeps 32 blocks clear
+    # of; BEFORE the Habitat Blocks (R9E) and the lights (R16). One-shot: nothing drives itself. NEVER APPLIED, NEVER SEEN
+    out.append(("R9MN", "the long mine networks: the Old Craters Drift, the Hollow Seam, the Ridgeback Workings (data/mine_networks.json)",
+                [("fn", "cobblers:mine_networks/%s" % f) for f in indexed("cobblers_mine_networks", "mine_networks")]))
     # the cave kit (tools/caves.py, data/caves.json; LEGENDARY_HOMES.md section 4): K1, K2 and K3, one block pass each held in a
     # forceload of its box, BEFORE R9E (each part's Habitat Block replaces a floor cell this writes). The gates' doors and the area
     # boss's keeper drive themselves (cobblers:caves/tick and /boss/<id>/keeper) and need no step

@@ -552,6 +552,23 @@
     },
     {
       "blocks": [
+        "minecraft:rail",
+        "minecraft:coal_ore",
+        "minecraft:iron_ore",
+        "minecraft:redstone_ore",
+        "minecraft:diamond_ore",
+        "minecraft:deepslate_coal_ore",
+        "minecraft:deepslate_iron_ore",
+        "minecraft:deepslate_redstone_ore",
+        "minecraft:deepslate_diamond_ore"
+      ],
+      "scope": "the long mine networks (mine_networks: tools/mine_networks.py, data/mine_networks.json, pack cobblers_mine_networks): the rails on the main haulage drifts and the ore veins in the exposed walls of the drifts and stopes, underground in the eastern half (x >= 4160)",
+      "why": "the owner, 2026-10-21: 'with no caves people wont be incentivized to mine at all ... really really large and long mines every so often in the world'. The ore is what a mine pays in and the rail is what an old working looks like; the bank buys the minerals (data/bank.json)",
+      "consequence": "data/spawn_blocks.json (docs/world-building/SPAWN_BLOCKS_LIST.md): rail draws Rolycoly, Carkol and Coalossal; coal ore Rolycoly, Carkol, Coalossal and Torkoal; iron ore Aron, Lairon, Aggron, the Alolan Geodude line and Orthworm; redstone ore and deepslate redstone ore Klink, Klang and Klinklang; diamond ore and deepslate diamond ore Carbink, Sableye, Glimmet and Glimmora; each as a nearby-block condition, in tunnels 8 or more blocks under the surface, so the spawns are of the cave contexts. NOT SEEN: whether those spawns reach the drifts at all, how many appear along thousands of blocks of rail and ore, or what the level cap does to them. Copper, lapis and gold ore are not spawn conditions",
+      "decided": "the owner, 2026-10-05: spawn-condition blocks ALLOWED (this file's owner_decision_2026_10_05); this entry names where, as the contract C4 requires (builder flip, unit MINE NETWORKS 2026-10-22)"
+    },
+    {
+      "blocks": [
         "minecraft:water"
       ],
       "scope": "the Drowned Quarry (drowned_quarry: tools/drowned_quarry.py, data/drowned_quarry.json, pack cobblers_drowned_quarry): the flooded working under Lake Tilpey's east wall, x6337-6540 z4105-4150, carved rock filled with water and joined to the lake at one open cutting",
