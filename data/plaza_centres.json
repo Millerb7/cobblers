@@ -51,6 +51,16 @@
     "minecraft:flower_pot"
    ]
   },
+  "berries": {
+   "counter": [
+    "minecraft:composter"
+   ],
+   "stock": [
+    "minecraft:hay_block[axis=y]",
+    "minecraft:barrel[facing=up]",
+    "minecraft:flower_pot"
+   ]
+  },
   "mulch": {
    "counter": [
     "minecraft:composter"
@@ -874,7 +884,7 @@
    "name": "Viltri Quay",
    "class": "medium",
    "coverage_max": 0.15,
-   "why": "The lake town that takes in whoever the water brings. No water on the square (a spawn condition; the fountain waits for the owner's whitelist, TOWN_CENTERS decision 2), so the centrepiece is a rescue boat's hull on trestles with the arrivals ledger beside it; four stalls for the rescue stores, the two fishmongers and the galley.",
+   "why": "The lake town that takes in whoever the water brings. No water on the square (a spawn condition; the fountain waits for the owner's whitelist, TOWN_CENTERS decision 2), so the centrepiece is a rescue boat's hull on trestles with the arrivals ledger beside it; five stalls for the rescue stores, the two fishmongers, the galley and the berry grower.",
    "palette": {
     "wood": "oak",
     "awning": "minecraft:light_blue_carpet",
@@ -1016,6 +1026,28 @@
       1623,
       108,
       2821,
+      180
+     ]
+    },
+    {
+     "id": "gym2_town_stall_5",
+     "near": [
+      1614,
+      2826
+     ],
+     "facing": "north",
+     "sells": "berries",
+     "awning": "minecraft:green_carpet",
+     "why": "the Berry Grower's stall: the crews' held-item berries, the owner's 2026-10-21 request",
+     "at": [
+      1611,
+      108,
+      2819
+     ],
+     "keeper_at": [
+      1611,
+      108,
+      2818,
       180
      ]
     }

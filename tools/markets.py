@@ -119,6 +119,8 @@ SPAWN_BLOCKS = ROOT / "data" / "spawn_blocks.json"
 STALL_ID = re.compile(r"([a-z0-9_]+)_stall_([0-9]+)")
 STALL_REACH = 4.0      # a keeper at a contract stall stands within this of the stall's own `at` (it serves across it)
 STRANDS = ("convenience", "power", "provision")
+# the rules an owner_exception on a stall line may waive (and nothing else)
+OWNER_WAIVABLE = {"spawn_block", "vanilla_provision"}
 # vanilla items that win fights, skip the game's gates, or that the bank buys back as currency: never a provision
 NOT_PROVISION = re.compile(r"minecraft:(?:diamond_.*|netherite_.*|enchanted_.*|totem_of_undying|elytra|experience_bottle|"
                            r"ender_pearl|ender_eye|emerald.*|golden_apple|.*_spawn_egg|.*shulker_box|beacon|spawner|"
@@ -928,7 +930,19 @@ def stall_problems(doc, towns, plazas):
             if item.startswith(SB):
                 out.append("%s: a Sophisticated Backpacks item: the ladder is the counters'" % w)
             placed = PLACES.get(item, item)
-            if item in spawn or placed in spawn:
+            # An OWNER EXCEPTION (2026-10-21, the berry stall): a line may carry owner_exception {decision, waives},
+            # decision a quote naming the owner, waives drawn from OWNER_WAIVABLE. Only the named rules are waived,
+            # for that line only; the price, count, gate and strand rules still apply to it.
+            ex = it.get("owner_exception")
+            waived = set()
+            if ex is not None:
+                waived = set(ex.get("waives") or []) if isinstance(ex, dict) else set()
+                if not (isinstance(ex, dict) and "owner" in str(ex.get("decision") or "").lower()
+                        and waived and waived <= OWNER_WAIVABLE):
+                    out.append("%s: owner_exception needs a `decision` quoting the owner and `waives` drawn from %s"
+                               % (w, sorted(OWNER_WAIVABLE)))
+                    waived = set()
+            if (item in spawn or placed in spawn) and "spawn_block" not in waived:
                 out.append("%s: %s%s is a block a spawn condition names (data/spawn_blocks.json): a player who buys it "
                            "decides encounters" % (w, item, "" if placed == item else " (it places %s)" % placed))
             cnt, price = it.get("count"), it.get("price")
@@ -956,7 +970,7 @@ def stall_problems(doc, towns, plazas):
             elif strand == "provision":
                 if g is not None:
                     out.append("%s: a provision is ungated (a gated line is convenience or power, and on the curve)" % w)
-                if not item.startswith("minecraft:") or NOT_PROVISION.fullmatch(item):
+                if (not item.startswith("minecraft:") or NOT_PROVISION.fullmatch(item)) and "vanilla_provision" not in waived:
                     out.append("%s: %s is not a provision (vanilla, and none of NOT_PROVISION)" % (w, item))
             elif own and g != own:
                 out.append("%s: a %s line on the critical path gates on %r, not its town's own %s" % (w, strand, g, own))
