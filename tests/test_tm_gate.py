@@ -302,7 +302,9 @@ def test_no_recipe_is_stranded_and_no_tm_comes_early(tmp_path):
 
 def test_each_shelf_tm_unlocks_at_its_shelf_lines_badge(tmp_path):
     plan, _, _ = _make(G, tmp_path)
-    assert len(F.shelf_from_markets()) == 23
+    # was 23 (the leaders' pools alone); since 2026-10-22 the tier shelves also sell answer TMs (data/markets.json
+    # price_policies.tm_tier, the TM shops for both modes), each at its power-rule badge, so none is a disagreement
+    assert len(F.shelf_from_markets()) == len(F.SHELF_GEM) == F.LEADER_SHELF + 29
     assert shelf_failures(plan) == []
     # the shelf wins where the power rule disagrees: the 21 lines of docs/mechanics/TM_POWER_GATE.md 5, kept
     got = {item for item, t in plan["tms"].items() if t["rule"] == "shelf" and t["badge"] != t["power_badge"]}
