@@ -4978,6 +4978,330 @@
       "scope": "player",
       "initial": false,
       "set_by": "transition keep_packet"
+    },
+    {
+      "id": "quest.mine_ridgeback_01.defeated",
+      "quest_id": "mine_ridgeback_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_ridgeback_01, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_ridgeback_02.defeated",
+      "quest_id": "mine_ridgeback_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_ridgeback_02, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_ridgeback_03.defeated",
+      "quest_id": "mine_ridgeback_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_ridgeback_03, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_ridgeback_04.defeated",
+      "quest_id": "mine_ridgeback_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_ridgeback_04, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_ridgeback_05.defeated",
+      "quest_id": "mine_ridgeback_05",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_ridgeback_05, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_ridgeback_06.defeated",
+      "quest_id": "mine_ridgeback_06",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_ridgeback_06, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_ridgeback_07.defeated",
+      "quest_id": "mine_ridgeback_07",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_ridgeback_07, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_ridgeback_08.defeated",
+      "quest_id": "mine_ridgeback_08",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_ridgeback_08, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_ridgeback_09.defeated",
+      "quest_id": "mine_ridgeback_09",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_ridgeback_09, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_ridgeback_10.defeated",
+      "quest_id": "mine_ridgeback_10",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_ridgeback_10, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_ridgeback_11.defeated",
+      "quest_id": "mine_ridgeback_11",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_ridgeback_11, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_ridgeback_boss.defeated",
+      "quest_id": "mine_ridgeback_boss",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_ridgeback_boss, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_gorge_01.defeated",
+      "quest_id": "mine_gorge_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_gorge_01, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_gorge_02.defeated",
+      "quest_id": "mine_gorge_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_gorge_02, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_gorge_03.defeated",
+      "quest_id": "mine_gorge_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_gorge_03, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_gorge_04.defeated",
+      "quest_id": "mine_gorge_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_gorge_04, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_gorge_05.defeated",
+      "quest_id": "mine_gorge_05",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_gorge_05, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_gorge_06.defeated",
+      "quest_id": "mine_gorge_06",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_gorge_06, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_gorge_07.defeated",
+      "quest_id": "mine_gorge_07",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_gorge_07, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_gorge_08.defeated",
+      "quest_id": "mine_gorge_08",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_gorge_08, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_gorge_09.defeated",
+      "quest_id": "mine_gorge_09",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_gorge_09, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_gorge_10.defeated",
+      "quest_id": "mine_gorge_10",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_gorge_10, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_gorge_11.defeated",
+      "quest_id": "mine_gorge_11",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_gorge_11, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_gorge_boss.defeated",
+      "quest_id": "mine_gorge_boss",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_gorge_boss, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_craters_01.defeated",
+      "quest_id": "mine_craters_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_craters_01, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_craters_02.defeated",
+      "quest_id": "mine_craters_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_craters_02, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_craters_03.defeated",
+      "quest_id": "mine_craters_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_craters_03, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_craters_04.defeated",
+      "quest_id": "mine_craters_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_craters_04, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_craters_05.defeated",
+      "quest_id": "mine_craters_05",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_craters_05, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_craters_06.defeated",
+      "quest_id": "mine_craters_06",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_craters_06, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_craters_07.defeated",
+      "quest_id": "mine_craters_07",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_craters_07, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_craters_08.defeated",
+      "quest_id": "mine_craters_08",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_craters_08, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_craters_09.defeated",
+      "quest_id": "mine_craters_09",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_craters_09, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_craters_10.defeated",
+      "quest_id": "mine_craters_10",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_craters_10, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_craters_11.defeated",
+      "quest_id": "mine_craters_11",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_craters_11, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
+    },
+    {
+      "id": "quest.mine_craters_boss.defeated",
+      "quest_id": "mine_craters_boss",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "mine_craters_boss, set by its rctmod defeat_count advancement (tools/route_trainers.py); data/mine_crew_trainers.json"
     }
   ],
   "gym_markers": {

@@ -35,6 +35,10 @@ Ground only from `tools/ground.py` (rounded heightmap). At least 8 blocks of gro
 `lava` with stone round every carved box, carves again. Tile functions pass `function_limits.check_lines`. The spawn policy has an entry
 scoped to `mine_networks` for rail and coal, iron, redstone and diamond ore (`data/spawn_block_policy.json`).
 
+## Crews
+
+Twelve trainers work each network (miners, a foreman, a Shift Boss at the deepest stope): `MINE_CREWS.md`, `data/mine_crews.json`, `tools/mine_crews.py`. `data/mine_crew_trainers.json` is skipped by this generator's and the audit's authored-place scan (`SKIP_FILES`), or the layout would avoid its own crew.
+
 ## Not checked
 
 Water, lava, caves or structures that no data file carries (the shell covers fluid within 2 blocks of a carved box only); that the rock is
