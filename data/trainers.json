@@ -57,7 +57,12 @@
           "ability": "rockhead",
           "heldItem": "oran_berry",
           "nature": "impish",
-          "level": 18
+          "level": 18,
+          "evs": {
+            "hp": 252,
+            "def": 252,
+            "spd": 4
+          }
         },
         {
           "species": "bonsly",
@@ -70,7 +75,12 @@
           "ability": "rockhead",
           "heldItem": "oran_berry",
           "nature": "careful",
-          "level": 18
+          "level": 18,
+          "evs": {
+            "hp": 252,
+            "spd": 252,
+            "def": 4
+          }
         },
         {
           "species": "onix",
@@ -83,7 +93,12 @@
           "ability": "sturdy",
           "heldItem": "berry_juice",
           "nature": "impish",
-          "level": 20
+          "level": 20,
+          "evs": {
+            "hp": 252,
+            "def": 252,
+            "spd": 4
+          }
         }
       ],
       "dialogue": {
@@ -142,7 +157,12 @@
             "ability": "rockhead",
             "heldItem": "oran_berry",
             "nature": "impish",
-            "level": 18
+            "level": 18,
+            "evs": {
+              "hp": 252,
+              "def": 252,
+              "spd": 4
+            }
           },
           {
             "species": "bonsly",
@@ -155,7 +175,12 @@
             "ability": "rockhead",
             "heldItem": "oran_berry",
             "nature": "careful",
-            "level": 18
+            "level": 18,
+            "evs": {
+              "hp": 252,
+              "spd": 252,
+              "def": 4
+            }
           },
           {
             "species": "onix",
@@ -168,7 +193,12 @@
             "ability": "sturdy",
             "heldItem": "berry_juice",
             "nature": "impish",
-            "level": 20
+            "level": 20,
+            "evs": {
+              "hp": 252,
+              "def": 252,
+              "spd": 4
+            }
           }
         ]
       },
@@ -191,7 +221,12 @@
               "ability": "rockhead",
               "heldItem": "oran_berry",
               "nature": "impish",
-              "level": 18
+              "level": 18,
+              "evs": {
+                "hp": 252,
+                "def": 252,
+                "spd": 4
+              }
             },
             {
               "species": "bonsly",
@@ -204,7 +239,12 @@
               "ability": "rockhead",
               "heldItem": "oran_berry",
               "nature": "careful",
-              "level": 18
+              "level": 18,
+              "evs": {
+                "hp": 252,
+                "spd": 252,
+                "def": 4
+              }
             },
             {
               "species": "onix",
@@ -217,7 +257,12 @@
               "ability": "sturdy",
               "heldItem": "berry_juice",
               "nature": "impish",
-              "level": 20
+              "level": 20,
+              "evs": {
+                "hp": 252,
+                "def": 252,
+                "spd": 4
+              }
             }
           ],
           "rct": {
@@ -255,7 +300,12 @@
                 "ability": "rockhead",
                 "heldItem": "oran_berry",
                 "nature": "impish",
-                "level": 18
+                "level": 18,
+                "evs": {
+                  "hp": 252,
+                  "def": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "bonsly",
@@ -268,7 +318,12 @@
                 "ability": "rockhead",
                 "heldItem": "oran_berry",
                 "nature": "careful",
-                "level": 18
+                "level": 18,
+                "evs": {
+                  "hp": 252,
+                  "spd": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "onix",
@@ -281,7 +336,12 @@
                 "ability": "sturdy",
                 "heldItem": "berry_juice",
                 "nature": "impish",
-                "level": 20
+                "level": 20,
+                "evs": {
+                  "hp": 252,
+                  "def": 252,
+                  "spd": 4
+                }
               }
             ]
           },
@@ -306,7 +366,12 @@
               "ability": "sandstream",
               "heldItem": "smooth_rock",
               "nature": "impish",
-              "level": 19
+              "level": 19,
+              "evs": {
+                "hp": 252,
+                "def": 252,
+                "spd": 4
+              }
             },
             {
               "species": "lileep",
@@ -319,7 +384,12 @@
               "ability": "stormdrain",
               "heldItem": "eviolite",
               "nature": "calm",
-              "level": 19
+              "level": 19,
+              "evs": {
+                "hp": 252,
+                "spd": 252,
+                "def": 4
+              }
             },
             {
               "species": "carkol",
@@ -332,7 +402,12 @@
               "ability": "flamebody",
               "heldItem": "eviolite",
               "nature": "impish",
-              "level": 19
+              "level": 19,
+              "evs": {
+                "hp": 252,
+                "def": 252,
+                "spd": 4
+              }
             },
             {
               "species": "dwebble",
@@ -345,7 +420,12 @@
               "ability": "sturdy",
               "heldItem": "white_herb",
               "nature": "adamant",
-              "level": 19
+              "level": 19,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "nosepass",
@@ -358,7 +438,12 @@
               "ability": "sturdy",
               "heldItem": "sitrus_berry",
               "nature": "bold",
-              "level": 20
+              "level": 20,
+              "evs": {
+                "hp": 252,
+                "def": 252,
+                "spd": 4
+              }
             },
             {
               "species": "onix",
@@ -371,7 +456,12 @@
               "ability": "sturdy",
               "heldItem": "weakness_policy",
               "nature": "jolly",
-              "level": 20
+              "level": 20,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             }
           ],
           "rct": {
@@ -409,7 +499,12 @@
                 "ability": "sandstream",
                 "heldItem": "smooth_rock",
                 "nature": "impish",
-                "level": 19
+                "level": 19,
+                "evs": {
+                  "hp": 252,
+                  "def": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "lileep",
@@ -422,7 +517,12 @@
                 "ability": "stormdrain",
                 "heldItem": "eviolite",
                 "nature": "calm",
-                "level": 19
+                "level": 19,
+                "evs": {
+                  "hp": 252,
+                  "spd": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "carkol",
@@ -435,7 +535,12 @@
                 "ability": "flamebody",
                 "heldItem": "eviolite",
                 "nature": "impish",
-                "level": 19
+                "level": 19,
+                "evs": {
+                  "hp": 252,
+                  "def": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "dwebble",
@@ -448,7 +553,12 @@
                 "ability": "sturdy",
                 "heldItem": "white_herb",
                 "nature": "adamant",
-                "level": 19
+                "level": 19,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "nosepass",
@@ -461,7 +571,12 @@
                 "ability": "sturdy",
                 "heldItem": "sitrus_berry",
                 "nature": "bold",
-                "level": 20
+                "level": 20,
+                "evs": {
+                  "hp": 252,
+                  "def": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "onix",
@@ -474,7 +589,12 @@
                 "ability": "sturdy",
                 "heldItem": "weakness_policy",
                 "nature": "jolly",
-                "level": 20
+                "level": 20,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               }
             ]
           },
@@ -511,7 +631,12 @@
           "ability": "swiftswim",
           "heldItem": "oran_berry",
           "nature": "timid",
-          "level": 22
+          "level": 22,
+          "evs": {
+            "spa": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "lombre",
@@ -524,7 +649,12 @@
           "ability": "swiftswim",
           "heldItem": "mystic_water",
           "nature": "modest",
-          "level": 23
+          "level": 23,
+          "evs": {
+            "hp": 252,
+            "spa": 252,
+            "spd": 4
+          }
         },
         {
           "species": "starmie",
@@ -537,7 +667,12 @@
           "ability": "analytic",
           "heldItem": "sitrus_berry",
           "nature": "timid",
-          "level": 25
+          "level": 25,
+          "evs": {
+            "spa": 252,
+            "spe": 252,
+            "hp": 4
+          }
         }
       ],
       "dialogue": {
@@ -594,7 +729,12 @@
             "ability": "swiftswim",
             "heldItem": "oran_berry",
             "nature": "timid",
-            "level": 22
+            "level": 22,
+            "evs": {
+              "spa": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "lombre",
@@ -607,7 +747,12 @@
             "ability": "swiftswim",
             "heldItem": "mystic_water",
             "nature": "modest",
-            "level": 23
+            "level": 23,
+            "evs": {
+              "hp": 252,
+              "spa": 252,
+              "spd": 4
+            }
           },
           {
             "species": "starmie",
@@ -620,7 +765,12 @@
             "ability": "analytic",
             "heldItem": "sitrus_berry",
             "nature": "timid",
-            "level": 25
+            "level": 25,
+            "evs": {
+              "spa": 252,
+              "spe": 252,
+              "hp": 4
+            }
           }
         ]
       },
@@ -643,7 +793,12 @@
               "ability": "swiftswim",
               "heldItem": "oran_berry",
               "nature": "timid",
-              "level": 22
+              "level": 22,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "lombre",
@@ -656,7 +811,12 @@
               "ability": "swiftswim",
               "heldItem": "mystic_water",
               "nature": "modest",
-              "level": 23
+              "level": 23,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "starmie",
@@ -669,7 +829,12 @@
               "ability": "analytic",
               "heldItem": "sitrus_berry",
               "nature": "timid",
-              "level": 25
+              "level": 25,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             }
           ],
           "rct": {
@@ -707,7 +872,12 @@
                 "ability": "swiftswim",
                 "heldItem": "oran_berry",
                 "nature": "timid",
-                "level": 22
+                "level": 22,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "lombre",
@@ -720,7 +890,12 @@
                 "ability": "swiftswim",
                 "heldItem": "mystic_water",
                 "nature": "modest",
-                "level": 23
+                "level": 23,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "starmie",
@@ -733,7 +908,12 @@
                 "ability": "analytic",
                 "heldItem": "sitrus_berry",
                 "nature": "timid",
-                "level": 25
+                "level": 25,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               }
             ]
           },
@@ -758,7 +938,12 @@
               "ability": "regenerator",
               "heldItem": "eviolite",
               "nature": "bold",
-              "level": 23
+              "level": 23,
+              "evs": {
+                "hp": 252,
+                "def": 252,
+                "spd": 4
+              }
             },
             {
               "species": "tentacool",
@@ -771,7 +956,12 @@
               "ability": "liquidooze",
               "heldItem": "black_sludge",
               "nature": "calm",
-              "level": 24
+              "level": 24,
+              "evs": {
+                "hp": 252,
+                "spd": 252,
+                "def": 4
+              }
             },
             {
               "species": "goldeen",
@@ -784,7 +974,12 @@
               "ability": "lightningrod",
               "heldItem": "eviolite",
               "nature": "jolly",
-              "level": 24
+              "level": 24,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "shellder",
@@ -797,7 +992,12 @@
               "ability": "skilllink",
               "heldItem": "eviolite",
               "nature": "adamant",
-              "level": 24
+              "level": 24,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "azumarill",
@@ -810,7 +1010,12 @@
               "ability": "hugepower",
               "heldItem": "sitrus_berry",
               "nature": "adamant",
-              "level": 25
+              "level": 25,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "starmie",
@@ -823,7 +1028,12 @@
               "ability": "naturalcure",
               "heldItem": "leftovers",
               "nature": "timid",
-              "level": 25
+              "level": 25,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             }
           ],
           "rct": {
@@ -861,7 +1071,12 @@
                 "ability": "regenerator",
                 "heldItem": "eviolite",
                 "nature": "bold",
-                "level": 23
+                "level": 23,
+                "evs": {
+                  "hp": 252,
+                  "def": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "tentacool",
@@ -874,7 +1089,12 @@
                 "ability": "liquidooze",
                 "heldItem": "black_sludge",
                 "nature": "calm",
-                "level": 24
+                "level": 24,
+                "evs": {
+                  "hp": 252,
+                  "spd": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "goldeen",
@@ -887,7 +1107,12 @@
                 "ability": "lightningrod",
                 "heldItem": "eviolite",
                 "nature": "jolly",
-                "level": 24
+                "level": 24,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "shellder",
@@ -900,7 +1125,12 @@
                 "ability": "skilllink",
                 "heldItem": "eviolite",
                 "nature": "adamant",
-                "level": 24
+                "level": 24,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "azumarill",
@@ -913,7 +1143,12 @@
                 "ability": "hugepower",
                 "heldItem": "sitrus_berry",
                 "nature": "adamant",
-                "level": 25
+                "level": 25,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "starmie",
@@ -926,7 +1161,12 @@
                 "ability": "naturalcure",
                 "heldItem": "leftovers",
                 "nature": "timid",
-                "level": 25
+                "level": 25,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               }
             ]
           },
@@ -963,7 +1203,12 @@
           "ability": "static",
           "heldItem": "eviolite",
           "nature": "timid",
-          "level": 27
+          "level": 27,
+          "evs": {
+            "spa": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "magneton",
@@ -976,7 +1221,12 @@
           "ability": "magnetpull",
           "heldItem": "magnet",
           "nature": "modest",
-          "level": 28
+          "level": 28,
+          "evs": {
+            "hp": 252,
+            "spa": 252,
+            "spd": 4
+          }
         },
         {
           "species": "boltund",
@@ -989,7 +1239,12 @@
           "ability": "strongjaw",
           "heldItem": "muscle_band",
           "nature": "jolly",
-          "level": 29
+          "level": 29,
+          "evs": {
+            "atk": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "raichu",
@@ -1002,7 +1257,12 @@
           "ability": "static",
           "heldItem": "sitrus_berry",
           "nature": "timid",
-          "level": 30
+          "level": 30,
+          "evs": {
+            "spa": 252,
+            "spe": 252,
+            "hp": 4
+          }
         }
       ],
       "dialogue": {
@@ -1061,7 +1321,12 @@
             "ability": "static",
             "heldItem": "eviolite",
             "nature": "timid",
-            "level": 27
+            "level": 27,
+            "evs": {
+              "spa": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "magneton",
@@ -1074,7 +1339,12 @@
             "ability": "magnetpull",
             "heldItem": "magnet",
             "nature": "modest",
-            "level": 28
+            "level": 28,
+            "evs": {
+              "hp": 252,
+              "spa": 252,
+              "spd": 4
+            }
           },
           {
             "species": "boltund",
@@ -1087,7 +1357,12 @@
             "ability": "strongjaw",
             "heldItem": "muscle_band",
             "nature": "jolly",
-            "level": 29
+            "level": 29,
+            "evs": {
+              "atk": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "raichu",
@@ -1100,7 +1375,12 @@
             "ability": "static",
             "heldItem": "sitrus_berry",
             "nature": "timid",
-            "level": 30
+            "level": 30,
+            "evs": {
+              "spa": 252,
+              "spe": 252,
+              "hp": 4
+            }
           }
         ]
       },
@@ -1123,7 +1403,12 @@
               "ability": "static",
               "heldItem": "eviolite",
               "nature": "timid",
-              "level": 27
+              "level": 27,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "magneton",
@@ -1136,7 +1421,12 @@
               "ability": "magnetpull",
               "heldItem": "magnet",
               "nature": "modest",
-              "level": 28
+              "level": 28,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "boltund",
@@ -1149,7 +1439,12 @@
               "ability": "strongjaw",
               "heldItem": "muscle_band",
               "nature": "jolly",
-              "level": 29
+              "level": 29,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "raichu",
@@ -1162,7 +1457,12 @@
               "ability": "static",
               "heldItem": "sitrus_berry",
               "nature": "timid",
-              "level": 30
+              "level": 30,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             }
           ],
           "rct": {
@@ -1200,7 +1500,12 @@
                 "ability": "static",
                 "heldItem": "eviolite",
                 "nature": "timid",
-                "level": 27
+                "level": 27,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "magneton",
@@ -1213,7 +1518,12 @@
                 "ability": "magnetpull",
                 "heldItem": "magnet",
                 "nature": "modest",
-                "level": 28
+                "level": 28,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "boltund",
@@ -1226,7 +1536,12 @@
                 "ability": "strongjaw",
                 "heldItem": "muscle_band",
                 "nature": "jolly",
-                "level": 29
+                "level": 29,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "raichu",
@@ -1239,7 +1554,12 @@
                 "ability": "static",
                 "heldItem": "sitrus_berry",
                 "nature": "timid",
-                "level": 30
+                "level": 30,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               }
             ]
           },
@@ -1264,7 +1584,12 @@
               "ability": "voltabsorb",
               "heldItem": "sitrus_berry",
               "nature": "timid",
-              "level": 28
+              "level": 28,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "lanturn",
@@ -1277,7 +1602,12 @@
               "ability": "voltabsorb",
               "heldItem": "leftovers",
               "nature": "calm",
-              "level": 28
+              "level": 28,
+              "evs": {
+                "hp": 252,
+                "spd": 252,
+                "def": 4
+              }
             },
             {
               "species": "emolga",
@@ -1289,7 +1619,12 @@
               ],
               "ability": "motordrive",
               "nature": "jolly",
-              "level": 29
+              "level": 29,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "vikavolt",
@@ -1302,7 +1637,12 @@
               "ability": "levitate",
               "heldItem": "wise_glasses",
               "nature": "modest",
-              "level": 29
+              "level": 29,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "raichu",
@@ -1315,7 +1655,12 @@
               "ability": "lightningrod",
               "heldItem": "focus_sash",
               "nature": "timid",
-              "level": 30
+              "level": 30,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "pawmot",
@@ -1328,7 +1673,12 @@
               "ability": "ironfist",
               "heldItem": "expert_belt",
               "nature": "jolly",
-              "level": 30
+              "level": 30,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             }
           ],
           "rct": {
@@ -1366,7 +1716,12 @@
                 "ability": "voltabsorb",
                 "heldItem": "sitrus_berry",
                 "nature": "timid",
-                "level": 28
+                "level": 28,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "lanturn",
@@ -1379,7 +1734,12 @@
                 "ability": "voltabsorb",
                 "heldItem": "leftovers",
                 "nature": "calm",
-                "level": 28
+                "level": 28,
+                "evs": {
+                  "hp": 252,
+                  "spd": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "emolga",
@@ -1391,7 +1751,12 @@
                 ],
                 "ability": "motordrive",
                 "nature": "jolly",
-                "level": 29
+                "level": 29,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "vikavolt",
@@ -1404,7 +1769,12 @@
                 "ability": "levitate",
                 "heldItem": "wise_glasses",
                 "nature": "modest",
-                "level": 29
+                "level": 29,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "raichu",
@@ -1417,7 +1787,12 @@
                 "ability": "lightningrod",
                 "heldItem": "focus_sash",
                 "nature": "timid",
-                "level": 30
+                "level": 30,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "pawmot",
@@ -1430,7 +1805,12 @@
                 "ability": "ironfist",
                 "heldItem": "expert_belt",
                 "nature": "jolly",
-                "level": 30
+                "level": 30,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               }
             ]
           },
@@ -1467,7 +1847,12 @@
           "ability": "chlorophyll",
           "heldItem": "sitrus_berry",
           "nature": "calm",
-          "level": 33
+          "level": 33,
+          "evs": {
+            "hp": 252,
+            "spd": 252,
+            "def": 4
+          }
         },
         {
           "species": "roserade",
@@ -1480,7 +1865,12 @@
           "ability": "naturalcure",
           "heldItem": "sitrus_berry",
           "nature": "timid",
-          "level": 33
+          "level": 33,
+          "evs": {
+            "spa": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "victreebel",
@@ -1493,7 +1883,12 @@
           "ability": "chlorophyll",
           "heldItem": "miracle_seed",
           "nature": "adamant",
-          "level": 34
+          "level": 34,
+          "evs": {
+            "atk": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "vileplume",
@@ -1506,7 +1901,12 @@
           "ability": "chlorophyll",
           "heldItem": "coba_berry",
           "nature": "modest",
-          "level": 35
+          "level": 35,
+          "evs": {
+            "hp": 252,
+            "spa": 252,
+            "spd": 4
+          }
         }
       ],
       "dialogue": {
@@ -1564,7 +1964,12 @@
             "ability": "chlorophyll",
             "heldItem": "sitrus_berry",
             "nature": "calm",
-            "level": 33
+            "level": 33,
+            "evs": {
+              "hp": 252,
+              "spd": 252,
+              "def": 4
+            }
           },
           {
             "species": "roserade",
@@ -1577,7 +1982,12 @@
             "ability": "naturalcure",
             "heldItem": "sitrus_berry",
             "nature": "timid",
-            "level": 33
+            "level": 33,
+            "evs": {
+              "spa": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "victreebel",
@@ -1590,7 +2000,12 @@
             "ability": "chlorophyll",
             "heldItem": "miracle_seed",
             "nature": "adamant",
-            "level": 34
+            "level": 34,
+            "evs": {
+              "atk": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "vileplume",
@@ -1603,7 +2018,12 @@
             "ability": "chlorophyll",
             "heldItem": "coba_berry",
             "nature": "modest",
-            "level": 35
+            "level": 35,
+            "evs": {
+              "hp": 252,
+              "spa": 252,
+              "spd": 4
+            }
           }
         ]
       },
@@ -1626,7 +2046,12 @@
               "ability": "chlorophyll",
               "heldItem": "sitrus_berry",
               "nature": "calm",
-              "level": 33
+              "level": 33,
+              "evs": {
+                "hp": 252,
+                "spd": 252,
+                "def": 4
+              }
             },
             {
               "species": "roserade",
@@ -1639,7 +2064,12 @@
               "ability": "naturalcure",
               "heldItem": "sitrus_berry",
               "nature": "timid",
-              "level": 33
+              "level": 33,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "victreebel",
@@ -1652,7 +2082,12 @@
               "ability": "chlorophyll",
               "heldItem": "miracle_seed",
               "nature": "adamant",
-              "level": 34
+              "level": 34,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "vileplume",
@@ -1665,7 +2100,12 @@
               "ability": "chlorophyll",
               "heldItem": "coba_berry",
               "nature": "modest",
-              "level": 35
+              "level": 35,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             }
           ],
           "rct": {
@@ -1703,7 +2143,12 @@
                 "ability": "chlorophyll",
                 "heldItem": "sitrus_berry",
                 "nature": "calm",
-                "level": 33
+                "level": 33,
+                "evs": {
+                  "hp": 252,
+                  "spd": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "roserade",
@@ -1716,7 +2161,12 @@
                 "ability": "naturalcure",
                 "heldItem": "sitrus_berry",
                 "nature": "timid",
-                "level": 33
+                "level": 33,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "victreebel",
@@ -1729,7 +2179,12 @@
                 "ability": "chlorophyll",
                 "heldItem": "miracle_seed",
                 "nature": "adamant",
-                "level": 34
+                "level": 34,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "vileplume",
@@ -1742,7 +2197,12 @@
                 "ability": "chlorophyll",
                 "heldItem": "coba_berry",
                 "nature": "modest",
-                "level": 35
+                "level": 35,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               }
             ]
           },
@@ -1767,7 +2227,12 @@
               "ability": "prankster",
               "heldItem": "damp_rock",
               "nature": "timid",
-              "level": 33
+              "level": 33,
+              "evs": {
+                "hp": 252,
+                "spe": 252,
+                "spd": 4
+              }
             },
             {
               "species": "ferroseed",
@@ -1780,7 +2245,12 @@
               "ability": "ironbarbs",
               "heldItem": "eviolite",
               "nature": "relaxed",
-              "level": 34
+              "level": 34,
+              "evs": {
+                "hp": 252,
+                "def": 252,
+                "spd": 4
+              }
             },
             {
               "species": "breloom",
@@ -1793,7 +2263,12 @@
               "ability": "technician",
               "heldItem": "focus_sash",
               "nature": "jolly",
-              "level": 34
+              "level": 34,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "cradily",
@@ -1806,7 +2281,12 @@
               "ability": "suctioncups",
               "heldItem": "leftovers",
               "nature": "calm",
-              "level": 34
+              "level": 34,
+              "evs": {
+                "hp": 252,
+                "spd": 252,
+                "def": 4
+              }
             },
             {
               "species": "lurantis",
@@ -1819,7 +2299,12 @@
               "ability": "contrary",
               "heldItem": "sitrus_berry",
               "nature": "adamant",
-              "level": 35
+              "level": 35,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "ludicolo",
@@ -1832,7 +2317,12 @@
               "ability": "swiftswim",
               "heldItem": "life_orb",
               "nature": "modest",
-              "level": 35
+              "level": 35,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             }
           ],
           "rct": {
@@ -1870,7 +2360,12 @@
                 "ability": "prankster",
                 "heldItem": "damp_rock",
                 "nature": "timid",
-                "level": 33
+                "level": 33,
+                "evs": {
+                  "hp": 252,
+                  "spe": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "ferroseed",
@@ -1883,7 +2378,12 @@
                 "ability": "ironbarbs",
                 "heldItem": "eviolite",
                 "nature": "relaxed",
-                "level": 34
+                "level": 34,
+                "evs": {
+                  "hp": 252,
+                  "def": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "breloom",
@@ -1896,7 +2396,12 @@
                 "ability": "technician",
                 "heldItem": "focus_sash",
                 "nature": "jolly",
-                "level": 34
+                "level": 34,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "cradily",
@@ -1909,7 +2414,12 @@
                 "ability": "suctioncups",
                 "heldItem": "leftovers",
                 "nature": "calm",
-                "level": 34
+                "level": 34,
+                "evs": {
+                  "hp": 252,
+                  "spd": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "lurantis",
@@ -1922,7 +2432,12 @@
                 "ability": "contrary",
                 "heldItem": "sitrus_berry",
                 "nature": "adamant",
-                "level": 35
+                "level": 35,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "ludicolo",
@@ -1935,7 +2450,12 @@
                 "ability": "swiftswim",
                 "heldItem": "life_orb",
                 "nature": "modest",
-                "level": 35
+                "level": 35,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               }
             ]
           },
@@ -1972,7 +2492,12 @@
           "ability": "infiltrator",
           "heldItem": "sitrus_berry",
           "nature": "timid",
-          "level": 38
+          "level": 38,
+          "evs": {
+            "hp": 252,
+            "spe": 252,
+            "spd": 4
+          }
         },
         {
           "species": "weezing",
@@ -1985,7 +2510,12 @@
           "ability": "neutralizinggas",
           "heldItem": "rocky_helmet",
           "nature": "bold",
-          "level": 38
+          "level": 38,
+          "evs": {
+            "hp": 252,
+            "def": 252,
+            "spd": 4
+          }
         },
         {
           "species": "toxtricity",
@@ -1998,7 +2528,12 @@
           "ability": "punkrock",
           "heldItem": "magnet",
           "nature": "modest",
-          "level": 39
+          "level": 39,
+          "evs": {
+            "hp": 252,
+            "spa": 252,
+            "spd": 4
+          }
         },
         {
           "species": "drapion",
@@ -2011,7 +2546,12 @@
           "ability": "battlearmor",
           "heldItem": "black_sludge",
           "nature": "adamant",
-          "level": 40
+          "level": 40,
+          "evs": {
+            "hp": 252,
+            "atk": 252,
+            "def": 4
+          }
         },
         {
           "species": "venomoth",
@@ -2024,7 +2564,12 @@
           "ability": "tintedlens",
           "heldItem": "black_sludge",
           "nature": "timid",
-          "level": 40
+          "level": 40,
+          "evs": {
+            "spa": 252,
+            "spe": 252,
+            "hp": 4
+          }
         }
       ],
       "dialogue": {
@@ -2082,7 +2627,12 @@
             "ability": "infiltrator",
             "heldItem": "sitrus_berry",
             "nature": "timid",
-            "level": 38
+            "level": 38,
+            "evs": {
+              "hp": 252,
+              "spe": 252,
+              "spd": 4
+            }
           },
           {
             "species": "weezing",
@@ -2095,7 +2645,12 @@
             "ability": "neutralizinggas",
             "heldItem": "rocky_helmet",
             "nature": "bold",
-            "level": 38
+            "level": 38,
+            "evs": {
+              "hp": 252,
+              "def": 252,
+              "spd": 4
+            }
           },
           {
             "species": "toxtricity",
@@ -2108,7 +2663,12 @@
             "ability": "punkrock",
             "heldItem": "magnet",
             "nature": "modest",
-            "level": 39
+            "level": 39,
+            "evs": {
+              "hp": 252,
+              "spa": 252,
+              "spd": 4
+            }
           },
           {
             "species": "drapion",
@@ -2121,7 +2681,12 @@
             "ability": "battlearmor",
             "heldItem": "black_sludge",
             "nature": "adamant",
-            "level": 40
+            "level": 40,
+            "evs": {
+              "hp": 252,
+              "atk": 252,
+              "def": 4
+            }
           },
           {
             "species": "venomoth",
@@ -2134,7 +2699,12 @@
             "ability": "tintedlens",
             "heldItem": "black_sludge",
             "nature": "timid",
-            "level": 40
+            "level": 40,
+            "evs": {
+              "spa": 252,
+              "spe": 252,
+              "hp": 4
+            }
           }
         ]
       },
@@ -2157,7 +2727,12 @@
               "ability": "infiltrator",
               "heldItem": "sitrus_berry",
               "nature": "timid",
-              "level": 38
+              "level": 38,
+              "evs": {
+                "hp": 252,
+                "spe": 252,
+                "spd": 4
+              }
             },
             {
               "species": "weezing",
@@ -2170,7 +2745,12 @@
               "ability": "neutralizinggas",
               "heldItem": "rocky_helmet",
               "nature": "bold",
-              "level": 38
+              "level": 38,
+              "evs": {
+                "hp": 252,
+                "def": 252,
+                "spd": 4
+              }
             },
             {
               "species": "toxtricity",
@@ -2183,7 +2763,12 @@
               "ability": "punkrock",
               "heldItem": "magnet",
               "nature": "modest",
-              "level": 39
+              "level": 39,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "drapion",
@@ -2196,7 +2781,12 @@
               "ability": "battlearmor",
               "heldItem": "black_sludge",
               "nature": "adamant",
-              "level": 40
+              "level": 40,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "venomoth",
@@ -2209,7 +2799,12 @@
               "ability": "tintedlens",
               "heldItem": "black_sludge",
               "nature": "timid",
-              "level": 40
+              "level": 40,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             }
           ],
           "rct": {
@@ -2247,7 +2842,12 @@
                 "ability": "infiltrator",
                 "heldItem": "sitrus_berry",
                 "nature": "timid",
-                "level": 38
+                "level": 38,
+                "evs": {
+                  "hp": 252,
+                  "spe": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "weezing",
@@ -2260,7 +2860,12 @@
                 "ability": "neutralizinggas",
                 "heldItem": "rocky_helmet",
                 "nature": "bold",
-                "level": 38
+                "level": 38,
+                "evs": {
+                  "hp": 252,
+                  "def": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "toxtricity",
@@ -2273,7 +2878,12 @@
                 "ability": "punkrock",
                 "heldItem": "magnet",
                 "nature": "modest",
-                "level": 39
+                "level": 39,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "drapion",
@@ -2286,7 +2896,12 @@
                 "ability": "battlearmor",
                 "heldItem": "black_sludge",
                 "nature": "adamant",
-                "level": 40
+                "level": 40,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "venomoth",
@@ -2299,7 +2914,12 @@
                 "ability": "tintedlens",
                 "heldItem": "black_sludge",
                 "nature": "timid",
-                "level": 40
+                "level": 40,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               }
             ]
           },
@@ -2324,7 +2944,12 @@
               "ability": "insomnia",
               "heldItem": "focus_sash",
               "nature": "jolly",
-              "level": 40
+              "level": 40,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "skuntank",
@@ -2337,7 +2962,12 @@
               "ability": "aftermath",
               "heldItem": "black_glasses",
               "nature": "adamant",
-              "level": 40
+              "level": 40,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "tentacruel",
@@ -2350,7 +2980,12 @@
               "ability": "liquidooze",
               "heldItem": "black_sludge",
               "nature": "calm",
-              "level": 40
+              "level": 40,
+              "evs": {
+                "hp": 252,
+                "spd": 252,
+                "def": 4
+              }
             },
             {
               "species": "roserade",
@@ -2363,7 +2998,12 @@
               "ability": "naturalcure",
               "heldItem": "wise_glasses",
               "nature": "timid",
-              "level": 40
+              "level": 40,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "toxicroak",
@@ -2376,7 +3016,12 @@
               "ability": "dryskin",
               "heldItem": "life_orb",
               "nature": "jolly",
-              "level": 40
+              "level": 40,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "glimmora",
@@ -2389,7 +3034,12 @@
               "ability": "toxicdebris",
               "heldItem": "focus_sash",
               "nature": "modest",
-              "level": 40
+              "level": 40,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             }
           ],
           "rct": {
@@ -2427,7 +3077,12 @@
                 "ability": "insomnia",
                 "heldItem": "focus_sash",
                 "nature": "jolly",
-                "level": 40
+                "level": 40,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "skuntank",
@@ -2440,7 +3095,12 @@
                 "ability": "aftermath",
                 "heldItem": "black_glasses",
                 "nature": "adamant",
-                "level": 40
+                "level": 40,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "tentacruel",
@@ -2453,7 +3113,12 @@
                 "ability": "liquidooze",
                 "heldItem": "black_sludge",
                 "nature": "calm",
-                "level": 40
+                "level": 40,
+                "evs": {
+                  "hp": 252,
+                  "spd": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "roserade",
@@ -2466,7 +3131,12 @@
                 "ability": "naturalcure",
                 "heldItem": "wise_glasses",
                 "nature": "timid",
-                "level": 40
+                "level": 40,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "toxicroak",
@@ -2479,7 +3149,12 @@
                 "ability": "dryskin",
                 "heldItem": "life_orb",
                 "nature": "jolly",
-                "level": 40
+                "level": 40,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "glimmora",
@@ -2492,7 +3167,12 @@
                 "ability": "toxicdebris",
                 "heldItem": "focus_sash",
                 "nature": "modest",
-                "level": 40
+                "level": 40,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               }
             ]
           },
@@ -2529,7 +3209,12 @@
           "ability": "magicbounce",
           "heldItem": "colbur_berry",
           "nature": "quiet",
-          "level": 42
+          "level": 42,
+          "evs": {
+            "hp": 252,
+            "spa": 252,
+            "spd": 4
+          }
         },
         {
           "species": "slowbro",
@@ -2542,7 +3227,12 @@
           "ability": "regenerator",
           "heldItem": "sitrus_berry",
           "nature": "relaxed",
-          "level": 43
+          "level": 43,
+          "evs": {
+            "hp": 252,
+            "def": 252,
+            "spd": 4
+          }
         },
         {
           "species": "bronzong",
@@ -2555,7 +3245,12 @@
           "ability": "levitate",
           "heldItem": "leftovers",
           "nature": "sassy",
-          "level": 43
+          "level": 43,
+          "evs": {
+            "hp": 252,
+            "def": 128,
+            "spd": 128
+          }
         },
         {
           "species": "exeggutor",
@@ -2568,7 +3263,12 @@
           "ability": "harvest",
           "heldItem": "sitrus_berry",
           "nature": "quiet",
-          "level": 44
+          "level": 44,
+          "evs": {
+            "hp": 252,
+            "spa": 252,
+            "spd": 4
+          }
         },
         {
           "species": "alakazam",
@@ -2581,7 +3281,12 @@
           "ability": "magicguard",
           "heldItem": "life_orb",
           "nature": "timid",
-          "level": 45
+          "level": 45,
+          "evs": {
+            "spa": 252,
+            "spe": 252,
+            "hp": 4
+          }
         }
       ],
       "dialogue": {
@@ -2639,7 +3344,12 @@
             "ability": "magicbounce",
             "heldItem": "colbur_berry",
             "nature": "quiet",
-            "level": 42
+            "level": 42,
+            "evs": {
+              "hp": 252,
+              "spa": 252,
+              "spd": 4
+            }
           },
           {
             "species": "slowbro",
@@ -2652,7 +3362,12 @@
             "ability": "regenerator",
             "heldItem": "sitrus_berry",
             "nature": "relaxed",
-            "level": 43
+            "level": 43,
+            "evs": {
+              "hp": 252,
+              "def": 252,
+              "spd": 4
+            }
           },
           {
             "species": "bronzong",
@@ -2665,7 +3380,12 @@
             "ability": "levitate",
             "heldItem": "leftovers",
             "nature": "sassy",
-            "level": 43
+            "level": 43,
+            "evs": {
+              "hp": 252,
+              "def": 128,
+              "spd": 128
+            }
           },
           {
             "species": "exeggutor",
@@ -2678,7 +3398,12 @@
             "ability": "harvest",
             "heldItem": "sitrus_berry",
             "nature": "quiet",
-            "level": 44
+            "level": 44,
+            "evs": {
+              "hp": 252,
+              "spa": 252,
+              "spd": 4
+            }
           },
           {
             "species": "alakazam",
@@ -2691,7 +3416,12 @@
             "ability": "magicguard",
             "heldItem": "life_orb",
             "nature": "timid",
-            "level": 45
+            "level": 45,
+            "evs": {
+              "spa": 252,
+              "spe": 252,
+              "hp": 4
+            }
           }
         ]
       },
@@ -2714,7 +3444,12 @@
               "ability": "magicbounce",
               "heldItem": "colbur_berry",
               "nature": "quiet",
-              "level": 42
+              "level": 42,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "slowbro",
@@ -2727,7 +3462,12 @@
               "ability": "regenerator",
               "heldItem": "sitrus_berry",
               "nature": "relaxed",
-              "level": 43
+              "level": 43,
+              "evs": {
+                "hp": 252,
+                "def": 252,
+                "spd": 4
+              }
             },
             {
               "species": "bronzong",
@@ -2740,7 +3480,12 @@
               "ability": "levitate",
               "heldItem": "leftovers",
               "nature": "sassy",
-              "level": 43
+              "level": 43,
+              "evs": {
+                "hp": 252,
+                "def": 128,
+                "spd": 128
+              }
             },
             {
               "species": "exeggutor",
@@ -2753,7 +3498,12 @@
               "ability": "harvest",
               "heldItem": "sitrus_berry",
               "nature": "quiet",
-              "level": 44
+              "level": 44,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "alakazam",
@@ -2766,7 +3516,12 @@
               "ability": "magicguard",
               "heldItem": "life_orb",
               "nature": "timid",
-              "level": 45
+              "level": 45,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             }
           ],
           "rct": {
@@ -2804,7 +3559,12 @@
                 "ability": "magicbounce",
                 "heldItem": "colbur_berry",
                 "nature": "quiet",
-                "level": 42
+                "level": 42,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "slowbro",
@@ -2817,7 +3577,12 @@
                 "ability": "regenerator",
                 "heldItem": "sitrus_berry",
                 "nature": "relaxed",
-                "level": 43
+                "level": 43,
+                "evs": {
+                  "hp": 252,
+                  "def": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "bronzong",
@@ -2830,7 +3595,12 @@
                 "ability": "levitate",
                 "heldItem": "leftovers",
                 "nature": "sassy",
-                "level": 43
+                "level": 43,
+                "evs": {
+                  "hp": 252,
+                  "def": 128,
+                  "spd": 128
+                }
               },
               {
                 "species": "exeggutor",
@@ -2843,7 +3613,12 @@
                 "ability": "harvest",
                 "heldItem": "sitrus_berry",
                 "nature": "quiet",
-                "level": 44
+                "level": 44,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "alakazam",
@@ -2856,7 +3631,12 @@
                 "ability": "magicguard",
                 "heldItem": "life_orb",
                 "nature": "timid",
-                "level": 45
+                "level": 45,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               }
             ]
           },
@@ -2881,7 +3661,12 @@
               "ability": "psychicsurge",
               "heldItem": "terrain_extender",
               "nature": "modest",
-              "level": 45
+              "level": 45,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "gallade",
@@ -2894,7 +3679,12 @@
               "ability": "sharpness",
               "heldItem": "life_orb",
               "nature": "jolly",
-              "level": 45
+              "level": 45,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "gardevoir",
@@ -2907,7 +3697,12 @@
               "ability": "trace",
               "heldItem": "leftovers",
               "nature": "timid",
-              "level": 45
+              "level": 45,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "reuniclus",
@@ -2920,7 +3715,12 @@
               "ability": "magicguard",
               "heldItem": "sitrus_berry",
               "nature": "quiet",
-              "level": 45
+              "level": 45,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "espeon",
@@ -2933,7 +3733,12 @@
               "ability": "magicbounce",
               "heldItem": "wise_glasses",
               "nature": "timid",
-              "level": 45
+              "level": 45,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "alakazam",
@@ -2946,7 +3751,12 @@
               "ability": "magicguard",
               "heldItem": "focus_sash",
               "nature": "timid",
-              "level": 45
+              "level": 45,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             }
           ],
           "rct": {
@@ -2984,7 +3794,12 @@
                 "ability": "psychicsurge",
                 "heldItem": "terrain_extender",
                 "nature": "modest",
-                "level": 45
+                "level": 45,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "gallade",
@@ -2997,7 +3812,12 @@
                 "ability": "sharpness",
                 "heldItem": "life_orb",
                 "nature": "jolly",
-                "level": 45
+                "level": 45,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "gardevoir",
@@ -3010,7 +3830,12 @@
                 "ability": "trace",
                 "heldItem": "leftovers",
                 "nature": "timid",
-                "level": 45
+                "level": 45,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "reuniclus",
@@ -3023,7 +3848,12 @@
                 "ability": "magicguard",
                 "heldItem": "sitrus_berry",
                 "nature": "quiet",
-                "level": 45
+                "level": 45,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "espeon",
@@ -3036,7 +3866,12 @@
                 "ability": "magicbounce",
                 "heldItem": "wise_glasses",
                 "nature": "timid",
-                "level": 45
+                "level": 45,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "alakazam",
@@ -3049,7 +3884,12 @@
                 "ability": "magicguard",
                 "heldItem": "focus_sash",
                 "nature": "timid",
-                "level": 45
+                "level": 45,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               }
             ]
           },
@@ -3086,7 +3926,12 @@
           "ability": "drought",
           "heldItem": "heat_rock",
           "nature": "bold",
-          "level": 47
+          "level": 47,
+          "evs": {
+            "hp": 252,
+            "def": 252,
+            "spd": 4
+          }
         },
         {
           "species": "arcanine",
@@ -3099,7 +3944,12 @@
           "ability": "intimidate",
           "heldItem": "sitrus_berry",
           "nature": "jolly",
-          "level": 48
+          "level": 48,
+          "evs": {
+            "atk": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "magcargo",
@@ -3112,7 +3962,12 @@
           "ability": "flamebody",
           "heldItem": "sitrus_berry",
           "nature": "modest",
-          "level": 48
+          "level": 48,
+          "evs": {
+            "hp": 252,
+            "spa": 252,
+            "spd": 4
+          }
         },
         {
           "species": "typhlosion",
@@ -3125,7 +3980,12 @@
           "ability": "blaze",
           "heldItem": "charcoal",
           "nature": "timid",
-          "level": 49
+          "level": 49,
+          "evs": {
+            "spa": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "charizard",
@@ -3138,7 +3998,12 @@
           "ability": "solarpower",
           "heldItem": "sitrus_berry",
           "nature": "timid",
-          "level": 50
+          "level": 50,
+          "evs": {
+            "spa": 252,
+            "spe": 252,
+            "hp": 4
+          }
         }
       ],
       "dialogue": {
@@ -3195,7 +4060,12 @@
             "ability": "drought",
             "heldItem": "heat_rock",
             "nature": "bold",
-            "level": 47
+            "level": 47,
+            "evs": {
+              "hp": 252,
+              "def": 252,
+              "spd": 4
+            }
           },
           {
             "species": "arcanine",
@@ -3208,7 +4078,12 @@
             "ability": "intimidate",
             "heldItem": "sitrus_berry",
             "nature": "jolly",
-            "level": 48
+            "level": 48,
+            "evs": {
+              "atk": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "magcargo",
@@ -3221,7 +4096,12 @@
             "ability": "flamebody",
             "heldItem": "sitrus_berry",
             "nature": "modest",
-            "level": 48
+            "level": 48,
+            "evs": {
+              "hp": 252,
+              "spa": 252,
+              "spd": 4
+            }
           },
           {
             "species": "typhlosion",
@@ -3234,7 +4114,12 @@
             "ability": "blaze",
             "heldItem": "charcoal",
             "nature": "timid",
-            "level": 49
+            "level": 49,
+            "evs": {
+              "spa": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "charizard",
@@ -3247,7 +4132,12 @@
             "ability": "solarpower",
             "heldItem": "sitrus_berry",
             "nature": "timid",
-            "level": 50
+            "level": 50,
+            "evs": {
+              "spa": 252,
+              "spe": 252,
+              "hp": 4
+            }
           }
         ]
       },
@@ -3270,7 +4160,12 @@
               "ability": "drought",
               "heldItem": "heat_rock",
               "nature": "bold",
-              "level": 47
+              "level": 47,
+              "evs": {
+                "hp": 252,
+                "def": 252,
+                "spd": 4
+              }
             },
             {
               "species": "arcanine",
@@ -3283,7 +4178,12 @@
               "ability": "intimidate",
               "heldItem": "sitrus_berry",
               "nature": "jolly",
-              "level": 48
+              "level": 48,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "magcargo",
@@ -3296,7 +4196,12 @@
               "ability": "flamebody",
               "heldItem": "sitrus_berry",
               "nature": "modest",
-              "level": 48
+              "level": 48,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "typhlosion",
@@ -3309,7 +4214,12 @@
               "ability": "blaze",
               "heldItem": "charcoal",
               "nature": "timid",
-              "level": 49
+              "level": 49,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "charizard",
@@ -3322,7 +4232,12 @@
               "ability": "solarpower",
               "heldItem": "sitrus_berry",
               "nature": "timid",
-              "level": 50
+              "level": 50,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             }
           ],
           "rct": {
@@ -3360,7 +4275,12 @@
                 "ability": "drought",
                 "heldItem": "heat_rock",
                 "nature": "bold",
-                "level": 47
+                "level": 47,
+                "evs": {
+                  "hp": 252,
+                  "def": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "arcanine",
@@ -3373,7 +4293,12 @@
                 "ability": "intimidate",
                 "heldItem": "sitrus_berry",
                 "nature": "jolly",
-                "level": 48
+                "level": 48,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "magcargo",
@@ -3386,7 +4311,12 @@
                 "ability": "flamebody",
                 "heldItem": "sitrus_berry",
                 "nature": "modest",
-                "level": 48
+                "level": 48,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "typhlosion",
@@ -3399,7 +4329,12 @@
                 "ability": "blaze",
                 "heldItem": "charcoal",
                 "nature": "timid",
-                "level": 49
+                "level": 49,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "charizard",
@@ -3412,7 +4347,12 @@
                 "ability": "solarpower",
                 "heldItem": "sitrus_berry",
                 "nature": "timid",
-                "level": 50
+                "level": 50,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               }
             ]
           },
@@ -3437,7 +4377,12 @@
               "ability": "galewings",
               "heldItem": "heavy_duty_boots",
               "nature": "jolly",
-              "level": 50
+              "level": 50,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "chandelure",
@@ -3450,7 +4395,12 @@
               "ability": "flashfire",
               "heldItem": "life_orb",
               "nature": "modest",
-              "level": 50
+              "level": 50,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "scovillain",
@@ -3463,7 +4413,12 @@
               "ability": "insomnia",
               "heldItem": "sitrus_berry",
               "nature": "modest",
-              "level": 50
+              "level": 50,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "infernape",
@@ -3476,7 +4431,12 @@
               "ability": "blaze",
               "heldItem": "focus_sash",
               "nature": "naive",
-              "level": 50
+              "level": 50,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "charizard",
@@ -3489,7 +4449,12 @@
               "ability": "blaze",
               "heldItem": "lum_berry",
               "nature": "jolly",
-              "level": 50
+              "level": 50,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "volcarona",
@@ -3502,7 +4467,12 @@
               "ability": "flamebody",
               "heldItem": "leftovers",
               "nature": "timid",
-              "level": 50
+              "level": 50,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             }
           ],
           "rct": {
@@ -3540,7 +4510,12 @@
                 "ability": "galewings",
                 "heldItem": "heavy_duty_boots",
                 "nature": "jolly",
-                "level": 50
+                "level": 50,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "chandelure",
@@ -3553,7 +4528,12 @@
                 "ability": "flashfire",
                 "heldItem": "life_orb",
                 "nature": "modest",
-                "level": 50
+                "level": 50,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "scovillain",
@@ -3566,7 +4546,12 @@
                 "ability": "insomnia",
                 "heldItem": "sitrus_berry",
                 "nature": "modest",
-                "level": 50
+                "level": 50,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "infernape",
@@ -3579,7 +4564,12 @@
                 "ability": "blaze",
                 "heldItem": "focus_sash",
                 "nature": "naive",
-                "level": 50
+                "level": 50,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "charizard",
@@ -3592,7 +4582,12 @@
                 "ability": "blaze",
                 "heldItem": "lum_berry",
                 "nature": "jolly",
-                "level": 50
+                "level": 50,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "volcarona",
@@ -3605,7 +4600,12 @@
                 "ability": "flamebody",
                 "heldItem": "leftovers",
                 "nature": "timid",
-                "level": 50
+                "level": 50,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               }
             ]
           },
@@ -3642,7 +4642,12 @@
           "ability": "sandstream",
           "heldItem": "sitrus_berry",
           "nature": "impish",
-          "level": 52
+          "level": 52,
+          "evs": {
+            "hp": 252,
+            "def": 252,
+            "spd": 4
+          }
         },
         {
           "species": "persian",
@@ -3655,7 +4660,12 @@
           "ability": "technician",
           "heldItem": "silk_scarf",
           "nature": "jolly",
-          "level": 52
+          "level": 52,
+          "evs": {
+            "atk": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "mudsdale",
@@ -3668,7 +4678,12 @@
           "ability": "stamina",
           "heldItem": "leftovers",
           "nature": "careful",
-          "level": 53
+          "level": 53,
+          "evs": {
+            "hp": 252,
+            "def": 128,
+            "spd": 128
+          }
         },
         {
           "species": "nidoqueen",
@@ -3681,7 +4696,12 @@
           "ability": "sheerforce",
           "heldItem": "expert_belt",
           "nature": "modest",
-          "level": 53
+          "level": 53,
+          "evs": {
+            "hp": 252,
+            "spa": 252,
+            "spd": 4
+          }
         },
         {
           "species": "krookodile",
@@ -3694,7 +4714,12 @@
           "ability": "intimidate",
           "heldItem": "black_glasses",
           "nature": "jolly",
-          "level": 54
+          "level": 54,
+          "evs": {
+            "atk": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "rhyperior",
@@ -3707,7 +4732,12 @@
           "ability": "solidrock",
           "heldItem": "sitrus_berry",
           "nature": "adamant",
-          "level": 55
+          "level": 55,
+          "evs": {
+            "hp": 252,
+            "atk": 252,
+            "def": 4
+          }
         }
       ],
       "dialogue": {
@@ -3770,7 +4800,12 @@
             "ability": "sandstream",
             "heldItem": "sitrus_berry",
             "nature": "impish",
-            "level": 52
+            "level": 52,
+            "evs": {
+              "hp": 252,
+              "def": 252,
+              "spd": 4
+            }
           },
           {
             "species": "persian",
@@ -3783,7 +4818,12 @@
             "ability": "technician",
             "heldItem": "silk_scarf",
             "nature": "jolly",
-            "level": 52
+            "level": 52,
+            "evs": {
+              "atk": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "mudsdale",
@@ -3796,7 +4836,12 @@
             "ability": "stamina",
             "heldItem": "leftovers",
             "nature": "careful",
-            "level": 53
+            "level": 53,
+            "evs": {
+              "hp": 252,
+              "def": 128,
+              "spd": 128
+            }
           },
           {
             "species": "nidoqueen",
@@ -3809,7 +4854,12 @@
             "ability": "sheerforce",
             "heldItem": "expert_belt",
             "nature": "modest",
-            "level": 53
+            "level": 53,
+            "evs": {
+              "hp": 252,
+              "spa": 252,
+              "spd": 4
+            }
           },
           {
             "species": "krookodile",
@@ -3822,7 +4872,12 @@
             "ability": "intimidate",
             "heldItem": "black_glasses",
             "nature": "jolly",
-            "level": 54
+            "level": 54,
+            "evs": {
+              "atk": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "rhyperior",
@@ -3835,7 +4890,12 @@
             "ability": "solidrock",
             "heldItem": "sitrus_berry",
             "nature": "adamant",
-            "level": 55
+            "level": 55,
+            "evs": {
+              "hp": 252,
+              "atk": 252,
+              "def": 4
+            }
           }
         ]
       },
@@ -3858,7 +4918,12 @@
               "ability": "sandstream",
               "heldItem": "sitrus_berry",
               "nature": "impish",
-              "level": 52
+              "level": 52,
+              "evs": {
+                "hp": 252,
+                "def": 252,
+                "spd": 4
+              }
             },
             {
               "species": "persian",
@@ -3871,7 +4936,12 @@
               "ability": "technician",
               "heldItem": "silk_scarf",
               "nature": "jolly",
-              "level": 52
+              "level": 52,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "mudsdale",
@@ -3884,7 +4954,12 @@
               "ability": "stamina",
               "heldItem": "leftovers",
               "nature": "careful",
-              "level": 53
+              "level": 53,
+              "evs": {
+                "hp": 252,
+                "def": 128,
+                "spd": 128
+              }
             },
             {
               "species": "nidoqueen",
@@ -3897,7 +4972,12 @@
               "ability": "sheerforce",
               "heldItem": "expert_belt",
               "nature": "modest",
-              "level": 53
+              "level": 53,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "krookodile",
@@ -3910,7 +4990,12 @@
               "ability": "intimidate",
               "heldItem": "black_glasses",
               "nature": "jolly",
-              "level": 54
+              "level": 54,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "rhyperior",
@@ -3923,7 +5008,12 @@
               "ability": "solidrock",
               "heldItem": "sitrus_berry",
               "nature": "adamant",
-              "level": 55
+              "level": 55,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             }
           ],
           "rct": {
@@ -3961,7 +5051,12 @@
                 "ability": "sandstream",
                 "heldItem": "sitrus_berry",
                 "nature": "impish",
-                "level": 52
+                "level": 52,
+                "evs": {
+                  "hp": 252,
+                  "def": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "persian",
@@ -3974,7 +5069,12 @@
                 "ability": "technician",
                 "heldItem": "silk_scarf",
                 "nature": "jolly",
-                "level": 52
+                "level": 52,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "mudsdale",
@@ -3987,7 +5087,12 @@
                 "ability": "stamina",
                 "heldItem": "leftovers",
                 "nature": "careful",
-                "level": 53
+                "level": 53,
+                "evs": {
+                  "hp": 252,
+                  "def": 128,
+                  "spd": 128
+                }
               },
               {
                 "species": "nidoqueen",
@@ -4000,7 +5105,12 @@
                 "ability": "sheerforce",
                 "heldItem": "expert_belt",
                 "nature": "modest",
-                "level": 53
+                "level": 53,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "krookodile",
@@ -4013,7 +5123,12 @@
                 "ability": "intimidate",
                 "heldItem": "black_glasses",
                 "nature": "jolly",
-                "level": 54
+                "level": 54,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "rhyperior",
@@ -4026,7 +5141,12 @@
                 "ability": "solidrock",
                 "heldItem": "sitrus_berry",
                 "nature": "adamant",
-                "level": 55
+                "level": 55,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               }
             ]
           },
@@ -4051,7 +5171,12 @@
               "ability": "levitate",
               "heldItem": "mental_herb",
               "nature": "bold",
-              "level": 55
+              "level": 55,
+              "evs": {
+                "hp": 252,
+                "def": 252,
+                "spd": 4
+              }
             },
             {
               "species": "gastrodon",
@@ -4064,7 +5189,12 @@
               "ability": "stormdrain",
               "heldItem": "leftovers",
               "nature": "calm",
-              "level": 55
+              "level": 55,
+              "evs": {
+                "hp": 252,
+                "spd": 252,
+                "def": 4
+              }
             },
             {
               "species": "gliscor",
@@ -4077,7 +5207,12 @@
               "ability": "poisonheal",
               "heldItem": "toxic_orb",
               "nature": "jolly",
-              "level": 55
+              "level": 55,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "donphan",
@@ -4090,7 +5225,12 @@
               "ability": "sturdy",
               "heldItem": "expert_belt",
               "nature": "adamant",
-              "level": 55
+              "level": 55,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "excadrill",
@@ -4103,7 +5243,12 @@
               "ability": "moldbreaker",
               "heldItem": "life_orb",
               "nature": "jolly",
-              "level": 55
+              "level": 55,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "garchomp",
@@ -4116,7 +5261,12 @@
               "ability": "roughskin",
               "heldItem": "focus_sash",
               "nature": "jolly",
-              "level": 55
+              "level": 55,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             }
           ],
           "rct": {
@@ -4154,7 +5304,12 @@
                 "ability": "levitate",
                 "heldItem": "mental_herb",
                 "nature": "bold",
-                "level": 55
+                "level": 55,
+                "evs": {
+                  "hp": 252,
+                  "def": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "gastrodon",
@@ -4167,7 +5322,12 @@
                 "ability": "stormdrain",
                 "heldItem": "leftovers",
                 "nature": "calm",
-                "level": 55
+                "level": 55,
+                "evs": {
+                  "hp": 252,
+                  "spd": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "gliscor",
@@ -4180,7 +5340,12 @@
                 "ability": "poisonheal",
                 "heldItem": "toxic_orb",
                 "nature": "jolly",
-                "level": 55
+                "level": 55,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "donphan",
@@ -4193,7 +5358,12 @@
                 "ability": "sturdy",
                 "heldItem": "expert_belt",
                 "nature": "adamant",
-                "level": 55
+                "level": 55,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "excadrill",
@@ -4206,7 +5376,12 @@
                 "ability": "moldbreaker",
                 "heldItem": "life_orb",
                 "nature": "jolly",
-                "level": 55
+                "level": 55,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "garchomp",
@@ -4219,7 +5394,12 @@
                 "ability": "roughskin",
                 "heldItem": "focus_sash",
                 "nature": "jolly",
-                "level": 55
+                "level": 55,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               }
             ]
           },
@@ -4256,7 +5436,12 @@
           "ability": "cursedbody",
           "heldItem": "focus_sash",
           "nature": "timid",
-          "level": 57
+          "level": 57,
+          "evs": {
+            "hp": 252,
+            "spe": 252,
+            "spd": 4
+          }
         },
         {
           "species": "mamoswine",
@@ -4269,7 +5454,12 @@
           "ability": "thickfat",
           "heldItem": "life_orb",
           "nature": "adamant",
-          "level": 58
+          "level": 58,
+          "evs": {
+            "hp": 252,
+            "atk": 252,
+            "def": 4
+          }
         },
         {
           "species": "jynx",
@@ -4282,7 +5472,12 @@
           "ability": "dryskin",
           "heldItem": "colbur_berry",
           "nature": "timid",
-          "level": 58
+          "level": 58,
+          "evs": {
+            "spa": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "weavile",
@@ -4295,7 +5490,12 @@
           "ability": "pressure",
           "heldItem": "choice_band",
           "nature": "jolly",
-          "level": 59
+          "level": 59,
+          "evs": {
+            "atk": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "walrein",
@@ -4308,7 +5508,12 @@
           "ability": "thickfat",
           "heldItem": "leftovers",
           "nature": "bold",
-          "level": 59
+          "level": 59,
+          "evs": {
+            "hp": 252,
+            "def": 252,
+            "spd": 4
+          }
         },
         {
           "species": "lapras",
@@ -4321,7 +5526,12 @@
           "ability": "waterabsorb",
           "heldItem": "assault_vest",
           "nature": "modest",
-          "level": 60
+          "level": 60,
+          "evs": {
+            "hp": 252,
+            "spa": 252,
+            "spd": 4
+          }
         }
       ],
       "dialogue": {
@@ -4378,7 +5588,12 @@
             "ability": "cursedbody",
             "heldItem": "focus_sash",
             "nature": "timid",
-            "level": 57
+            "level": 57,
+            "evs": {
+              "hp": 252,
+              "spe": 252,
+              "spd": 4
+            }
           },
           {
             "species": "mamoswine",
@@ -4391,7 +5606,12 @@
             "ability": "thickfat",
             "heldItem": "life_orb",
             "nature": "adamant",
-            "level": 58
+            "level": 58,
+            "evs": {
+              "hp": 252,
+              "atk": 252,
+              "def": 4
+            }
           },
           {
             "species": "jynx",
@@ -4404,7 +5624,12 @@
             "ability": "dryskin",
             "heldItem": "colbur_berry",
             "nature": "timid",
-            "level": 58
+            "level": 58,
+            "evs": {
+              "spa": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "weavile",
@@ -4417,7 +5642,12 @@
             "ability": "pressure",
             "heldItem": "choice_band",
             "nature": "jolly",
-            "level": 59
+            "level": 59,
+            "evs": {
+              "atk": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "walrein",
@@ -4430,7 +5660,12 @@
             "ability": "thickfat",
             "heldItem": "leftovers",
             "nature": "bold",
-            "level": 59
+            "level": 59,
+            "evs": {
+              "hp": 252,
+              "def": 252,
+              "spd": 4
+            }
           },
           {
             "species": "lapras",
@@ -4443,7 +5678,12 @@
             "ability": "waterabsorb",
             "heldItem": "assault_vest",
             "nature": "modest",
-            "level": 60
+            "level": 60,
+            "evs": {
+              "hp": 252,
+              "spa": 252,
+              "spd": 4
+            }
           }
         ]
       },
@@ -4466,7 +5706,12 @@
               "ability": "cursedbody",
               "heldItem": "focus_sash",
               "nature": "timid",
-              "level": 57
+              "level": 57,
+              "evs": {
+                "hp": 252,
+                "spe": 252,
+                "spd": 4
+              }
             },
             {
               "species": "mamoswine",
@@ -4479,7 +5724,12 @@
               "ability": "thickfat",
               "heldItem": "life_orb",
               "nature": "adamant",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "jynx",
@@ -4492,7 +5742,12 @@
               "ability": "dryskin",
               "heldItem": "colbur_berry",
               "nature": "timid",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "weavile",
@@ -4505,7 +5760,12 @@
               "ability": "pressure",
               "heldItem": "choice_band",
               "nature": "jolly",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "walrein",
@@ -4518,7 +5778,12 @@
               "ability": "thickfat",
               "heldItem": "leftovers",
               "nature": "bold",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "hp": 252,
+                "def": 252,
+                "spd": 4
+              }
             },
             {
               "species": "lapras",
@@ -4531,7 +5796,12 @@
               "ability": "waterabsorb",
               "heldItem": "assault_vest",
               "nature": "modest",
-              "level": 60
+              "level": 60,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             }
           ],
           "rct": {
@@ -4569,7 +5839,12 @@
                 "ability": "cursedbody",
                 "heldItem": "focus_sash",
                 "nature": "timid",
-                "level": 57
+                "level": 57,
+                "evs": {
+                  "hp": 252,
+                  "spe": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "mamoswine",
@@ -4582,7 +5857,12 @@
                 "ability": "thickfat",
                 "heldItem": "life_orb",
                 "nature": "adamant",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "jynx",
@@ -4595,7 +5875,12 @@
                 "ability": "dryskin",
                 "heldItem": "colbur_berry",
                 "nature": "timid",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "weavile",
@@ -4608,7 +5893,12 @@
                 "ability": "pressure",
                 "heldItem": "choice_band",
                 "nature": "jolly",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "walrein",
@@ -4621,7 +5911,12 @@
                 "ability": "thickfat",
                 "heldItem": "leftovers",
                 "nature": "bold",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "hp": 252,
+                  "def": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "lapras",
@@ -4634,7 +5929,12 @@
                 "ability": "waterabsorb",
                 "heldItem": "assault_vest",
                 "nature": "modest",
-                "level": 60
+                "level": 60,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               }
             ]
           },
@@ -4659,7 +5959,12 @@
               "ability": "snowwarning",
               "heldItem": "light_clay",
               "nature": "quiet",
-              "level": 57
+              "level": 57,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "cloyster",
@@ -4672,7 +5977,12 @@
               "ability": "skilllink",
               "heldItem": "white_herb",
               "nature": "adamant",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "crabominable",
@@ -4685,7 +5995,12 @@
               "ability": "ironfist",
               "heldItem": "assault_vest",
               "nature": "adamant",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "frosmoth",
@@ -4698,7 +6013,12 @@
               "ability": "icescales",
               "heldItem": "heavy_duty_boots",
               "nature": "timid",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "cetitan",
@@ -4711,7 +6031,12 @@
               "ability": "slushrush",
               "heldItem": "sitrus_berry",
               "nature": "adamant",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "lapras",
@@ -4724,7 +6049,12 @@
               "ability": "waterabsorb",
               "heldItem": "weakness_policy",
               "nature": "modest",
-              "level": 60
+              "level": 60,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             }
           ],
           "rct": {
@@ -4762,7 +6092,12 @@
                 "ability": "snowwarning",
                 "heldItem": "light_clay",
                 "nature": "quiet",
-                "level": 57
+                "level": 57,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "cloyster",
@@ -4775,7 +6110,12 @@
                 "ability": "skilllink",
                 "heldItem": "white_herb",
                 "nature": "adamant",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "crabominable",
@@ -4788,7 +6128,12 @@
                 "ability": "ironfist",
                 "heldItem": "assault_vest",
                 "nature": "adamant",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "frosmoth",
@@ -4801,7 +6146,12 @@
                 "ability": "icescales",
                 "heldItem": "heavy_duty_boots",
                 "nature": "timid",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "cetitan",
@@ -4814,7 +6164,12 @@
                 "ability": "slushrush",
                 "heldItem": "sitrus_berry",
                 "nature": "adamant",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "lapras",
@@ -4827,7 +6182,12 @@
                 "ability": "waterabsorb",
                 "heldItem": "weakness_policy",
                 "nature": "modest",
-                "level": 60
+                "level": 60,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               }
             ]
           },
@@ -4864,7 +6224,12 @@
           "ability": "intimidate",
           "heldItem": "heavy_duty_boots",
           "nature": "jolly",
-          "level": 57
+          "level": 57,
+          "evs": {
+            "atk": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "machamp",
@@ -4877,7 +6242,12 @@
           "ability": "guts",
           "heldItem": "flame_orb",
           "nature": "adamant",
-          "level": 58
+          "level": 58,
+          "evs": {
+            "hp": 252,
+            "atk": 252,
+            "def": 4
+          }
         },
         {
           "species": "hariyama",
@@ -4890,7 +6260,12 @@
           "ability": "thickfat",
           "heldItem": "assault_vest",
           "nature": "adamant",
-          "level": 58
+          "level": 58,
+          "evs": {
+            "hp": 252,
+            "atk": 252,
+            "def": 4
+          }
         },
         {
           "species": "lucario",
@@ -4903,7 +6278,12 @@
           "ability": "innerfocus",
           "heldItem": "life_orb",
           "nature": "timid",
-          "level": 59
+          "level": 59,
+          "evs": {
+            "spa": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "heracross",
@@ -4916,7 +6296,12 @@
           "ability": "moxie",
           "heldItem": "choice_scarf",
           "nature": "jolly",
-          "level": 59
+          "level": 59,
+          "evs": {
+            "atk": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "hitmonlee",
@@ -4929,7 +6314,12 @@
           "ability": "unburden",
           "heldItem": "white_herb",
           "nature": "jolly",
-          "level": 60
+          "level": 60,
+          "evs": {
+            "atk": 252,
+            "spe": 252,
+            "hp": 4
+          }
         }
       ],
       "dialogue": {
@@ -4986,7 +6376,12 @@
             "ability": "intimidate",
             "heldItem": "heavy_duty_boots",
             "nature": "jolly",
-            "level": 57
+            "level": 57,
+            "evs": {
+              "atk": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "machamp",
@@ -4999,7 +6394,12 @@
             "ability": "guts",
             "heldItem": "flame_orb",
             "nature": "adamant",
-            "level": 58
+            "level": 58,
+            "evs": {
+              "hp": 252,
+              "atk": 252,
+              "def": 4
+            }
           },
           {
             "species": "hariyama",
@@ -5012,7 +6412,12 @@
             "ability": "thickfat",
             "heldItem": "assault_vest",
             "nature": "adamant",
-            "level": 58
+            "level": 58,
+            "evs": {
+              "hp": 252,
+              "atk": 252,
+              "def": 4
+            }
           },
           {
             "species": "lucario",
@@ -5025,7 +6430,12 @@
             "ability": "innerfocus",
             "heldItem": "life_orb",
             "nature": "timid",
-            "level": 59
+            "level": 59,
+            "evs": {
+              "spa": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "heracross",
@@ -5038,7 +6448,12 @@
             "ability": "moxie",
             "heldItem": "choice_scarf",
             "nature": "jolly",
-            "level": 59
+            "level": 59,
+            "evs": {
+              "atk": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "hitmonlee",
@@ -5051,7 +6466,12 @@
             "ability": "unburden",
             "heldItem": "white_herb",
             "nature": "jolly",
-            "level": 60
+            "level": 60,
+            "evs": {
+              "atk": 252,
+              "spe": 252,
+              "hp": 4
+            }
           }
         ]
       },
@@ -5074,7 +6494,12 @@
               "ability": "intimidate",
               "heldItem": "heavy_duty_boots",
               "nature": "jolly",
-              "level": 57
+              "level": 57,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "machamp",
@@ -5087,7 +6512,12 @@
               "ability": "guts",
               "heldItem": "flame_orb",
               "nature": "adamant",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "hariyama",
@@ -5100,7 +6530,12 @@
               "ability": "thickfat",
               "heldItem": "assault_vest",
               "nature": "adamant",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "lucario",
@@ -5113,7 +6548,12 @@
               "ability": "innerfocus",
               "heldItem": "life_orb",
               "nature": "timid",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "heracross",
@@ -5126,7 +6566,12 @@
               "ability": "moxie",
               "heldItem": "choice_scarf",
               "nature": "jolly",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "hitmonlee",
@@ -5139,7 +6584,12 @@
               "ability": "unburden",
               "heldItem": "white_herb",
               "nature": "jolly",
-              "level": 60
+              "level": 60,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             }
           ],
           "rct": {
@@ -5177,7 +6627,12 @@
                 "ability": "intimidate",
                 "heldItem": "heavy_duty_boots",
                 "nature": "jolly",
-                "level": 57
+                "level": 57,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "machamp",
@@ -5190,7 +6645,12 @@
                 "ability": "guts",
                 "heldItem": "flame_orb",
                 "nature": "adamant",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "hariyama",
@@ -5203,7 +6663,12 @@
                 "ability": "thickfat",
                 "heldItem": "assault_vest",
                 "nature": "adamant",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "lucario",
@@ -5216,7 +6681,12 @@
                 "ability": "innerfocus",
                 "heldItem": "life_orb",
                 "nature": "timid",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "heracross",
@@ -5229,7 +6699,12 @@
                 "ability": "moxie",
                 "heldItem": "choice_scarf",
                 "nature": "jolly",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "hitmonlee",
@@ -5242,7 +6717,12 @@
                 "ability": "unburden",
                 "heldItem": "white_herb",
                 "nature": "jolly",
-                "level": 60
+                "level": 60,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               }
             ]
           },
@@ -5267,7 +6747,12 @@
               "ability": "intimidate",
               "heldItem": "leftovers",
               "nature": "careful",
-              "level": 57
+              "level": 57,
+              "evs": {
+                "hp": 252,
+                "def": 128,
+                "spd": 128
+              }
             },
             {
               "species": "hitmonchan",
@@ -5280,7 +6765,12 @@
               "ability": "ironfist",
               "heldItem": "punching_glove",
               "nature": "adamant",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "medicham",
@@ -5293,7 +6783,12 @@
               "ability": "purepower",
               "heldItem": "life_orb",
               "nature": "jolly",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "quaquaval",
@@ -5306,7 +6801,12 @@
               "ability": "moxie",
               "heldItem": "lum_berry",
               "nature": "jolly",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "conkeldurr",
@@ -5319,7 +6819,12 @@
               "ability": "ironfist",
               "heldItem": "assault_vest",
               "nature": "adamant",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "annihilape",
@@ -5332,7 +6837,12 @@
               "ability": "defiant",
               "heldItem": "leftovers",
               "nature": "adamant",
-              "level": 60
+              "level": 60,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             }
           ],
           "rct": {
@@ -5370,7 +6880,12 @@
                 "ability": "intimidate",
                 "heldItem": "leftovers",
                 "nature": "careful",
-                "level": 57
+                "level": 57,
+                "evs": {
+                  "hp": 252,
+                  "def": 128,
+                  "spd": 128
+                }
               },
               {
                 "species": "hitmonchan",
@@ -5383,7 +6898,12 @@
                 "ability": "ironfist",
                 "heldItem": "punching_glove",
                 "nature": "adamant",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "medicham",
@@ -5396,7 +6916,12 @@
                 "ability": "purepower",
                 "heldItem": "life_orb",
                 "nature": "jolly",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "quaquaval",
@@ -5409,7 +6934,12 @@
                 "ability": "moxie",
                 "heldItem": "lum_berry",
                 "nature": "jolly",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "conkeldurr",
@@ -5422,7 +6952,12 @@
                 "ability": "ironfist",
                 "heldItem": "assault_vest",
                 "nature": "adamant",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "annihilape",
@@ -5435,7 +6970,12 @@
                 "ability": "defiant",
                 "heldItem": "leftovers",
                 "nature": "adamant",
-                "level": 60
+                "level": 60,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               }
             ]
           },
@@ -5472,7 +7012,12 @@
           "ability": "levitate",
           "heldItem": "colbur_berry",
           "nature": "timid",
-          "level": 57
+          "level": 57,
+          "evs": {
+            "hp": 252,
+            "spe": 252,
+            "spd": 4
+          }
         },
         {
           "species": "spiritomb",
@@ -5485,7 +7030,12 @@
           "ability": "pressure",
           "heldItem": "leftovers",
           "nature": "careful",
-          "level": 58
+          "level": 58,
+          "evs": {
+            "hp": 252,
+            "spd": 252,
+            "def": 4
+          }
         },
         {
           "species": "banette",
@@ -5498,7 +7048,12 @@
           "ability": "frisk",
           "heldItem": "choice_band",
           "nature": "adamant",
-          "level": 58
+          "level": 58,
+          "evs": {
+            "hp": 252,
+            "atk": 252,
+            "def": 4
+          }
         },
         {
           "species": "dusknoir",
@@ -5511,7 +7066,12 @@
           "ability": "pressure",
           "heldItem": "assault_vest",
           "nature": "adamant",
-          "level": 59
+          "level": 59,
+          "evs": {
+            "hp": 252,
+            "atk": 252,
+            "def": 4
+          }
         },
         {
           "species": "chandelure",
@@ -5524,7 +7084,12 @@
           "ability": "flashfire",
           "heldItem": "choice_scarf",
           "nature": "timid",
-          "level": 59
+          "level": 59,
+          "evs": {
+            "spa": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "gengar",
@@ -5537,7 +7102,12 @@
           "ability": "cursedbody",
           "heldItem": "focus_sash",
           "nature": "timid",
-          "level": 60
+          "level": 60,
+          "evs": {
+            "spa": 252,
+            "spe": 252,
+            "hp": 4
+          }
         }
       ],
       "dialogue": {
@@ -5594,7 +7164,12 @@
             "ability": "levitate",
             "heldItem": "colbur_berry",
             "nature": "timid",
-            "level": 57
+            "level": 57,
+            "evs": {
+              "hp": 252,
+              "spe": 252,
+              "spd": 4
+            }
           },
           {
             "species": "spiritomb",
@@ -5607,7 +7182,12 @@
             "ability": "pressure",
             "heldItem": "leftovers",
             "nature": "careful",
-            "level": 58
+            "level": 58,
+            "evs": {
+              "hp": 252,
+              "spd": 252,
+              "def": 4
+            }
           },
           {
             "species": "banette",
@@ -5620,7 +7200,12 @@
             "ability": "frisk",
             "heldItem": "choice_band",
             "nature": "adamant",
-            "level": 58
+            "level": 58,
+            "evs": {
+              "hp": 252,
+              "atk": 252,
+              "def": 4
+            }
           },
           {
             "species": "dusknoir",
@@ -5633,7 +7218,12 @@
             "ability": "pressure",
             "heldItem": "assault_vest",
             "nature": "adamant",
-            "level": 59
+            "level": 59,
+            "evs": {
+              "hp": 252,
+              "atk": 252,
+              "def": 4
+            }
           },
           {
             "species": "chandelure",
@@ -5646,7 +7236,12 @@
             "ability": "flashfire",
             "heldItem": "choice_scarf",
             "nature": "timid",
-            "level": 59
+            "level": 59,
+            "evs": {
+              "spa": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "gengar",
@@ -5659,7 +7254,12 @@
             "ability": "cursedbody",
             "heldItem": "focus_sash",
             "nature": "timid",
-            "level": 60
+            "level": 60,
+            "evs": {
+              "spa": 252,
+              "spe": 252,
+              "hp": 4
+            }
           }
         ]
       },
@@ -5682,7 +7282,12 @@
               "ability": "levitate",
               "heldItem": "colbur_berry",
               "nature": "timid",
-              "level": 57
+              "level": 57,
+              "evs": {
+                "hp": 252,
+                "spe": 252,
+                "spd": 4
+              }
             },
             {
               "species": "spiritomb",
@@ -5695,7 +7300,12 @@
               "ability": "pressure",
               "heldItem": "leftovers",
               "nature": "careful",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "hp": 252,
+                "spd": 252,
+                "def": 4
+              }
             },
             {
               "species": "banette",
@@ -5708,7 +7318,12 @@
               "ability": "frisk",
               "heldItem": "choice_band",
               "nature": "adamant",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "dusknoir",
@@ -5721,7 +7336,12 @@
               "ability": "pressure",
               "heldItem": "assault_vest",
               "nature": "adamant",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "chandelure",
@@ -5734,7 +7354,12 @@
               "ability": "flashfire",
               "heldItem": "choice_scarf",
               "nature": "timid",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "gengar",
@@ -5747,7 +7372,12 @@
               "ability": "cursedbody",
               "heldItem": "focus_sash",
               "nature": "timid",
-              "level": 60
+              "level": 60,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             }
           ],
           "rct": {
@@ -5785,7 +7415,12 @@
                 "ability": "levitate",
                 "heldItem": "colbur_berry",
                 "nature": "timid",
-                "level": 57
+                "level": 57,
+                "evs": {
+                  "hp": 252,
+                  "spe": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "spiritomb",
@@ -5798,7 +7433,12 @@
                 "ability": "pressure",
                 "heldItem": "leftovers",
                 "nature": "careful",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "hp": 252,
+                  "spd": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "banette",
@@ -5811,7 +7451,12 @@
                 "ability": "frisk",
                 "heldItem": "choice_band",
                 "nature": "adamant",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "dusknoir",
@@ -5824,7 +7469,12 @@
                 "ability": "pressure",
                 "heldItem": "assault_vest",
                 "nature": "adamant",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "chandelure",
@@ -5837,7 +7487,12 @@
                 "ability": "flashfire",
                 "heldItem": "choice_scarf",
                 "nature": "timid",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "gengar",
@@ -5850,7 +7505,12 @@
                 "ability": "cursedbody",
                 "heldItem": "focus_sash",
                 "nature": "timid",
-                "level": 60
+                "level": 60,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               }
             ]
           },
@@ -5875,7 +7535,12 @@
               "ability": "mummy",
               "heldItem": "mental_herb",
               "nature": "relaxed",
-              "level": 57
+              "level": 57,
+              "evs": {
+                "hp": 252,
+                "def": 252,
+                "spd": 4
+              }
             },
             {
               "species": "sableye",
@@ -5888,7 +7553,12 @@
               "ability": "prankster",
               "heldItem": "leftovers",
               "nature": "careful",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "hp": 252,
+                "spd": 252,
+                "def": 4
+              }
             },
             {
               "species": "mimikyu",
@@ -5901,7 +7571,12 @@
               "ability": "disguise",
               "heldItem": "life_orb",
               "nature": "jolly",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "trevenant",
@@ -5914,7 +7589,12 @@
               "ability": "harvest",
               "heldItem": "sitrus_berry",
               "nature": "brave",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "jellicent",
@@ -5927,7 +7607,12 @@
               "ability": "cursedbody",
               "heldItem": "rocky_helmet",
               "nature": "bold",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "hp": 252,
+                "def": 252,
+                "spd": 4
+              }
             },
             {
               "species": "golurk",
@@ -5940,7 +7625,12 @@
               "ability": "noguard",
               "heldItem": "assault_vest",
               "nature": "brave",
-              "level": 60
+              "level": 60,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             }
           ],
           "rct": {
@@ -5978,7 +7668,12 @@
                 "ability": "mummy",
                 "heldItem": "mental_herb",
                 "nature": "relaxed",
-                "level": 57
+                "level": 57,
+                "evs": {
+                  "hp": 252,
+                  "def": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "sableye",
@@ -5991,7 +7686,12 @@
                 "ability": "prankster",
                 "heldItem": "leftovers",
                 "nature": "careful",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "hp": 252,
+                  "spd": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "mimikyu",
@@ -6004,7 +7704,12 @@
                 "ability": "disguise",
                 "heldItem": "life_orb",
                 "nature": "jolly",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "trevenant",
@@ -6017,7 +7722,12 @@
                 "ability": "harvest",
                 "heldItem": "sitrus_berry",
                 "nature": "brave",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "jellicent",
@@ -6030,7 +7740,12 @@
                 "ability": "cursedbody",
                 "heldItem": "rocky_helmet",
                 "nature": "bold",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "hp": 252,
+                  "def": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "golurk",
@@ -6043,7 +7758,12 @@
                 "ability": "noguard",
                 "heldItem": "assault_vest",
                 "nature": "brave",
-                "level": 60
+                "level": 60,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               }
             ]
           },
@@ -6080,7 +7800,12 @@
           "ability": "unnerve",
           "heldItem": "focus_sash",
           "nature": "jolly",
-          "level": 57
+          "level": 57,
+          "evs": {
+            "atk": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "gyarados",
@@ -6093,7 +7818,12 @@
           "ability": "intimidate",
           "heldItem": "lum_berry",
           "nature": "jolly",
-          "level": 58
+          "level": 58,
+          "evs": {
+            "atk": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "flygon",
@@ -6106,7 +7836,12 @@
           "ability": "levitate",
           "heldItem": "choice_scarf",
           "nature": "jolly",
-          "level": 58
+          "level": 58,
+          "evs": {
+            "atk": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "baxcalibur",
@@ -6119,7 +7854,12 @@
           "ability": "thermalexchange",
           "heldItem": "loaded_dice",
           "nature": "adamant",
-          "level": 59
+          "level": 59,
+          "evs": {
+            "hp": 252,
+            "atk": 252,
+            "def": 4
+          }
         },
         {
           "species": "dragalge",
@@ -6132,7 +7872,12 @@
           "ability": "adaptability",
           "heldItem": "assault_vest",
           "nature": "modest",
-          "level": 59
+          "level": 59,
+          "evs": {
+            "hp": 252,
+            "spa": 252,
+            "spd": 4
+          }
         },
         {
           "species": "dragonite",
@@ -6145,7 +7890,12 @@
           "ability": "multiscale",
           "heldItem": "weakness_policy",
           "nature": "adamant",
-          "level": 60
+          "level": 60,
+          "evs": {
+            "hp": 252,
+            "atk": 252,
+            "def": 4
+          }
         }
       ],
       "dialogue": {
@@ -6202,7 +7952,12 @@
             "ability": "unnerve",
             "heldItem": "focus_sash",
             "nature": "jolly",
-            "level": 57
+            "level": 57,
+            "evs": {
+              "atk": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "gyarados",
@@ -6215,7 +7970,12 @@
             "ability": "intimidate",
             "heldItem": "lum_berry",
             "nature": "jolly",
-            "level": 58
+            "level": 58,
+            "evs": {
+              "atk": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "flygon",
@@ -6228,7 +7988,12 @@
             "ability": "levitate",
             "heldItem": "choice_scarf",
             "nature": "jolly",
-            "level": 58
+            "level": 58,
+            "evs": {
+              "atk": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "baxcalibur",
@@ -6241,7 +8006,12 @@
             "ability": "thermalexchange",
             "heldItem": "loaded_dice",
             "nature": "adamant",
-            "level": 59
+            "level": 59,
+            "evs": {
+              "hp": 252,
+              "atk": 252,
+              "def": 4
+            }
           },
           {
             "species": "dragalge",
@@ -6254,7 +8024,12 @@
             "ability": "adaptability",
             "heldItem": "assault_vest",
             "nature": "modest",
-            "level": 59
+            "level": 59,
+            "evs": {
+              "hp": 252,
+              "spa": 252,
+              "spd": 4
+            }
           },
           {
             "species": "dragonite",
@@ -6267,7 +8042,12 @@
             "ability": "multiscale",
             "heldItem": "weakness_policy",
             "nature": "adamant",
-            "level": 60
+            "level": 60,
+            "evs": {
+              "hp": 252,
+              "atk": 252,
+              "def": 4
+            }
           }
         ]
       },
@@ -6290,7 +8070,12 @@
               "ability": "unnerve",
               "heldItem": "focus_sash",
               "nature": "jolly",
-              "level": 57
+              "level": 57,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "gyarados",
@@ -6303,7 +8088,12 @@
               "ability": "intimidate",
               "heldItem": "lum_berry",
               "nature": "jolly",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "flygon",
@@ -6316,7 +8106,12 @@
               "ability": "levitate",
               "heldItem": "choice_scarf",
               "nature": "jolly",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "baxcalibur",
@@ -6329,7 +8124,12 @@
               "ability": "thermalexchange",
               "heldItem": "loaded_dice",
               "nature": "adamant",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "dragalge",
@@ -6342,7 +8142,12 @@
               "ability": "adaptability",
               "heldItem": "assault_vest",
               "nature": "modest",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "dragonite",
@@ -6355,7 +8160,12 @@
               "ability": "multiscale",
               "heldItem": "weakness_policy",
               "nature": "adamant",
-              "level": 60
+              "level": 60,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             }
           ],
           "rct": {
@@ -6393,7 +8203,12 @@
                 "ability": "unnerve",
                 "heldItem": "focus_sash",
                 "nature": "jolly",
-                "level": 57
+                "level": 57,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "gyarados",
@@ -6406,7 +8221,12 @@
                 "ability": "intimidate",
                 "heldItem": "lum_berry",
                 "nature": "jolly",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "flygon",
@@ -6419,7 +8239,12 @@
                 "ability": "levitate",
                 "heldItem": "choice_scarf",
                 "nature": "jolly",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "baxcalibur",
@@ -6432,7 +8257,12 @@
                 "ability": "thermalexchange",
                 "heldItem": "loaded_dice",
                 "nature": "adamant",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "dragalge",
@@ -6445,7 +8275,12 @@
                 "ability": "adaptability",
                 "heldItem": "assault_vest",
                 "nature": "modest",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "dragonite",
@@ -6458,7 +8293,12 @@
                 "ability": "multiscale",
                 "heldItem": "weakness_policy",
                 "nature": "adamant",
-                "level": 60
+                "level": 60,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               }
             ]
           },
@@ -6483,7 +8323,12 @@
               "ability": "stalwart",
               "heldItem": "focus_sash",
               "nature": "modest",
-              "level": 57
+              "level": 57,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "tyrantrum",
@@ -6496,7 +8341,12 @@
               "ability": "rockhead",
               "heldItem": "life_orb",
               "nature": "adamant",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "kingdra",
@@ -6509,7 +8359,12 @@
               "ability": "sniper",
               "heldItem": "scope_lens",
               "nature": "modest",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "hydreigon",
@@ -6522,7 +8377,12 @@
               "ability": "levitate",
               "heldItem": "choice_scarf",
               "nature": "timid",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "goodra",
@@ -6535,7 +8395,12 @@
               "ability": "gooey",
               "heldItem": "assault_vest",
               "nature": "modest",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "dragonite",
@@ -6548,7 +8413,12 @@
               "ability": "multiscale",
               "heldItem": "heavy_duty_boots",
               "nature": "jolly",
-              "level": 60
+              "level": 60,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             }
           ],
           "rct": {
@@ -6586,7 +8456,12 @@
                 "ability": "stalwart",
                 "heldItem": "focus_sash",
                 "nature": "modest",
-                "level": 57
+                "level": 57,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "tyrantrum",
@@ -6599,7 +8474,12 @@
                 "ability": "rockhead",
                 "heldItem": "life_orb",
                 "nature": "adamant",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "kingdra",
@@ -6612,7 +8492,12 @@
                 "ability": "sniper",
                 "heldItem": "scope_lens",
                 "nature": "modest",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "hydreigon",
@@ -6625,7 +8510,12 @@
                 "ability": "levitate",
                 "heldItem": "choice_scarf",
                 "nature": "timid",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "goodra",
@@ -6638,7 +8528,12 @@
                 "ability": "gooey",
                 "heldItem": "assault_vest",
                 "nature": "modest",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "dragonite",
@@ -6651,7 +8546,12 @@
                 "ability": "multiscale",
                 "heldItem": "heavy_duty_boots",
                 "nature": "jolly",
-                "level": 60
+                "level": 60,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               }
             ]
           },
@@ -6688,7 +8588,12 @@
           "ability": "keeneye",
           "heldItem": "focus_sash",
           "nature": "timid",
-          "level": 58
+          "level": 58,
+          "evs": {
+            "spa": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "exeggutor",
@@ -6701,7 +8606,12 @@
           "ability": "harvest",
           "heldItem": "sitrus_berry",
           "nature": "modest",
-          "level": 59
+          "level": 59,
+          "evs": {
+            "hp": 252,
+            "spa": 252,
+            "spd": 4
+          }
         },
         {
           "species": "rhydon",
@@ -6714,7 +8624,12 @@
           "ability": "lightningrod",
           "heldItem": "eviolite",
           "nature": "adamant",
-          "level": 60
+          "level": 60,
+          "evs": {
+            "hp": 252,
+            "atk": 252,
+            "def": 4
+          }
         },
         {
           "species": "arcanine",
@@ -6727,7 +8642,12 @@
           "ability": "intimidate",
           "heldItem": "assault_vest",
           "nature": "jolly",
-          "level": 60
+          "level": 60,
+          "evs": {
+            "atk": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "alakazam",
@@ -6740,7 +8660,12 @@
           "ability": "magicguard",
           "heldItem": "life_orb",
           "nature": "timid",
-          "level": 61
+          "level": 61,
+          "evs": {
+            "spa": 252,
+            "spe": 252,
+            "hp": 4
+          }
         },
         {
           "species": "blastoise",
@@ -6753,7 +8678,12 @@
           "ability": "torrent",
           "heldItem": "white_herb",
           "nature": "modest",
-          "level": 62
+          "level": 62,
+          "evs": {
+            "hp": 252,
+            "spa": 252,
+            "spd": 4
+          }
         }
       ],
       "dialogue": {
@@ -6810,7 +8740,12 @@
             "ability": "keeneye",
             "heldItem": "focus_sash",
             "nature": "timid",
-            "level": 58
+            "level": 58,
+            "evs": {
+              "spa": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "exeggutor",
@@ -6823,7 +8758,12 @@
             "ability": "harvest",
             "heldItem": "sitrus_berry",
             "nature": "modest",
-            "level": 59
+            "level": 59,
+            "evs": {
+              "hp": 252,
+              "spa": 252,
+              "spd": 4
+            }
           },
           {
             "species": "rhydon",
@@ -6836,7 +8776,12 @@
             "ability": "lightningrod",
             "heldItem": "eviolite",
             "nature": "adamant",
-            "level": 60
+            "level": 60,
+            "evs": {
+              "hp": 252,
+              "atk": 252,
+              "def": 4
+            }
           },
           {
             "species": "arcanine",
@@ -6849,7 +8794,12 @@
             "ability": "intimidate",
             "heldItem": "assault_vest",
             "nature": "jolly",
-            "level": 60
+            "level": 60,
+            "evs": {
+              "atk": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "alakazam",
@@ -6862,7 +8812,12 @@
             "ability": "magicguard",
             "heldItem": "life_orb",
             "nature": "timid",
-            "level": 61
+            "level": 61,
+            "evs": {
+              "spa": 252,
+              "spe": 252,
+              "hp": 4
+            }
           },
           {
             "species": "blastoise",
@@ -6875,7 +8830,12 @@
             "ability": "torrent",
             "heldItem": "white_herb",
             "nature": "modest",
-            "level": 62
+            "level": 62,
+            "evs": {
+              "hp": 252,
+              "spa": 252,
+              "spd": 4
+            }
           }
         ]
       },
@@ -6898,7 +8858,12 @@
               "ability": "keeneye",
               "heldItem": "focus_sash",
               "nature": "timid",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "exeggutor",
@@ -6911,7 +8876,12 @@
               "ability": "harvest",
               "heldItem": "sitrus_berry",
               "nature": "modest",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "rhydon",
@@ -6924,7 +8894,12 @@
               "ability": "lightningrod",
               "heldItem": "eviolite",
               "nature": "adamant",
-              "level": 60
+              "level": 60,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "arcanine",
@@ -6937,7 +8912,12 @@
               "ability": "intimidate",
               "heldItem": "assault_vest",
               "nature": "jolly",
-              "level": 60
+              "level": 60,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "alakazam",
@@ -6950,7 +8930,12 @@
               "ability": "magicguard",
               "heldItem": "life_orb",
               "nature": "timid",
-              "level": 61
+              "level": 61,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "blastoise",
@@ -6963,7 +8948,12 @@
               "ability": "torrent",
               "heldItem": "white_herb",
               "nature": "modest",
-              "level": 62
+              "level": 62,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             }
           ],
           "rct": {
@@ -7001,7 +8991,12 @@
                 "ability": "keeneye",
                 "heldItem": "focus_sash",
                 "nature": "timid",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "exeggutor",
@@ -7014,7 +9009,12 @@
                 "ability": "harvest",
                 "heldItem": "sitrus_berry",
                 "nature": "modest",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "rhydon",
@@ -7027,7 +9027,12 @@
                 "ability": "lightningrod",
                 "heldItem": "eviolite",
                 "nature": "adamant",
-                "level": 60
+                "level": 60,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "arcanine",
@@ -7040,7 +9045,12 @@
                 "ability": "intimidate",
                 "heldItem": "assault_vest",
                 "nature": "jolly",
-                "level": 60
+                "level": 60,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "alakazam",
@@ -7053,7 +9063,12 @@
                 "ability": "magicguard",
                 "heldItem": "life_orb",
                 "nature": "timid",
-                "level": 61
+                "level": 61,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "blastoise",
@@ -7066,7 +9081,12 @@
                 "ability": "torrent",
                 "heldItem": "white_herb",
                 "nature": "modest",
-                "level": 62
+                "level": 62,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               }
             ]
           },
@@ -7091,7 +9111,12 @@
               "ability": "unnerve",
               "heldItem": "focus_sash",
               "nature": "jolly",
-              "level": 58
+              "level": 58,
+              "evs": {
+                "atk": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "machamp",
@@ -7104,7 +9129,12 @@
               "ability": "noguard",
               "heldItem": "assault_vest",
               "nature": "adamant",
-              "level": 59
+              "level": 59,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "scizor",
@@ -7117,7 +9147,12 @@
               "ability": "technician",
               "heldItem": "life_orb",
               "nature": "adamant",
-              "level": 60
+              "level": 60,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             },
             {
               "species": "magnezone",
@@ -7130,7 +9165,12 @@
               "ability": "sturdy",
               "heldItem": "air_balloon",
               "nature": "modest",
-              "level": 60
+              "level": 60,
+              "evs": {
+                "hp": 252,
+                "spa": 252,
+                "spd": 4
+              }
             },
             {
               "species": "gengar",
@@ -7143,7 +9183,12 @@
               "ability": "cursedbody",
               "heldItem": "choice_specs",
               "nature": "timid",
-              "level": 61
+              "level": 61,
+              "evs": {
+                "spa": 252,
+                "spe": 252,
+                "hp": 4
+              }
             },
             {
               "species": "tyranitar",
@@ -7156,7 +9201,12 @@
               "ability": "sandstream",
               "heldItem": "lum_berry",
               "nature": "adamant",
-              "level": 62
+              "level": 62,
+              "evs": {
+                "hp": 252,
+                "atk": 252,
+                "def": 4
+              }
             }
           ],
           "rct": {
@@ -7194,7 +9244,12 @@
                 "ability": "unnerve",
                 "heldItem": "focus_sash",
                 "nature": "jolly",
-                "level": 58
+                "level": 58,
+                "evs": {
+                  "atk": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "machamp",
@@ -7207,7 +9262,12 @@
                 "ability": "noguard",
                 "heldItem": "assault_vest",
                 "nature": "adamant",
-                "level": 59
+                "level": 59,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "scizor",
@@ -7220,7 +9280,12 @@
                 "ability": "technician",
                 "heldItem": "life_orb",
                 "nature": "adamant",
-                "level": 60
+                "level": 60,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               },
               {
                 "species": "magnezone",
@@ -7233,7 +9298,12 @@
                 "ability": "sturdy",
                 "heldItem": "air_balloon",
                 "nature": "modest",
-                "level": 60
+                "level": 60,
+                "evs": {
+                  "hp": 252,
+                  "spa": 252,
+                  "spd": 4
+                }
               },
               {
                 "species": "gengar",
@@ -7246,7 +9316,12 @@
                 "ability": "cursedbody",
                 "heldItem": "choice_specs",
                 "nature": "timid",
-                "level": 61
+                "level": 61,
+                "evs": {
+                  "spa": 252,
+                  "spe": 252,
+                  "hp": 4
+                }
               },
               {
                 "species": "tyranitar",
@@ -7259,7 +9334,12 @@
                 "ability": "sandstream",
                 "heldItem": "lum_berry",
                 "nature": "adamant",
-                "level": 62
+                "level": 62,
+                "evs": {
+                  "hp": 252,
+                  "atk": 252,
+                  "def": 4
+                }
               }
             ]
           },

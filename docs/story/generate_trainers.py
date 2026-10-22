@@ -21,6 +21,8 @@ RULES_PATH = ROOT / "docs" / "story" / "TRAINER_RULES.json"
 ROUTES_PATH = ROOT / "data" / "routes.json"
 OUTPUT_PATH = ROOT / "data" / "trainers.json"
 AI_KEYS = {"moveBias", "switchBias", "statusMoveBias", "itemBias", "maxSelectMargin"}
+# rctapi PokemonModel$StatsModel's fields (rctapi 0.16.2-beta); `evs` on a team member uses exactly these keys
+EV_STATS = {"hp", "atk", "def", "spa", "spd", "spe"}
 # A Challenge team is installed under its own rctmod id, <id>_challenge (tools/challenge_mode.py,
 # docs/mechanics/OAK_AND_CHALLENGE.md), and rctmod refuses to spawn a second trainer of the same IDENTITY within
 # uniqueTrainerRadius of the first (TrainerSpawner.isUnique, docs/research/RCT_PER_PLAYER_MODE.md section 2). Both
@@ -70,8 +72,34 @@ def validate_pokemon(pokemon, context):
     evs = pokemon.get("evs", {})
     if any(not 0 <= value <= 31 for value in ivs.values()):
         raise ValueError(f"{context}: IV outside 0..31")
+    if set(evs) - EV_STATS:
+        raise ValueError(f"{context}: EV keys {sorted(set(evs) - EV_STATS)} are not rctapi StatsModel fields")
     if any(not 0 <= value <= 252 for value in evs.values()) or sum(evs.values()) > 510:
         raise ValueError(f"{context}: EV spread violates campaign limits")
+
+
+def boss_ev_spread(slot_id, mode_name, species, rules):
+    """The EV spread of one boss member: its role's spread from rules["boss_evs"], then any per-member override."""
+    section = rules["boss_evs"]
+    role = section["roles"].get(slot_id, {}).get(mode_name, {}).get(species)
+    if role is None:
+        raise ValueError(f"{slot_id} {mode_name}: {species} has no boss_evs role")
+    if role not in section["spreads"]:
+        raise ValueError(f"{slot_id} {mode_name}: {species} role {role!r} is not in boss_evs.spreads")
+    spread = dict(section["spreads"][role])
+    spread.update(section.get("overrides", {}).get(slot_id, {}).get(mode_name, {}).get(species, {}))
+    return spread
+
+
+def check_boss_ev_keys(rules, used):
+    """Every role and override must name a (boss, mode, species) the generator actually applied: a stale entry fails."""
+    section = rules["boss_evs"]
+    for table in ("roles", "overrides"):
+        for slot_id, modes in section.get(table, {}).items():
+            for mode_name, members in modes.items():
+                stale = sorted(set(members) - used.get((slot_id, mode_name), set()))
+                if stale:
+                    raise ValueError(f"boss_evs.{table}: {slot_id} {mode_name} names {stale}, not on that team")
 
 
 def make_rct(trainer, rules):
@@ -100,7 +128,7 @@ def boss_level(ace_level, offset):
     return ace_level + offset
 
 
-def build_boss_mode(slot, mode_name, rules):
+def build_boss_mode(slot, mode_name, rules, ev_used=None):
     """Build one boss mode. Normal inherits the slot; Challenge overlays it."""
     mode = deepcopy(slot.get("modes", {}).get(mode_name, {}))
     members = mode.get("members", slot.get("members", []))
@@ -112,6 +140,10 @@ def build_boss_mode(slot, mode_name, rules):
     for member in members:
         pokemon = deepcopy(member)
         pokemon["level"] = boss_level(slot["ace_level"], pokemon.pop("level_offset"))
+        if "boss_evs" in rules and "evs" not in pokemon:
+            pokemon["evs"] = boss_ev_spread(slot["id"], mode_name, pokemon["species"], rules)
+            if ev_used is not None:
+                ev_used.setdefault((slot["id"], mode_name), set()).add(pokemon["species"])
         if pokemon.pop("ace", False):
             ace_count += 1
             ace_species = pokemon["species"]
@@ -148,6 +180,7 @@ def build_bosses(rules):
     result = []
     expected_aces = rules["difficulty"]["gym_ace_levels"]
     seen_gym_aces = []
+    ev_used = {}
     for slot in rules["bosses"]:
         entry = {
             "id": slot["id"],
@@ -167,8 +200,8 @@ def build_bosses(rules):
             entry["blocked_by"] = slot["blocked_by"]
             result.append(entry)
             continue
-        normal = build_boss_mode(slot, "normal", rules)
-        challenge = build_boss_mode(slot, "challenge", rules)
+        normal = build_boss_mode(slot, "normal", rules, ev_used)
+        challenge = build_boss_mode(slot, "challenge", rules, ev_used)
         if challenge is None:
             # an Elite Four or Champion slot with no Challenge members: the same team, under its own identity
             challenge = deepcopy(normal)
@@ -188,6 +221,8 @@ def build_bosses(rules):
         result.append(entry)
     if seen_gym_aces != expected_aces:
         raise ValueError(f"gym ace curve {seen_gym_aces} != configured {expected_aces}")
+    if "boss_evs" in rules:
+        check_boss_ev_keys(rules, ev_used)
     return result
 
 

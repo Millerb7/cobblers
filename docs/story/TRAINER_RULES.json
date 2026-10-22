@@ -46,6 +46,74 @@
       "generated_default": "normal"
     }
   },
+  "boss_evs": {
+    "why": "Gym leaders, the Elite Four and the Champion carry competitive EV spreads (the owner, 2026-10-22). rctapi reads `evs` {hp, atk, def, spa, spd, spe} on a team member: PokemonModel.evs -> PokemonModelConverter -> Pokemon.setEV (rctapi 0.16.2-beta; 1546 bundled rctmod 0.19.2-beta trainer members carry it). A missing stat is 0. generate_trainers.py applies `roles` through `spreads` to every boss member (both modes) and `overrides` last; it fails if a member has no role or a role/override names a species the team does not hold.",
+    "spreads": {
+      "fast_physical": {"atk": 252, "spe": 252, "hp": 4},
+      "fast_special": {"spa": 252, "spe": 252, "hp": 4},
+      "fast_support": {"hp": 252, "spe": 252, "spd": 4},
+      "bulky_physical": {"hp": 252, "atk": 252, "def": 4},
+      "bulky_special": {"hp": 252, "spa": 252, "spd": 4},
+      "physical_wall": {"hp": 252, "def": 252, "spd": 4},
+      "special_wall": {"hp": 252, "spd": 252, "def": 4},
+      "balanced_wall": {"hp": 252, "def": 128, "spd": 128}
+    },
+    "roles": {
+      "gym_01_brock": {
+        "normal": {"geodude": "physical_wall", "bonsly": "special_wall", "onix": "physical_wall"},
+        "challenge": {"hippopotas": "physical_wall", "lileep": "special_wall", "carkol": "physical_wall", "dwebble": "fast_physical", "nosepass": "physical_wall", "onix": "fast_physical"}
+      },
+      "gym_02_misty": {
+        "normal": {"horsea": "fast_special", "lombre": "bulky_special", "starmie": "fast_special"},
+        "challenge": {"slowpoke": "physical_wall", "tentacool": "special_wall", "goldeen": "fast_physical", "shellder": "bulky_physical", "azumarill": "bulky_physical", "starmie": "fast_special"}
+      },
+      "gym_03_surge": {
+        "normal": {"electabuzz": "fast_special", "magneton": "bulky_special", "boltund": "fast_physical", "raichu": "fast_special"},
+        "challenge": {"kilowattrel": "fast_special", "lanturn": "special_wall", "emolga": "fast_physical", "vikavolt": "bulky_special", "raichu": "fast_special", "pawmot": "fast_physical"}
+      },
+      "gym_04_erika": {
+        "normal": {"bellossom": "special_wall", "roserade": "fast_special", "victreebel": "fast_physical", "vileplume": "bulky_special"},
+        "challenge": {"whimsicott": "fast_support", "ferroseed": "physical_wall", "breloom": "fast_physical", "cradily": "special_wall", "lurantis": "bulky_physical", "ludicolo": "bulky_special"}
+      },
+      "gym_05_koga": {
+        "normal": {"crobat": "fast_support", "weezing": "physical_wall", "toxtricity": "bulky_special", "drapion": "bulky_physical", "venomoth": "fast_special"},
+        "challenge": {"ariados": "fast_physical", "skuntank": "bulky_physical", "tentacruel": "special_wall", "roserade": "fast_special", "toxicroak": "fast_physical", "glimmora": "bulky_special"}
+      },
+      "gym_06_sabrina": {
+        "normal": {"hatterene": "bulky_special", "slowbro": "physical_wall", "bronzong": "balanced_wall", "exeggutor": "bulky_special", "alakazam": "fast_special"},
+        "challenge": {"indeedee": "bulky_special", "gallade": "fast_physical", "gardevoir": "fast_special", "reuniclus": "bulky_special", "espeon": "fast_special", "alakazam": "fast_special"}
+      },
+      "gym_07_blaine": {
+        "normal": {"torkoal": "physical_wall", "arcanine": "fast_physical", "magcargo": "bulky_special", "typhlosion": "fast_special", "charizard": "fast_special"},
+        "challenge": {"talonflame": "fast_physical", "chandelure": "bulky_special", "scovillain": "bulky_special", "infernape": "fast_physical", "charizard": "fast_physical", "volcarona": "fast_special"}
+      },
+      "gym_08_giovanni": {
+        "normal": {"hippowdon": "physical_wall", "persian": "fast_physical", "mudsdale": "balanced_wall", "nidoqueen": "bulky_special", "krookodile": "fast_physical", "rhyperior": "bulky_physical"},
+        "challenge": {"claydol": "physical_wall", "gastrodon": "special_wall", "gliscor": "fast_physical", "donphan": "bulky_physical", "excadrill": "fast_physical", "garchomp": "fast_physical"}
+      },
+      "elite_01_lorelei": {
+        "normal": {"froslass": "fast_support", "mamoswine": "bulky_physical", "jynx": "fast_special", "weavile": "fast_physical", "walrein": "physical_wall", "lapras": "bulky_special"},
+        "challenge": {"abomasnow": "bulky_special", "cloyster": "fast_physical", "crabominable": "bulky_physical", "frosmoth": "fast_special", "cetitan": "bulky_physical", "lapras": "bulky_special"}
+      },
+      "elite_02_bruno": {
+        "normal": {"hitmontop": "fast_physical", "machamp": "bulky_physical", "hariyama": "bulky_physical", "lucario": "fast_special", "heracross": "fast_physical", "hitmonlee": "fast_physical"},
+        "challenge": {"scrafty": "balanced_wall", "hitmonchan": "bulky_physical", "medicham": "fast_physical", "quaquaval": "fast_physical", "conkeldurr": "bulky_physical", "annihilape": "bulky_physical"}
+      },
+      "elite_03_agatha": {
+        "normal": {"mismagius": "fast_support", "spiritomb": "special_wall", "banette": "bulky_physical", "dusknoir": "bulky_physical", "chandelure": "fast_special", "gengar": "fast_special"},
+        "challenge": {"cofagrigus": "physical_wall", "sableye": "special_wall", "mimikyu": "fast_physical", "trevenant": "bulky_physical", "jellicent": "physical_wall", "golurk": "bulky_physical"}
+      },
+      "elite_04_lance": {
+        "normal": {"aerodactyl": "fast_physical", "gyarados": "fast_physical", "flygon": "fast_physical", "baxcalibur": "bulky_physical", "dragalge": "bulky_special", "dragonite": "bulky_physical"},
+        "challenge": {"duraludon": "bulky_special", "tyrantrum": "bulky_physical", "kingdra": "bulky_special", "hydreigon": "fast_special", "goodra": "bulky_special", "dragonite": "fast_physical"}
+      },
+      "champion_blue": {
+        "normal": {"pidgeot": "fast_special", "exeggutor": "bulky_special", "rhydon": "bulky_physical", "arcanine": "fast_physical", "alakazam": "fast_special", "blastoise": "bulky_special"},
+        "challenge": {"aerodactyl": "fast_physical", "machamp": "bulky_physical", "scizor": "bulky_physical", "magnezone": "bulky_special", "gengar": "fast_special", "tyranitar": "bulky_physical"}
+      }
+    },
+    "overrides": {}
+  },
   "ai_profiles": {
     "route_standard": {
       "moveBias": 1.0,
