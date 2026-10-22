@@ -303,14 +303,37 @@ def test_every_tier_shelf_line_is_the_path_share_and_every_tier_has_a_shelf():
     leg = doc["income_basis"]["path"]["leg_by_badges_held"]
     lines = [(c, it) for c in doc["counters"] for it in c.get("stock") or [] if it.get("price_rule") == "tm_tier"]
     assert lines
+    # changed 2026-10-22 (the owner: "some tms that arent op should be accessible"; "if a player wants to craft it
+    # should seem worth it"): a utility TM (power badge <= 2 in the committed score table, placed by no outlier group)
+    # costs 0.10 of the path leg of its power badge instead, and every line is at least its crafted route's bank value
+    # / 0.6 (data/tm_craft_cost.json x the bank's prices), both rounded up to $100. Worked here from those files
+    sys.path.insert(0, str(ROOT / "tools"))
+    import bank as B
+    power = {k: v["power_badge"] for k, v in json.loads(
+        (ROOT / "docs" / "mechanics" / "TM_POWER_GATE.json").read_text(encoding="utf-8"))["tms"].items()}
+    outliers = set()
+    for g in json.loads((ROOT / "data" / "tm_gate.json").read_text(encoding="utf-8"))["badge_rule"]["power"]["outliers"]:
+        outliers |= set(g.get("place") or {}) | set(g.get("shelf_agrees") or {})
+    craft = json.loads((ROOT / "data" / "tm_craft_cost.json").read_text(encoding="utf-8"))["by_tm"]
+    bank = B.prices(B.load())
+    utility = 0
     for c, it in lines:
-        want = math.ceil(0.35 * leg[str(it["tier"])] / 100) * 100
+        pb = power.get(it["item"])
+        if isinstance(pb, int) and pb <= 2 and it["item"] not in outliers:
+            want = math.ceil(0.10 * leg[str(pb)] / 100) * 100
+            utility += 1
+        else:
+            want = math.ceil(0.35 * leg[str(it["tier"])] / 100) * 100
+        made = sum(float(q) * bank[i] for i, q in craft[it["item"]]["bank_inputs"].items())
+        want = max(want, math.ceil(made / 0.6 / 100) * 100)
         assert it["price"] == want * it["count"], (c["id"], it["id"], it["price"], want)
+        assert made <= 0.6 * it["price"] / it["count"], (c["id"], it["id"], made, it["price"])
         assert 1 <= it["gate_badge"] <= it["tier"], (c["id"], it["id"])
         if c["path"] == "critical":
             assert it["tier"] in ({c["badge"] - 1} | ({8} if c["badge"] == 8 else set())), (c["id"], it["id"])
         else:
             assert it["tier"] == it["gate_badge"], (c["id"], it["id"])
+    assert utility >= 18, utility       # the 18 utility lines of 2026-10-22 and the weak leader TMs already shelved
     on_path = {it["tier"] for c, it in lines if c["path"] == "critical" and it.get("answers")}
     assert on_path == set(range(1, 9))
     assert [math.ceil(0.35 * leg[str(t)] / 100) * 100 for t in range(1, 9)] == \

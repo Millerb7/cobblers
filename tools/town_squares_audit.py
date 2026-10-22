@@ -139,6 +139,25 @@ from collections import deque
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+_UTILITY = {}
+
+
+def _utility_power_badge(u, item):
+    """The power badge of a utility TM (data/markets.json price_policies.tm_tier.utility), or None: read from
+    docs/mechanics/TM_POWER_GATE.json and data/tm_gate.json's outlier groups by this audit, never from tools/markets.py."""
+    if not isinstance(u, dict) or not isinstance(item, str):
+        return None
+    if not _UTILITY:
+        scores = json.loads((ROOT / "docs/mechanics/TM_POWER_GATE.json").read_text(encoding="utf-8"))["tms"]
+        gate = json.loads((ROOT / "data/tm_gate.json").read_text(encoding="utf-8"))
+        out = set()
+        for g in gate["badge_rule"]["power"].get("outliers") or []:
+            out |= set(g.get("place") or {}) | set(g.get("shelf_agrees") or {})
+        _UTILITY.update(power={k: v.get("power_badge") for k, v in scores.items()}, outliers=out)
+    pb = _UTILITY["power"].get(item)
+    if not isinstance(pb, int) or pb > int(u["max_power_badge"]) or item in _UTILITY["outliers"]:
+        return None
+    return pb
 sys.path.insert(0, str(ROOT / "tools"))
 
 FUNC_DIR = ROOT / "build" / "datapacks" / "cobblers_plaza_centres" / "data" / "cobblers" / "function" / "plaza_centres"
@@ -1195,6 +1214,15 @@ def item_checks(markets_doc, spawn, ids):
                     else {gb}
                 try:
                     floor = math.ceil(float(pol["fraction"]) * int(path_leg[str(t)]) / int(pol["round_to"])) * int(pol["round_to"])
+                    # changed 2026-10-22 (the owner: "some tms that arent op should be accessible"): a UTILITY line
+                    # (price_policies.tm_tier.utility) is floored at its own share of the path leg of its TM's power
+                    # badge instead. Which TM is utility is derived here from the committed score table and the
+                    # outlier groups, read by this audit itself, not from tools/markets.py
+                    upb = _utility_power_badge(pol.get("utility"), it.get("item"))
+                    if upb is not None:
+                        u = pol["utility"]
+                        floor = math.ceil(float(u["fraction"]) * int(path_leg[str(upb)]) / int(u["round_to"])) \
+                            * int(u["round_to"])
                 except (KeyError, TypeError, ValueError):
                     floor = None
                 if floor is None:

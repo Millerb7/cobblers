@@ -197,7 +197,8 @@ def test_counter_lines_are_the_sited_stock_and_only_that(raw):
             refused |= {line["item"] for line in c.get(key) or [] if line["item"].startswith("tmcraft:tm_")}
     # the sited shelf today; a change here is a change to this page's claim. Was 10 (Fossick's alone); since
     # 2026-10-22 the tier shelves (data/markets.json price_policies.tm_tier, TM shops for both modes) sell 52 TMs
-    assert len(want) == 52, want
+    # 70 since the 18 utility lines of the same day (price_policies.tm_tier.utility, Viltri and Highwire)
+    assert len(want) == 70, want
     for item, r in rows.items():
         got = {li for li in r["lis"] if li.startswith("Counter in")}
         assert got == want.get(item, set()), (item, got, want.get(item))

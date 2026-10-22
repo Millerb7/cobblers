@@ -253,14 +253,18 @@ def test_no_bottle_cap_is_sold_for_less_than_the_iv_service_at_any_tier(market):
 
 # ============================================================================================ the Challenge voucher
 def shelf_tm_unit():
-    """{tier: one TM's price} from the committed tm_tier counter lines' own prices; every line of a tier agrees."""
-    out = {}
-    for c in MARKETS["counters"]:
-        for it in c.get("stock") or []:
-            if it.get("price_rule") == "tm_tier" and it.get("answers"):
-                out.setdefault(it["tier"], set()).add(it["price"] // (it.get("count") or 1))
-    assert all(len(v) == 1 for v in out.values()), out
-    return {t: v.pop() for t, v in out.items()}
+    """{tier: one TM's tier price} for every tier some tm_tier answer line is sold at: 0.35 x the path leg played at
+    that tier, rounded up to $100 (ECONOMY_V3.md 3.3), worked here from income_basis.path.
+    Changed 2026-10-22: was each tier's answer lines' own price, every line agreeing. Since the utility band (the owner:
+    "some tms that arent op should be accessible") a weak answer costs less than its tier (Absorb $300 at tier 1, Mud-
+    Slap and Sand Tomb $300 at tier 2, Confusion $700 at tier 4) and the crafting floor can raise a line above it, so the
+    lines no longer state the tier price; the voucher's basket still counts two answers at the tier price (its rule,
+    data/challenge_mode.json voucher.rule; the owner kept the $760,800 total)."""
+    import math
+    leg = MARKETS["income_basis"]["path"]["leg_by_badges_held"]
+    tiers = {it["tier"] for c in MARKETS["counters"] for it in c.get("stock") or []
+             if it.get("price_rule") == "tm_tier" and it.get("answers")}
+    return {t: math.ceil(0.35 * leg[str(t)] / 100) * 100 for t in tiers}
 
 
 def voucher_problems(c):

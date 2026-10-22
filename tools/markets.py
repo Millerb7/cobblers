@@ -700,11 +700,75 @@ def tm_tier_unit(doc, tier):
     return int(-(-want // step)) * step
 
 
+_TM_INPUTS = {}
+
+
+def _tm_inputs():
+    """The committed tables the utility band and the crafting floor read: the power score table (through
+    tools/tm_gate.py), data/tm_gate.json's outlier groups, data/tm_craft_cost.json and the bank's buy prices. Read once."""
+    if not _TM_INPUTS:
+        import bank as B
+        import tm_craft_cost as CC
+        import tm_gate as TG
+        gdoc = TG.load()
+        scores = TG.load_scores(gdoc)["tms"]
+        outliers = set()
+        for g in gdoc["badge_rule"]["power"].get("outliers") or []:
+            outliers |= set(g.get("place") or {}) | set(g.get("shelf_agrees") or {})
+        _TM_INPUTS.update(power={k: v.get("power_badge") for k, v in scores.items()}, outliers=outliers,
+                          craft=CC.load()["by_tm"], bank=B.prices(B.load()), bank_value=CC.bank_value)
+    return _TM_INPUTS
+
+
+def tm_utility_badge(doc, item):
+    """The power badge that makes `item` a utility line (price_policies.tm_tier.utility), or None: its power badge is
+    at most max_power_badge and no outlier group places or names it (the rule misjudged those, so their score is not
+    a measure of how weak they are)."""
+    u = tm_tier_policy(doc).get("utility")
+    if not u:
+        return None
+    inp = _tm_inputs()
+    pb = inp["power"].get(item)
+    if not isinstance(pb, int) or pb > int(u["max_power_badge"]) or item in inp["outliers"]:
+        return None
+    return pb
+
+
+def tm_craft_value(item):
+    """Today's bank value of `item`'s crafted route (data/tm_craft_cost.json bank_inputs x tools/bank.py prices)."""
+    inp = _tm_inputs()
+    e = inp["craft"].get(item)
+    if e is None:
+        raise MarketError("%s has no crafted route in data/tm_craft_cost.json (python tools/tm_craft_cost.py --write)"
+                          % item)
+    return inp["bank_value"](e, inp["bank"])
+
+
+def tm_line_unit(doc, item, tier):
+    """{"base": the tier or utility price, "band": "tier" | "utility", "floor": the crafting floor, "unit": the larger}:
+    one unit of a tm_tier line."""
+    pol = tm_tier_policy(doc)
+    pb = tm_utility_badge(doc, item)
+    if pb is not None:
+        u = pol["utility"]
+        step = int(u["round_to"])
+        leg = int(doc["income_basis"]["path"]["leg_by_badges_held"][str(pb)])
+        base, band = int(-(-(Fraction(str(u["fraction"])) * leg) // step)) * step, "utility"
+    else:
+        base, band = tm_tier_unit(doc, tier), "tier"
+    floor = 0
+    cf = pol.get("crafting_floor")
+    if isinstance(cf, dict) and cf.get("max_ratio"):
+        step = int(cf["round_to"])
+        floor = int(-(-(tm_craft_value(item) / Fraction(str(cf["max_ratio"]))) // step)) * step
+    return {"base": base, "band": band, "floor": floor, "unit": max(base, floor)}
+
+
 def tm_tier_price(doc, it):
     t = it.get("tier")
     if isinstance(t, bool) or t not in TM_TIERS:
         raise MarketError("line %s: tier %r is not a whole tier 0-8" % (it.get("id"), t))
-    return tm_tier_unit(doc, t) * (it.get("count") or 1)
+    return tm_line_unit(doc, it.get("item"), t)["unit"] * (it.get("count") or 1)
 
 
 def tm_tier_allowed(c, it):

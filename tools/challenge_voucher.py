@@ -114,6 +114,42 @@ def problems(c, rule):
     return out
 
 
+OAK_GIFTS_FN = "cobblers:challenge/oak_gifts"
+
+
+def gift_problems(doc, markets, quests):
+    """data/challenge_mode.json tm_gifts against the shelves (the owner, 2026-10-22: "challenge mode should be given
+    tms"): each gym step gives exactly the tier-N shelf lines that answer the boss after gym N (the lines tm_cost reads
+    for the basket), the Oak step names the first boss and is called by Oak's voucher transition, once."""
+    import markets as M
+    g = doc.get("tm_gifts")
+    if not g:
+        return ["data/challenge_mode.json has no tm_gifts block"]
+    out = []
+    steps = g.get("by_step") or {}
+    if list(steps) != [s for s, _ in STEPS]:
+        out.append("the steps are not Oak then gyms 1-8: %s" % list(steps))
+    for at, t in STEPS:
+        if at == "oak_mode_choice":
+            continue
+        want = sorted({it["item"] for _c, it, _h in M.tm_tier_lines(markets)
+                       if it.get("tier") == t and str(it.get("answers", "")).startswith(NEXT_BOSS[t])})
+        got = sorted((steps.get(at) or {}).get("items") or [])
+        if got != want:
+            out.append("%s gives %s, the tier-%d shelf answers %s with %s" % (at, got, t, NEXT_BOSS[t], want))
+    oak = steps.get("oak_mode_choice") or {}
+    if not str(oak.get("boss", "")).startswith("kanto_brock") or not oak.get("items"):
+        out.append("oak_mode_choice must give the first boss's (kanto_brock) answers")
+    trans = [t for q in quests["quests"] for t in q.get("transitions") or []
+             if any(e.get("kind") == "challenge_voucher" and e.get("at") == "oak_mode_choice" for e in t.get("effects") or [])]
+    calls = [t for t in trans if any(e.get("kind") == "function" and e.get("function") == OAK_GIFTS_FN
+                                     for e in t.get("effects") or [])]
+    if len(trans) != 1 or len(calls) != 1:
+        out.append("Oak's voucher transition must call %s once (found %d voucher transition(s), %d calling it)"
+                   % (OAK_GIFTS_FN, len(trans), len(calls)))
+    return out
+
+
 def render(v):
     """The voucher block as data/challenge_mode.json writes it: one key a line, every value compact on its line."""
     lines = ["  \"voucher\": {"]
@@ -188,8 +224,15 @@ def main(argv=None):
                 print("data/quests.json challenge_voucher at %r pays %r, the schedule says %r"
                       % (e.get("at"), e.get("cash"), steps.get(e.get("at"))))
             return 1
-        print("voucher current: total $%d over %d grants; %d paid by quest effects, matching"
-              % (c["total"], len(c["schedule"]), len(paid)))
+        gift_bad = gift_problems(doc, read(MARKETS), quests)
+        for b in gift_bad:
+            print("PROBLEM tm_gifts: %s" % b)
+        if gift_bad:
+            return 1
+        print("voucher current: total $%d over %d grants; %d paid by quest effects, matching; TM gifts: %d steps, "
+              "%d TMs, each gym's the shelf's answer set" % (c["total"], len(c["schedule"]), len(paid),
+                                                             len(doc["tm_gifts"]["by_step"]),
+                                                             sum(len(s["items"]) for s in doc["tm_gifts"]["by_step"].values())))
         return 0
     if a.write:
         v = dict(doc["voucher"])
