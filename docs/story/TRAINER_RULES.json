@@ -716,7 +716,7 @@
         "highhorsepower",
         "rockslide",
         "bodypress",
-        "heavy_slam"
+        "heavyslam"
       ]
     },
     "roggenrola": {"species": "roggenrola", "moveset": ["tackle", "harden", "sandattack", "smackdown"]},
@@ -3227,7 +3227,7 @@
             "highhorsepower",
             "rockslide",
             "bodypress",
-            "heavy_slam"
+            "heavyslam"
           ],
           "ability": "stamina",
           "heldItem": "leftovers",
@@ -3313,7 +3313,7 @@
                 "highhorsepower",
                 "rockslide",
                 "bodypress",
-                "heavy_slam"
+                "heavyslam"
               ],
               "ability": "stamina",
               "heldItem": "leftovers",

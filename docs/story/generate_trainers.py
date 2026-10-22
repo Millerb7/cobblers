@@ -209,6 +209,37 @@ def choose_team(placement_index, role, route, rules):
     return selected
 
 
+def build_challenge_species_team(normal_team, placement, route_rule, rules):
+    """The Challenge team of a placement with `challenge_team_species`, before build_route_mode's Challenge pass.
+
+    Species come from the list (kit keys; an unknown key fails). Moves are the kit's own: Normal's `movesets` are
+    never applied, since the species and the length differ. Levels keep the fight's ceiling and the old Challenge
+    vector (CHALLENGE_ROUTES.md section 4, reading B): the same length takes Normal's levels in order; one longer
+    takes Normal's levels, the added member second-to-last at ceiling - 1 and the last at the ceiling, which is
+    where the old extra-member rule inserted it, so prize money and the income model do not move."""
+    keys = placement["challenge_team_species"]
+    where = f"{route_rule['id']} {placement['name']}"
+    unknown = [key for key in keys if key not in rules["species_kits"]]
+    if unknown:
+        raise ValueError(f"{where}: challenge_team_species has unknown species kits {unknown}")
+    count = len(normal_team)
+    if len(keys) not in (count, count + 1):
+        raise ValueError(
+            f"{where}: challenge_team_species has {len(keys)} members; Normal has {count}, so it must have "
+            f"{count} or {count + 1}"
+        )
+    levels = [member["level"] for member in normal_team]
+    if len(keys) == count + 1:
+        ceiling = max(levels)
+        levels = levels[:-1] + [ceiling - 1] + levels[-1:] if count > 1 else levels + [ceiling - 1]
+    team = []
+    for key, level in zip(keys, levels):
+        kit = deepcopy(rules["species_kits"][key])
+        kit["level"] = level
+        team.append(kit)
+    return team
+
+
 def build_route_mode(base_team, placement, route_rule, mode_name, rules):
     """Create a route-trainer mode without changing its level ceiling."""
     team = deepcopy(base_team)
@@ -309,7 +340,15 @@ def build_route_trainers(rules, routes_doc, route_orders=None):
                     kit["level"] = max(band["minimum"], base_level - (len(selected) - team_index - 1))
                     team.append(kit)
                 normal_team, normal_ai = build_route_mode(team, placement, route_rule, "normal", rules)
-                challenge_team, challenge_ai = build_route_mode(team, placement, route_rule, "challenge", rules)
+                challenge_base = team
+                if placement.get("challenge_team_species") is not None:
+                    if placement["role"] in route_rule.get("challenge", {}).get("extra_member_roles", []):
+                        raise ValueError(
+                            f"{route_rule['id']} {placement['name']}: challenge_team_species with an "
+                            f"extra_member_roles role would add a second extra member"
+                        )
+                    challenge_base = build_challenge_species_team(team, placement, route_rule, rules)
+                challenge_team, challenge_ai = build_route_mode(challenge_base, placement, route_rule, "challenge", rules)
             trainer_id = placement.get(
                 "id", f"route_{route_rule['order']:02d}_trainer_{index:02d}"
             )
