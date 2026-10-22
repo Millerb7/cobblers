@@ -185,6 +185,9 @@ POWER_VANILLA = re.compile(r"minecraft:(?:potion|splash_potion|lingering_potion|
 # ---- the theme vocabulary: per theme word, the item paths (minecraft: assumed) that read as that stall's goods.
 COOKED = {"bread", "baked_potato", "cooked_beef", "cooked_chicken", "cooked_mutton", "cooked_porkchop", "cooked_rabbit",
           "cooked_cod", "cooked_salmon", "rabbit_stew", "mushroom_stew", "beetroot_soup", "pumpkin_pie"}
+# a theme read by a rule instead of a word list (the owner, 2026-10-21, Viltri's Berry Grower: "a held item berry
+# trainer"): an item reads as `berries` when it is one of Cobblemon's berries
+THEME_RULES = {"berries": lambda item: item.startswith("cobblemon:") and item.endswith("_berry")}
 THEME_WORDS = {
     # 2026-10-05, Arrow Creeks Farm's stand: what the owner's farm makes ("milk, leather, yadda yadda") and its fields
     "farm goods": {"milk_bucket", "white_wool", "leather", "honey_bottle", "honeycomb", "egg", "feather", "carrot",
@@ -1146,9 +1149,14 @@ def item_checks(markets_doc, spawn, ids):
                               "has no item model with an item-tag entry" % (kind, rec["id"], item)))
             else:
                 unchecked.add(ns)
+            # an OWNER EXCEPTION (the owner, 2026-10-21, the berry stall; tools/markets.py OWNER_WAIVABLE): a line whose
+            # owner_exception quotes the owner waives exactly the rules it names, for that line; a malformed one waives
+            # nothing (and tools/markets.py check refuses it)
+            ex = it.get("owner_exception")
+            waived = set(ex.get("waives") or []) if isinstance(ex, dict) and "owner" in str(ex.get("decision") or "").lower() else set()
             placed = PLACES_BLOCK.get(item, item)
             for b in {placed, GROWS.get(placed, placed)}:
-                if b in spawn:
+                if b in spawn and "spawn_block" not in waived:
                     P.append(("items", "%s:%s:spawn" % (rec["id"], item), "%s %s: %s puts down %s, a spawn-condition "
                               "block" % (kind, rec["id"], item, b)))
             power = (ns == "cobblemon" and path.endswith("_ball")) or path.endswith("poke_ball") or \
@@ -1185,7 +1193,7 @@ def item_checks(markets_doc, spawn, ids):
                            "2026-10-09: a price under the income gate is free)"
                            % (gb, "%.0f" % (it["price"] / n) if isinstance(it.get("price"), (int, float)) else
                               repr(it.get("price")), inc[str(gb)], gb))
-            if power and not gated:
+            if power and not gated and "power_gate" not in waived:
                 P.append(("power", "%s:%s" % (rec["id"], item), "%s %s: %s is a ball, battle item or boost and %s"
                           % (kind, rec["id"], item, why)))
     return P, unchecked
@@ -1195,6 +1203,11 @@ def theme_checks(markets_doc):
     P = []
     for s in markets_doc.get("stalls") or []:
         words = THEME_WORDS.get(s.get("sells"))
+        rule = THEME_RULES.get(s.get("sells"))
+        if rule:
+            P += [("theme", "%s:%s" % (s["id"], it["item"]), "%s (%s): %s does not read as %r"
+                   % (s["id"], s.get("sells"), it["item"], s.get("sells"))) for it in s.get("stock") or [] if not rule(it["item"])]
+            continue
         if words is None:
             P.append(("theme", s["id"], "%s: theme %r has no vocabulary here" % (s["id"], s.get("sells"))))
             continue

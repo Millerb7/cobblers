@@ -120,7 +120,7 @@ STALL_ID = re.compile(r"([a-z0-9_]+)_stall_([0-9]+)")
 STALL_REACH = 4.0      # a keeper at a contract stall stands within this of the stall's own `at` (it serves across it)
 STRANDS = ("convenience", "power", "provision")
 # the rules an owner_exception on a stall line may waive (and nothing else)
-OWNER_WAIVABLE = {"spawn_block", "vanilla_provision"}
+OWNER_WAIVABLE = {"spawn_block", "vanilla_provision", "power_gate"}   # power_gate: tools/town_squares_audit.py
 # vanilla items that win fights, skip the game's gates, or that the bank buys back as currency: never a provision
 NOT_PROVISION = re.compile(r"minecraft:(?:diamond_.*|netherite_.*|enchanted_.*|totem_of_undying|elytra|experience_bottle|"
                            r"ender_pearl|ender_eye|emerald.*|golden_apple|.*_spawn_egg|.*shulker_box|beacon|spawner|"
