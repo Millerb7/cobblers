@@ -733,13 +733,13 @@
     "wattrel": {"species": "wattrel", "moveset": ["spark", "pluck", "quickattack", "roost"]},
     "joltik": {"species": "joltik", "moveset": ["electroweb", "bugbite", "thunderwave", "slash"]},
     "pikachu": {"species": "pikachu", "moveset": ["spark", "grassknot", "surf", "quickattack"]},
-    "cottonee": {"species": "cottonee", "moveset": ["raindance", "stunspore", "megadrain", "fairywind"]},
+    "cottonee": {"species": "cottonee", "moveset": ["charm", "stunspore", "megadrain", "fairywind"]},
     "shroomish": {"species": "shroomish", "moveset": ["stunspore", "megadrain", "headbutt", "leechseed"]},
     "pelipper": {"species": "pelipper", "moveset": ["raindance", "waterpulse", "wingattack", "supersonic"]},
     "ferroseed": {"species": "ferroseed", "moveset": ["gyroball", "metalclaw", "curse", "pinmissile"]},
     "breloom": {"species": "breloom", "moveset": ["machpunch", "megadrain", "stunspore", "headbutt"]},
     "lileep": {"species": "lileep", "moveset": ["ancientpower", "megadrain", "confuseray", "acid"]},
-    "whimsicott": {"species": "whimsicott", "moveset": ["raindance", "tailwind", "encore", "gigadrain"]},
+    "whimsicott": {"species": "whimsicott", "moveset": ["charm", "tailwind", "encore", "gigadrain"]},
     "ludicolo": {"species": "ludicolo", "moveset": ["waterpulse", "gigadrain", "icywind", "fakeout"]},
     "ariados": {"species": "ariados", "moveset": ["toxicspikes", "poisonjab", "suckerpunch", "bugbite"]},
     "qwilfish": {"species": "qwilfish", "moveset": ["poisonjab", "aquatail", "spikes", "toxicspikes"]},
@@ -8112,7 +8112,7 @@
           ]
           },
           "challenge": [
-            {"species": "cottonee", "level": 31, "ability": "prankster", "moveset": ["raindance", "stunspore", "megadrain", "encore"]},
+            {"species": "cottonee", "level": 31, "ability": "prankster", "moveset": ["charm", "stunspore", "megadrain", "encore"]},
             {"species": "lombre", "level": 31, "ability": "swiftswim", "moveset": ["bubblebeam", "megadrain", "fakeout", "icywind"]},
             {"species": "gloom", "level": 32, "moveset": ["gigadrain", "acid", "sleeppowder", "moonblast"], "heldItem": "lum_berry"}
           ]

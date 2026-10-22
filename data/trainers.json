@@ -10659,7 +10659,7 @@
             {
               "species": "cottonee",
               "moveset": [
-                "raindance",
+                "charm",
                 "stunspore",
                 "megadrain",
                 "fairywind"
@@ -10696,7 +10696,7 @@
               {
                 "species": "cottonee",
                 "moveset": [
-                  "raindance",
+                  "charm",
                   "stunspore",
                   "megadrain",
                   "fairywind"
@@ -11397,7 +11397,7 @@
             {
               "species": "cottonee",
               "moveset": [
-                "raindance",
+                "charm",
                 "stunspore",
                 "megadrain",
                 "fairywind"
@@ -11464,7 +11464,7 @@
               {
                 "species": "cottonee",
                 "moveset": [
-                  "raindance",
+                  "charm",
                   "stunspore",
                   "megadrain",
                   "fairywind"
@@ -11961,7 +11961,7 @@
             {
               "species": "whimsicott",
               "moveset": [
-                "raindance",
+                "charm",
                 "tailwind",
                 "encore",
                 "gigadrain"
@@ -12028,7 +12028,7 @@
               {
                 "species": "whimsicott",
                 "moveset": [
-                  "raindance",
+                  "charm",
                   "tailwind",
                   "encore",
                   "gigadrain"
@@ -22699,7 +22699,7 @@
               "level": 31,
               "ability": "prankster",
               "moveset": [
-                "raindance",
+                "charm",
                 "stunspore",
                 "megadrain",
                 "encore"
@@ -22758,7 +22758,7 @@
                 "level": 31,
                 "ability": "prankster",
                 "moveset": [
-                  "raindance",
+                  "charm",
                   "stunspore",
                   "megadrain",
                   "encore"
