@@ -10,6 +10,10 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
 - The owner's preference is one integration branch and one draft PR per batch: merge both into one PR when handing over.
 
 ## 2. Where it stopped
+- **2026-10-22 13:28: everything is installed** (STATE "Live installs 2026-10-22"); live up at 16G, detached. The
+  bean stand-in is gone (the pack's own sweep loads). Owed by hand to the one Challenge player: $5,000, the badge-1/2 TM
+  gifts and the TM Case (data/challenge_mode.json lists them). Branch head cbe11cb6, pushed, no PR yet: open ONE draft PR.
+
 - **Live is UP at 16G, detached** (start-live.ps1, WMI: it survives this session). Check the PROCESS, not just RCON.
 - **The bean stand-in** `C:/Users/wnd/Documents/cobblers-local/bean_sweep.py` runs detached (pid at start 21272) and
   exits by itself once `cobblers:no_beans/sweep` exists. Install the fixed tools/no_beans.py with the next batch.
