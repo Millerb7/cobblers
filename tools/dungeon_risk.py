@@ -869,14 +869,20 @@ def patch_functions(doc, fns, rk=None):
         if name.startswith("risk/"):
             continue
         new = []
-        for ln in lines:
+        pending = None      # the satchel's clear, placed after the pick's line and any copies of it (the lent rod's:
+        for ln in lines:    # tools/dungeon_extras2.py patch_functions keeps its copy on the line right after the pick's)
+            if pending is not None and not (ln.startswith(pending[0]) and "clear @s" in ln and pick not in ln):
+                new.append(pending[1])
+                pending = None
             new.append(ln)
             if arrive_rx.match(name) and ln.startswith(give):
                 new.append(sat_g)
                 found["give"] += 1
             if pick in ln and "clear @s" in ln:
-                new.append(ln.replace(pick, sat_m))
+                pending = (ln.split(pick)[0], ln.replace(pick, sat_m))
                 found["clear"] += 1
+        if pending is not None:
+            new.append(pending[1])
         if start_rx.match(name):
             new.append("function %s" % begin)
             found["begin"] += 1

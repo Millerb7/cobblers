@@ -461,6 +461,18 @@ def test_the_engine_hooks():
     assert any(K.satchel_match(RK) in l for l in fns["m/restore"])
 
 
+# The lent rod's clear stays on the line right after the pick's (tests/test_dungeon_extras2.py relies on it); the
+# satchel's comes after both.
+def test_the_satchel_clear_follows_the_lent_rods():
+    import dungeon_extras2 as DX
+    fns = engine_fns()
+    pick = D.pick_match(DOC)
+    fns["m/end"] = [D.HEAD, "clear @s %s" % pick, "clear @s %s" % DX.lent_rod_match(), "tag @s remove dg.adv"]
+    K.patch_functions(DOC, fns, RK)
+    assert fns["m/end"][2:5] == ["clear @s %s" % pick, "clear @s %s" % DX.lent_rod_match(),
+                                 "clear @s %s" % K.satchel_match(RK)], fns["m/end"]
+
+
 def test_a_missing_engine_hook_fails_closed():
     fns = engine_fns()
     del fns["pay"]
