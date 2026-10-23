@@ -16,7 +16,13 @@ applies it to every inherited file:
     satisfied anywhere in the Nether and nowhere else, so every inherited spawn is gone from the Nether and the
     overworld keeps exactly the suppression it had (the owner, 2026-10-08, approving docs/mechanics/NETHER_ENCOUNTERS.md
     Q3 "replace, not layer"; our own Nether tables are compiled pools in cobblers_spawns, which this tool never reads)
-  - first, drop every detail (and herd member) of a species data/spawn_suppression.json removed_species lists, in
+  - first, drop EVERY inherited fishing detail (spawnablePositionType "fishing"), in every dimension and outside every
+    box (the owner, 2026-10-22: "i dont want another moment of my friend getting a mon he doesnt want in an area"; a
+    friend fishing off Pallet's west shore hooked a Pyukumuku the fishing guide lists nowhere near). What a rod catches
+    is ours alone: tools/compile_spawns.py build_fishing lays an authored table over every cell of water
+    (data/fishing_fill.json, tools/fishing_cover.py). Fails closed if, after writing, any inherited path the server
+    loads still carries a fishing detail enabled (verify_no_fishing); non-fishing inherited spawns are untouched
+  - then drop every detail (and herd member) of a species data/spawn_suppression.json removed_species lists, in
     every dimension and outside every box; a file left with no detail is re-emitted as the inherited file with
     "enabled": false (EXP-012 V4/V5). The list is the 22 paradoxes (the owner, 2026-10-08: paradoxes are dungeon
     content, never wild) plus managed_species (2026-10-12: Meloetta, Tapu Fini, Nihilego, Buzzwole, Pheromosa, whose
@@ -181,6 +187,27 @@ def suppress(doc, conds, nether=True):
     return n
 
 
+FISHING_CONTEXT = "fishing"
+
+
+def is_fishing(detail):
+    """A spawn detail whose context is the fishing rod's: Cobblemon 1.8.0 reads it from spawnablePositionType (the key
+    older notes call "context" is accepted too, so a detail written either way is dropped)."""
+    return str(detail.get("spawnablePositionType") or detail.get("context") or "").lower() == FISHING_CONTEXT
+
+
+def remove_fishing(doc):
+    """Drop every fishing detail from doc. Returns the number dropped; a file with other details keeps them."""
+    spawns = doc.get("spawns")
+    if not isinstance(spawns, list):
+        return 0
+    keep = [s for s in spawns if not is_fishing(s)]
+    n = len(spawns) - len(keep)
+    if n:
+        doc["spawns"] = keep
+    return n
+
+
 def species_token(pokemon):
     """The species of a detail's "pokemon" property string: its first word, lower case, any namespace dropped
     ("fearow held_item=cobblemon:flying_gem alpha=true" -> "fearow", "cobblemon:fluttermane" -> "fluttermane")."""
@@ -271,6 +298,38 @@ def verify_removed_species(effective, out, removed):
     return problems
 
 
+def _live_fishing(text):
+    """Fishing details in a spawn file's raw text, found by a text scan and not by remove_fishing's walk, so a detail
+    shape the walk does not know (a nested list, a new herd key) still shows."""
+    return len(re.findall(r'"(?:spawnablePositionType|context)"\s*:\s*"fishing"', text, flags=re.I))
+
+
+def verify_no_fishing(effective, out):
+    """Fail closed unless no inherited spawn file the server loads still carries an enabled fishing detail.
+
+    For every inherited resource path: if its effective source holds one, the pack must override that path with a file
+    that is "enabled": false or holds none. Every file the pack writes is scanned the same way. Returns the problems."""
+    problems = []
+    for key in sorted(k for k in effective if "\0" not in k):
+        src = _live_fishing(effective[key + "\0raw"].decode("utf-8", "replace"))
+        ns, rel = key.split(":", 1)
+        f = Path(out) / "data" / ns / "spawn_pool_world" / rel
+        if not f.is_file():
+            if src:
+                problems.append("%s holds %d fishing details and the pack does not override it" % (key, src))
+            continue
+        text = f.read_text(encoding="utf-8")
+        try:
+            enabled = json.loads(text).get("enabled", True) is not False
+        except ValueError:
+            problems.append("%s: the pack's override does not parse" % key)
+            continue
+        left = _live_fishing(text)
+        if enabled and left:
+            problems.append("%s: the pack's override is enabled and still holds %d fishing details" % (key, left))
+    return problems
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--server", required=True, help="server directory holding mods/ and datapacks/")
@@ -342,7 +401,8 @@ def main(argv=None):
              "skipped_disabled": 0, "details": 0, "bytes": 0, "multi_source_paths": 0, "unparsed": [],
              "nether_suppressed": not a.no_nether, "removed_species": len(removed),
              "paradox_label_check": "no Cobblemon jar on this server" if labelled is None else len(labelled),
-             "removed_species_details": 0, "disabled_paths": []}
+             "removed_species_details": 0, "disabled_paths": [], "fishing_details_removed": 0,
+             "fishing_disabled_paths": 0}
     for key in sorted(k for k in effective if "\0" not in k):
         stats["paths"] += 1
         if len(effective[key]) > 1:
@@ -355,14 +415,18 @@ def main(argv=None):
         if doc.get("enabled", True) is False:
             stats["skipped_disabled"] += 1
             continue
+        fished = remove_fishing(doc)
+        stats["fishing_details_removed"] += fished
         dropped = remove_species(doc, removed)
         stats["removed_species_details"] += dropped
-        if dropped and not doc.get("spawns"):
-            # every detail was a removed species: disable the inherited file at its path, the shape EXP-012 proved
-            # (V4 a jar file, V5 a COBBLEVERSE-DP file), instead of re-emitting it suppressed
+        if (dropped or fished) and not doc.get("spawns"):
+            # every detail was a removed species or a fishing one: disable the inherited file at its path, the shape
+            # EXP-012 proved (V4 a jar file, V5 a COBBLEVERSE-DP file), instead of re-emitting it suppressed
             doc = json.loads(effective[key + "\0raw"])
             doc["enabled"] = False
             stats["disabled_paths"].append(key)
+            if fished and not dropped:
+                stats["fishing_disabled_paths"] += 1
         else:
             stats["details"] += suppress(doc, conds, nether=not a.no_nether)
         ns, rel = key.split(":", 1)
@@ -377,6 +441,10 @@ def main(argv=None):
     if problems:
         (out / "pack.mcmeta").unlink(missing_ok=True)
         raise SystemExit("a removed species is still a live inherited spawn (%d): %s" % (len(problems), "; ".join(problems[:10])))
+    problems = verify_no_fishing(effective, out)
+    if problems:
+        (out / "pack.mcmeta").unlink(missing_ok=True)
+        raise SystemExit("an inherited fishing detail is still live (%d): %s" % (len(problems), "; ".join(problems[:10])))
     (out / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description": "Cobblers bounded suppression of inherited spawns (generated, local only)"}}), encoding="utf-8")
     stats["routes_sha256"] = hashlib.sha256(Path(a.routes).read_bytes()).hexdigest()
     (out / "manifest.json").write_text(json.dumps(stats, indent=2) + "\n", encoding="utf-8")

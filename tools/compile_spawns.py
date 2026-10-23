@@ -1024,7 +1024,36 @@ def build_marine(spawns, regions, routes, waterways=()):
     return files, summaries
 
 
-def build_fishing(spawns, regions, routes, waterways=(), grid=SUBREGION_GRID):
+def waterway_boxes(path=None):
+    """The waterway boxes data/waterways.json carves out of the sub-region and marine rosters ([] with no file)."""
+    p = Path(path) if path else ROOT / "data" / "waterways.json"
+    out = []
+    if p.is_file():
+        for wdef in json.loads(p.read_text(encoding="utf-8"))["waterways"]:
+            for _, _, bs in waterways_mod.boxes_by_segment(wdef["polyline"], wdef["half_width"], WATERWAY_GRID):
+                out.extend(bs)
+    return out
+
+
+def fishing_areas(spawns, regions, routes, waterways=(), grid=SUBREGION_GRID):
+    """{area: (kind, boxes)} for every area that has a fishing list: kind "subregions" over its whole polygon raster
+    (spawn-free cells cut), or "marine" over the band's own boxes. Before data/fishing_fill.json is applied."""
+    fish = fishing_by_scope(spawns)
+    subs = {s["id"]: s for s in regions["subregions"]}
+    bands = marine_bands(spawns, regions, routes, waterways) if fish else {}
+    lost = sorted(set(fish) - set(bands) - set(subs))
+    if lost:
+        raise SystemExit("fishing entries name areas that are neither a sub-region nor a marine band: %s" % lost)
+    out = {}
+    for area in sorted(fish):
+        if area in subs:
+            out[area] = ("subregions", subregion_boxes.boxes_for(subs[area]["polygons"], grid, (), spawn_free_zones()))
+        else:
+            out[area] = ("marine", bands[area])
+    return out
+
+
+def build_fishing(spawns, regions, routes, waterways=(), grid=SUBREGION_GRID, fill=None):
     """The fishing half of the pack (docs/mechanics/FISHING.md): each area's fishing entries as spawnablePositionType
     "fishing" details, in a file of their own, spawn_pool_world/fishing/subregions/<sub>.json or
     spawn_pool_world/fishing/marine/<band>.json (the folder names the kind of place, as the land files' folders do).
@@ -1042,17 +1071,18 @@ def build_fishing(spawns, regions, routes, waterways=(), grid=SUBREGION_GRID):
     fish = fishing_by_scope(spawns)
     if not fish:
         return {}, []
-    subs = {s["id"]: s for s in regions["subregions"]}
-    bands = marine_bands(spawns, regions, routes, waterways)
-    lost = sorted(set(fish) - set(bands) - set(subs))
-    if lost:
-        raise SystemExit("fishing entries name areas that are neither a sub-region nor a marine band: %s" % lost)
+    areas = fishing_areas(spawns, regions, routes, waterways, grid)
+    if fill is not None:
+        # data/fishing_fill.json (tools/fishing_cover.py): cells two areas covered go to one, cells none covered go to
+        # the nearest area of the right kind, so every cell of the playable world has exactly one table (fails closed
+        # on a stale file)
+        import fishing_cover
+        after = fishing_cover.apply({a: b for a, (_, b) in areas.items()}, fill)
+        fishing_cover.verify_exclusive(after, spawn_free_zones())
+        areas = {a: (k, after[a]) for a, (k, _) in areas.items()}
     files, summaries = {}, []
     for area, ents in sorted(fish.items()):
-        if area in subs:
-            kind, boxes = "subregions", subregion_boxes.boxes_for(subs[area]["polygons"], grid, (), spawn_free_zones())
-        else:
-            kind, boxes = "marine", bands[area]
+        kind, boxes = areas[area]
         if not boxes:
             raise SystemExit("%s: an area with a fishing list compiles no box" % area)
         out = fishing_details(area, boxes, ents)
@@ -1123,6 +1153,8 @@ def main(argv=None):
     p.add_argument("--grid", type=int, default=SUBREGION_GRID,
                    help="grid the sub-region polygons are rasterised on before being merged into boxes")
     p.add_argument("--waterways", default=str(ROOT / "data" / "waterways.json"))
+    p.add_argument("--fishing-fill", default=str(ROOT / "data" / "fishing_fill.json"),
+                   help="the cover tools/fishing_cover.py plans (every cell of the playable world has one fishing table); '' for none")
     p.add_argument("--no-subregions", action="store_true",
                    help="compile route corridors only, as before 2026-09-17")
     p.add_argument("--check", default=None, help="compare with the compilation in this directory instead of writing")
@@ -1152,7 +1184,12 @@ def main(argv=None):
         files.update(subfiles)
         marinefiles, ms = build_marine(spawns, regions, routes, water_boxes)
         files.update(marinefiles)
-        fishfiles, fs = build_fishing(spawns, regions, routes, water_boxes, a.grid)
+        fillpath = a.fishing_fill
+        fill = None
+        if fillpath:
+            import fishing_cover
+            fill = fishing_cover.load(fillpath)
+        fishfiles, fs = build_fishing(spawns, regions, routes, water_boxes, a.grid, fill)
         files.update(fishfiles)
     netherfiles, ns = build_nether(spawns)
     files.update(netherfiles)
