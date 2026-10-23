@@ -471,6 +471,7 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
 EXCLUDED = {
     "cobblers_dg_probes": "STAGING ONLY: the Night Shift probe pack (tools/dungeon_probes.py, EXP-069..083), installed by hand into the staging world and run over RCON per each EXP; never in the players' pack or a re-apply step",
     "cobblers_reapply": "the loose-function container; its functions are run by the steps that own them",
+    "cobblers_entrance_guides": "the cave and mine guides' waypoint functions (tools/entrance_trails.py, 2026-10-22): called by their dialogue at play time, never by a step; the guides themselves are seated by R17N",
     # 2026-09-30: HELD BACK ON PURPOSE, and this is a safety hold, not tidiness. R9Z places obsidian walls
     # across the Rift's throat, the League's gate and behind the League, plus gatehouse barriers. The hold was
     # put on because the functions that let a player EARN a pass - cobblers:rift_zones/z{1,2,4,5}/qualify -
