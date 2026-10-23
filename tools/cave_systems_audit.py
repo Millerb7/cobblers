@@ -34,6 +34,9 @@ What it checks, per system (a PROBLEM line for each failure; exit 1):
   caverns    at least three open volumes 30 across and 15 tall are present in the replayed volume (a flood-based measure)
   ore        every ore cell is outside the carved volume, touches it, is deepslate under y0 and stone over it, lies in its
              type's y range, has >= 4 cover; a diamond/redstone/gold/lapis ore is deepest; richer deeper and farther from a town
+  ore layer  (2026-10-23) every `_ore` write, from the built functions: one cell, a spec ore, written `replace #minecraft:base_stone_overworld`
+             (rock only), never in the carved volume, on a base ore or on a nest room's Habitat Block, the right variant for y, in its
+             type's y range, under >= layer.cover of ground, inside the limits, within 8 of a carved cell, 3 from sea and lake water
   light      no light source but a lantern, none farther than 60 from a mouth
   palette    nothing but air, stone, deepslate, the spec's ores and the lantern is placed; every ore that is a spawn condition has
              a data/spawn_block_policy.json whitelist entry scoped `cave_systems`
@@ -87,6 +90,9 @@ WATER = 12
 AUTHORED = 32
 SHELL = 2
 SHELL_MAX = 6
+ORE_REACH = 8                  # an ore of the vein layer lies within 8 (Chebyshev) of a carved cell; the generator keeps 7 (Euclid) of a wall cell
+ORE_WATER = 3                  # ... and its column at least 3 from sea or lake water (the carve keeps 12, the reach 8: 4 in fact)
+ORE_FILTER = "#minecraft:base_stone_overworld"
 ZONE_CAP = 60
 TILE = 192
 LANTERN_REACH = 60
@@ -346,15 +352,16 @@ class Audit:
         pr = []
         shells = [n for n in idx if n.endswith("_shell")]
         carves = [n for n in idx if n.endswith("_carve")]
-        if idx != shells + carves:
-            self.problems.append("index: every shell must come before every carve (the run step reads it in order)")
+        ores = [n for n in idx if n.endswith("_ore")]
+        if idx != shells + carves + ores:
+            self.problems.append("index: every shell must come before every carve, and the ore functions last (the run step reads it in order)")
         used = set()
         for name in idx:
             used.add(name)
         self.events = {}            # tile name -> events of the shell run, then the carve run
         self.tiles = {}
         clock = 0
-        for name in shells + carves:
+        for name in shells + carves + ores:
             sysid, tx, tz, kind = split_name(name)
             ev = run_function(fns, name, pr)
             for e in ev:
@@ -790,6 +797,110 @@ class Audit:
         self.report[sysid]["ore_spawn_blocks_policy_covered"] = sorted({o[3] for o in ore} & sb)
         return ore
 
+    # -- 5b. the ore that goes into the rock (2026-10-23): veins and hidden clusters, in the tiles' own _ore functions
+    def check_ore_layer(self, sysid, sysspec, X, Y, Z, base_ore):
+        """Every `_ore` write, read from the BUILT functions: one cell, a spec ore, replacing rock only (the filter), never in the carved
+        volume or on a base ore or a nest room's Habitat Block, deepslate under y0 and stone over it, in its type's y range, under
+        `layer.cover` of ground, inside the system's limits, within ORE_REACH of a carved cell, away from sea and lake water.
+        Returns [(x, y, z, block)] for the nest check."""
+        lay = self.rules["ore"].get("layer")
+        types = {}
+        for t in self.rules["ore"]["types"]:
+            types[t["stone"]] = t
+            types[t["deepslate"]] = t
+        carved = set(zip(X.tolist(), Y.tolist(), Z.tolist()))
+        base = {(o[0], o[1], o[2]) for o in base_ore}
+        rooms = {tuple(r["block"]) for r in (sysspec.get("nest_rooms") or [])}
+        rows, msgs = [], []
+        seen = set()
+        per_tile = {}
+        for (s, tx, tz), kinds in sorted(self.tiles.items()):
+            if s != sysid or "ore" not in kinds:
+                continue
+            for e in kinds["ore"]:
+                if e[0] != "fill":
+                    msgs.append("tile %d,%d: an ore function holds a %s, not a fill" % (tx, tz, e[0]))
+                    continue
+                b, blk, flt = e[1], e[2], e[3]
+                if b[0:3] != b[3:6]:
+                    msgs.append("tile %d,%d: an ore fill that is not one cell: %s" % (tx, tz, b))
+                    continue
+                c = (b[0], b[1], b[2])
+                if flt != ORE_FILTER:
+                    msgs.append("ore %s at %s is written with filter %r, not %s (it could replace air, water, a fitting or another ore)" % (blk, c, flt, ORE_FILTER))
+                if blk not in types:
+                    msgs.append("ore layer writes %s at %s, not an ore of the spec" % (blk, c))
+                    continue
+                t = types[blk]
+                if blk != (t["deepslate"] if c[1] < 0 else t["stone"]):
+                    msgs.append("ore %s at %s: wrong variant for y%d" % (blk, c, c[1]))
+                if not t["y_min"] <= c[1] <= t["y_max"]:
+                    msgs.append("ore %s at %s: outside its y range" % (blk, c))
+                if c in carved:
+                    msgs.append("ore %s at %s is inside the carved volume (it would fill a passage)" % (blk, c))
+                if c in base:
+                    msgs.append("ore %s at %s is on a base ore cell" % (blk, c))
+                if c in rooms:
+                    msgs.append("ore %s at %s is on a nest room's Habitat Block" % (blk, c))
+                if c in seen:
+                    msgs.append("ore at %s is written twice" % (c,))
+                seen.add(c)
+                if lay and int(self.ground(np.array([c[0]]), np.array([c[2]]))[0]) - c[1] < lay["cover"]:
+                    msgs.append("ore %s at %s has under %d of cover" % (blk, c, lay["cover"]))
+                if not (self.rules["west_limit_x"] <= c[0] <= self.rules["east_limit_x"] and self.rules["north_limit_z"] <= c[2] <= self.rules["south_limit_z"]):
+                    msgs.append("ore %s at %s is outside the system's limits" % (blk, c))
+                rows.append((c[0], c[1], c[2], blk))
+                per_tile.setdefault((tx, tz), []).append(c)
+        # reach: within ORE_REACH of a carved cell, tile by tile with a halo
+        halo = ORE_REACH
+        for (tx, tz), cs in sorted(per_tile.items()):
+            x0, z0 = tx * TILE, tz * TILE
+            sel = (X >= x0 - halo) & (X < x0 + TILE + halo) & (Z >= z0 - halo) & (Z < z0 + TILE + halo)
+            if not sel.any():
+                msgs.append("tile %d,%d: ore with no carved cell within %d" % (tx, tz, halo))
+                continue
+            oy = int(Y[sel].min()) - halo
+            ny = int(Y[sel].max()) + halo - oy + 1
+            arr = np.zeros((ny, TILE + 2 * halo, TILE + 2 * halo), bool)
+            arr[Y[sel] - oy, Z[sel] - (z0 - halo), X[sel] - (x0 - halo)] = True
+            reach = dilate_cube(arr, ORE_REACH)[:, halo:halo + TILE, halo:halo + TILE]
+            far = 0
+            for (x, y, z) in cs:
+                iy = y - oy
+                if not (0 <= iy < ny and reach[iy, z - z0, x - x0]):
+                    far += 1
+            if far:
+                msgs.append("tile %d,%d: %d ore cells are more than %d from any carved cell" % (tx, tz, far, ORE_REACH))
+        # water: no ore column within ORE_WATER of sea or lake water
+        if rows:
+            cols = np.unique(np.array([[r[0], r[2]] for r in rows], np.int64), axis=0)
+            wet, ox, oz = self.water_inputs(int(cols[:, 0].min()), int(cols[:, 1].min()), int(cols[:, 0].max()), int(cols[:, 1].max()))
+            hit = near_mask(wet, ox, oz, cols[:, 0], cols[:, 1], ORE_WATER)
+            if hit.any():
+                msgs.append("%d ore columns lie within %d of sea or lake water (first %s)" % (int(hit.sum()), ORE_WATER, tuple(int(v) for v in cols[hit][0])))
+        # the spawn-condition ores need the policy entry (the same types as the base ore, checked again for what this layer places)
+        sb = set(jload(ROOT / "data" / "spawn_blocks.json")["blocks"])
+        policy = jload(ROOT / "data" / "spawn_block_policy.json")
+        allowed = {b for w in policy["whitelist"] if "cave_systems" in (w.get("scope") or "") for b in w["blocks"]}
+        for b in sorted({r[3] for r in rows} & sb - allowed):
+            msgs.append("the ore layer places %s, a spawn condition, with no data/spawn_block_policy.json entry scoped cave_systems" % b)
+        for m_ in msgs[:6]:
+            self.bad(sysid, m_)
+        if len(msgs) > 6:
+            self.bad(sysid, "%d ore-layer problems in all" % len(msgs))
+        # the report: exposed (a carved cell beside it) against hidden, by ore
+        ex = hid = 0
+        by = {}
+        for (x, y, z, blk) in rows:
+            e_ = any((x + dx, y + dy, z + dz) in carved for dx, dy, dz in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)))
+            ex += e_
+            hid += not e_
+            tid = types[blk]["id"] if blk in types else blk
+            d = by.setdefault(tid, [0, 0])
+            d[0 if e_ else 1] += 1
+        self.report[sysid]["ore_layer"] = {"cells": len(rows), "exposed": ex, "hidden": hid, "by_ore_exposed_hidden": by}
+        return rows
+
     # -- 6. the live carve: the 2026-10-22 cells are still carved, in their own functions, and nothing was added at a mouth
     def check_live(self, sysid, X, Y, Z, mouths):
         rec = ((self.spec.get("live_carve") or {}).get("systems") or {}).get(sysid)
@@ -1007,7 +1118,8 @@ class Audit:
             self.check_caverns(sysid, X, Y, Z)
             ore = self.check_dress(sysid, X, Y, Z, s["mouths"])
             self.check_live(sysid, X, Y, Z, s["mouths"])
-            self.check_nests(sysid, s, X, Y, Z, ore or [])
+            layer = self.check_ore_layer(sysid, s, X, Y, Z, ore or [])
+            self.check_nests(sysid, s, X, Y, Z, (ore or []) + (layer or []))
             rp = self.report[sysid]
             if rp.get("reachable_floor_columns", 0) < 6 * 1500:
                 self.bad(sysid, "only %s reachable floor columns: under 1500 per player for six players" % rp.get("reachable_floor_columns"))

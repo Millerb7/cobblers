@@ -651,6 +651,156 @@ def audit_network(spec, net, tiles, state, carved, g):
     return out, stats
 
 
+# ------------------------------------------------------------------ 13: the ore that goes into the rock (2026-10-23)
+
+ORE_FILTER = "#minecraft:base_stone_overworld"
+ORE_REACH = 8          # within 8 (Chebyshev) of a carved cell; the generator keeps 7 (Euclid) of a wall cell
+ORE_WATER = 3          # and a column at least 3 from the sea or a lake (the carve keeps 12)
+
+
+def read_layer(pack, net_id):
+    """{(tx, tz): ops} of the network's `<net>_o_<tx>_<tz>` functions (veins and hidden ore), each op like read_pack's."""
+    d = Path(pack) / "data" / "cobblers" / "function" / "mine_networks"
+    out, problems = {}, []
+    for f in sorted(d.glob("%s_o_*_*.mcfunction" % net_id)):
+        t = tuple(int(v) for v in f.stem[len(net_id) + 3:].split("_"))
+        lines = f.read_text(encoding="utf-8").splitlines()
+        for n, cmd, why in FL.check_lines(lines, str(f)):
+            problems.append("limits: %s line %d: %s" % (f.name, n, why))
+        ops = []
+        for ln, raw in enumerate(lines, start=1):
+            s = raw.strip()
+            if not s or s.startswith("#") or s.startswith("forceload "):
+                continue
+            m = FILL.match(s)
+            if m:
+                v = [int(x) for x in m.groups()[:6]]
+                ops.append(("fill", (v[0], v[1], v[2], v[3], v[4], v[5]), m.group(7), m.group(8), ln))
+            else:
+                problems.append("layer: %s line %d is not a fill: %s" % (f.name, ln, s[:70]))
+        out[t] = ops
+    return out, problems
+
+
+def check_layer(spec, net, layer, state, carved, g):
+    """Every ore of the layer, read from the BUILT functions with this audit's own derivation: one cell, a spec ore, written with the
+    rock-only filter, not in the carved volume, not on a cell the carve functions wrote (a fitting or a base ore), not on a nest
+    room's Habitat Block, deepslate only under y8 and stone only from y0, under cover_min of ground, west of x_min is not allowed,
+    within ORE_REACH of a carved cell and ORE_WATER of no sea or lake column. Returns (problems, stats)."""
+    out, rows = [], []
+    rules = spec["rules"]
+    types = {}
+    for o in spec["ores"]["table"]:
+        types[o["stone"]] = ("stone", o["id"])
+        types[o["deepslate"]] = ("deepslate", o["id"])
+    rooms = {tuple(r["block"]) for r in (net.get("nest_rooms") or [])}
+    seen = set()
+    per_tile = {}
+    for t, ops in sorted(layer.items()):
+        for op in ops:
+            b, blk, flt = op[1], base(op[2]), op[3]
+            if b[0:3] != b[3:6]:
+                out.append("layer: tile %s has a fill that is not one cell: %s" % (t, b))
+                continue
+            c = (b[0], b[1], b[2])
+            if flt != ORE_FILTER:
+                out.append("layer: ore %s at %s is written with filter %r, not %s (it could replace air, water, a fitting or another ore)" % (blk, c, flt, ORE_FILTER))
+            if blk not in types:
+                out.append("layer: %s at %s is not an ore of the spec" % (blk, c))
+                continue
+            kind = types[blk][0]
+            if (kind == "deepslate" and c[1] >= 8) or (kind == "stone" and c[1] < 0):
+                out.append("layer: %s at %s is the wrong variant for its height" % (blk, c))
+            if c in carved:
+                out.append("layer: ore %s at %s is inside a carved cell" % (blk, c))
+            if c in state:
+                out.append("layer: ore %s at %s is on a cell the carve functions wrote (a fitting or a base ore)" % (blk, c))
+            if c in rooms:
+                out.append("layer: ore %s at %s is on a nest room's Habitat Block" % (blk, c))
+            if c in seen:
+                out.append("layer: ore at %s is written twice" % (c,))
+            if c[0] < rules["x_min"]:
+                out.append("layer: ore at %s is west of x_min" % (c,))
+            seen.add(c)
+            rows.append((c, types[blk][1]))
+            per_tile.setdefault(t, []).append(c)
+    if not rows:
+        return out, {"cells": 0}
+    xs = np.array([r[0][0] for r in rows])
+    zs = np.array([r[0][2] for r in rows])
+    ys = np.array([r[0][1] for r in rows])
+    x0, x1, z0, z1 = int(xs.min()) - 8, int(xs.max()) + 8, int(zs.min()) - 8, int(zs.max()) + 8
+    H = g.box(x0, z0, x1, z1).astype(np.int32)
+    cov = H[zs - z0, xs - x0] - ys
+    low = cov < rules["cover_min"]
+    if low.any():
+        i = int(np.argmax(low))
+        out.append("layer: %d ore cells have under %d of ground over them (first %s: %d)" % (int(low.sum()), rules["cover_min"], rows[i][0], int(cov[i])))
+    # reach, tile by tile
+    C = np.array(sorted(carved), np.int64)
+    T = 128
+    halo = ORE_REACH
+    for (tx, tz), cs in sorted(per_tile.items()):
+        ax, az = tx * T, tz * T
+        sel = (C[:, 0] >= ax - halo) & (C[:, 0] < ax + T + halo) & (C[:, 2] >= az - halo) & (C[:, 2] < az + T + halo)
+        if not sel.any():
+            out.append("layer: tile %d,%d has ore and no carved cell within %d" % (tx, tz, halo))
+            continue
+        S = C[sel]
+        oy = int(S[:, 1].min()) - halo
+        ny = int(S[:, 1].max()) + halo - oy + 1
+        arr = np.zeros((ny, T + 2 * halo, T + 2 * halo), bool)
+        arr[S[:, 1] - oy, S[:, 2] - (az - halo), S[:, 0] - (ax - halo)] = True
+        reach = arr
+        for axis in (0, 1, 2):
+            acc = reach.copy()
+            for s_ in range(1, ORE_REACH + 1):
+                a = [slice(None)] * 3
+                b_ = [slice(None)] * 3
+                a[axis] = slice(s_, None)
+                b_[axis] = slice(None, -s_)
+                acc[tuple(a)] |= reach[tuple(b_)]
+                acc[tuple(b_)] |= reach[tuple(a)]
+            reach = acc
+        reach = reach[:, halo:halo + T, halo:halo + T]
+        far = sum(1 for (x, y, z) in cs if not (0 <= y - oy < ny and reach[y - oy, z - az, x - ax]))
+        if far:
+            out.append("layer: tile %d,%d has %d ore cells more than %d from any carved cell" % (tx, tz, far, ORE_REACH))
+    # water: the sea and the lake basins, within ORE_WATER of an ore column
+    cols = sorted({(r[0][0], r[0][2]) for r in rows})
+    cx = np.array([c[0] for c in cols], np.float64)
+    cz = np.array([c[1] for c in cols], np.float64)
+    sea_level = int(jload("world.json")["vertical"]["sea_level"])
+    sea = H <= sea_level
+    hit = np.zeros(len(cols), bool)
+    for dx in range(-ORE_WATER, ORE_WATER + 1):
+        for dz in range(-ORE_WATER, ORE_WATER + 1):
+            if dx * dx + dz * dz <= ORE_WATER * ORE_WATER:
+                hit |= sea[(cz + dz - z0).astype(int), (cx + dx - x0).astype(int)]
+    if hit.any():
+        out.append("layer: %d ore columns within %d of the sea" % (int(hit.sum()), ORE_WATER))
+    for l in jload("landmarks.json")["landmarks"]:
+        for ring in (l.get("water_body") or {}).get("basin_polygons") or []:
+            rx = [q[0] for q in ring]
+            rz = [q[1] for q in ring]
+            if max(rx) < x0 or min(rx) > x1 or max(rz) < z0 or min(rz) > z1:
+                continue
+            bad = in_ring(cx, cz, ring)
+            for a, b_ in zip(ring, ring[1:] + ring[:1]):
+                bad |= seg_dist(cx, cz, a[0], a[1], b_[0], b_[1]) <= ORE_WATER
+            if bad.any():
+                out.append("layer: %d ore columns in or within %d of lake %s" % (int(bad.sum()), ORE_WATER, l["id"]))
+    # the report: exposed (a carved cell beside it) against hidden, by ore
+    ex = 0
+    by = {}
+    for (c, tid) in rows:
+        e_ = any((c[0] + d[0], c[1] + d[1], c[2] + d[2]) in carved for d in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)))
+        ex += e_
+        d = by.setdefault(tid, [0, 0])
+        d[0 if e_ else 1] += 1
+    return out, {"cells": len(rows), "exposed": ex, "hidden": len(rows) - ex, "by_ore_exposed_hidden": by}
+
+
 def audit(spec=None, pack=PACK, only=None, source_root=None):
     spec = spec or json.loads(SPEC.read_text(encoding="utf-8"))
     g = G.Ground(source_root)
@@ -666,6 +816,13 @@ def audit(spec=None, pack=PACK, only=None, source_root=None):
         state, carved = replay(tiles)
         out, stats = audit_network(spec, net, tiles, state, carved, g)
         problems += ["%s: %s" % (net["id"], p) for p in out]
+        layer, lprobs = read_layer(pack, net["id"])
+        problems += ["%s: %s" % (net["id"], p) for p in lprobs]
+        lout, lstats = check_layer(spec, net, layer, state, carved, g)
+        problems += ["%s: %s" % (net["id"], p) for p in lout[:8]]
+        if len(lout) > 8:
+            problems.append("%s: layer: %d ore-layer problems in all" % (net["id"], len(lout)))
+        stats["ore_layer"] = lstats
         cols_by_net[net["id"]] = np.array(stats.pop("columns", []), np.float64).reshape(-1, 2)
         allstats[net["id"]] = stats
     ids = sorted(cols_by_net)

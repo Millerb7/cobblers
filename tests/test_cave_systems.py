@@ -137,7 +137,7 @@ def test_every_function_is_within_the_server_limits(real, spec):
 def test_a_function_writes_only_inside_its_tile_and_the_tile_is_held(real, spec):
     tile = spec["rules"]["tile"]
     for name, lines in real["files"].items():
-        if not (name.endswith("_shell") or name.endswith("_carve")):
+        if not (name.endswith("_shell") or name.endswith("_carve") or name.endswith("_ore")):
             continue
         _sid, _kind, (x0, z0, x1, z1) = CS.tile_name_box(name, tile)
         assert (x1 - x0 + 1) // 16 * ((z1 - z0 + 1) // 16) <= 256         # forceload's chunk limit
@@ -147,8 +147,9 @@ def test_a_function_writes_only_inside_its_tile_and_the_tile_is_held(real, spec)
 def test_the_index_runs_every_shell_before_any_carve(real):
     idx = CS.index_lines(real["files"])
     kinds = [n.rsplit("_", 1)[1] for n in idx]
-    assert kinds == sorted(kinds, key=lambda k: 0 if k == "shell" else 1)
-    assert set(kinds) == {"shell", "carve"}
+    # shells, then carves, then the ore layer's own functions (2026-10-23): the ore never runs before a carve
+    assert kinds == sorted(kinds, key=lambda k: {"shell": 0, "carve": 1, "ore": 2}[k])
+    assert set(kinds) == {"shell", "carve", "ore"}
 
 
 def test_the_steps_hold_each_tile_and_release_it(spec, real):
@@ -158,7 +159,7 @@ def test_the_steps_hold_each_tile_and_release_it(spec, real):
         add, wait, fn, rem = steps[i:i + 4]
         assert add[0] == "cmd" and add[1].startswith("forceload add ")
         assert wait[0] == "wait" and fn[0] == "fn" and rem[1] == add[1].replace("add", "remove")
-    assert len(steps) // 4 == len([n for n in real["files"] if n.endswith(("_shell", "_carve"))])
+    assert len(steps) // 4 == len([n for n in real["files"] if n.endswith(("_shell", "_carve", "_ore"))])
 
 
 def test_the_ore_is_richer_deeper_and_the_mouths_are_near_something(real):
@@ -518,3 +519,140 @@ def test_the_pack_has_no_runtime_data(real):
     kinds = {p.relative_to(base / "data" / "cobblers").parts[0] for p in (base / "data" / "cobblers").rglob("*") if p.is_file()}
     assert kinds == {"function"}
     assert not (base / "data" / "minecraft").exists()          # no tick or load tag: nothing runs by itself
+
+
+# ------------------------------------------------------------------ 2026-10-23: the ore that goes into the rock (tools/ore_veins.py)
+
+import ore_veins as OV               # noqa: E402
+
+
+def _slab(over=None, ys=range(0, 30), zs=range(0, 30)):
+    """A flat wall: open air for x <= 0, rock from x = 1, base coal ore along the wall. Returns (layer, seeds, base set, coal, cfg)."""
+    sp = CS.load()
+    cfg = dict(sp["rules"]["ore"]["layer"], seed_rate=1.0, break_rate=0.0, hidden_rate=1.0)
+    cfg.update(over or {})
+    coal = next(t for t in sp["rules"]["ore"]["types"] if t["id"] == "coal")
+    seeds = [((1, y, z), coal["stone"]) for y in ys for z in zs]
+    base = {c for c, _b in seeds}
+    lay = OV.Layer(cfg, 77, lambda c: c[0] <= 0, lambda c: c[0] >= 1 and c not in base and -40 <= c[1] <= 80 and -40 <= c[2] <= 80,
+                   lambda t, c: True, lambda t, c: t["stone"], {coal["stone"]: coal, coal["deepslate"]: coal}.get)
+    return lay, seeds, base, coal, cfg
+
+
+def test_a_vein_goes_one_to_four_into_the_rock_and_is_three_to_ten_blocks():
+    # without it the "veins" would be the old one-layer band again: this reads the helper on a flat wall, where depth is just x - 1
+    lay, seeds, _base, _coal, cfg = _slab()
+    sizes = []
+    for e, blk in seeds:
+        cells = lay.vein(e, _coal)
+        if cells:
+            sizes.append(len(cells) + 1)                                # the seed counts
+            assert all(c[0] >= 2 for c in cells)                        # break_rate 0: every new cell behind the wall layer
+            assert max(c[0] for c in cells) - 1 <= cfg["depth"][1]      # at most 4 deep
+    assert len(sizes) > 400
+    assert min(sizes) >= 3 and max(sizes) <= 10
+    assert max(sizes) >= 8                                              # the range is used, not only the small end
+    lay.grow_veins(seeds)
+    cells = lay.result()
+    assert cells and all(c[5] == "vein" for c in cells)
+    assert max(c[0] for c in cells) - 1 >= 3                            # and some reach 3 or more in
+
+
+def test_veins_break_the_surface_in_two_or_three_cells_only_when_asked():
+    lay, seeds, _b, _c, cfg = _slab(dict(break_rate=1.0))
+    lay.grow_veins(seeds)
+    surf = [c for c in lay.result() if c[0] == 1]
+    assert surf, "break_rate 1.0 must break the surface"
+    lay0, seeds0, *_ = _slab(dict(break_rate=0.0))
+    lay0.grow_veins(seeds0)
+    assert not [c for c in lay0.result() if c[0] == 1]
+    # the seed plus 1 or 2 more: at most break_cells[1] - 1 new surface cells a vein
+    for e, _blk in seeds[:200]:
+        lay1, _s, _bb, coal, _cf = _slab(dict(break_rate=1.0))
+        cells = lay1.vein(e, coal)
+        assert sum(1 for c in cells if c[0] == 1) <= cfg["break_cells"][1] - 1
+
+
+def test_hidden_clusters_are_two_to_six_blocks_two_to_six_deep_with_no_exposed_face():
+    lay, _seeds, _b, coal, cfg = _slab(dict(hidden_rate=0.02))
+    walls = [((1, y, z), 1.0) for y in range(0, 30) for z in range(0, 30)]
+    n = lay.grow_hidden(walls, lambda c, r, w: coal)
+    cells = lay.result()
+    assert n > 5 and cells and all(c[5] == "hidden" for c in cells)
+    assert min(c[0] for c in cells) >= 2                                # never beside the open air (x <= 0)
+    assert max(c[0] for c in cells) - 1 <= 7                            # inside the reach of 7
+    assert 2 * n <= len(cells) <= 6 * n
+
+
+def test_the_layer_is_deterministic_and_never_reuses_a_cell():
+    a = _slab()
+    a[0].grow_veins(a[1])
+    b = _slab()
+    b[0].grow_veins(b[1])
+    assert a[0].result() == b[0].result()
+    cells = [(c[0], c[1], c[2]) for c in a[0].result()]
+    assert len(cells) == len(set(cells)) and not (set(cells) & a[2])
+
+
+def test_the_real_ore_layer_hides_ore_and_adds_almost_no_exposed_ore(real):
+    # the owner (2026-10-23): "some ore should be hidden", and the exposed ore stays roughly what it was. The audit counts both
+    # from the built functions. Exposed additions are the veins that break the surface: a few percent of the base ore
+    for sid, rp in [(k, v) for k, v in real["report"].items() if not k.startswith("_")]:
+        lay = rp["ore_layer"]
+        assert lay["cells"] > 1000, sid
+        assert lay["hidden"] >= 0.5 * rp["ore_blocks"], (sid, lay["hidden"], rp["ore_blocks"])
+        assert lay["exposed"] <= 0.05 * rp["ore_blocks"], (sid, lay["exposed"], rp["ore_blocks"])
+        assert set(lay["by_ore_exposed_hidden"]) >= {"coal", "iron", "copper"}
+
+
+def test_every_line_of_every_ore_function_replaces_rock_only(real):
+    n = 0
+    for name, lines in real["files"].items():
+        if not name.endswith("_ore"):
+            continue
+        for ln in lines:
+            if ln.startswith("fill"):
+                assert ln.endswith(" replace #minecraft:base_stone_overworld"), (name, ln)
+                n += 1
+    assert n > 10000
+
+
+def test_the_ore_layer_leaves_the_carve_the_shell_and_the_dress_as_they_were(real):
+    # additive over the live world: no carve, shell, air, wide or dress line writes a cell the layer writes
+    layer = {tuple(map(int, ln.split()[1:4])) for name, lines in real["files"].items() if name.endswith("_ore") for ln in lines if ln.startswith("fill")}
+    for name, lines in real["files"].items():
+        if name.endswith("_ore"):
+            continue
+        for ln in lines:
+            if ln.startswith("fill") and ln.split()[1:4] == ln.split()[4:7]:
+                assert tuple(map(int, ln.split()[1:4])) not in layer, (name, ln)
+
+
+def test_audit_catches_an_ore_write_that_could_replace_anything(spec, ground, tmp_path, monkeypatch):
+    # the generator drops the rock-only filter: the same cells, written as plain fills, would overwrite air, water or a fitting
+    monkeypatch.setattr(CS, "ORE_FILTER", None)
+    sp = synth(spec, "t_nofilter", [2100, 5000], 520, OLD)
+    problems, report, _res = build_and_audit(sp, ground, tmp_path)
+    assert report["t_nofilter"]["ore_layer"]["cells"] > 0
+    assert has(problems, "written with filter"), problems[:5]
+
+
+def test_audit_catches_a_generator_that_grows_ore_out_into_the_passage(spec, ground, tmp_path, monkeypatch):
+    # inward is flipped (the ore grows toward the open air) and the generator's own rock check is dropped: ore lands in carved cells
+    orig = OV.inward_of
+    monkeypatch.setattr(OV, "inward_of", lambda air, c: (lambda r: None if r is None else (r[0], -r[1]))(orig(air, c)))
+    monkeypatch.setattr(OV.Layer, "hidden_ok", lambda self, c, w, t: (c[0] - w[0]) ** 2 + (c[1] - w[1]) ** 2 + (c[2] - w[2]) ** 2 <= OV.REACH2)
+    sp = synth(spec, "t_outward", [2100, 5000], 520, OLD)
+    problems, _r, _res = build_and_audit(sp, ground, tmp_path)
+    assert has(problems, "inside the carved volume"), problems[:5]
+
+
+def test_audit_catches_a_generator_that_lets_the_ore_wander_far_from_the_passage(spec, ground, tmp_path, monkeypatch):
+    # the generator's reach limit is removed and its hidden clusters are sent two blocks deeper than the record says (a change of
+    # the generator's step, the data untouched); the audit, which keeps its own limit of 8 from a carved cell, must see ore beyond it
+    monkeypatch.setattr(OV, "REACH2", 100000)
+    orig = OV.add
+    monkeypatch.setattr(OV, "add", lambda c, d, k=1: orig(c, d, k * 3 if k > 1 else k))
+    sp = synth(spec, "t_far", [2100, 5000], 520, OLD)
+    problems, _r, _res = build_and_audit(sp, ground, tmp_path)
+    assert has(problems, "more than 8 from any carved cell"), problems[:5]

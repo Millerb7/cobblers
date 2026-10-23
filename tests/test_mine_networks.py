@@ -337,3 +337,90 @@ def test_the_nest_species_are_in_the_jar():
         for r in net["nest_rooms"]:
             for e in habs[r["id"] + "_pool"]["entries"]:
                 assert e["pokemon"] in sp, (r["id"], e["pokemon"])
+
+
+# ------------------------------------------------------------------ 2026-10-23: the ore that goes into the rock (tools/ore_veins.py)
+
+def test_the_ore_layer_hides_ore_and_adds_almost_no_exposed_ore(real):
+    # the owner (2026-10-23): "some ore should be hidden", with the exposed ore staying roughly what it was. The AUDIT counts both
+    # from the built functions (not the generator's own tally)
+    for net_id, st in real["stats"].items():
+        lay = st["ore_layer"]
+        base_exposed = sum(1 for L, m in real["nets"] if L.net["id"] == net_id
+                           for c in m.ores if any((c[0] + d[0], c[1] + d[1], c[2] + d[2]) in m.air
+                                                  for d in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1))))
+        assert lay["cells"] > 1000, net_id
+        assert lay["hidden"] >= 0.5 * base_exposed, (net_id, lay["hidden"], base_exposed)
+        assert lay["exposed"] <= 0.05 * base_exposed, (net_id, lay["exposed"], base_exposed)
+
+
+def test_every_ore_function_line_replaces_rock_only_and_runs_after_every_carve(real):
+    d = real["out"] / "data" / "cobblers" / "function" / "mine_networks"
+    files = sorted(d.glob("*_o_*_*.mcfunction"))
+    assert files
+    n = 0
+    for f in files:
+        for ln in f.read_text(encoding="utf-8").splitlines():
+            if ln.startswith("fill"):
+                assert ln.endswith(" replace #minecraft:base_stone_overworld"), (f.name, ln)
+                n += 1
+    assert n > 3000
+    idx = (d / "index.txt").read_text(encoding="utf-8").split()
+    kinds = ["o" if "_o_" in x else "t" for x in idx]
+    assert kinds == sorted(kinds, key=lambda k: 0 if k == "t" else 1) and "o" in kinds     # ore last
+
+
+def test_the_layer_never_touches_a_fitting_a_base_ore_or_a_carved_cell(real):
+    for L, m in real["nets"]:
+        assert m.layer_ores
+        for (x, y, z, _b, _tid, _k) in m.layer_ores:
+            c = (x, y, z)
+            assert c not in m.air and c not in m.fix and c not in m.ores, (L.net["id"], c)
+
+
+def test_the_layer_ore_stays_inside_the_reach_of_the_working_and_under_cover(real):
+    # the generator's cover (8) and reach (7 of a wall cell, so 8 of a carved cell), read here from the model itself
+    for L, m in real["nets"]:
+        pb = L.pbox
+        for (x, y, z, _b, _tid, _k) in m.layer_ores:
+            assert int(L.H[z - pb.z0, x - pb.x0]) - y >= SPEC["rules"]["cover_min"]
+        for (x, y, z, _b, _tid, _k) in m.layer_ores[::40]:                  # a sample: 17^3 lookups a cell
+            assert any((x + dx, y + dy, z + dz) in m.air for dx in range(-8, 9) for dy in range(-8, 9) for dz in range(-8, 9)), (x, y, z)
+
+
+def test_a_rare_ore_of_the_layer_stays_on_the_levels_its_type_allows(real):
+    # y_max is the highest FLOOR a type may be seeded at; a layer cell lies at most a stope's height (6) and the reach (7) above one
+    ymax = {t["id"]: t["y_max"] for t in SPEC["ores"]["table"]}
+    for L, m in real["nets"]:
+        for (x, y, z, _b, tid, _k) in m.layer_ores:
+            assert y <= ymax[tid] + 6 + 7 + 1, (L.net["id"], tid, y)
+
+
+def test_audit_catches_a_layer_written_without_the_rock_only_filter(tmp_path, monkeypatch):
+    spec = one("mn_gorge")
+    probs = mutated_audit(tmp_path, monkeypatch, spec, lambda mp: mp.setattr(MN, "ORE_FILTER", None))
+    assert any("written with filter" in p for p in probs), probs[:5]
+
+
+def test_audit_catches_a_generator_that_grows_ore_out_into_the_working(tmp_path, monkeypatch):
+    import ore_veins as OV
+    spec = one("mn_gorge")
+    orig = OV.inward_of
+
+    def patch(mp):
+        mp.setattr(OV, "inward_of", lambda air, c: (lambda r: None if r is None else (r[0], -r[1]))(orig(air, c)))
+        mp.setattr(OV.Layer, "hidden_ok", lambda self, c, w, t: (c[0] - w[0]) ** 2 + (c[1] - w[1]) ** 2 + (c[2] - w[2]) ** 2 <= OV.REACH2)
+    probs = mutated_audit(tmp_path, monkeypatch, spec, patch)
+    assert any("layer:" in p and ("inside a carved cell" in p or "carve functions wrote" in p) for p in probs), probs[:5]
+
+
+def test_audit_catches_a_generator_that_lets_the_ore_wander_far_from_the_working(tmp_path, monkeypatch):
+    import ore_veins as OV
+    spec = one("mn_gorge")
+    orig = OV.add
+
+    def patch(mp):
+        mp.setattr(OV, "REACH2", 100000)
+        mp.setattr(OV, "add", lambda c, d, k=1: orig(c, d, k * 3 if k > 1 else k))
+    probs = mutated_audit(tmp_path, monkeypatch, spec, patch)
+    assert any("more than 8 from any carved cell" in p for p in probs), probs[:5]
