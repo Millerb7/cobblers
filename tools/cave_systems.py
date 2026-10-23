@@ -49,6 +49,13 @@ HOW A SYSTEM IS MADE (deterministic: every random choice is a seeded FNV hash, a
                  places the ore and lanterns. The shell goes first everywhere so no pocket beside a tile edge can flood a
                  passage that is already open (Groudon's cavern was flooded from pockets in the rock: docs/STATE.md)
 
+  2026-10-23, the ORE LAYER (the owner: "make the blocks around the edges like ore more than 1 deep ... ores are only on the band" /
+  "some ore should be hidden"), tools/ore_veins.py, rules.ore.layer: veins of 3-10 blocks grown 1-4 INTO the rock from the exposed ore
+  (a few break the surface in 2-3 cells) and hidden clusters of 2-6 blocks 2-6 behind the walls, no face on any passage; richer deeper
+  and farther from a town, the same ore mix. Written in each tile's own `_ore` function (listed after every carve in the index), every
+  line `replace #minecraft:base_stone_overworld`, so a re-run repeats safely and only rock can become ore; the base ore, the carve, the
+  shell and the dress functions are byte-for-byte what they were. Ore stays 6+ under the ground and within 7 of a wall cell.
+
   2026-10-23, ADDITIVE over the live carve (steps 1-7 are the "base", carved into the live world on 2026-10-22 by R9CS):
   8. live        the base must reproduce data/cave_systems.json live_carve cell for cell (count and sha256), or the build fails
                  closed: a re-plan would carve a second network over the one in the world. A data change within the plan's
@@ -98,6 +105,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import function_limits as FL   # noqa: E402
 import ground as G             # noqa: E402
+import ore_veins as OV         # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 SPEC = ROOT / "data" / "cave_systems.json"
@@ -1252,8 +1260,9 @@ def ore_table(rules):
     return rules["ore"]["types"]
 
 
-def dress_ore(region, rules, seed, carved_keys, zone):
-    """[(x, y, z, block)] ore cells in exposed wall cells. Veins grow over wall cells; richer deeper and farther from a town."""
+def wall_arrays(region, rules, carved_keys, min_cover):
+    """(wall keys, x, y, z, cover, richness) of the rock cells beside a carved cell with at least `min_cover` of ground over them.
+    Richness: richer deeper under the surface and farther from a town (data/cave_systems.json rules.ore)."""
     od = rules["ore"]
     d6 = np.array([1, -1, NY, -NY, region.nz * NY, -region.nz * NY], np.int64)
     nb = (carved_keys[:, None] + d6[None, :]).ravel()
@@ -1267,10 +1276,34 @@ def dress_ore(region, rules, seed, carved_keys, zone):
     wall, wx, wy, wz, ix, iz = wall[ok], wx[ok], wy[ok], wz[ok], ix[ok], iz[ok]
     g = region.H[iz, ix]
     cover = g - wy
-    ok = cover >= od["min_cover"]
+    ok = cover >= min_cover
     wall, wx, wy, wz, cover = wall[ok], wx[ok], wy[ok], wz[ok], cover[ok]
     dt = town_dist(wx, wz)
     rich = od["rich_base"] + od["rich_depth"] * np.clip((cover - 20) / 140.0, 0, 1) + od["rich_far"] * np.clip(dt / 1000.0, 0, 1)
+    return wall, wx, wy, wz, cover, rich
+
+
+def pick_cave_type(types, x, y, z, r, salt):
+    """The ore type at a cell of richness r: by weight, and for the rare ores by depth_gain x (richness - 1); None when no type reaches y."""
+    avail = [t for t in types if t["y_min"] <= y <= t["y_max"]]
+    if not avail:
+        return None
+    wts = [t["weight"] * (1 + (t["depth_gain"] * (r - 1) if t.get("depth_gain") else 0)) for t in avail]
+    pick = float(hash01(x, y, z, salt)) * sum(wts)
+    acc = 0.0
+    t = avail[-1]
+    for tt, ww in zip(avail, wts):
+        acc += ww
+        if pick <= acc:
+            t = tt
+            break
+    return t
+
+
+def dress_ore(region, rules, seed, carved_keys, zone):
+    """[(x, y, z, block)] ore cells in exposed wall cells. Veins grow over wall cells; richer deeper and farther from a town."""
+    od = rules["ore"]
+    wall, wx, wy, wz, cover, rich = wall_arrays(region, rules, carved_keys, od["min_cover"])
     u = hash01(wx, wy, wz, seed + 101)
     centre = u < od["centre_rate"] * rich
     cx, cy, cz, cr = wx[centre], wy[centre], wz[centre], rich[centre]
@@ -1281,18 +1314,9 @@ def dress_ore(region, rules, seed, carved_keys, zone):
     order = np.argsort(hash01(cx, cy, cz, seed + 102))
     for q in order:
         x, y, z, r = int(cx[q]), int(cy[q]), int(cz[q]), float(cr[q])
-        avail = [t for t in types if t["y_min"] <= y <= t["y_max"]]
-        if not avail:
+        t = pick_cave_type(types, x, y, z, r, seed + 103)
+        if t is None:
             continue
-        wts = [t["weight"] * (1 + (t["depth_gain"] * (r - 1) if t.get("depth_gain") else 0)) for t in avail]
-        pick = hash01(x, y, z, seed + 103) * sum(wts)
-        acc = 0.0
-        t = avail[-1]
-        for tt, ww in zip(avail, wts):
-            acc += ww
-            if pick <= acc:
-                t = tt
-                break
         size = int(t["vein"] * (0.6 + 0.8 * hash01(x, y, z, seed + 104)))
         cells = [(x, y, z)]
         seenv = {(x, y, z)}
@@ -1317,6 +1341,65 @@ def dress_ore(region, rules, seed, carved_keys, zone):
                 taken[key] = block
                 out.append((p[0], p[1], p[2], block))
     return out
+
+
+ORE_FILTER = OV.ORE_FILTER            # a hook: tests/test_cave_systems.py clears it to prove the audit bites on an unfiltered ore write
+
+
+def vein_layer(spec, sysspec, res):
+    """2026-10-23: the ore that goes into the rock (tools/ore_veins.py): veins grown from the exposed ore and hidden clusters behind
+    the walls. Returns {"cells": [(x, y, z, block, type id, kind)], "stats": {...}}. Additive to the base ore (res["ores"]) and
+    to the carve: it only ever picks rock cells, with `cover` of ground over them, inside the system's own limits."""
+    rules = spec["rules"]
+    cfg = rules["ore"]["layer"]
+    reg, seed = res["region"], res["builder"].seed
+    types = ore_table(rules)
+    by_block = {}
+    for t in types:
+        by_block[t["stone"]] = t
+        by_block[t["deepslate"]] = t
+    cells = set(zip(res["x"].tolist(), res["y"].tolist(), res["z"].tolist()))
+    base = {(x, y, z): b for (x, y, z, b) in res["ores"]}
+    reserved = {tuple(r["block"]) for r in (sysspec.get("nest_rooms") or [])}
+    cover = cfg["cover"]
+    xlo, xhi = rules["west_limit_x"], rules["east_limit_x"]
+    zlo, zhi = rules["north_limit_z"], rules["south_limit_z"]
+    H = reg.H
+
+    def air(c):
+        return c in cells
+
+    def rock_ok(c):
+        x, y, z = c
+        if c in cells or c in base or c in reserved:
+            return False
+        if not (xlo <= x <= xhi and zlo <= z <= zhi and reg.inside(x, z)):
+            return False
+        return int(H[z - reg.z0, x - reg.x0]) - y >= cover
+
+    def ore_ok(t, c):
+        return t["y_min"] <= c[1] <= t["y_max"]
+
+    def block_for(t, c):
+        return t["deepslate"] if c[1] < 0 else t["stone"]
+
+    lay = OV.Layer(cfg, seed, air, rock_ok, ore_ok, block_for, by_block.get)
+    seeds = [((x, y, z), b) for (x, y, z), b in base.items() if OV.exposed(air, (x, y, z))]
+    n_v = lay.grow_veins(seeds)
+    _w, wx, wy, wz, _cv, rich = wall_arrays(reg, rules, res["keys"], cover)
+    walls = list(zip(zip(wx.tolist(), wy.tolist(), wz.tolist()), rich.tolist()))
+
+    def pick(c, r, _w):
+        return pick_cave_type(types, c[0], c[1], c[2], r * cfg["hidden_bonus"], seed + 203)
+
+    n_h = lay.grow_hidden(walls, pick)
+    out = lay.result()
+    rows_base = [(c, by_block[b]["id"], OV.exposed(air, c)) for c, b in base.items()]
+    rows_new = [((o[0], o[1], o[2]), o[4], OV.exposed(air, (o[0], o[1], o[2]))) for o in out]
+    stats = OV.summarise(rows_base, rows_new)
+    stats.update({"veins": n_v, "hidden_clusters": n_h, "vein_seeds": len(seeds), "cells": len(out),
+                  "vein_cells": sum(1 for o in out if o[5] == "vein"), "hidden_cells": sum(1 for o in out if o[5] == "hidden")})
+    return {"cells": out, "stats": stats}
 
 
 def lantern_cells(net, region, mouths, carved_set, rules):
@@ -1439,7 +1522,7 @@ def fill_line(b, block, flt=None):
     return s + (" replace %s" % flt if flt else "")
 
 
-def tile_functions(sysid, region, rules, cx, cy, cz, ores, lanterns, base=None):
+def tile_functions(sysid, region, rules, cx, cy, cz, ores, lanterns, base=None, veins=None):
     """{name: lines} for every tile with carve cells or shell cells. cx, cy, cz: int arrays of every carved cell. `base`: the
     (x, y, z) arrays of the live 2026-10-22 carve, a subset of the cells; given, a tile's `_air` carves exactly its base cells
     (the live lines) and `_wide` the rest, and the carve chain runs both before and after the shell."""
@@ -1540,6 +1623,22 @@ def tile_functions(sysid, region, rules, cx, cy, cz, ores, lanterns, base=None):
                                       + calls + ["function %s/%s_shell" % (F, name)]
                                       + (calls if CARVE_AGAIN else [])
                                       + ["function %s/%s_dress" % (F, name)])
+    # 2026-10-23: the ore that goes into the rock, in its OWN function per tile (the tile its cells stand in, which may be a
+    # neighbour of the carve's: the run step holds that tile's box). Every line replaces rock only; a re-run repeats safely.
+    vein_by = {}
+    for (x, y, z, b, _tid, _kind) in (veins or ()):
+        vein_by.setdefault((x // T_, z // T_), []).append((x, y, z, b))
+    stats["vein_lines"] = 0
+    for (tx, tz), cells in sorted(vein_by.items()):
+        x0, z0 = tx * T_, tz * T_
+        lines = ["# Generated by %s from data/cave_systems.json: ore veins and hidden ore for system %s, tile %d,%d (x %d..%d, z %d..%d)"
+                 % (GENERATED, sysid, tx, tz, x0, x0 + T_ - 1, z0, z0 + T_ - 1),
+                 "# chunks-loaded-by: the re-application (forceload add over RCON before this runs)",
+                 "# every line replaces rock only (%s): never air, water, a fitting or another ore" % (ORE_FILTER or "no filter")]
+        for (x, y, z, b) in sorted(cells):
+            lines.append("fill %d %d %d %d %d %d %s%s" % (x, y, z, x, y, z, b, (" replace " + ORE_FILTER) if ORE_FILTER else ""))
+            stats["vein_lines"] += 1
+        files["%s_%d_%d_ore" % (sysid, tx, tz)] = lines
     return files, stats
 
 
@@ -2387,7 +2486,9 @@ def passage_widths(res, keys, zone, sample=4):
 def system_pack(spec, sysspec, res):
     rules = spec["rules"]
     base = (res["base_x"], res["base_y"], res["base_z"]) if "base_x" in res else None
-    files, stats = tile_functions(sysspec["id"], res["region"], rules, res["x"], res["y"], res["z"], res["ores"], res["lanterns"], base)
+    vl = vein_layer(spec, sysspec, res)
+    res["veins"], res["vein_stats"] = vl["cells"], vl["stats"]
+    files, stats = tile_functions(sysspec["id"], res["region"], rules, res["x"], res["y"], res["z"], res["ores"], res["lanterns"], base, vl["cells"])
     return files, stats
 
 
@@ -2426,7 +2527,7 @@ def summarise(spec, sysspec, res, files, stats):
         "halls": len(res["halls"]),
         "mouths": [dict(m) for m in res["mouths"]],
         "levels_used": sorted({min(range(len(rules_levels(spec))), key=lambda q: abs(rules_levels(spec)[q]["y"] - n[1])) for n in net.n if n[5] >= 0}),
-        "carved_cells": int(len(res["x"])), "ore_blocks": len(res["ores"]), "ore_by_block": ore_n, "lanterns": len(res["lanterns"]),
+        "carved_cells": int(len(res["x"])), "ore_blocks": len(res["ores"]), "ore_by_block": ore_n, "ore_layer": res.get("vein_stats"), "lanterns": len(res["lanterns"]),
         "lines": lines, "lines_by_kind": stats, "max_chain_per_tile": exec_lines,
         "bounds": [int(xs.min()), int(res["y"].min()), int(zs.min()), int(xs.max()), int(res["y"].max()), int(zs.max())],
         "clipped": res["removed"], "disconnected_dropped": res["disconnected"],
@@ -2451,7 +2552,8 @@ def index_lines(files):
     """The order the run step uses: every shell, then every carve, tiles in name order."""
     shells = sorted(k for k in files if k.endswith("_shell"))
     carves = sorted(k for k in files if k.endswith("_carve"))
-    return shells + carves
+    ores = sorted(k for k in files if k.endswith("_ore"))
+    return shells + carves + ores
 
 
 def write_pack(files, index, out=OUT):

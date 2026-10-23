@@ -39,6 +39,12 @@ actually being stone below the surface (it is assumed, as tools/mining_caves.py 
 and build/paint (generated, absent from a fresh checkout); whether the pillars, stairs, rails and ladders come out as
 written in a running game. Nothing here has been applied to any world.
 
+2026-10-23, the ORE LAYER (the owner: ore "more than 1 deep ... only on the band" / "some ore should be hidden"), tools/ore_veins.py,
+data/mine_networks.json ores.layer: veins of 3-10 blocks grown 1-4 into the rock from the exposed ore (a few break the surface in 2-3
+cells) and hidden clusters of 2-6 blocks 2-6 behind the walls. Written in `<net>_o_<tx>_<tz>` functions of their own, listed after every
+carve in index.txt, every line `replace #minecraft:base_stone_overworld`: a re-run repeats safely and only rock becomes ore. The audit
+re-checks each from the built functions (the filter, not a carved or written cell, cover, reach 8, sea and lake 3).
+
 2026-10-23, ADDITIVE over the live working (R9MN carved it on 2026-10-22): the base must reproduce data/mine_networks.json
 live_carve or the build fails closed (CHECK_LIVE); 1 or 2 NEST ROOMS a network (data nests, networks[].nest_rooms, sited once by
 `nests --site`): a straight spur 3 wide on from the dead end of a drift into an elliptical cavity 12 to 20 across, a dead end
@@ -69,6 +75,7 @@ import function_limits as FL   # noqa: E402
 import ground as G             # noqa: E402
 import mines as M              # noqa: E402
 import mine_nets_world as W    # noqa: E402
+import ore_veins as OV         # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 SPEC = ROOT / "data" / "mine_networks.json"
@@ -804,6 +811,9 @@ class Model:
         self.air_boxes = self.air_boxes[:n_base]
         self.build_fittings()
         self.build_ore()
+        self.layer_ores = []        # (x, y, z, block, type id, "vein" | "hidden"): the 2026-10-23 ore that goes into the rock
+        self.layer_stats = {}
+        self.build_layer()
 
     # -- carved volume
     def put_box(self, box, level, dist, stope=0, pillars=()):
@@ -1009,12 +1019,8 @@ class Model:
             return o["deepslate"]
         return o["stone"]
 
-    def build_ore(self):
-        L = self.L
-        cfg = L.spec["ores"]
-        table = cfg["table"]
-        cov = L.rules["cover_min"]
-        pb = L.pbox
+    def wall_candidates(self):
+        """{rock cell: (level, walk distance, in a stope)} beside a carved cell (the sides and the roof, not the floor)."""
         cands = {}
         for (x, y, z), (lvl, dist, stope) in self.air.items():
             for dx, dy, dz in ((1, 0, 0), (-1, 0, 0), (0, 0, 1), (0, 0, -1), (0, 1, 0)):
@@ -1022,6 +1028,15 @@ class Model:
                 if c in self.air or c in self.fix or c in cands:
                     continue
                 cands[c] = (lvl, dist, stope)
+        return cands
+
+    def build_ore(self):
+        L = self.L
+        cfg = L.spec["ores"]
+        table = cfg["table"]
+        cov = L.rules["cover_min"]
+        pb = L.pbox
+        cands = self.wall_candidates()
         taken = set()
         for c in sorted(cands):
             x, y, z = c
@@ -1063,6 +1078,75 @@ class Model:
                 taken.add(cc)
                 self.ores[cc] = self.ore_block(pick, cc[1], cc[0], cc[2])
             self.ore_counts[pick["id"]] = self.ore_counts.get(pick["id"], 0) + len(cells)
+
+    def build_layer(self):
+        """2026-10-23: veins from the exposed ore into the rock, and hidden clusters behind the walls (tools/ore_veins.py). ADDITIVE:
+        the base ore (self.ores) and the carve are untouched, and every cell is rock that is not a fitting, not a base ore, not a nest
+        room's Habitat Block, with `cover` of ground over it, inside the plan box's margin."""
+        L = self.L
+        cfg = L.spec["ores"]["layer"]
+        table = L.spec["ores"]["table"]
+        pb = L.pbox
+        by_block = {}
+        for o in table:
+            by_block[o["stone"]] = o
+            by_block[o["deepslate"]] = o
+        reserved = {tuple(r["block"]) for r in self.rooms}
+        xmin = L.rules["x_min"]
+
+        def air(c):
+            return c in self.air
+
+        def rock_ok(c):
+            x, y, z = c
+            if c in self.air or c in self.fix or c in self.ores or c in reserved:
+                return False
+            if not (pb.x0 + 4 <= x <= pb.x1 - 4 and pb.z0 + 4 <= z <= pb.z1 - 4) or x < xmin:
+                return False
+            return int(L.H[z - pb.z0, x - pb.x0]) - y >= cfg["cover"]
+
+        def block_for(t, c):
+            return self.ore_block(t, c[1], c[0], c[2])
+
+        lay = OV.Layer(cfg, M.h32(L.seed, L.sid, 90), air, rock_ok, lambda t, c: True, block_for, by_block.get)
+        seeds = [(c, b) for c, b in sorted(self.ores.items()) if OV.exposed(air, c)]
+        n_v = lay.grow_veins(seeds)
+        cands = self.wall_candidates()
+        far_blocks = float(L.spec["ores"]["far_blocks"])
+        stope_x = L.spec["ores"]["stope_multiplier"]
+        walls = []
+        for c, (lvl, dist, stope) in sorted(cands.items()):
+            if int(L.H[c[2] - pb.z0, c[0] - pb.x0]) - c[1] < cfg["cover"]:
+                continue
+            rich = (1 + cfg["hidden_depth_gain"] * lvl) * (1 + cfg["hidden_far_gain"] * min(1.0, dist / far_blocks)) * (cfg["hidden_stope"] if stope else 1.0)
+            walls.append((c, rich))
+        info = {c: v for c, v in cands.items()}
+
+        def pick(c, r, w):
+            lvl, dist, stope = info[w]
+            floor = L.levels[lvl]
+            far = min(1.0, dist / far_blocks)
+            avail = [(o, o["p"] * (1 + o["depth_gain"] * lvl) * (1 + o["far_gain"] * far)) for o in table if floor <= o["y_max"]]
+            tot = sum(p for _o, p in avail)
+            if not avail or tot <= 0:
+                return None
+            u = (M.h32(L.seed, L.sid, 91, c[0], c[1], c[2]) & 0xFFFFFF) / float(0x1000000) * tot
+            acc = 0.0
+            for o, p in avail:
+                acc += p
+                if u < acc:
+                    return o
+            return avail[-1][0]
+
+        n_h = lay.grow_hidden(walls, pick)
+        self.layer_ores = lay.result()
+        rows_base = [(c, by_block[b]["id"], OV.exposed(air, c)) for c, b in self.ores.items()]
+        rows_new = [((o[0], o[1], o[2]), o[4], OV.exposed(air, (o[0], o[1], o[2]))) for o in self.layer_ores]
+        st = OV.summarise(rows_base, rows_new)
+        st.update({"veins": n_v, "hidden_clusters": n_h, "vein_seeds": len(seeds), "cells": len(self.layer_ores),
+                   "vein_cells": sum(1 for o in self.layer_ores if o[5] == "vein"),
+                   "hidden_cells": sum(1 for o in self.layer_ores if o[5] == "hidden")})
+        self.layer_stats = st
 
 
 # ------------------------------------------------------------------ 2026-10-23: nest rooms, ADDED to the live working
@@ -1421,6 +1505,26 @@ def function_lines(L, m):
     return out
 
 
+ORE_FILTER = OV.ORE_FILTER      # a hook: tests/test_mine_networks.py clears it to prove the audit bites on an unfiltered ore write
+
+
+def layer_lines(L, m):
+    """{tile: lines} of the 2026-10-23 ore layer, one function a tile, SEPARATE from the carve's: every line replaces rock only
+    (`replace #minecraft:base_stone_overworld`), so a re-run repeats safely and nothing but rock can become ore. The tile is the one
+    the ore cell stands in (it may be the neighbour of the carve's); FL.ensure_loaded holds it."""
+    by = {}
+    for (x, y, z, b, _tid, _kind) in m.layer_ores:
+        by.setdefault((x // TILE, z // TILE), []).append((x, y, z, b))
+    out = {}
+    for t, cells in sorted(by.items()):
+        head = ["# Generated by tools/mine_networks.py from data/mine_networks.json: %s, ore veins and hidden ore, tile %d,%d (x%d-%d, z%d-%d)"
+                % (L.net["id"], t[0], t[1], t[0] * TILE, t[0] * TILE + TILE - 1, t[1] * TILE, t[1] * TILE + TILE - 1),
+                "# every line replaces rock only (%s): never air, water, a fitting or another ore; safe to run again" % (ORE_FILTER or "no filter")]
+        body = ["fill %d %d %d %d %d %d %s%s" % (x, y, z, x, y, z, b, (" replace " + ORE_FILTER) if ORE_FILTER else "") for (x, y, z, b) in sorted(cells)]
+        out[t] = FL.ensure_loaded(head + body)
+    return out
+
+
 # ------------------------------------------------------------------ the checks this tool makes of itself
 
 def self_check(L, m):
@@ -1506,6 +1610,17 @@ def function_name(net_id, t):
     return "%s/%s_t_%d_%d" % (F_, net_id, t[0], t[1])
 
 
+def ore_function_name(net_id, t):
+    return "%s/%s_o_%d_%d" % (F_, net_id, t[0], t[1])
+
+
+def order_key(name):
+    """The run order: every network's carve tiles (`<net>_t_<tx>_<tz>`) first, then every ore function (`<net>_o_<tx>_<tz>`), each by
+    network and tile. The ore layer never runs before any carve."""
+    m = re.match(r"^(.*)_([to])_(-?\d+)_(-?\d+)$", name.split("/")[-1])
+    return (0 if m.group(2) == "t" else 1, m.group(1), int(m.group(3)), int(m.group(4)))
+
+
 def build_functions(spec=None, funcs=None):
     """The function names step R9MN runs, in order: from the committed data when a built pack is not at hand."""
     if funcs is not None:
@@ -1525,6 +1640,7 @@ def write(spec, nets, out=None, plan_path=None):
     (out / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description":
         "Cobblers: the long mine networks (tools/mine_networks.py, data/mine_networks.json)"}}, indent=2) + "\n", encoding="utf-8")
     funcs, counts, stats = {}, {}, {}
+    layer_funcs = {}
     for L, m in nets:
         lines = function_lines(L, m)
         funcs[L.net["id"]] = lines
@@ -1534,11 +1650,23 @@ def write(spec, nets, out=None, plan_path=None):
                 raise MineError("function %s would be refused: %s" % (function_name(L.net["id"], t), bad[:3]))
             (fdir / ("%s_t_%d_%d.mcfunction" % ((L.net["id"],) + t))).write_text("\n".join(body) + "\n", encoding="utf-8", newline="\n")
             counts[function_name(L.net["id"], t)] = sum(1 for b in body if b.strip() and not b.startswith("#"))
-        stats[L.net["id"]] = block_stats(lines)
-    probs = pack_problems(spec, {(n, t): b for n, d in funcs.items() for t, b in d.items()})
+        ore_fns = layer_lines(L, m)
+        for t, body in ore_fns.items():
+            bad = FL.check_lines(body, ore_function_name(L.net["id"], t))
+            if bad:
+                raise MineError("function %s would be refused: %s" % (ore_function_name(L.net["id"], t), bad[:3]))
+            (fdir / ("%s_o_%d_%d.mcfunction" % ((L.net["id"],) + t))).write_text("\n".join(body) + "\n", encoding="utf-8", newline="\n")
+            counts[ore_function_name(L.net["id"], t)] = sum(1 for b in body if b.strip() and not b.startswith("#"))
+        every_fn = dict(lines)
+        every_fn.update({("o",) + t: b for t, b in ore_fns.items()})
+        stats[L.net["id"]] = block_stats(every_fn)
+        layer_funcs[L.net["id"]] = ore_fns
+    every = {(n, t): b for n, d in funcs.items() for t, b in d.items()}
+    every.update({(n, "o", t): b for n, d in layer_funcs.items() for t, b in d.items()})
+    probs = pack_problems(spec, every)
     if probs:
         raise MineError("; ".join(probs))
-    order = sorted(counts, key=lambda s: (s.split("/")[1].rsplit("_t_", 1)[0], *map(int, s.rsplit("_t_", 1)[1].split("_"))))
+    order = sorted(counts, key=order_key)
     (fdir / "index.txt").write_text("\n".join(s.split("/")[1] for s in order) + "\n", encoding="utf-8", newline="\n")
     return funcs, counts, stats
 
@@ -1585,10 +1713,10 @@ def plan_json(spec, nets, counts, stats):
                          for i in L.inclines],
             "shafts": [{"level": s["level"] + 1, "x": s["x"], "z": s["z"], "dx": s["d"][0], "dz": s["d"][1]} for s in L.shafts],
             "stopes": [{"level": s["level"] + 1, "bounds": [s["x0"], s["z0"], s["x1"], s["z1"]], "height": s["height"]} for s in L.stopes],
-            "carved_cells": len(m.air), "ore_blocks": dict(sorted(m.ore_counts.items())), "fittings": m.counts,
+            "carved_cells": len(m.air), "ore_blocks": dict(sorted(m.ore_counts.items())), "ore_layer": m.layer_stats, "fittings": m.counts,
             "stats": stats[L.net["id"]],
         }
-    ordered = sorted(counts, key=lambda s: (s.split("/")[1].rsplit("_t_", 1)[0], *map(int, s.rsplit("_t_", 1)[1].split("_"))))
+    ordered = sorted(counts, key=order_key)
     return {"schema": "cobblers.derived.mine-networks/1", "build_functions": ordered, "commands": counts, "networks": out}
 
 
