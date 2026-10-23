@@ -106,6 +106,10 @@ any other   risk/forfeit (first line of m/end and slot/s<g>/end): the stash dele
   - `remove`: found, out of battle, holding no item, and (in the party) not the party's last Pokemon: `remove_by_id` from
     the store it is in (3, 4); otherwise kept and logged (5 holds an item, 6 in battle, 7 last in party, 8 the remove
     returned 0).
+- **ASSUMED, the probe's first question (EXP-098 S14):** that `runmolang`'s runtime has `for_each` (the repo's proven
+  uses are in callbacks: `tools/dungeon.py` `callback`), that a struct's `.id` compares with `==` against a string
+  (`tools/entei_boss.py:684` compares species that way), and that `is_empty` returns 1 for an empty stack. If the first
+  two fail, the reaper reports nothing and removes nothing.
 - Every failure of the chain keeps: a callback that does not fire logs nothing; a script that dies stops the chain with
   the Pokemon untouched; an entry from an older run is dropped, not acted on; a traded, released or missing Pokemon is
   "not found".
