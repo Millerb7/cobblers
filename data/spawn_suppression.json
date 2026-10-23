@@ -44,6 +44,16 @@
     "End",
     "postgame unless later progression policy changes it"
   ],
+  "inherited_fishing": {
+    "policy": "no inherited fishing detail is live anywhere: every inherited spawn detail whose spawnablePositionType is \"fishing\" is dropped from the inherited pools in every dimension, inside and outside every box; retain_defaults does not keep them (it keeps the inherited grounded, surface, submerged and seafloor spawns)",
+    "why": "the owner, 2026-10-22: \"go through the fishing spawns and sure that up, i dont want another moment of my friend getting a mon he doesnt want in an area.\" On 2026-10-21 a friend fishing off Pallet's west shore hooked a Pyukumuku the fishing guide does not list there: COBBLEVERSE-DP-v31's pyukumuku-4 (is_beach and is_ocean, common, weight 2) was live on 103 stride columns of sea in x1000-1150, z5300-5500, which no sub-region raster, sea band or suppression box reached",
+    "inherited_sources_2026-10-22": "603 effective fishing details over 160 species: 599 in 160 files of COBBLEVERSE-DP-v31.zip (data/cobblemon/spawn_pool_world/), 4 in one cobblemon-additions file; read from cobblers-local/server-snapshot-2026-10-05 and again with the 1.8.2 mod set (same counts); no spawn-detail preset carries fishing",
+    "native_expression": "tools/suppress_inherited_spawns.py remove_fishing drops the details from the file it re-emits; a file left with none is re-emitted as the inherited file with \"enabled\": false (the removed_species shape, EXP-012 V4/V5)",
+    "fail_closed": "verify_no_fishing: after writing, every inherited resource path the server loads is re-read from its effective source and the pack's output, and the run fails if any still-enabled file holds a fishing detail (tests/test_fishing_cover.py)",
+    "what_fishes_instead": "our own tables only: tools/compile_spawns.py build_fishing, with data/fishing_fill.json (tools/fishing_cover.py) giving every cell of water exactly one table; docs/mechanics/FISHING.md section 4b; tools/fishing_audit.py",
+    "not_covered": "a fishing pool a dungeon carries (our own, inside the dungeon); what Cobblemon does on a cast, which was not observed",
+    "runtime_status": "generated only; not installed, not cast in game"
+  },
   "removed_species": {
     "policy": "never wild, anywhere: every inherited spawn detail naming one of these species is removed from the inherited pools in every dimension, inside and outside every box; retain_defaults does not keep them",
     "why": "the owner, 2026-10-08: 'WILD FLUTTER MANE: switch the inherited paradox spawns off. Paradoxes are dungeon content, and a wild one in spooky biomes at night undoes both that and the starter being special. Check every other paradox while you are there.' Flutter Mane is the final of the eighth starter line (data/mythical_starters.json starter_misdreavus). Dungeon paradoxes come from dungeon data, not from wild pools",
