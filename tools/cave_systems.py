@@ -128,7 +128,7 @@ BASE_STONE = "#minecraft:base_stone_overworld"
 # files that are not footprints (planning labels, region polygons, spawn rules) and the paths no tool should walk
 # entrance_trails.json, fishing_fill.json and underground_spawns.json (2026-10-22) are not places to keep clear:
 # the trails END at the mouths by design, the fill is water cells, the pools are the caves' own boxes
-SKIP_FILES = {"cave_systems.json", "cells.json", "regions.json", "marine_seas.json", "sculpt.json", "world.json", "spawns.json",
+SKIP_FILES = {"cave_systems.json", "cells.json", "regions.json", "marine_seas.json", "sculpt.json", "world.json", "spawns.json", "fishing_fill.json", "underground_spawns.json",
               "spawn_suppression.json", "entrance_trails.json", "fishing_fill.json", "underground_spawns.json"}
 SKIP_DIRS = {"notes", "held", "checks"}
 SKIP_KEYS = set()          # tools/southern_residents.py authored_points skips only `nearest_*`; so does this (landmark extents count)

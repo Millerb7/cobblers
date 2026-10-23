@@ -35,6 +35,7 @@
   "rules": {
     "north_of_z": 4096,
     "north_of_z_why": "the brief: OUTSIDE rows E-H. Rows are 1024 blocks from origin_z 0 (data/world.json grid), so rows A-D are z < 4096; every written column, clear, NPC, anchor and cache is held to it",
+    "authored_clearance_exempt_files": {"fishing_fill.json": "fishing cover cells (tools/fishing_cover.py, 2026-10-22): water cells that name which fishing table applies, not a place on land", "underground_spawns.json": "the caves' and mines' underground spawn boxes (tools/underground_spawns.py, 2026-10-22): spawn volumes below ground, not a place"},
     "authored_clearance": 96,
     "authored_clearance_why": "the brief of 2026-10-03: at least 96 blocks from any x/z authored in data/*.json. tools/southern_residents.py authored_points(), called with this file as the one to skip, scans EVERY other data file (data/southern_residents.json among them) and the generator checks every written column, the whole perimeter of every box clear, every NPC spot, anchor and cache. This file's own records in data/quests.json, data/dialogue.json and data/rewards.json are skipped by id. authored_points() never reads a {min_x, max_x, min_z, max_z} box, so data/routes.json's spawn-corridor boxes are held separately, each as a FILLED rectangle (tools/southern_residents.py corridor_check, 2026-10-03, after the independent audit found three sites inside 96 of one)",
     "path_clearance": 128,
