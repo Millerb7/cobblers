@@ -570,7 +570,7 @@ def build_wards(plan):
 # The owner, 2026-10-12: "The forest should expand toward the Scar, maybe envelop some of it, and then down the back and
 # side of the mountain." Layer 1 above is the tarn's own wood and is not touched; the arms are laid along spines in
 # data/scar_tarn.json growth.arms, one function each, with the same kinds, heights, paint and plants.
-SKIP_FILES = {"scar_tarn.json", "cells.json", "regions.json", "world.json"}   # planning labels, not things (the audit's list)
+SKIP_FILES = {"scar_tarn.json", "cells.json", "regions.json", "world.json", "fishing_fill.json", "underground_spawns.json"}   # planning labels, not things (the audit's list)
 OWN = re.compile(r"scar_tarn")
 
 

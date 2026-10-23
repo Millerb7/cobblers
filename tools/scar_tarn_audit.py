@@ -589,7 +589,7 @@ def _xz(p):
     return isinstance(p, list) and len(p) in (2, 3) and all(_num(v) for v in p) and 0 <= p[0] <= 8192 and 0 <= p[-1] <= 8192
 
 
-SKIP_FILES = {"scar_tarn.json", "cells.json", "regions.json", "world.json"}   # planning labels, not things
+SKIP_FILES = {"scar_tarn.json", "cells.json", "regions.json", "world.json", "fishing_fill.json", "underground_spawns.json"}   # planning labels, not things
 OWN = re.compile(r"scar_tarn")
 
 
