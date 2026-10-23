@@ -176,13 +176,14 @@ def pool_records(room, theme, species, spawns=None, regions=None):
 
 
 def habitat_record(room):
+    # status "placed": the owner asked for the nests (2026-10-22), and R9E writes PLACED blocks only
     x, y, z = room["block"]
     act = dict(ACTIVATED, spawn_range=int(room["spawn_range"]), cancel_range=int(room["cancel_range"]))
     return {"id": block_id(room["id"]), "place": "%s (%s): the floor cell under the middle of the nest room %s" % (room["place"], room["owner_file"], room["id"]),
             "pool": "cobblers:%s" % pool_id(room["id"]), "style": "activated", "replace_spawns": False,
             "position": {"x": int(x), "y": int(y), "z": int(z)}, "mimic": stone_for(int(y)),
             "activated": {k: act[k] for k in ("spawn_range", "chance", "trigger", "cancel_range", "max_spawns_per_activation", "max_spawns")},
-            "status": "planned", "generated_by": room["generated_by"],
+            "status": "placed", "generated_by": room["generated_by"],
             "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED "
                    "block in the floor under the room's middle keeps up to %d of the theme alive, %d refilled at a time, TICK at chance 1. "
                    "spawn_range %d keeps the spawner's box inside the room (the generator and its audit check that no other carved cell "
