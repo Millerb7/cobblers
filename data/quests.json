@@ -7429,6 +7429,140 @@
       ]
     },
     {
+      "id": "ambient_entrance_guides",
+      "source": "data/entrance_trails.json guides; docs/world-building/ENTRANCE_TRAILS.md",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": true,
+        "npcs_remain_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_entrance_guide_old_seams",
+        "dlg_entrance_guide_hollow_reach",
+        "dlg_entrance_guide_frostpeak_deeps",
+        "dlg_entrance_guide_craters",
+        "dlg_entrance_guide_gorge",
+        "dlg_entrance_guide_ridgeback"
+      ],
+      "objectives": [],
+      "transitions": [
+        {
+          "id": "mark_old_seams",
+          "conditions": [],
+          "effects": [
+            {
+              "kind": "function",
+              "function": "cobblers:guides/guide_old_seams",
+              "why": "offers the player a shareable Xaero's waypoint to the entrance (tools/entrance_trails.py guide_commands), the form of the next-gym offer"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.ambient_entrance_guides.old_seams_cursor",
+              "value": "marked"
+            }
+          ]
+        },
+        {
+          "id": "mark_hollow_reach",
+          "conditions": [],
+          "effects": [
+            {
+              "kind": "function",
+              "function": "cobblers:guides/guide_hollow_reach",
+              "why": "offers the player a shareable Xaero's waypoint to the entrance (tools/entrance_trails.py guide_commands), the form of the next-gym offer"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.ambient_entrance_guides.hollow_reach_cursor",
+              "value": "marked"
+            }
+          ]
+        },
+        {
+          "id": "mark_frostpeak_deeps",
+          "conditions": [],
+          "effects": [
+            {
+              "kind": "function",
+              "function": "cobblers:guides/guide_frostpeak_deeps",
+              "why": "offers the player a shareable Xaero's waypoint to the entrance (tools/entrance_trails.py guide_commands), the form of the next-gym offer"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.ambient_entrance_guides.frostpeak_deeps_cursor",
+              "value": "marked"
+            }
+          ]
+        },
+        {
+          "id": "mark_craters",
+          "conditions": [],
+          "effects": [
+            {
+              "kind": "function",
+              "function": "cobblers:guides/guide_craters",
+              "why": "offers the player a shareable Xaero's waypoint to the entrance (tools/entrance_trails.py guide_commands), the form of the next-gym offer"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.ambient_entrance_guides.craters_cursor",
+              "value": "marked"
+            }
+          ]
+        },
+        {
+          "id": "mark_gorge",
+          "conditions": [],
+          "effects": [
+            {
+              "kind": "function",
+              "function": "cobblers:guides/guide_gorge",
+              "why": "offers the player a shareable Xaero's waypoint to the entrance (tools/entrance_trails.py guide_commands), the form of the next-gym offer"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.ambient_entrance_guides.gorge_cursor",
+              "value": "marked"
+            }
+          ]
+        },
+        {
+          "id": "mark_ridgeback",
+          "conditions": [],
+          "effects": [
+            {
+              "kind": "function",
+              "function": "cobblers:guides/guide_ridgeback",
+              "why": "offers the player a shareable Xaero's waypoint to the entrance (tools/entrance_trails.py guide_commands), the form of the next-gym offer"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.ambient_entrance_guides.ridgeback_cursor",
+              "value": "marked"
+            }
+          ]
+        }
+      ],
+      "rewards": [],
+      "writer": "dialogue cursor persistence only; the transitions only tell the player where an entrance is",
+      "readers": "the six entrance-guide conversations only",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player has their own cursor; the waypoint offer goes to the player who asked"
+      },
+      "progression_field_refs": [
+        "quest.ambient_entrance_guides.old_seams_cursor",
+        "quest.ambient_entrance_guides.hollow_reach_cursor",
+        "quest.ambient_entrance_guides.frostpeak_deeps_cursor",
+        "quest.ambient_entrance_guides.craters_cursor",
+        "quest.ambient_entrance_guides.gorge_cursor",
+        "quest.ambient_entrance_guides.ridgeback_cursor"
+      ]
+    },
+    {
       "id": "ambient_ursaluna_den",
       "source": "data/ursaluna_cave.json; docs: the owner's request of 2026-10-02 (data/ursaluna_cave.json request)",
       "scope": "player",

@@ -3423,6 +3423,90 @@
       ]
     },
     {
+      "id": "quest.ambient_entrance_guides.old_seams_cursor",
+      "quest_id": "ambient_entrance_guides",
+      "field": "old_seams_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "offer",
+        "marked",
+        "again"
+      ]
+    },
+    {
+      "id": "quest.ambient_entrance_guides.hollow_reach_cursor",
+      "quest_id": "ambient_entrance_guides",
+      "field": "hollow_reach_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "offer",
+        "marked",
+        "again"
+      ]
+    },
+    {
+      "id": "quest.ambient_entrance_guides.frostpeak_deeps_cursor",
+      "quest_id": "ambient_entrance_guides",
+      "field": "frostpeak_deeps_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "offer",
+        "marked",
+        "again"
+      ]
+    },
+    {
+      "id": "quest.ambient_entrance_guides.craters_cursor",
+      "quest_id": "ambient_entrance_guides",
+      "field": "craters_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "offer",
+        "marked",
+        "again"
+      ]
+    },
+    {
+      "id": "quest.ambient_entrance_guides.gorge_cursor",
+      "quest_id": "ambient_entrance_guides",
+      "field": "gorge_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "offer",
+        "marked",
+        "again"
+      ]
+    },
+    {
+      "id": "quest.ambient_entrance_guides.ridgeback_cursor",
+      "quest_id": "ambient_entrance_guides",
+      "field": "ridgeback_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "offer",
+        "marked",
+        "again"
+      ]
+    },
+    {
       "id": "quest.arena_tier_1_champion.defeated",
       "quest_id": "arena_tier_1_champion",
       "field": "defeated",

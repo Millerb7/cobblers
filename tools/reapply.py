@@ -428,6 +428,11 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # own forceload. Nothing in it acts on its own, so it is global and `strip` takes it out of the heap after the run.
                 # OFFLINE: built and audited, never yet applied to any world
                 "cobblers_cave_systems",
+                # 2026-10-23: walked trails from the towns to the cave and mine entrances, lit by lanterns, with a signpost at each start
+                # (tools/entrance_trails.py, data/entrance_trails.json): blocks only, run by R16T, global and stripped after the run.
+                # The guides' waypoint offers are the SECOND pack: a dialogue calls them at play time, so that one is kept
+                "cobblers_entrance_trails",
+                "cobblers_entrance_guides",
                 # 2026-10-12: the legendary sanctuaries (tools/sanctuaries.py, data/sanctuaries.json), the open-air set pieces that
                 # replace the cave kit's K2-K6: blocks and the retired caves' restore run by R9SY (after R9CK, BEFORE R9E); the
                 # gates' barrier doors and the area bosses' keeper act on their own (tick drivers, a capture callback), so
@@ -1367,6 +1372,10 @@ def prepare_jobs(a):
     # the walk from every mouth) and fails the prepare on any breach. Fail-closed
     add("cave_systems:build", "cave_systems.py", "build", *src)
     add("cave_systems_audit", "cave_systems_audit.py", *src)
+    # the trails to the caves and mines (data/entrance_trails.json, 2026-10-23), after the cave and mine packs are built so the audit can
+    # read their writes, then its independent audit: the walk, the ground, the water, the buildings, the lanterns and the sign. Fail-closed
+    add("entrance_trails:build", "entrance_trails.py", "build", *src)
+    add("entrance_trails_audit", "entrance_trails_audit.py", *src)
     # the legendary sanctuaries (data/sanctuaries.json): the same reason (their siting keeps clear of every other built pack's
     # writes), and the Habitat Blocks, pools and probes they keep in data/ are refused if they drifted. Its audit
     # (tools/sanctuaries_audit.py) replays the pack over the heightmap: the walk with the door closed and open, nothing floating,
@@ -2682,6 +2691,12 @@ def steps(with_spawns=False):
     shrine_ids = [q["id"] for q in json.loads((ROOT / "data" / "shrines.json").read_text(encoding="utf-8")).get("shrines") or []]
     out.append(("R16D", "wayside shrines on the town approaches (%d, data/shrines.json)" % len(shrine_ids),
                 [("fn", "cobblers:shrines/%s" % s) for s in shrine_ids]))
+    # the trails from the towns to the cave and mine entrances (tools/entrance_trails.py, data/entrance_trails.json): surface blocks only
+    # (a ribbon, lantern posts and a signpost), after the cave and mine carves (R9CS, R9MN), the towns and the shrines (R16D) they
+    # keep clear of. Listed from the committed data, so the step exists whether or not the pack is built here
+    trail_ids = [t["id"] for t in json.loads((ROOT / "data" / "entrance_trails.json").read_text(encoding="utf-8"))["trails"]]
+    out.append(("R16T", "trails to the cave and mine entrances (%d, data/entrance_trails.json)" % len(trail_ids),
+                [("fn", "cobblers:trails/%s" % t) for t in trail_ids]))
     # the Pallet crushed house (2026-10-13, tools/crushed_house.py, data/crushed_house.json): a pure block pass in a forceload of
     # its box, AFTER the hometown (R7), the lights (R16), the dressing (R16B) and the shrines it keeps clear of, so nothing re-levels
     # or paves under it, and BEFORE R17N (Hank outside its blocked door) and R18CH (Lena inside its pocket): both are seated into

@@ -308,6 +308,42 @@
       "texture": "rctmod:textures/trainers/single/old_sage.png",
       "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/old_sage.png, 64x64 player-skin layout, matching steve.geo's 64x64). Gorge hamlet elder: the pack's old sage."
     },
+    "cobblers:entrance_old_seams": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/hiker_alan_00b9.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/hiker_alan_00b9.png, 64x64 player-skin layout, matching steve.geo's 64x64). Pallet: an old seam-finder, a hiker who followed coal under the hill. Chosen from the file name and the role, not by looking at the texture; a skin the trainer records already use, none another NPC look uses."
+    },
+    "cobblers:entrance_hollow_reach": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/scientist_beau_0154.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/scientist_beau_0154.png, 64x64 player-skin layout, matching steve.geo's 64x64). Stoneford: a surveyor of the Hollow Reach, a scientist in field dress. Chosen from the file name and the role, not by looking at the texture; a skin the trainer records already use, none another NPC look uses."
+    },
+    "cobblers:entrance_frostpeak": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/hiker_nob_00b7.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/hiker_nob_00b7.png, 64x64 player-skin layout, matching steve.geo's 64x64). Highwire: a mountain guide, a hiker. Chosen from the file name and the role, not by looking at the texture; a skin the trainer records already use, none another NPC look uses."
+    },
+    "cobblers:entrance_craters": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/scientist_connor_0150.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/scientist_connor_0150.png, 64x64 player-skin layout, matching steve.geo's 64x64). Fossick: an assayer of the Old Craters Drift, a scientist. Chosen from the file name and the role, not by looking at the texture; a skin the trainer records already use, none another NPC look uses."
+    },
+    "cobblers:entrance_gorge": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/fisherman_andrew_00e9.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/fisherman_andrew_00e9.png, 64x64 player-skin layout, matching steve.geo's 64x64). Bridgekeep: a bridge-keeper by the river, a fisherman. Chosen from the file name and the role, not by looking at the texture; a skin the trainer records already use, none another NPC look uses."
+    },
+    "cobblers:entrance_ridgeback": {
+      "model": "cobblemon:steve.geo",
+      "poser": "cobblemon:standard",
+      "texture": "rctmod:textures/trainers/single/hiker_brice_00ba.png",
+      "texture_from": "COBBLEVERSE RCTmod RP.zip (assets/rctmod/textures/trainers/single/hiker_brice_00ba.png, 64x64 player-skin layout, matching steve.geo's 64x64). Greenhollow: an ore carter of the Ridgeback company, a hiker. Chosen from the file name and the role, not by looking at the texture; a skin the trainer records already use, none another NPC look uses."
+    },
     "cobblers:mining_foreman": {
       "model": "cobblemon:steve.geo",
       "poser": "cobblemon:standard",
@@ -640,6 +676,12 @@
     "npc_route3_guide": "cobblers:route3_guide",
     "npc_route4_packer": "cobblers:hallam",
     "npc_route4_gatekeeper": "cobblers:oriel",
+    "npc_entrance_guide_old_seams": "cobblers:entrance_old_seams",
+    "npc_entrance_guide_hollow_reach": "cobblers:entrance_hollow_reach",
+    "npc_entrance_guide_frostpeak_deeps": "cobblers:entrance_frostpeak",
+    "npc_entrance_guide_craters": "cobblers:entrance_craters",
+    "npc_entrance_guide_gorge": "cobblers:entrance_gorge",
+    "npc_entrance_guide_ridgeback": "cobblers:entrance_ridgeback",
     "npc_stone_tip_viltri_light_keeper": "cobblers:light_keeper",
     "npc_stone_tip_tea_town_picker": "cobblers:tea_picker",
     "npc_stone_tip_the_scar_scavenger": "cobblers:scar_scavenger",

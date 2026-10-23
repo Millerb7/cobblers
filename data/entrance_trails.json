@@ -1,0 +1,167 @@
+{
+  "schema": "cobblers.entrance_trails/1",
+  "status": "authored 2026-10-23; built and audited offline (tools/entrance_trails.py, tools/entrance_trails_audit.py); nothing applied to any world, nothing seen in game",
+  "generated_by": "hand",
+  "owner_words": [
+    "i think if its near a town, add a path to it",
+    "an npc to give a waypoint to a mi9ne would be cool."
+  ],
+  "why": "The six cave systems and mine networks (data/cave_systems.json, data/mine_networks.json) have entrances 80 to 700 blocks from the nearest town or route, marked by nothing: no path, no sign, no one who says where they are. This file is the table that makes each easy to find. A TRAIL is a walked ribbon from a town's street end to an entrance, lit by lanterns on posts, with a signpost at its start. A GUIDE is a resident of the nearest town who, when talked to, offers a shareable Xaero's waypoint to an entrance (the 'Next gym' offer's mechanism, tools/progression_pack.py xaero_share). tools/entrance_trails.py turns trails and guides into the pack cobblers_entrance_trails; its guides' conversations are data/dialogue.json's (quest ambient_entrance_guides) and their seats data/npc_seats.json's.",
+  "not_covered": "The Frostpeak Deeps has a guide and no trail: its four mouths stand 81 to 85 blocks from the Frostpeak shrine, a summit site, and 1,244 blocks or more from the nearest town (Highwire), past the 800 blocks a trail is laid for. The caves' and mines' OTHER entrances (the Old Seams has three, the Hollow Reach six, the Hollow Seam two) have no trail of their own: each trail goes to ONE entrance and the cave or mine joins the rest underground. A route junction sign (tools/signposts.py) for entrances that stand 100 to 200 blocks off a route (reach_r2, reach_r2n, seams_mansion) is not built.",
+  "rules": {
+    "width": 3,
+    "width_why": "the centre line is dirt_path and the two flanks gravel or coarse_dirt, so the centre line is the only dirt_path in a trail (the audit and the sign's distance read it that way); a ribbon cell is a centre cell and its four neighbours",
+    "max_length_blocks": 800,
+    "max_edge_degrees": 40,
+    "max_edge_degrees_why": "tools/build_routes.py's router hard limit: an edge steeper than 40 degrees is refused, a column steeper than 40 degrees is impassable (routes.json walkability_verdict)",
+    "max_step": 1,
+    "max_step_why": "the centre line never rises or falls more than one block between neighbouring cells, so it is walkable without jumping a gap",
+    "water_clear": 3,
+    "water_clear_why": "the sea (ground at or under sea_near), lake basins, river corridors (river_corridor blocks of the graded centreline plus the reach's half width) and waterways, kept this many blocks from every ribbon cell; a trail that cannot avoid water is refused, not bridged",
+    "sea_near": 63,
+    "river_corridor": 6,
+    "building_clear": 4,
+    "building_clear_why": "blocks kept between a ribbon cell and every authored point, box or short polyline in data/*.json (the files named in `skip_files` aside) and every other town's footprint",
+    "skip_files": ["route_paths.json", "routes.json", "regions.json", "cells.json", "world.json", "cave_systems.json", "mine_networks.json", "mine_crew_trainers.json", "entrance_trails.json", "spawns.json", "habitat_blocks.json", "signposts.json"],
+    "skip_files_why": "route lines are dense point lists a trail may cross (a walked path crossing a road is fine); the cave and mine files are the entrances the trails go to; the spawn files hold coordinate boxes of areas, not buildings",
+    "start_open": 14,
+    "goal_open": 40,
+    "stop_short": 6,
+    "stop_short_why": "the trail ends this many blocks before the entrance point: the cave's or mine's own ramp starts at the point and its builder owns those blocks",
+    "lantern_every": 24,
+    "lantern_offset": 2,
+    "sign_wood": "spruce",
+    "sign_offset": 3,
+    "sign_index": 8,
+    "centre": "minecraft:dirt_path",
+    "flank": ["minecraft:gravel", "minecraft:coarse_dirt"],
+    "post": "minecraft:spruce_fence",
+    "lamp": "minecraft:lantern",
+    "clear_height": 4,
+    "blocks_why": "vanilla 1.21.1 blocks none of which is a spawn condition (data/spawn_blocks.json), the roads_and_paths set of data/spawn_block_policy.json plus a fence and a lantern"
+  },
+  "trails": [
+    {
+      "id": "trail_old_seams",
+      "system": "old_seams",
+      "kind": "cave",
+      "sign": ["Old Seams"],
+      "from_town": "hometown",
+      "from_at": [1522, 5292],
+      "to": "seams_oak_s",
+      "why": "Pallet's cross street ends at its east edge (data/placements.json hometown roads cross_street, 1522,5292); the nearest of the three mouths to Pallet is seams_oak_s, 278 blocks east of the footprint. The system's other mouths are by the Great Oak and the Route 1 mansion."
+    },
+    {
+      "id": "trail_hollow_reach_steepside",
+      "system": "hollow_reach",
+      "kind": "cave",
+      "sign": ["Hollow Reach"],
+      "from_town": "tea_town",
+      "from_at": [2600, 3486],
+      "to": "reach_tea_n",
+      "why": "Steepside's terrace road enters at its north edge (data/placements.json tea_town streets terrace_road, 2600,3486); reach_tea_n stands 85 blocks off the footprint, to the north-west."
+    },
+    {
+      "id": "trail_hollow_reach_stoneford",
+      "system": "hollow_reach",
+      "kind": "cave",
+      "sign": ["Hollow Reach"],
+      "from_town": "gym1_town",
+      "from_at": [1756, 3520],
+      "to": "reach_brock",
+      "why": "Stoneford's north avenue ends at the footprint's north edge (data/placements.json gym1_town streets north_avenue, 1756,3520); reach_brock stands 85 blocks off the footprint, to the east-north-east, beside Route 2's first stretch."
+    },
+    {
+      "id": "trail_craters",
+      "system": "mn_craters",
+      "kind": "mine",
+      "sign": ["Craters Drift"],
+      "from_town": "mining_town",
+      "from_at": [6636, 5612],
+      "to": "mn_craters_a1",
+      "why": "Fossick's bowl walk climbs to the footprint's north edge (data/placements.json mining_town streets bowl_walk, 6636,5612); the adit stands 147 blocks off the footprint, to the north."
+    },
+    {
+      "id": "trail_gorge",
+      "system": "mn_gorge",
+      "kind": "mine",
+      "sign": ["Hollow Seam"],
+      "from_route": "route_07_sabrina_to_blaine",
+      "from_at": [6608, 3855],
+      "to": "mn_gorge_a1",
+      "why": "The adits stand on the north side of the gorge's river and Bridgekeep on the south: no open line joins them without a bridge, and a trail bridges nothing. Route 7 is the nearest walked line to the first adit (data/route_paths.json route_07_sabrina_to_blaine, 246 blocks from (6888, 3856) at (6645, 3895), which is on the river bridge), so the trail forks off the route at (6608, 3855), the last dry route cell north of the bridge (280 blocks from the adit), and the sign stands at the fork. The guide in Bridgekeep still offers the waypoint."
+    },
+    {
+      "id": "trail_ridgeback",
+      "system": "mn_ridgeback",
+      "kind": "mine",
+      "sign": ["Ridgeback", "Workings"],
+      "from_town": "gym4_town",
+      "from_at": [4392, 1554],
+      "to": "mn_ridgeback_a1",
+      "why": "Greenhollow's east lane leaves the footprint at 4392,1554 (data/placements.json gym4_town streets east_lane); the adit stands 579 blocks off the footprint, to the north-east."
+    }
+  ],
+  "guides": [
+    {
+      "id": "guide_old_seams",
+      "system": "old_seams",
+      "conversation": "dlg_entrance_guide_old_seams",
+      "npc": "npc_entrance_guide_old_seams",
+      "town": "hometown",
+      "goes_to": "seams_oak_s",
+      "marker": {"name": "Old Seams", "initials": "OS", "color": 11},
+      "why": "Pallet is the nearest town to the Old Seams (the first mining place a new group finds)."
+    },
+    {
+      "id": "guide_hollow_reach",
+      "system": "hollow_reach",
+      "conversation": "dlg_entrance_guide_hollow_reach",
+      "npc": "npc_entrance_guide_hollow_reach",
+      "town": "gym1_town",
+      "goes_to": "reach_brock",
+      "marker": {"name": "Hollow Reach", "initials": "HR", "color": 11},
+      "why": "Stoneford and Steepside are both 85 blocks from a Hollow Reach mouth; Stoneford is on the critical path, so more players pass it. Steepside's trail is signed but has no guide."
+    },
+    {
+      "id": "guide_frostpeak_deeps",
+      "system": "frostpeak_deeps",
+      "conversation": "dlg_entrance_guide_frostpeak_deeps",
+      "npc": "npc_entrance_guide_frostpeak_deeps",
+      "town": "gym3_town",
+      "goes_to": "peak_s",
+      "marker": {"name": "Frostpeak Deeps", "initials": "FD", "color": 11},
+      "why": "Highwire is the nearest town, 1,360 blocks from peak_s; no trail is laid that far, so the waypoint is the way in. peak_s is the southern mouth, the nearest of the four to the Frostpeak camp's side of the mountain."
+    },
+    {
+      "id": "guide_craters",
+      "system": "mn_craters",
+      "conversation": "dlg_entrance_guide_craters",
+      "npc": "npc_entrance_guide_craters",
+      "town": "mining_town",
+      "goes_to": "mn_craters_a1",
+      "marker": {"name": "Craters Drift", "initials": "CD", "color": 6},
+      "why": "Fossick is the nearest town to the Old Craters Drift."
+    },
+    {
+      "id": "guide_gorge",
+      "system": "mn_gorge",
+      "conversation": "dlg_entrance_guide_gorge",
+      "npc": "npc_entrance_guide_gorge",
+      "town": "gorge_hamlet",
+      "goes_to": "mn_gorge_a1",
+      "marker": {"name": "Hollow Seam", "initials": "HS", "color": 6},
+      "why": "Bridgekeep (the gorge hamlet) is the nearest town to the Hollow Seam."
+    },
+    {
+      "id": "guide_ridgeback",
+      "system": "mn_ridgeback",
+      "conversation": "dlg_entrance_guide_ridgeback",
+      "npc": "npc_entrance_guide_ridgeback",
+      "town": "gym4_town",
+      "goes_to": "mn_ridgeback_a1",
+      "marker": {"name": "Ridgeback Workings", "initials": "RW", "color": 6},
+      "why": "Greenhollow is the nearest town to the Ridgeback Workings."
+    }
+  ]
+}
