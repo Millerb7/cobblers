@@ -10,6 +10,9 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
 - The owner's preference is one integration branch and one draft PR per batch: merge both into one PR when handing over.
 
 ## 2. Where it stopped
+- **2026-10-23 07:18: the underground batch is live** (STATE "Live install 2026-10-23"); up at 16G, detached;
+  branch head e90467a8+ pushed, no PR yet. Next: one draft PR for the whole branch; the hand payments to the Challenge
+  player; an independent test-author pass over tonight's tools (each builder wrote its own tests).
 - **2026-10-22 13:28: everything is installed** (STATE "Live installs 2026-10-22"); live up at 16G, detached. The
   bean stand-in is gone (the pack's own sweep loads). Owed by hand to the one Challenge player: $5,000, the badge-1/2 TM
   gifts and the TM Case (data/challenge_mode.json lists them). Branch head cbe11cb6, pushed, no PR yet: open ONE draft PR.
