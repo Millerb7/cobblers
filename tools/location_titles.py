@@ -146,8 +146,11 @@ def _marine_bands():
     return CS.marine_bands(load("spawns.json"), load("regions.json"), load("routes.json"), water)
 
 
-def settlements(regs):
-    """[{id, name, box (x0, z0, x1, z1), y (lo, hi) or None, region name or None}]."""
+def settlements(regs, with_y=True):
+    """[{id, name, box (x0, z0, x1, z1), y (lo, hi) or None, region name or None}].
+
+    with_y=False leaves the Displaced City's y None instead of reading derived/cavern/plan.json: a caller that only
+    wants the settlement's column box (tools/nuzlocke_zones.py settlement_at) then needs no derived artifact."""
     import signposts
     names = signposts.place_names()
     towns = {t["id"]: t for t in load("towns.json")["towns"]}
@@ -162,7 +165,7 @@ def settlements(regs):
             fp = towns.get(sid, {}).get("footprint") or {}
             rect = [fp.get("min_x"), fp.get("min_z"), fp.get("max_x"), fp.get("max_z")] if fp else None
         y = None
-        if sid == "displaced_city":
+        if sid == "displaced_city" and with_y:
             cp = json.loads((ROOT / "derived" / "cavern" / "plan.json").read_text(encoding="utf-8"))
             y = (cp["floor_y"]["min"] - 2, cp["ceiling_y"]["max"])
         cx, cz = ((rect[0] + rect[2]) / 2.0, (rect[1] + rect[3]) / 2.0) if rect else (None, None)
