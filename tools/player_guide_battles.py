@@ -18,6 +18,12 @@ EVERY FACT IS READ FROM THE LIVE DATA, never from a design document:
                 tools/challenge_mode.normal_seat / challenge_seat (data/gym_buildings, data/gym_interiors.json,
                 data/challenge_mode.json); place names from data/routes.json, data/towns.json, data/gym_buildings
                 and data/gym_interiors.json
+  mine crews    data/mine_crews.json (the three networks, their level bands and each slot's depth) and
+                data/mine_crew_trainers.json (who, the seat), the teams from the same emitted pack as every other fight
+                (data/rctmod/trainers/mine_<network>_<nn>.json and its _challenge copy). Not in data/trainers.json
+  boss EVs      the `evs` on each team member of the emitted pack (docs/story/generate_trainers.py applies
+                docs/story/TRAINER_RULES.json boss_evs to the thirteen bosses); the spread names are that file's. The
+                mine crews and the juniors carry none and the page says so
   order         route trainers by their seat's measured walked_distance along the route (Victory Road by
                 route_progress); juniors by the order a player first comes surely into each one's sight, measured
                 by tools/gym_trainers_audit.audit() from the replayed hall builds (review N100: trainer_order is
@@ -73,7 +79,8 @@ SHOWDOWN_MOVES = "assets/cobblemon/showdown/node_modules/pokemon-showdown/data/m
 ENTRY = re.compile(r"^  (\w+): \{\n(.*?)^  \},?$", re.S | re.M)
 TRAINERS = "data/rctmod/trainers/%s.json"
 MOBS = "data/rctmod/mobs/trainers/single/%s.json"
-CLASS_LABEL = {"route": "Route trainer", "optional_route": "Optional, off the road", "gym_trainer": "Gym trainer",
+CLASS_LABEL = {"mine_miner": "Crew", "mine_foreman": "Foreman", "mine_shift_boss": "Shift Boss",
+               "route": "Route trainer", "optional_route": "Optional, off the road", "gym_trainer": "Gym trainer",
                "gym_leader": "Gym Leader", "elite_four": "Elite Four", "champion": "Champion"}
 # The page's look, the eighteen type badges' colours among it, lives in docs/player/assets/site.css (shared by
 # every guide, hand-written); this tool emits classes only (`t t-<type>`).
@@ -234,7 +241,8 @@ def mon(dex, m):
     return {"species": m["species"], "name": name, "types": types, "level": m["level"],
             "ability": dex.ability(m["ability"]) if m.get("ability") else None,
             "item": dex.item(m["heldItem"]) if m.get("heldItem") else None,
-            "nature": dex.nature(m["nature"]) if m.get("nature") else None, "moves": moves}
+            "nature": dex.nature(m["nature"]) if m.get("nature") else None, "moves": moves,
+            "evs": {k: v for k, v in (m.get("evs") or {}).items() if v}}
 
 
 def collect(jar=None):
@@ -458,8 +466,63 @@ def collect(jar=None):
     missing = sorted(set(recs) - covered)
     if missing:
         raise SystemExit("records in data/trainers.json with no place on the page: %s" % missing)
+    mines = mine_crews(pack, fight, notes)
     return {"sections": sections, "notes": notes, "titles": titles, "rule": rule, "shared": shared,
-            "jar": dex.jar.name, "missing": sorted(dex.missing), "count": len(covered)}
+            "jar": dex.jar.name, "missing": sorted(dex.missing), "mines": mines,
+            "count": len(covered) + sum(len(n["fights"]) for n in mines),
+            "spreads": ev_spreads(), "ev_fights": ev_fight_count(pack)}
+
+
+def ev_spreads():
+    """{spread id: {stat: evs}} as docs/story/TRAINER_RULES.json boss_evs names them."""
+    return doc("docs/story/TRAINER_RULES.json")["boss_evs"]["spreads"]
+
+
+def ev_fight_count(pack):
+    """(trainer files whose every member carries evs, trainer files in all), over the Normal files of the pack."""
+    files = [f for rel, f in pack.items() if rel.startswith("data/rctmod/trainers/") and not rel.endswith("_challenge.json")]
+    return sum(1 for f in files if f["team"] and all(m.get("evs") for m in f["team"])), len(files)
+
+
+def mine_crews(pack, fight, notes):
+    """The three mine networks' crews: [{id, name, band, levels, fights}], each fight() card of the same shape as a route
+    trainer's. The order is data/mine_crews.json's (shallow to deep); the seat and name are data/mine_crew_trainers.json's;
+    the levels printed are the emitted trainer files', and a band the files leave is a data note."""
+    crews = doc("data/mine_crews.json")["networks"]
+    seats = {t["id"]: t for t in doc("data/mine_crew_trainers.json")["trainers"]}
+    out = []
+    for net in crews:
+        fights, lv_n, lv_c, deepest = [], [], [], max(c["level"] for c in net["crew"])
+        for c in net["crew"]:
+            t = seats[c["id"]]
+            if c["place"] == "main":
+                where = "level %d of %d, %d blocks along the main line" % (c["level"], deepest, c["walk"])
+            else:
+                where = "the stope of level %d of %d" % (c["level"], deepest)
+            rec = {"id": c["id"], "display_name": t["display_name"], "class": "mine_" + t["role"]}
+            f = fight(rec, c["id"], t["seat"], "%s, %s" % (net["name"], where))
+            f["role"], f["depth"], f["place_where"] = t["role"], c["level"], where
+            f["lv_normal"] = [min(m["level"] for m in f["teams"]["normal"]), max(m["level"] for m in f["teams"]["normal"])]
+            if f["teams"]["challenge"] is None:
+                raise SystemExit("%s has no Challenge team in the emitted pack" % c["id"])
+            f["lv_challenge"] = [min(m["level"] for m in f["teams"]["challenge"]),
+                                 max(m["level"] for m in f["teams"]["challenge"])]
+            lv_n += f["lv_normal"]
+            lv_c += f["lv_challenge"]
+            fights.append(f)
+        shift = [c for c in net["crew"] if c["role"] == "shift_boss"]
+        if len(shift) != 1 or shift[0]["level"] != deepest:
+            notes.append("%s: the Shift Boss is not the single trainer on the deepest level in data/mine_crews.json."
+                         % net["name"])
+        levels = [min(lv_n), max(lv_n)]
+        if levels != list(net["band"]):
+            notes.append("%s: data/mine_crews.json band says Lv %d-%d; the emitted trainer files run Lv %d-%d. The page "
+                         "shows the files." % (net["name"], net["band"][0], net["band"][1], levels[0], levels[1]))
+        if [f["lv_challenge"] for f in fights] and [min(lv_c), max(lv_c)] != levels:
+            notes.append("%s: the Challenge teams run Lv %d-%d, not the Normal %d-%d." % (
+                net["name"], min(lv_c), max(lv_c), levels[0], levels[1]))
+        out.append({"id": net["id"], "name": net["name"], "levels": levels, "fights": fights})
+    return out
 
 
 def recs_for(bosses, up):
@@ -485,12 +548,29 @@ def badge(dex_type, label=None):
     return '<span class="t t-%s">%s</span>' % (esc(dex_type), esc(label or dex_type))
 
 
+EV_STATS = (("hp", "HP"), ("atk", "Atk"), ("def", "Def"), ("spa", "SpA"), ("spd", "SpD"), ("spe", "Spe"))
+
+
+def ev_text(evs, spreads):
+    """"Fast physical: 252 Atk, 252 Spe, 4 HP" -- the spread's name (docs/story/TRAINER_RULES.json boss_evs.spreads, matched
+    on the numbers) and the numbers, biggest first."""
+    parts = sorted(((evs[k], lab) for k, lab in EV_STATS if evs.get(k)), key=lambda x: -x[0])  # stable: stat order on ties
+    name = next((pretty(n) for n, sp in spreads.items() if {k: v for k, v in sp.items() if v} == evs), None)
+    nums = ", ".join("%d %s" % p for p in parts)
+    return "%s: %s" % (name, nums) if name else nums
+
+
+SPREADS = {}
+
+
 def render_mon(m):
     out = ['<div class="mon"><div class="mh"><b>%s</b><span class="lv">Lv %d</span></div>' % (esc(m["name"]), m["level"])]
     out.append('<div class="ty">%s</div>' % ("".join(badge(t) for t in m["types"]) or '<span class="tag">type unknown</span>'))
     kv = [("Ability", m["ability"] or "not set in the file"), ("Item", m["item"] or "none")]
     if m["nature"]:
         kv.append(("Nature", m["nature"]))
+    if m.get("evs"):
+        kv.append(("EVs", ev_text(m["evs"], SPREADS)))
     out.append('<dl class="kv">%s</dl>' % "".join("<dt>%s</dt><dd>%s</dd>" % (esc(k), esc(v)) for k, v in kv))
     mv = []
     for name, typ, cat in m["moves"]:
@@ -572,7 +652,58 @@ def filter_label(s):
     return s["title"].split(":")[0]
 
 
+def lv_text(lv):
+    return "%d" % lv[0] if lv[0] == lv[1] else "%d-%d" % tuple(lv)
+
+
+def render_mines(model, no):
+    """The "Mine crews" section: per network, a table of its twelve (where, levels, members) and then each one's card with
+    both teams, like a route trainer's. Returns (html, last card number)."""
+    nets = model["mines"]
+    n_all = sum(len(n["fights"]) for n in nets)
+    extra = sum(1 for n in nets for f in n["fights"] if len(f["teams"]["challenge"]) > len(f["teams"]["normal"]))
+    out = ['<section %s><h2>Mine crews<small>%d trainers in the three mines</small></h2>'
+           % (player_site.section_attr("mine-crews"), n_all)]
+    out.append('<p class="lead">Each of the three mines has a crew of miners, a foreman in a stope and a <b>Shift Boss</b> '
+               'in the deepest stope. They are optional: no gym waits on beating them, and they sit outside the level-cap '
+               'chain above. The levels in a mine are those of the gym trainers a player reaches there, rising with depth. '
+               'Where the mines are is on the <a href="region-map.html#caves">region map</a>. Challenge teams keep the '
+               'Normal levels and add a held item to each Pokemon; %d of the %d also add one more Pokemon. Mine trainers '
+               'carry no EV spread.</p>' % (extra, n_all))
+    for net in nets:
+        boss = next(f for f in net["fights"] if f["role"] == "shift_boss")
+        out.append('<h3>%s<small> Lv %s</small></h3>' % (esc(net["name"]), lv_text(net["levels"])))
+        out.append('<p>Shift Boss: <a href="#t-%s">%s</a>, Lv %s (Normal), Lv %s (Challenge), %d Pokemon (Normal), %d '
+                   '(Challenge).</p>' % (esc(boss["id"]), esc(boss["name"]), lv_text(boss["lv_normal"]),
+                                         lv_text(boss["lv_challenge"]), len(boss["teams"]["normal"]),
+                                         len(boss["teams"]["challenge"])))
+        rows = "".join(
+            '<tr><td><a href="#t-%s">%s</a></td><td>%s</td><td>%s</td><td class="n">%s</td><td class="n">%s</td></tr>'
+            % (esc(f["id"]), esc(f["name"]), esc(f["class"]), esc(f["place_where"]),
+               "%s (%d)" % (lv_text(f["lv_normal"]), len(f["teams"]["normal"])),
+               "%s (%d)" % (lv_text(f["lv_challenge"]), len(f["teams"]["challenge"]))) for f in net["fights"])
+        out.append('<div class="wide"><table><thead><tr><th>Trainer</th><th>Role</th><th>Where</th><th class="n">Normal Lv '
+                   '(Pokemon)</th><th class="n">Challenge Lv (Pokemon)</th></tr></thead><tbody>%s</tbody></table></div>' % rows)
+        for f in net["fights"]:
+            no += 1
+            out.append(render_fight(f, no))
+    out.append("</section>")
+    return "".join(out), no
+
+
+def ev_box(model):
+    spreads = model["spreads"]
+    lines = "".join("<li><b>%s</b>: %s</li>" % (esc(pretty(n)), esc(ev_text({k: v for k, v in sp.items() if v}, {})))
+                    for n, sp in spreads.items())
+    have, _of = model["ev_fights"]
+    return ('<p><b>EV spreads.</b> The Gym Leaders, the Elite Four and the Champion (%d trainers) give every Pokemon, in '
+            'both modes, one of these effort spreads; its card lists it as <b>EVs</b>. Nobody else has any.</p><ul>%s</ul>'
+            % (have, lines))
+
+
 def render(model):
+    SPREADS.clear()
+    SPREADS.update(model["spreads"])
     secs = model["sections"]
     count = lambda s: sum(len(fs) for _t, fs in s["parts"])
     toc = []
@@ -580,6 +711,7 @@ def render(model):
         cap = (' <span class="lead">(cap <span class="cv m-n">%d</span><span class="cv m-c">%d</span>)</span>'
                % (s["cap"]["normal"], s["cap"]["challenge"]) if s["cap"] else "")
         toc.append('<li><a href="#%s">%s</a>, %d fights%s</li>' % (s["id"], esc(s["title"]), count(s), cap))
+    toc.append('<li><a href="#mine-crews">Mine crews</a>, %d fights</li>' % sum(len(n["fights"]) for n in model["mines"]))
     sh = model["shared"]
     rules = ("Every trainer file here plays %s, uses no items in battle (maxItemUses %s, bag %s), does not heal you "
              "(healPlayers %s) and does not scale anyone's levels (adjustPlayerLevels %s, adjustNPCLevels %s)."
@@ -592,7 +724,7 @@ def render(model):
     body.append("<main>")
     body.append("<h1>Every trainer fight, in the order you meet them</h1>")
     body.append('<p class="lead">%d trainers: each gym\'s route, its juniors and its leader, then Victory Road, the '
-                'Elite Four and the Champion. The switch at the top changes every team on the page between '
+                'Elite Four and the Champion, then the crews of the three mines. The switch at the top changes every team on the page between '
                 '<b>Normal</b> (in game: %s) and <b>Challenge</b> (in game: %s). Coordinates are block positions '
                 '(x y z).</p>' % (model["count"], esc(model["titles"]["normal"]), esc(model["titles"]["challenge"])))
     body.append('<div class="box"><p><b>Level caps.</b> Your Pokemon stop gaining experience at the cap. The cap is '
@@ -600,13 +732,14 @@ def render(model):
                 'it is at least %s from the start (initialLevelCap), and %s after the Champion. A trainer refuses '
                 'to battle a party over the cap. Each section shows the cap that holds until its leader falls.</p>'
                 '<p><b>Rules.</b> %s</p><p><b>Battles on sight</b> means the trainer starts the fight when it sees '
-                'you within that distance; <b>Talk to battle</b> means you choose when.</p></div>'
-                % (esc(ru["relative"]), esc(ru["initial"]), esc(ru["after_champion"]), rules))
+                'you within that distance; <b>Talk to battle</b> means you choose when.</p>%s</div>'
+                % (esc(ru["relative"]), esc(ru["initial"]), esc(ru["after_champion"]), rules, ev_box(model)))
     body.append('<nav class="box toc" id="contents"><b>Contents</b><ol>%s<li><a href="#data-notes">Data notes</a>'
                 '</li><li><a href="#not-covered">What this page does not cover</a></li></ol></nav>' % "".join(toc))
     # the shared section filter (tools/player_site.py filter_nav): one button per gym or leg, beside the
     # Normal / Challenge switch in the header, which it does not replace
-    body.append(player_site.filter_nav([(s["id"], filter_label(s), s["title"]) for s in secs],
+    body.append(player_site.filter_nav([(s["id"], filter_label(s), s["title"]) for s in secs]
+                                       + [("mine-crews", "Mine crews", "The crews of the three mines")],
                                        label="Show one gym or leg"))
     no = 0
     for s in secs:
@@ -623,6 +756,8 @@ def render(model):
                 no += 1
                 body.append(render_fight(f, no))
         body.append("</section>")
+    mines_html, no = render_mines(model, no)
+    body.append(mines_html)
     notes = model["notes"] or ["None: the data files agree with each other and with the measured order."]
     body.append('<section id="data-notes"><h2>Data notes</h2><p class="lead">Where two data files, or a data file '
                 'and a measurement, disagree. The page always shows what the trainer files hold.</p>'
@@ -675,6 +810,7 @@ def main(argv=None):
         did, out, fights, len(model["sections"]), len(model["notes"]), len(text.encode("utf-8"))))
     for s in model["sections"]:
         print("  %-34s %s" % (s["title"], ", ".join("%s %d" % (t, len(fs)) for t, fs in s["parts"])))
+    print("  %-34s %s" % ("Mine crews", ", ".join("%s %d" % (n["name"], len(n["fights"])) for n in model["mines"])))
     if model["missing"]:
         print("  not named by the jar: %s" % ", ".join(model["missing"]))
     return 0

@@ -27,12 +27,28 @@
       "order": 20
     },
     {
+      "file": "challenge.html",
+      "title": "Challenge mode",
+      "label": "Challenge",
+      "description": "Full-Team rules against Standard: what the mode changes, the cash and the TMs it gives at the start and with each badge, and the TM Case.",
+      "generator": "tools/player_guide_challenge.py",
+      "order": 25
+    },
+    {
       "file": "items.html",
       "title": "Items and money",
       "label": "Items and money",
       "description": "How money works, and every item you can buy, barter for, sell or craft: where, from whom and for how much.",
       "generator": "tools/player_guide_items.py",
       "order": 30
+    },
+    {
+      "file": "training.html",
+      "title": "Training coaches",
+      "label": "Training",
+      "description": "The eight coaches who raise a Pokemon to your level cap, train its effort or perfect its stats: where they stand, what each service does and what it costs at every badge.",
+      "generator": "tools/player_guide_training.py",
+      "order": 31
     },
     {
       "file": "tms.html",
