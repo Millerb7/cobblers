@@ -10,7 +10,7 @@
   "site": 1,
   "waterway": 1,
   "total": 89,
-  "not_zones": 32
+  "not_zones": 38
  },
  "derivation": {
   "tables_are_subregions": "data/encounter_design.json has 61 tables and data/regions.json 61 sub-regions, the same ids",
@@ -2163,6 +2163,36 @@
   },
   {
    "zone": "marshy_marsh_basin",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "mine_nest_mn_craters_1_pool",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "mine_nest_mn_craters_2_pool",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "mine_nest_mn_gorge_1_pool",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "mine_nest_mn_gorge_2_pool",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "mine_nest_mn_ridgeback_1_pool",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "mine_nest_mn_ridgeback_2_pool",
    "what": "Habitat Block pool",
    "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
   },

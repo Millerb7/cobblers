@@ -609,6 +609,29 @@ def wild_species(pack_pools=None):
     return {r["sp"]: r["name"] for a in model["areas"] for r in a["rows"]}
 
 
+UNDERGROUND = Path(__file__).resolve().parent.parent / "data" / "underground_spawns.json"
+SHOWN_RARITIES = ("common", "uncommon")   # rare and ultra-rare finds stay a discovery, as the rest of the site keeps them
+
+
+def underground_cell(system_id):
+    """What lives underground in one system, by depth band, from data/underground_spawns.json (the same data the server's
+    cobblers_underground_spawns pack is generated from): common and uncommon species with their levels."""
+    doc = json.loads(UNDERGROUND.read_text(encoding="utf-8"))
+    rec = next((s for s in doc["systems"] if s["id"] == system_id), None)
+    if rec is None:
+        return "none mapped"
+    out = []
+    for band, label in (("shallow", "Upper"), ("mid", "Middle"), ("deep", "Deep")):
+        b = rec["bands"].get(band)
+        if not b:
+            continue
+        names = ["%s %s" % (sp.replace("_", " ").title(), lv) for sp, lv, rarity, _w in b["entries"] if rarity in SHOWN_RARITIES]
+        rare = any(rarity not in SHOWN_RARITIES for _sp, _lv, rarity, _w in b["entries"])
+        out.append("<b>%s</b> (y%d to y%d): %s%s" % (label, b["minY"], b["maxY"], html.escape(", ".join(names)),
+                                                    ", and rarer finds" if rare else ""))
+    return "<br>".join(out)
+
+
 def caves_section(sites):
     """The "Caves and mines" section: one row a place. See tools/entrance_sites.py for where each figure comes from."""
     e = html.escape
@@ -623,18 +646,19 @@ def caves_section(sites):
             trail = "no trail and no sign: follow the waypoint"
         town = ("Ask a resident of %s: they will offer a map waypoint to one entrance." % e(st["guide_town"])) if st["guide_town"] else ""
         lv = ("%d-%d" % st["levels"]) if st["levels"] else "not on a mapped encounter area"
-        rows += ('<tr data-cave><td><strong>%s</strong><br>%s</td><td><ul>%s</ul></td><td>%s</td><td>%s</td><td class="n">%s</td></tr>'
+        rows += ('<tr data-cave><td><strong>%s</strong><br>%s</td><td><ul>%s</ul></td><td>%s</td><td>%s</td><td class="n">%s</td>'
+                 '<td>%s</td></tr>'
                  % (e(st["name"]), "cave system" if st["kind"] == "cave" else "mine", ents, e(st["depth"]),
-                    "%s %s" % (trail, town), e(lv)))
+                    "%s %s" % (trail, town), e(lv), underground_cell(st["id"])))
     return ('<section class="doc" id="caves"><h2>Caves and mines</h2><p>Six large places to dig and to fight in the dark, with '
             'coal, iron, copper, lapis, gold, redstone and diamond in the walls, richer the deeper and the farther from a town. '
             'The three <b>cave systems</b> are natural passages in the west; the three <b>mines</b> are old timbered workings in '
             'the east, with rails, inclines and ladders between their levels. Their entrances are the orange dots on the map '
             '(the "Caves and mines" layer). Bring light: the only lanterns are at the entrances.</p>'
             '<table><thead><tr><th>Place</th><th>Entrances</th><th>How deep</th><th>Finding it</th><th class="n">Wild levels '
-            'at the entrances</th></tr></thead><tbody>%s</tbody></table>'
+            'at the entrances</th><th>Underground Pokemon</th></tr></thead><tbody>%s</tbody></table>'
             '<p class="small">Wild levels are those of the surface encounter areas the entrances stand in (the tables above); '
-            'what lives underground is not listed, because no underground table is published here. Depths are '
+            'underground Pokemon spawn by depth (the last column; a few nest rooms off side passages hold more). Depths are '
             'the plans these places were generated from (about, not surveyed in a running game).</p></section>' % rows)
 
 

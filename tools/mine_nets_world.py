@@ -27,7 +27,9 @@ DATA = ROOT / "data"
 # mine_crew_trainers.json (2026-10-22, tools/mine_crews.py) holds seats INSIDE the networks, generated from their own
 # geometry; scanned as an authored place it would make each network keep 32 blocks from its own crew and regrow differently
 # once the file existed (found the first time it was written: the main-line cells vanished)
-SKIP_FILES = {"mine_networks.json", "mine_crew_trainers.json", "world.json", "regions.json", "cells.json"}
+# entrance_trails.json, fishing_fill.json and underground_spawns.json (2026-10-22) are not places to keep clear:
+# the trails END at the mouths by design, the fill is water cells, the pools are the caves' own boxes
+SKIP_FILES = {"mine_networks.json", "mine_crew_trainers.json", "world.json", "regions.json", "cells.json", "entrance_trails.json", "fishing_fill.json", "underground_spawns.json"}
 NEST_PREFIX = "mine_nest_"
 
 

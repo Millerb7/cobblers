@@ -96,8 +96,10 @@ ROOM_ACROSS = (12, 20)         # the brief: a room 12 to 20 across, at the narro
 FILL_RE = re.compile(r"^fill (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (\S+)(?: replace (\S+))?$")
 SET_RE = re.compile(r"^setblock (-?\d+) (-?\d+) (-?\d+) (\S+)$")
 FN_RE = re.compile(r"^function cobblers:%s/(\S+)$" % FOLDER)
+# entrance_trails.json, fishing_fill.json and underground_spawns.json (2026-10-22) are not places to keep clear:
+# the trails END at the mouths by design, the fill is water cells, the pools are the caves' own boxes
 SKIP_FILES = {"cave_systems.json", "cells.json", "regions.json", "marine_seas.json", "sculpt.json", "world.json", "spawns.json",
-              "spawn_suppression.json"}
+              "spawn_suppression.json", "entrance_trails.json", "fishing_fill.json", "underground_spawns.json"}
 
 
 def jload(p):

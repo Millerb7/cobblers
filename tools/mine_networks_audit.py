@@ -69,7 +69,9 @@ OPEN_BASES = ("minecraft:air", "minecraft:ladder", "minecraft:rail", "minecraft:
 NUM = r"(-?\d+)"
 FILL = re.compile(r"fill %s %s %s %s %s %s (\S+)(?: replace (\S+))?$" % ((NUM,) * 6))
 SET = re.compile(r"setblock %s %s %s (\S+)$" % ((NUM,) * 3))
-SKIP_FILES = {"mine_networks.json", "mine_crew_trainers.json", "world.json", "regions.json", "cells.json"}
+# entrance_trails.json, fishing_fill.json and underground_spawns.json (2026-10-22) are not places to keep clear:
+# the trails END at the mouths by design, the fill is water cells, the pools are the caves' own boxes
+SKIP_FILES = {"mine_networks.json", "mine_crew_trainers.json", "world.json", "regions.json", "cells.json", "entrance_trails.json", "fishing_fill.json", "underground_spawns.json"}
 NEST_PREFIX = "mine_nest_"
 NESTS = (1, 2)                 # the brief: 1 to 2 nest rooms a network
 ROOM_ACROSS = (12, 20)         # the brief: a room 12 to 20 across
