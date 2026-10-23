@@ -488,17 +488,33 @@ def render_basics(m):
     ti = m["death_titles"]
     need(sorted(ti) == sorted(DEATH_CAUSE), "the death messages are not the four causes DEATH_CAUSE describes")
     rows = [[esc(DEATH_CAUSE[k]), esc(ti[k]["title"]), esc(ti[k]["subtitle"] or "")] for k in sorted(ti)]
+    rk = json.loads((ROOT / "data" / "dungeon_risk.json").read_text(encoding="utf-8"))
+    need(rk["catches"]["mode"] in ("dry_run", "remove"), "data/dungeon_risk.json catches.mode is neither dry_run nor remove")
+    g.append('<h3>The Run Satchel</h3><p>When you arrive you are given a <b>Run Satchel</b> with the Rift Pick. Everything '
+             'you find in a rift goes into it instead of your inventory: what you mine, what you take from a chest, what '
+             'you fish up, what a wild Pokemon drops. Right-click the satchel to look inside. Relics are not put in it; '
+             'they are yours at once.</p>'
+             '<p>Leave by the exit and the rift asks what to do with it: <b>Take it all</b> (everything comes to you) or '
+             '<b>Sell it all</b> (the bank buys what it buys, at its own prices plus a small bonus for deeper rifts and '
+             'for beating the boss; the rest comes to you). If you do not choose within a minute, you take it all.</p>')
     g.append('<p>Any way of dying in a rift (the timer, a boss stage, a trainer, a Pokemon, a fall, lava) ends that run. '
              'There is no recovery claim inside a rift: no Pokemon or trainer there holds your things for you. A death '
              'costs exactly:</p><ul>'
+             '<li>your Run Satchel and everything in it;</li>'
              '<li>the blackout\'s money, $%d, which nothing in the rift holds for you, so it is gone for good;</li>'
              '<li>the run you paid a sigil for;</li><li>the price of trying again: another sigil, and the lockout.</li>'
-             '</ul><p>Trainer battles inside a rift pay no money.</p>' % m["blackout_money"])
-    g.append('<p>What you keep: %s</p>' % esc(" ".join(m["death_chat"][:1] + m["death_chat"][2:])))
+             '</ul><p>Everything you carried in is still yours. Trainer battles inside a rift pay no money.</p>'
+             % m["blackout_money"])
     g.append('<p>The rift tells you how a run ended:</p>')
     g.append(table(["When", "Message", "Subtitle"], rows))
-    g.append('<p>Pokemon you catch inside: the plan is that a catch is only yours if you leave alive. That is not built '
-             'yet, so today a catch is kept either way.</p>')
+    if rk["catches"]["mode"] == "remove":
+        catch = ('Pokemon you catch inside are only yours if you leave by the exit: a run that ends any other way takes '
+                 'them back. A shiny, and the rift\'s own prize, are yours whatever happens.')
+    else:
+        catch = ('Pokemon you catch inside: each one is noted, and a catch is meant to be yours only if you leave by the '
+                 'exit (a shiny and the rift\'s own prize are always yours). That is not enforced yet: today a catch is '
+                 'kept either way, and the rift tells you which ones it would have taken.')
+    g.append('<p>%s</p>' % esc(catch))
     pc = m["doc"]["engine"]["prize"]["chance_by_band"]
     g.append('<h3>The hidden prize</h3><p>Each dungeon may hide one prize Pokemon. It is not there every run: whether it is '
              'is rolled when you cross the threshold, and the chance rises with your band (by default %s). Before band %d '

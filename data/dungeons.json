@@ -101,17 +101,17 @@
       },
       "titles_why": "DUNGEONS.md 2.5, by cause (dg.cause): 1 the timer, 2 a boss stage (or any NPC) beat them, 3 anything else, 4 a run that died while they were away (2.6)",
       "chat": [
-        "Your items are all still yours. Nothing in a rift keeps them.",
+        "Everything you carried in is still yours. Nothing in a rift holds it for you.",
         "The blackout's money is gone for good. No one in the rift is holding it.",
-        "Kept: everything you mined and picked up."
+        "What you find in a rift is only yours once you leave by the exit."
       ],
-      "chat_why": "DUNGEONS.md 2.5's lines 1, 2 and 4, as drafted there (trainer-balance-designer to tone). Line 2 is printed without the amount (the blackout's own line names it); line 3 (the escrow) and line 5 (the lockout) are built by the keeper from scores",
+      "chat_why": "DUNGEONS.md 2.5's lines 1, 2 and 4 (trainer-balance-designer to tone). REVISED 2026-10-23 (DUNGEON-RISK, docs/mechanics/DUNGEON_RISK.md): everything found in a run goes to the Run Satchel, which a death empties, so 'Kept: everything you mined and picked up' became untrue. Line 2 is printed without the amount (the blackout's own line names it); the escrow's line is gone (dg.esc never held anything) and the Run Satchel's own line follows from risk/forfeit; line 5 (the lockout) is built by the keeper from scores",
       "away_line": "The rift closed while you were away.",
       "away_line_why": "2.6's line, without its minutes: the slot's deadline is freed with the slot, so the minutes are not kept"
     },
     "escrow": {
       "objective": "dg.esc",
-      "status": "the extension point only: no reward table is built tonight (section 9 is step 6's). A clean exit runs dungeons/pay, which is empty but for clearing dg.esc; every other way out clears it. dg.bossd is set when the boss's last stage falls, the flag 9.1's boss escrow will key on"
+      "status": "the extension point only: no reward table is built tonight (section 9 is step 6's). A clean exit runs dungeons/pay, which clears dg.esc and (since 2026-10-23) calls risk/won, the Run Satchel's Take it all / Sell it all (data/dungeon_risk.json); every other way out clears it. dg.bossd is set when the boss's last stage falls, the flag 9.1's boss escrow will key on"
     },
     "clawback": {
       "objective": "dg.claw",

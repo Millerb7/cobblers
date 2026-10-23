@@ -218,6 +218,15 @@ until it is beaten or caught (`docs/mechanics/DEATH_AND_WIPE.md:20-24` rule 5, `
 holder would be an entity in an instance that resets, so it would stop existing, and the items would be gone for good.
 Entei's room reached the same conclusion for one boss (`data/entei_boss.json:132`).
 
+**Changed 2026-10-23 (the owner; BUILT, NOT RUN: `docs/mechanics/DUNGEON_RISK.md`, `tools/dungeon_risk.py`).** What a
+run finds goes to the player's **Run Stash**, never the inventory, and is shown by the **Run Satchel** (a held item
+whose right-click opens a trade screen listing it). A clean exit offers *Take it all* or *Sell it all* (the bank's
+prices plus a small bonus). **Any other end deletes the stash.** Relics are kept; catches are logged by UUID and, on a
+failed run, looked up and logged as "would remove" (removal is written and OFF, `data/dungeon_risk.json`
+`catches.mode` `dry_run`); a shiny and the dungeon's prize species are never at stake. So a death now costs the three
+things below **and the Run Satchel**, and the "What is kept" paragraph below is superseded: what the player carried in
+is kept; what they found is not. Kept as the record of the 2026-10-09 design:
+
 **A dungeon death costs exactly three things, and nothing else:**
 1. **the money the blackout already takes**: $600 flat, never more than the balance (*relayed*, `data/blackout.json`
    `money`). Nothing holds it, so it is not recoverable. That is the gulch Megas' rule (contract C12: "still charges

@@ -1,6 +1,14 @@
 # Dungeon catches on the clock: held catches, the fail-safe removal, the anchor, nests
 
-**Status: DESIGN ONLY (content-architect, 2026-10-09).** Nothing here is built, generated or run. It builds onto the
+**Superseded in part 2026-10-23 (BUILT, NOT RUN): `docs/mechanics/DUNGEON_RISK.md` section 4.** The owner chose a
+ledger without marks ("we just log each one and then can remove it later"): every catch in a live run is logged by
+its UUID (`q.pokemon.id`), a shiny and every prize species of the dungeon are never logged, a clean exit keeps them,
+and any other end looks each one up by UUID in the party and the PC. **Removal is written and OFF** (`catches.mode`
+`dry_run`: it logs what it would remove). The guards built are this document's held item, in-battle and empty-party
+guards (7.3); the mark (section 5), the nest work (section 11) and the probes of section 12 not covered by
+`experiments/EXP-098-dungeon-risk` are still design. The rest below is the 2026-10-09 design, kept as the record.
+
+**Status (2026-10-09): DESIGN ONLY (content-architect, 2026-10-09).** Nothing here is built, generated or run. It builds onto the
 dungeon engine (`tools/dungeon.py`, `data/dungeons.json`, `docs/mechanics/DUNGEONS.md`) **after the owner has played
 the Night Shift**, and no removal of any Pokemon is built before every probe in section 12 has passed. It changes four
 lines of `DUNGEONS.md` (2.5 and 2.6), each marked there with what changed and why (section 15).

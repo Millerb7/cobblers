@@ -554,8 +554,14 @@ def kind_vault(doc, d, slot, room, theme):
 
 
 def vault_rooms(doc):
+    """Every vault record, in every wing and variant (R.all_records, as the bank vaults' pack_files walks). FIXED
+    2026-10-23 (DUNGEON-RISK): this walked the top-level rooms only, so a vault inside a wing or a variant swap (the
+    Night Shift's pay office, the Jungle's treasury, ...) placed a chest naming a loot table the pack never wrote, and
+    the chest opened empty."""
     for d in doc["dungeons"]:
-        for r in d.get("rooms", []):
+        if not R.has_rooms(d):
+            continue
+        for r in R.all_records(d):
             if r["kind"] == "vault":
                 yield d, r
 
