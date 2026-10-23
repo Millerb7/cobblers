@@ -39,6 +39,14 @@ actually being stone below the surface (it is assumed, as tools/mining_caves.py 
 and build/paint (generated, absent from a fresh checkout); whether the pillars, stairs, rails and ladders come out as
 written in a running game. Nothing here has been applied to any world.
 
+2026-10-23, ADDITIVE over the live working (R9MN carved it on 2026-10-22): the base must reproduce data/mine_networks.json
+live_carve or the build fails closed (CHECK_LIVE); 1 or 2 NEST ROOMS a network (data nests, networks[].nest_rooms, sited once by
+`nests --site`): a straight spur 3 wide on from the dead end of a drift into an elliptical cavity 12 to 20 across, a dead end
+with no fittings, carved in its own "# --- nest rooms" section after the base's in both passes; the build refuses a room that
+moves any fitting or carve of the working. One activated Habitat Block in the floor under the middle (tools/nest_rooms.py),
+placed by R9E after R9MN; never data-merged or force-loaded to read back (docs/STATE.md, the 2026-10-20 crash).
+
+  python tools/mine_networks.py nests --site [--write --jar <Cobblemon jar>]   site the rooms / write their records (data/ only)
   python tools/mine_networks.py site <x0> <z0> <x1> <z1>   candidate adit sites in a box; nothing written
   python tools/mine_networks.py report                     every network's layout and counts; nothing written
   python tools/mine_networks.py build                      -> build/datapacks/cobblers_mine_networks, derived/mine_networks/plan.json
@@ -48,6 +56,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import shutil
 import sys
 from collections import deque
@@ -775,16 +784,24 @@ class Layout:
 class Model:
     """What a layout writes: the carved boxes, the fittings (timber, rails, stairs, ladders, lanterns, pillars) and the ore."""
 
-    def __init__(self, L):
+    def __init__(self, L, rooms=()):
         self.L = L
         self.air = {}           # (x, y, z) -> (level, walk distance from an adit, in a stope)
         self.air_boxes = []     # (x0, y0, z0, x1, y1, z1)
+        self.nest_boxes = []    # the 2026-10-23 nest rooms' boxes, written in their own section after the live carve's
         self.fix = {}           # (x, y, z) -> block: every fitting cell (never ore)
         self.fills = []         # ordered fitting fills (x0, y0, z0, x1, y1, z1, block)
         self.ores = {}          # (x, y, z) -> block
         self.ore_counts = {}
         self.counts = {"sets": 0, "lanterns": 0, "rail_cells": 0, "pillars": 0}
+        self.rooms = list(rooms)
         self.build_air()
+        n_base = len(self.air_boxes)
+        for room in self.rooms:
+            for box in room_boxes(L, room):
+                self.put_box(box, room["level"] - 1, room["dist"])
+        self.nest_boxes = self.air_boxes[n_base:]
+        self.air_boxes = self.air_boxes[:n_base]
         self.build_fittings()
         self.build_ore()
 
@@ -1048,6 +1065,282 @@ class Model:
             self.ore_counts[pick["id"]] = self.ore_counts.get(pick["id"], 0) + len(cells)
 
 
+# ------------------------------------------------------------------ 2026-10-23: nest rooms, ADDED to the live working
+
+NEST_PREFIX = "mine_nest_"      # tools/nest_rooms.py ids; tools/mine_nets_world.py skips these records as authored places
+NESTS = True                    # carve the recorded rooms; False gives the live 2026-10-22 working alone
+CHECK_LIVE = True               # fail closed if the base no longer reproduces data/mine_networks.json live_carve
+
+
+def room_cells(room):
+    """{(x, y, z)} of a mine nest room and its spur: from the dead end `end` of a drift a straight spur 3 wide and `spur_height`
+    tall runs `spur_len` on along `d`, then an elliptical room (radius[0] along d, radius[1] across) with its floor at the drift's
+    and a domed roof, at least three high at the wall. No wall noise: the audit can test the shape exactly."""
+    ex, ez = room["end"]
+    dx, dz = room["d"]
+    px, pz = -dz, dx
+    yf = room["centre"][1]
+    out = set()
+    for i in range(1, room["spur_len"] + 3):
+        for l in (-1, 0, 1):
+            for k in range(room["spur_height"]):
+                out.add((ex + dx * i + px * l, yf + k, ez + dz * i + pz * l))
+    cx, _y, cz = room["centre"]
+    a, b = room["radius"]
+    tall = room["tall"]
+    R = int(math.ceil(max(a, b))) + 1
+    for u in range(-R, R + 1):
+        for v in range(-R, R + 1):
+            rho = math.sqrt((u / a) ** 2 + (v / b) ** 2)
+            if rho >= 1.0:
+                continue
+            hc = max(3, int(math.floor(tall * math.sqrt(1 - rho * rho) + 0.5)))
+            x, z = cx + dx * u + px * v, cz + dz * u + pz * v
+            for k in range(hc):
+                out.add((x, yf + k, z))
+    return out
+
+
+def room_boxes(L, room):
+    """The cells as boxes: one box per straight run of columns of equal height along x."""
+    cols = {}
+    for (x, y, z) in room_cells(room):
+        lo, hi = cols.get((x, z), (y, y))
+        cols[(x, z)] = (min(lo, y), max(hi, y))
+    boxes = []
+    for z in sorted({c[1] for c in cols}):
+        xs = sorted(x for (x, zz) in cols if zz == z)
+        run = []
+        for x in xs + [None]:
+            if run and (x is None or x != run[-1] + 1 or cols[(x, z)] != cols[(run[0], z)]):
+                lo, hi = cols[(run[0], z)]
+                boxes.append((run[0], lo, z, run[-1], hi, z))
+                run = []
+            if x is not None:
+                run.append(x)
+    return boxes
+
+
+def cells_digest(cells):
+    """sha256 of int32 little-endian (x, y, z) triples sorted by x, then y, then z (data/mine_networks.json live_carve)."""
+    import hashlib
+    a = np.array(sorted(cells), np.int64).reshape(-1, 3)
+    return len(a), hashlib.sha256(np.ascontiguousarray(a).astype("<i4").tobytes()).hexdigest()
+
+
+def boxes_cells(boxes):
+    out = set()
+    for (x0, y0, z0, x1, y1, z1) in boxes:
+        for x in range(x0, x1 + 1):
+            for y in range(y0, y1 + 1):
+                for z in range(z0, z1 + 1):
+                    out.add((x, y, z))
+    return out
+
+
+def live_problems(spec, L, m):
+    rec = ((spec.get("live_carve") or {}).get("networks") or {}).get(L.net["id"])
+    if not rec:
+        return []
+    n, dg = cells_digest(boxes_cells(m.air_boxes))
+    if n != rec["cells"] or dg != rec["sha256"]:
+        return ["%s: the base working no longer reproduces the live carve (%d cells, sha256 %s..., live %d, %s...): something within its "
+                "reach changed (an authored place, water, the heightmap, this tool); re-running R9MN would carve a different working over "
+                "the one in the world" % (L.net["id"], n, dg[:12], rec["cells"], rec["sha256"][:12])]
+    return []
+
+
+def room_problems(L, m, room, base_air=None):
+    """[problem] for one room against the working `m` (whose own air may already include it: pass base_air, the cells to keep clear of)."""
+    rules, nr = L.rules, L.spec["nests"]
+    cov = rules["cover_min"]
+    pb = L.pbox
+    out = []
+    cells = room_cells(room)
+    air = base_air if base_air is not None else set(m.air)
+    wexact = L._wexact
+    aexact = L._aexact
+    for (x, y, z) in cells:
+        if not (pb.x0 + 4 <= x <= pb.x1 - 4 and pb.z0 + 4 <= z <= pb.z1 - 4):
+            out.append("%s: a cell outside the network's box" % room["id"])
+            return out
+        iz, ix = z - pb.z0, x - pb.x0
+        if not L.inbox[iz, ix]:
+            out.append("%s: a cell at (%d, %d) outside the network's inner box" % (room["id"], x, z))
+            return out
+        if wexact[iz, ix] or aexact[iz, ix] or x < rules["x_min"]:
+            out.append("%s: a cell within the water or authored clearance at (%d, %d)" % (room["id"], x, z))
+            return out
+        if int(L.H[iz, ix]) - y < cov:
+            out.append("%s: a cell (%d, %d, %d) under %d of cover" % (room["id"], x, y, z, cov))
+            return out
+        if (x, y, z) in m.fix:
+            out.append("%s: a cell (%d, %d, %d) is a fitting of the working" % (room["id"], x, y, z))
+            return out
+        for c in ((x + 1, y, z), (x - 1, y, z), (x, y + 1, z), (x, y - 1, z), (x, y, z + 1), (x, y, z - 1)):
+            f = m.fix.get(c)
+            # a ladder needs rock behind it, a stair its sides, a post or beam its wall: no cell of a room touches one (a rail and
+            # its bed at a dead end may have open air beyond them)
+            if f is not None and base(f) not in (base(L.spec["materials"]["rail"]), base(L.spec["materials"]["bed"])):
+                out.append("%s: a cell (%d, %d, %d) touches the fitting %s at %s" % (room["id"], x, y, z, base(f), c))
+                return out
+    ex, ez = room["end"]
+    dx, dz = room["d"]
+    spur_first = {(ex + dx * i + (-dz) * l, room["centre"][1] + k, ez + dz * i + dx * l) for i in (1, 2) for l in (-1, 0, 1)
+                  for k in range(room["spur_height"])}
+    room_only = room_cells(dict(room, spur_len=-2))
+    for (x, y, z) in cells:
+        r = nr["room_clear"] if (x, y, z) in room_only else nr["spur_clear"]
+        if (x, y, z) in spur_first:
+            continue
+        for ddx in range(-r, r + 1):
+            for ddy in range(-r, r + 1):
+                for ddz in range(-r, r + 1):
+                    if (x + ddx, y + ddy, z + ddz) in air and (x + ddx, y + ddy, z + ddz) not in cells:
+                        out.append("%s: within %d of another carved cell at %s" % (room["id"], r, (x + ddx, y + ddy, z + ddz)))
+                        return out
+    bx, by, bz = room["block"]
+    sr = room["spawn_range"]
+    for c in air:
+        if abs(c[0] - bx) <= sr and abs(c[1] - by) <= sr and abs(c[2] - bz) <= sr and c not in cells:
+            out.append("%s: another carved cell %s is in the spawn box" % (room["id"], c))
+            return out
+        if c not in cells and math.dist(c, (bx, by, bz)) <= room["cancel_range"]:
+            out.append("%s: the cancel sphere (%d) reaches the working at %s" % (room["id"], room["cancel_range"], c))
+            return out
+    if (bx, by, bz) in cells or (bx, by + 1, bz) not in cells or (bx, by + 2, bz) not in cells:
+        out.append("%s: the block is not a rock cell under an open floor" % room["id"])
+    return out
+
+
+def prepare_rasters(L):
+    if not hasattr(L, "_wexact"):
+        L._wexact = W.dilate_sq(L.wet, L.rules["water_clear"])
+        L._aexact = W.dilate_sq(L.auth, L.rules["authored_clear"])
+
+
+def site_nests(L, m):
+    """[room] for one network: from the far end of side drifts and crosscuts (a dead end: nothing carved for room_clear + 2 past it),
+    in a seeded order, with seeded sizes; up to count[1], fewer than count[0] fails closed."""
+    nr = L.spec["nests"]
+    prepare_rasters(L)
+    themes = L.net.get("nest_themes") or []
+    rooms = []
+    air = set(m.air)
+    cands = []
+    for r in L.runs:
+        if r["kind"] not in ("side", "cross", "main") or r["n"] < 8:
+            continue
+        cands.append((r["kind"] == "main", L.hv(601, r["id"]), r["id"], r["n"], tuple(r["d"])))
+        if r["root_i"] > 0:          # a crosscut or side drift that starts past the run it hangs from: its start is a dead end too
+            cands.append((r["kind"] == "main", L.hv(606, r["id"]), r["id"], 0, (-r["d"][0], -r["d"][1])))
+    cands.sort()
+    for _m, _h, rid, at, d in cands:
+        if len(rooms) >= nr["count"][1]:
+            break
+        r = L.runs[rid - 1]
+        F = L.levels[r["level"]]
+        end = L.cell(r, at)
+        nxt = (end[0] + d[0], F + 1, end[1] + d[1])
+        if nxt in air:
+            continue
+        for t in range(4):
+            ls = L.rr(nr["spur_len"][0], nr["spur_len"][1], 602, rid, t)
+            a = L.rr(nr["across"][0] * 10, nr["across"][1] * 10, 603, rid, t) / 20.0
+            b = L.rr(nr["across"][0] * 10, int(a * 20), 604, rid, t) / 20.0
+            tall = L.rr(nr["tall"][0], nr["tall"][1], 605, rid, t)
+            ca = int(math.ceil(a))
+            cx, cz = end[0] + d[0] * (ls + 1 + ca), end[1] + d[1] * (ls + 1 + ca)
+            if any(math.hypot(cx - q["centre"][0], cz - q["centre"][2]) < nr["spacing"] for q in rooms):
+                break
+            sr = int(math.floor(0.7 * min(a, b)))
+            room = {"id": "%s%s_%d" % (NEST_PREFIX, L.net["id"], len(rooms) + 1), "theme": themes[len(rooms)]["theme"] if len(rooms) < len(themes) else None,
+                    "level": r["level"] + 1, "run": rid, "end": [end[0], end[1]], "d": [d[0], d[1]], "spur_len": ls, "spur_height": L.geo["side_height"],
+                    "spur_width": 3, "centre": [cx, F + 1, cz], "radius": [a, b], "wall_noise": 0.0, "tall": tall,
+                    "spur": [[end[0] + d[0], F + 1, end[1] + d[1]], [end[0] + d[0] * (ls + 2), F + 1, end[1] + d[1] * (ls + 2)]],
+                    "block": [cx, F, cz], "spawn_range": sr, "cancel_range": int(math.ceil(max(a, b))) + 1,
+                    "across": "%d by %d" % (round(2 * a), round(2 * b)),
+                    "dist": r["d0"] + abs(at - r["root_i"]) + ls + ca}
+            if room["theme"] is None:
+                raise MineError("%s: no nest theme for room %d" % (L.net["id"], len(rooms) + 1))
+            if room_problems(L, m, room, air):
+                continue
+            room["place"] = "%s, a nest room off a dead-end drift on level %d" % (L.net["name"], r["level"] + 1)
+            room["sited_by"] = "python tools/mine_networks.py nests --site (2026-10-23)"
+            rooms.append(room)
+            break
+    if len(rooms) < nr["count"][0]:
+        raise MineError("%s: only %d nest room(s) could be sited, %d wanted" % (L.net["id"], len(rooms), nr["count"][0]))
+    return rooms
+
+
+def nest_meta(net):
+    return [dict(r, owner_file="data/mine_networks.json", generated_by="tools/mine_networks.py", step="R9MN") for r in net.get("nest_rooms") or []]
+
+
+def write_nest_rooms(rooms_by_net):
+    """Write each network's nest_rooms as one line after its nest_themes line (the file is hand-formatted, compact lists)."""
+    raw = SPEC.read_text(encoding="utf-8").split("\n")
+    lines = []
+    for ln in raw:                       # take out the old rooms' lines, giving their comma back to the line before
+        if ln.startswith('   "nest_rooms": '):
+            if not ln.endswith(","):
+                lines[-1] = lines[-1].rstrip(",")
+            continue
+        lines.append(ln)
+    out, cur = [], None
+    for ln in lines:
+        mm = re.match(r'^   "id": "(mn_[a-z0-9_]+)",$', ln)
+        if mm:
+            cur = mm.group(1)
+        if ln.startswith('   "nest_rooms": '):
+            continue
+        if cur and ln.startswith('   "nest_themes": '):
+            out.append(ln.rstrip(",") + ",")
+            out.append('   "nest_rooms": ' + json.dumps(rooms_by_net.get(cur, []), ensure_ascii=False) + ("," if ln.endswith(",") else ""))
+            cur = None
+            continue
+        out.append(ln)
+    SPEC.write_text("\n".join(out), encoding="utf-8", newline="\n")
+    json.loads(SPEC.read_text(encoding="utf-8"))
+
+
+def nest_problems(spec):
+    import nest_rooms as NR
+    rooms = [r for n in spec["networks"] for r in nest_meta(n)]
+    return NR.record_problems(rooms, NEST_PREFIX) if rooms else []
+
+
+def cmd_nests(spec, site, write_, jar, source_root=None):
+    import nest_rooms as NR
+    if site:
+        by = {}
+        for net in spec["networks"]:
+            L = Layout(spec, net, source_root).build()
+            m = Model(L)
+            by[net["id"]] = site_nests(L, m)
+            for r in by[net["id"]]:
+                print("%s %s: centre %s, %s across, tall %d, block %s, spawn_range %d, level %d, theme %s"
+                      % (net["id"], r["id"], r["centre"], r["across"], r["tall"], r["block"], r["spawn_range"], r["level"], r["theme"]))
+        write_nest_rooms(by)
+        spec = load()
+        print("wrote the rooms into %s" % SPEC.relative_to(ROOT))
+    if write_:
+        import battle_sim
+        species = NR.load_species(jar or battle_sim.find_jar())
+        rooms = [r for n in spec["networks"] for r in nest_meta(n)]
+        themes = {t["theme"]: t for n in spec["networks"] for t in n.get("nest_themes") or []}
+        habs, ents = NR.sync(rooms, themes, species, NEST_PREFIX)
+        for h in habs:
+            print("%s: %s, %d-%d: %s" % (h["id"], h["display_name"], h["level_band"]["minimum"], h["level_band"]["maximum"],
+                                         ", ".join("%s %s" % (e["pokemon"], e["level"]) for e in h["entries"])))
+        print("wrote %d Habitat Block records and %d pools into data/habitat_blocks.json and data/spawns.json" % (len(rooms), len(habs)))
+    probs = nest_problems(load())
+    for q in probs:
+        print("PROBLEM:", q)
+    return 1 if probs else 0
+
+
 # ------------------------------------------------------------------ the functions
 
 TILE = 128
@@ -1080,14 +1373,19 @@ def function_lines(L, m):
     tiles = {}
 
     def tile_lines(t):
-        return tiles.setdefault(t, {"carve": [], "shell": [], "fit": [], "ore": []})
+        return tiles.setdefault(t, {"carve": [], "nest": [], "shell": [], "fit": [], "ore": []})
 
     for box in m.air_boxes:
         for (tx, tz) in tiles_of(box[0], box[2], box[3], box[5]):
             c = clip(box, tx, tz)
             if c:
                 tile_lines((tx, tz))["carve"].append(fillline(c, AIR))
-    shell_boxes = {(b[0] - shell, b[1] - shell, b[2] - shell, b[3] + shell, b[4] + shell, b[5] + shell) for b in m.air_boxes}
+    for box in m.nest_boxes:
+        for (tx, tz) in tiles_of(box[0], box[2], box[3], box[5]):
+            c = clip(box, tx, tz)
+            if c:
+                tile_lines((tx, tz))["nest"].append(fillline(c, AIR))
+    shell_boxes = {(b[0] - shell, b[1] - shell, b[2] - shell, b[3] + shell, b[4] + shell, b[5] + shell) for b in m.air_boxes + m.nest_boxes}
     for box in sorted(shell_boxes):
         for (tx, tz) in tiles_of(box[0], box[2], box[3], box[5]):
             c = clip(box, tx, tz)
@@ -1114,8 +1412,10 @@ def function_lines(L, m):
                 % (L.net["id"], t[0], t[1], t[0] * TILE, t[0] * TILE + TILE - 1, t[1] * TILE, t[1] * TILE + TILE - 1),
                 "# carve, then replace water and lava with stone %d blocks round every carved box, then carve again;"
                 % shell, "# then timber, bed, rails, stairs, ladders, lanterns and pillars; then the ore"]
-        body = (["# --- pass 1: carve"] + sorted(set(d["carve"])) + ["# --- shell: water and lava to stone, %d thick" % shell]
-                + d["shell"] + ["# --- pass 2: carve again"] + sorted(set(d["carve"])) + ["# --- fittings"] + d["fit"]
+        nest = (["# --- nest rooms (2026-10-23, data/mine_networks.json nest_rooms): added to the live carve above"] + sorted(set(d["nest"]))
+                if d["nest"] else [])
+        body = (["# --- pass 1: carve"] + sorted(set(d["carve"])) + nest + ["# --- shell: water and lava to stone, %d thick" % shell]
+                + d["shell"] + ["# --- pass 2: carve again"] + sorted(set(d["carve"])) + nest + ["# --- fittings"] + d["fit"]
                 + ["# --- ore"] + d["ore"])
         out[t] = FL.ensure_loaded(head + body)
     return out
@@ -1163,6 +1463,22 @@ def all_networks(spec=None, source_root=None):
     for net in spec["networks"]:
         L = Layout(spec, net, source_root).build()
         m = Model(L)
+        if CHECK_LIVE:
+            bad = live_problems(spec, L, m)
+            if bad:
+                raise MineError("; ".join(bad))
+        rooms = (net.get("nest_rooms") or []) if NESTS else []
+        if rooms:
+            prepare_rasters(L)
+            base_air = set(m.air)
+            for room in rooms:
+                bad = room_problems(L, m, room, base_air)
+                if bad:
+                    raise MineError("; ".join(bad))
+            m2 = Model(L, rooms)
+            if m2.fix != m.fix or m2.fills != m.fills or m2.air_boxes != m.air_boxes:
+                raise MineError("%s: the nest rooms move a fitting or a carve of the live working" % net["id"])
+            m = m2
         nets.append((L, m))
     return nets
 
@@ -1295,15 +1611,23 @@ def report(nets):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("mode", choices=("site", "report", "build"))
+    p.add_argument("mode", choices=("site", "report", "build", "nests"))
     p.add_argument("box", nargs="*", type=int)
     p.add_argument("--top", type=int, default=8)
     p.add_argument("--source-root")
     p.add_argument("--inputs-root", help="accepted for tools/reapply.py prepare's sake; nothing is read from it")
     p.add_argument("--server-dir", help="accepted for tools/reapply.py prepare's sake; not read")
     p.add_argument("--only", help="one network id")
+    p.add_argument("--site", action="store_true", help="nests: site the rooms anew into data/mine_networks.json (moves rooms: never once applied)")
+    p.add_argument("--write", action="store_true", help="nests: write their Habitat Block and pool records (needs a Cobblemon jar)")
+    p.add_argument("--jar", help="nests --write: the Cobblemon jar species and evolutions are read from")
     a = p.parse_args(argv)
     spec = load()
+    if a.mode == "nests":
+        try:
+            return cmd_nests(spec, a.site, a.write, a.jar, a.source_root)
+        except MineError as exc:
+            raise SystemExit("FAILED: %s" % exc)
     if a.mode == "site":
         if len(a.box) != 4:
             raise SystemExit("site needs x0 z0 x1 z1")
@@ -1320,6 +1644,7 @@ def main(argv=None):
     for L, m in nets:
         probs += L.problems
         probs += self_check(L, m)
+    probs += nest_problems(spec)
     report(nets)
     if probs:
         for pr in probs[:40]:

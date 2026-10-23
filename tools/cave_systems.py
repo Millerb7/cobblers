@@ -49,6 +49,24 @@ HOW A SYSTEM IS MADE (deterministic: every random choice is a seeded FNV hash, a
                  places the ore and lanterns. The shell goes first everywhere so no pocket beside a tile edge can flood a
                  passage that is already open (Groudon's cavern was flooded from pockets in the rock: docs/STATE.md)
 
+  2026-10-23, ADDITIVE over the live carve (steps 1-7 are the "base", carved into the live world on 2026-10-22 by R9CS):
+  8. live        the base must reproduce data/cave_systems.json live_carve cell for cell (count and sha256), or the build fails
+                 closed: a re-plan would carve a second network over the one in the world. A data change within the plan's
+                 reach (an authored point within 36 of a passage, water, the heightmap) is exactly such a re-plan
+  9. widen       the owner: "make some of the caves tunnels wider span from 3-15 blocks wide". Every node gets a width from a
+                 smooth seeded field ranked over the system (rules.widen): the narrowest share keep their width (the squeezes),
+                 most go 5.5 to 9.5, the top quarter 9.5 to 15; capped so another passage keeps 3 of rock; headroom up to 12.
+                 Added cells only, under the rules in the comment above cells_digest (cover 8 everywhere, nothing in a mouth zone,
+                 decks never opened into each other, the walk and the TRAP check). The pack carves base cells in `_air` (the live
+                 lines) and the added ones in `_wide`, both before and after the shell
+  10. nests      2 or 3 nest rooms a system (rules.nests), sited once by `nests --site` into systems[].nest_rooms: a straight spur
+                 off a branch into an elliptical room 12 to 20 across, a dead end; one activated Habitat Block in the floor under
+                 the middle, its record and pool written by `nests --write` through tools/nest_rooms.py. The block is placed by
+                 R9E after R9CS (tools/habitat_blocks.py: mimic first, then one setblock with the whole entity); nothing here
+                 data-merges or force-loads one to read it back (docs/STATE.md, the 2026-10-20 crash)
+
+  python tools/cave_systems.py nests --site [--write --jar <Cobblemon jar>]   site the rooms / write their records (data/ only)
+
 WHAT THIS DOES NOT COVER (CLAUDE.md "Our list is not the world")
   - Only what is in data/ is kept clear of. The world also holds what donor templates, mods and earlier passes put there. Nothing
     reads build/datapacks (the other packs' writes), derived/routes (the routed legs), build/paint (painted trees and the painted
@@ -64,6 +82,7 @@ WHAT THIS DOES NOT COVER (CLAUDE.md "Our list is not the world")
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import random
@@ -93,6 +112,9 @@ GENERATED = "tools/cave_systems.py"
 POLICY_SCOPE = "cave_systems"
 CARVE_AGAIN = True                 # carve, shell, carve again. A hook: tests/test_cave_systems.py turns it off to prove the audit bites
 WORLD_READS: set = set()           # tools/ground_rule.py: this tool reads no world; the heightmap and data only
+WIDEN = True                       # the 2026-10-23 widening and the nest rooms; False gives the live 2026-10-22 carve alone
+NEST_PREFIX = "cave_nest_"         # this tool's nest-room ids (tools/nest_rooms.py); its own blocks are not "authored places"
+CHECK_LIVE = True                  # fail closed if the base no longer reproduces the live carve (data/cave_systems.json live_carve)
 
 SEA_LEVEL = 62                     # data/world.json vertical.sea_level (the audit reads the file; a test pins the two together)
 Y_MIN = -64                       # the world's floor; keys use Y - Y_MIN
@@ -234,6 +256,8 @@ def collect_authored():
                 commands_in(o)
             return
         if isinstance(o, dict):
+            if str(o.get("id", "")).startswith(NEST_PREFIX):
+                return          # this tool's own nest-room Habitat Blocks sit inside its passages (tools/nest_rooms.py)
             ks = set(o)
             if {"min_x", "max_x", "min_z", "max_z"} <= ks and all(_num(o[k]) for k in ("min_x", "max_x", "min_z", "max_z")):
                 rects.append((o["min_x"], o["min_z"], o["max_x"], o["max_z"]))
@@ -1413,12 +1437,14 @@ def fill_line(b, block, flt=None):
     return s + (" replace %s" % flt if flt else "")
 
 
-def tile_functions(sysid, region, rules, cx, cy, cz, ores, lanterns):
-    """{name: lines} for every tile with carve cells or shell cells. cx, cy, cz: int arrays of every carved cell."""
+def tile_functions(sysid, region, rules, cx, cy, cz, ores, lanterns, base=None):
+    """{name: lines} for every tile with carve cells or shell cells. cx, cy, cz: int arrays of every carved cell. `base`: the
+    (x, y, z) arrays of the live 2026-10-22 carve, a subset of the cells; given, a tile's `_air` carves exactly its base cells
+    (the live lines) and `_wide` the rest, and the carve chain runs both before and after the shell."""
     T_ = rules["tile"]
     sh = rules["shell"]
     files = {}
-    stats = {"air_lines": 0, "shell_lines": 0, "ore_lines": 0, "lantern_lines": 0}
+    stats = {"air_lines": 0, "shell_lines": 0, "ore_lines": 0, "lantern_lines": 0, "wide_lines": 0}
     tx_all, tz_all = cx // T_, cz // T_
     tiles = set(zip(tx_all.tolist(), tz_all.tolist()))
     # the shell reaches `sh` into the neighbours
@@ -1470,14 +1496,34 @@ def tile_functions(sysid, region, rules, cx, cy, cz, ores, lanterns):
                         stats["shell_lines"] += 2
         files[name + "_shell"] = lines
         if own.any():
-            air = list(head)
-            air[0] = air[0].replace("system", "carve air for system")
-            for b in mesh_layer_boxes(own):
-                for bb in split_big(b):
-                    box = (bb[0] + x0, bb[1] + oy, bb[2] + z0, bb[3] + x0, bb[4] + oy, bb[5] + z0)
-                    air.append(fill_line(box, AIR))
-                    stats["air_lines"] += 1
-            files[name + "_air"] = air
+            if base is None:
+                own_base, own_wide = own, None
+            else:
+                bsel = (base[0] >= x0) & (base[0] < x0 + T_) & (base[2] >= z0) & (base[2] < z0 + T_)
+                own_base = np.zeros_like(own)
+                own_base[base[1][bsel] - oy, base[2][bsel] - z0, base[0][bsel] - x0] = True
+                own_wide = own & ~own_base
+            calls = []
+            if own_base.any():
+                air = list(head)
+                air[0] = air[0].replace("system", "carve air for system")
+                for b in mesh_layer_boxes(own_base):
+                    for bb in split_big(b):
+                        box = (bb[0] + x0, bb[1] + oy, bb[2] + z0, bb[3] + x0, bb[4] + oy, bb[5] + z0)
+                        air.append(fill_line(box, AIR))
+                        stats["air_lines"] += 1
+                files[name + "_air"] = air
+                calls.append("function %s/%s_air" % (F, name))
+            if own_wide is not None and own_wide.any():
+                wide = list(head)
+                wide[0] = wide[0].replace("system", "carve the 2026-10-23 widening and nest rooms for system")
+                for b in mesh_layer_boxes(own_wide):
+                    for bb in split_big(b):
+                        box = (bb[0] + x0, bb[1] + oy, bb[2] + z0, bb[3] + x0, bb[4] + oy, bb[5] + z0)
+                        wide.append(fill_line(box, AIR))
+                        stats["wide_lines"] += 1
+                files[name + "_wide"] = wide
+                calls.append("function %s/%s_wide" % (F, name))
             dress = list(head)
             dress[0] = dress[0].replace("system", "ore and light for system")
             for (x, y, z, b) in sorted(ore_by.get((tx, tz), ())):
@@ -1488,9 +1534,9 @@ def tile_functions(sysid, region, rules, cx, cy, cz, ores, lanterns):
                 stats["lantern_lines"] += 1
             files[name + "_dress"] = dress
             files[name + "_carve"] = (list(head[:1]) + head[1:]
-                                      + ["# carve, shell, carve again (the shell must not leave water or lava where the passage is), then dress",
-                                         "function %s/%s_air" % (F, name), "function %s/%s_shell" % (F, name)]
-                                      + (["function %s/%s_air" % (F, name)] if CARVE_AGAIN else [])
+                                      + ["# carve, shell, carve again (the shell must not leave water or lava where the passage is), then dress"]
+                                      + calls + ["function %s/%s_shell" % (F, name)]
+                                      + (calls if CARVE_AGAIN else [])
                                       + ["function %s/%s_dress" % (F, name)])
     return files, stats
 
@@ -1524,9 +1570,10 @@ def walk_problems(res):
     return probs
 
 
-def generate(spec, sysspec, g=None, region=None):
+def generate(spec, sysspec, g=None, region=None, widen=None, rooms=None):
     """Plan and voxelise one system, trying seeds until one can be walked end to end (at most MAX_ATTEMPTS, a fixed order, so the
-    result is reproducible). Fails closed with every attempt's reasons."""
+    result is reproducible). Fails closed with every attempt's reasons. That is the BASE, the live 2026-10-22 carve; it is
+    checked against data/cave_systems.json live_carve and then (WIDEN) widened and given its nest rooms, additively."""
     g = g or G.Ground()
     region = region or Region(spec["rules"], sysspec, g)
     log = []
@@ -1536,6 +1583,10 @@ def generate(spec, sysspec, g=None, region=None):
         if not probs:
             res["attempt"] = attempt
             res["rejected"] = log
+            if CHECK_LIVE:
+                check_live(spec, sysspec, res)
+            if WIDEN if widen is None else widen:
+                widen_system(spec, sysspec, res, rooms)
             return res
         log.append("attempt %d: %s" % (attempt, "; ".join(probs)))
     raise CaveSystemError("%s: no seed in %d attempts gave a walkable system: %s" % (sysspec["id"], MAX_ATTEMPTS, " | ".join(log)))
@@ -1674,9 +1725,667 @@ def centreline_length(net):
     return net.length
 
 
+# ------------------------------------------------------------------ 2026-10-23: wider passages and nest rooms, ADDITIVE ONLY
+#
+# The 2026-10-22 carve (the "base": everything above, unchanged) is in the live world. What follows only ever ADDS air to it:
+# the base cells are kept whole and the pack still carves them in their own `_air` functions (whose cells the audit digests
+# against data/cave_systems.json live_carve), and the new cells go in `_wide` functions. Rules for every added cell:
+#   - cover >= cover_min EVERYWHERE (the mouth-zone relaxation is not extended) and no added cell within mouth_zone of a
+#     mouth, so the mouths and the hillside outside them are exactly as carved (another builder works on the mouths' outside);
+#   - unblocked (authored 32, water 12, the limits: the same blocked grid), above the floor limit;
+#   - DECKS: every cell carries the floor of the vertical run it belongs to; an added cell within deck_gap (Chebyshev) of any
+#     carved cell whose floor differs by more than deck_tolerance is dropped, so widening never opens one level into another
+#     (no new hole, ledge or drop); a cell two separate widened runs both claim is dropped too;
+#   - never at or under a base lantern; connected to a mouth; then the walk (every mouth, 99% of the standing cells) and the
+#     TRAP check (every standing cell reached can walk back out of some mouth) must pass, or the build fails closed.
+
+def cells_digest(x, y, z):
+    """sha256 of the cell set: int32 little-endian (x, y, z) triples sorted by x, then y, then z (the definition
+    data/cave_systems.json live_carve states; the audit computes it for itself from the replayed pack)."""
+    a = np.stack([np.asarray(x, np.int64), np.asarray(y, np.int64), np.asarray(z, np.int64)], axis=1)
+    o = np.lexsort((a[:, 2], a[:, 1], a[:, 0]))
+    return hashlib.sha256(np.ascontiguousarray(a[o]).astype("<i4").tobytes()).hexdigest()
+
+
+def check_live(spec, sysspec, res):
+    """The base must be the live carve, cell for cell: a re-plan (a data change within the plan's reach, a code change) would
+    carve a different network over the one that is in the world. Fails closed."""
+    rec = ((spec.get("live_carve") or {}).get("systems") or {}).get(sysspec["id"])
+    if not rec:
+        return
+    n = int(len(res["x"]))
+    dg = cells_digest(res["x"], res["y"], res["z"])
+    if n != rec["cells"] or dg != rec["sha256"]:
+        raise CaveSystemError("%s: the base plan no longer reproduces the live carve (%d cells, sha256 %s..., live %d, %s...): something "
+                              "within the plan's reach changed (an authored point or box, water, the heightmap, this tool). Re-running R9CS "
+                              "would carve a different network over the one in the world; find the change before building"
+                              % (sysspec["id"], n, dg[:12], rec["cells"], rec["sha256"][:12]))
+
+
+def width_targets(net, seed, rules, mouths):
+    """(W, Hh) per node: the widened width and headroom. A smooth seeded field (value noise over `noise_scale` blocks) ranked
+    over the system's nodes, so the shares are exact: the lowest `share_squeeze` keep their own width (the squeezes), the
+    next ones spread over `typical`, the top `share_wide` over typical's top to width's top. Never narrower than the base
+    node; tapered back to the base width over `mouth_taper` blocks outside each mouth zone."""
+    wr = rules["widen"]
+    P = np.array([[q[0], q[1], q[2], q[3], q[4]] for q in net.n], np.float64)
+    n = len(P)
+    u = vnoise(P[:, 0], P[:, 1], P[:, 2], seed + 77, float(wr["noise_scale"]))
+    rank = np.empty(n)
+    rank[np.argsort(u, kind="stable")] = np.arange(n) / max(1.0, n - 1.0)
+    sq, wide = wr["share_squeeze"], wr["share_wide"]
+    t_lo, t_hi = wr["typical"]
+    w_top = wr["width"][1]
+    t = np.where(rank < sq, 0.0,
+                 np.where(rank < 1 - wide, t_lo + (t_hi - t_lo) * (rank - sq) / max(1e-9, 1 - wide - sq),
+                          t_hi + (w_top - t_hi) * (rank - (1 - wide)) / max(1e-9, wide)))
+    dm = np.full(n, 1e9)
+    for m in mouths:
+        dm = np.minimum(dm, np.hypot(P[:, 0] - m["x"], P[:, 2] - m["z"]))
+    f = np.clip((dm - rules["mouth_zone"]) / float(wr["mouth_taper"]), 0.0, 1.0)
+    W = P[:, 3] + f * np.maximum(0.0, t - P[:, 3])
+    W = np.minimum(W, foreign_caps(net, P, wr))
+    hn = vnoise(P[:, 0], P[:, 1], P[:, 2], seed + 78, 31.0)
+    Hh = np.clip(3.2 + 0.55 * W + 1.6 * (hn - 0.5) * 2, rules["height"][0], wr["height_max"])
+    return W, np.maximum(Hh, P[:, 4])
+
+
+def foreign_caps(net, P, wr):
+    """The widest each node may become so that it keeps `rock_between` blocks of rock from every node of ANOTHER passage (one more
+    than `own_reach` blocks away along the network) within 14 vertically: the gap beyond the two carved half-widths (x 1.3 for the
+    wall noise) is shared half and half. Passages that already touch keep their own width."""
+    n = len(P)
+    adj = {}
+    for i, j in net.edges:
+        d = math.dist(P[i], P[j])
+        adj.setdefault(i, []).append((j, d))
+        adj.setdefault(j, []).append((i, d))
+    reach = float(wr["own_reach"])
+    rock = float(wr["rock_between"])
+    cap = np.full(n, 1e9)
+    bucket = {}
+    for i in range(n):
+        bucket.setdefault((int(P[i, 0]) // 16, int(P[i, 2]) // 16), []).append(i)
+    import heapq
+    for i in range(n):
+        own = {i: 0.0}
+        hq = [(0.0, i)]
+        while hq:
+            d, a = heapq.heappop(hq)
+            if d > own.get(a, 1e9):
+                continue
+            for b, w in adj.get(a, ()):
+                nd = d + w
+                if nd <= reach and nd < own.get(b, 1e9):
+                    own[b] = nd
+                    heapq.heappush(hq, (nd, b))
+        bx, bz = int(P[i, 0]) // 16, int(P[i, 2]) // 16
+        rb_i = P[i, 3] / 2.0 * 1.3
+        for ax in (bx - 2, bx - 1, bx, bx + 1, bx + 2):
+            for az in (bz - 2, bz - 1, bz, bz + 1, bz + 2):
+                for j in bucket.get((ax, az), ()):
+                    if j in own or abs(P[j, 1] - P[i, 1]) >= 14:
+                        continue
+                    dh = math.hypot(P[j, 0] - P[i, 0], P[j, 2] - P[i, 2])
+                    if dh > 30:
+                        continue
+                    slack = dh - rock - rb_i - P[j, 3] / 2.0 * 1.3
+                    cap[i] = min(cap[i], max(P[i, 3], 2.0 * (rb_i + slack / 2.0) / 1.3))
+    return cap
+
+
+def wide_columns(net, seed, W, Hh, wmax, hmax, step=1.0):
+    """Column runs (x, z, floor, top exclusive) of the passages swept at the widened sizes, with the base sweep's own wall noise."""
+    segs = []
+    for (i, j) in net.edges:
+        a, b = net.n[i], net.n[j]
+        d = math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2)
+        n = max(2, int(math.ceil(d / step)))
+        t = np.linspace(0.0, 1.0, n + 1)
+        segs.append(np.stack([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t,
+                              W[i] + (W[j] - W[i]) * t, Hh[i] + (Hh[j] - Hh[i]) * t], axis=1))
+    S = np.concatenate(segs)
+    px, py, pz, w, h = S[:, 0], S[:, 1], S[:, 2], S[:, 3], S[:, 4]
+    cxs, czs, yf = np.round(px).astype(np.int64), np.round(pz).astype(np.int64), np.round(py).astype(np.int64)
+    rr = w / 2.0                 # the base sweep's 1.12 left out: a widened node measures about its nominal width, walls +-16%
+    R = int(math.ceil(wmax / 2.0 * 1.2)) + 1
+    ox, oz, of, ot = [], [], [], []
+    for dx in range(-R, R + 1):
+        for dz in range(-R, R + 1):
+            x = cxs + dx
+            z = czs + dz
+            d = np.hypot(x - px, z - pz)
+            reff = rr * (0.84 + 0.32 * vnoise(x, yf, z, seed + 3, 5.0))
+            ok = d < reff
+            if not ok.any():
+                continue
+            frac = (d[ok] / reff[ok]) ** 2.4
+            hc = np.minimum(np.floor(h[ok] * np.sqrt(np.maximum(0.0, 1 - frac)) + 0.35).astype(np.int64), int(hmax) + 1)
+            m = hc > 0
+            ox.append(x[ok][m])
+            oz.append(z[ok][m])
+            of.append(yf[ok][m])
+            ot.append(yf[ok][m] + hc[m])
+    return np.concatenate(ox), np.concatenate(oz), np.concatenate(of), np.concatenate(ot)
+
+
+def column_cells(region, X, Z, F, T):
+    """Cells (x, y, z, deck) of column runs: runs in one column whose floors chain within 4 merge (one passage on a slope), the
+    run's floor is the lowest of them, its top the highest; runs further apart stay separate (separate passages)."""
+    col = (X - region.x0) * region.nz + (Z - region.z0)
+    o = np.lexsort((F, col))
+    col, F, T = col[o], F[o], T[o]
+    new = np.r_[True, (col[1:] != col[:-1]) | (F[1:] - F[:-1] > 4)]
+    st = np.nonzero(new)[0]
+    floor = F[st]
+    top = np.maximum.reduceat(T, st)
+    gcol = col[st]
+    hgt = np.maximum(0, top - floor)
+    rep = np.repeat(np.arange(len(floor)), hgt)
+    offs = np.arange(len(rep)) - np.repeat(np.cumsum(hgt) - hgt, hgt)
+    colc = gcol[rep]
+    return colc // region.nz + region.x0, floor[rep] + offs, colc % region.nz + region.z0, floor[rep]
+
+
+def run_floors(keys):
+    """The floor (lowest y) of the vertical run each of the sorted unique keys belongs to, as an offset in y - Y_MIN."""
+    st = np.r_[True, np.diff(keys) != 1]
+    rid = np.cumsum(st) - 1
+    return (keys[st] % NY)[rid] + Y_MIN
+
+
+def deck_mismatch(region, keys, deck, test, tol, gap, tile=128):
+    """bool over `test` (indices into keys): True where a carved cell within `gap` (Chebyshev) has a deck more than `tol` away."""
+    X, Y, Z = region.unkey(keys)
+    out = np.zeros(len(test), bool)
+    if not len(test):
+        return out
+    tx, tz = X[test] // tile, Z[test] // tile
+    for (a, b) in sorted(set(zip(tx.tolist(), tz.tolist()))):
+        x0, z0 = a * tile - gap, b * tile - gap
+        n_ = tile + 2 * gap
+        sel = (X >= x0) & (X < x0 + n_) & (Z >= z0) & (Z < z0 + n_)
+        y0 = int(Y[sel].min()) - gap
+        ny = int(Y[sel].max()) - y0 + gap + 1
+        hi = np.full((ny, n_, n_), -30000, np.int32)
+        lo = np.full((ny, n_, n_), 30000, np.int32)
+        iy, iz, ix = Y[sel] - y0, Z[sel] - z0, X[sel] - x0
+        np.maximum.at(hi, (iy, iz, ix), deck[sel])
+        np.minimum.at(lo, (iy, iz, ix), deck[sel])
+        for ax in range(3):
+            ah, al = hi.copy(), lo.copy()
+            for s in range(1, gap + 1):
+                a_ = [slice(None)] * 3
+                b_ = [slice(None)] * 3
+                a_[ax] = slice(s, None)
+                b_[ax] = slice(None, -s)
+                ah[tuple(a_)] = np.maximum(ah[tuple(a_)], hi[tuple(b_)])
+                ah[tuple(b_)] = np.maximum(ah[tuple(b_)], hi[tuple(a_)])
+                al[tuple(a_)] = np.minimum(al[tuple(a_)], lo[tuple(b_)])
+                al[tuple(b_)] = np.minimum(al[tuple(b_)], lo[tuple(a_)])
+            hi, lo = ah, al
+        mine = np.nonzero((tx == a) & (tz == b))[0]
+        q = test[mine]
+        d = deck[q]
+        jy, jz, jx = Y[q] - y0, Z[q] - z0, X[q] - x0
+        out[mine] = (hi[jy, jz, jx] - d > tol) | (d - lo[jy, jz, jx] > tol)
+    return out
+
+
+def nest_room_cells(room, seed):
+    """(x, y, z) of a nest room and its spur: an elliptical room with a flat floor at `centre` y (the lowest air), a dome to
+    `tall`, mildly noisy walls; the spur a straight flat passage from `spur[0]` (in the parent passage) into the room."""
+    cx, yf, cz = room["centre"]
+    a, b = room["radius"]
+    ang, tall = room["angle"], room["tall"]
+    ca, sa = math.cos(ang), math.sin(ang)
+    ext = int(max(a, b) * 1.25) + 2
+    xs = np.arange(cx - ext, cx + ext + 1)
+    zs = np.arange(cz - ext, cz + ext + 1)
+    X, Z = np.meshgrid(xs, zs)
+    u = ((X - cx) * ca + (Z - cz) * sa) / a
+    v = (-(X - cx) * sa + (Z - cz) * ca) / b
+    rr = np.sqrt(u * u + v * v) * (1 + room["wall_noise"] * (vnoise(X, 0, Z, seed + 91, 6.0) - 0.5) * 2)
+    inside = rr < 1.0
+    hc = np.maximum(3, np.floor(tall * np.sqrt(np.maximum(0.0, 1 - rr * rr)) + 0.5)).astype(np.int64)
+    ox, oy, oz = [], [], []
+    for k in range(int(tall) + 1):
+        m = inside & (hc > k)
+        ox.append(X[m])
+        oz.append(Z[m])
+        oy.append(np.full(int(m.sum()), yf + k))
+    (sx, sy, sz), (ex, _ey, ez) = room["spur"][0], room["spur"][1]
+    L = math.hypot(ex - sx, ez - sz)
+    hw = room["spur_width"] / 2.0
+    pad = int(math.ceil(hw)) + 1
+    gx = np.arange(int(min(sx, ex)) - pad, int(max(sx, ex)) + pad + 1)
+    gz = np.arange(int(min(sz, ez)) - pad, int(max(sz, ez)) + pad + 1)
+    GX, GZ = np.meshgrid(gx, gz)
+    t = np.clip(((GX - sx) * (ex - sx) + (GZ - sz) * (ez - sz)) / max(1e-9, L * L), 0, 1)
+    on = np.hypot(GX - (sx + t * (ex - sx)), GZ - (sz + t * (ez - sz))) <= hw
+    for k in range(int(room["spur_height"])):
+        ox.append(GX[on])
+        oz.append(GZ[on])
+        oy.append(np.full(int(on.sum()), yf + k))
+    X_, Y_, Z_ = np.concatenate(ox), np.concatenate(oy), np.concatenate(oz)
+    k_ = np.unique((X_.astype(np.int64) * 8192 + Z_) * 1024 + (Y_ + 512))
+    return (k_ // 1024) // 8192, k_ % 1024 - 512, (k_ // 1024) % 8192
+
+
+def room_only_cells(room, seed):
+    """The room's own cells without the spur (for its clearance)."""
+    r = dict(room, spur=[room["centre"], room["centre"]], spur_height=0)
+    return nest_room_cells(r, seed)
+
+
+def offsets_cube(r):
+    return [(dx, dy, dz) for dx in range(-r, r + 1) for dy in range(-r, r + 1) for dz in range(-r, r + 1)]
+
+
+def any_near(region, keys_sorted, X, Y, Z, r):
+    """bool per cell: a key of keys_sorted lies within r (Chebyshev) of it."""
+    out = np.zeros(len(X), bool)
+    if not len(keys_sorted) or not len(X):
+        return out
+    for dx, dy, dz in offsets_cube(r):
+        k = region.key(X + dx, Y + dy, Z + dz)
+        p = np.searchsorted(keys_sorted, k)
+        p[p >= len(keys_sorted)] = len(keys_sorted) - 1
+        out |= keys_sorted[p] == k
+    return out
+
+
+def room_problems(region, rules, room, seed, others, mouths):
+    """[problem] for one recorded room against the carved cells `others` (sorted keys, the room excluded): every cell kept by
+    the rules, the room `room_clear` from everything, the spur `spur_clear` from everything past its first cells, the
+    spawner's box free of every other carved cell, the block a rock cell under an open floor."""
+    nr = rules["nests"]
+    out = []
+    X, Y, Z = nest_room_cells(room, seed)
+    keep, _rm = clip_cells(region, rules, X, Y, Z, np.zeros(region.shape, bool))
+    if not keep.all():
+        out.append("%s: %d of its %d cells break the cover, blocked or floor rule" % (room["id"], int((~keep).sum()), len(X)))
+    for m in mouths:
+        if (np.hypot(X - m["x"], Z - m["z"]) <= rules["mouth_zone"] + rules["nests"]["mouth_clear"]).any():
+            out.append("%s: inside a mouth zone" % room["id"])
+            break
+    RX, RY, RZ = room_only_cells(room, seed)
+    if any_near(region, others, RX, RY, RZ, nr["room_clear"]).any():
+        out.append("%s: the room comes within %d of another carved cell" % (room["id"], nr["room_clear"]))
+    sx, sy, sz = room["spur"][0]
+    far = np.hypot(X - sx, Z - sz) > room["attach_radius"]
+    if any_near(region, others, X[far], Y[far], Z[far], nr["spur_clear"]).any():
+        out.append("%s: the spur comes within %d of another carved cell past its attachment" % (room["id"], nr["spur_clear"]))
+    bx, by, bz = room["block"]
+    sr = room["spawn_range"]
+    bxs, bys, bzs = np.meshgrid(np.arange(bx - sr, bx + sr + 1), np.arange(by - sr, by + sr + 1), np.arange(bz - sr, bz + sr + 1), indexing="ij")
+    kb = region.key(bxs.ravel(), bys.ravel(), bzs.ravel())
+    p = np.searchsorted(others, kb)
+    p[p >= len(others)] = len(others) - 1
+    if len(others) and (others[p] == kb).any():
+        out.append("%s: another carved cell is inside the Habitat Block's spawn box (spawn_range %d)" % (room["id"], sr))
+    cells = set(zip(X.tolist(), Y.tolist(), Z.tolist()))
+    if (bx, by, bz) in cells or (bx, by + 1, bz) not in cells or (bx, by + 2, bz) not in cells:
+        out.append("%s: the block %s is not a rock cell under an open floor" % (room["id"], (bx, by, bz)))
+    return out
+
+
+def added_allowed(region, rules, mouths, X, Y, Z):
+    """bool per candidate added cell: unblocked, cover_min of rock EVERYWHERE, above the floor limit, outside every mouth zone.
+    A hook: tests/test_cave_systems.py swaps it for the base's mouth-zone rule to prove the audit sees cells added at a mouth."""
+    keep, _removed = clip_cells(region, rules, X, Y, Z, np.zeros(region.shape, bool))
+    for m in mouths:
+        keep &= np.hypot(X - m["x"], Z - m["z"]) > rules["mouth_zone"]
+    return keep
+
+
+def widen_system(spec, sysspec, res, rooms=None):
+    """Add the widened passages and the nest rooms (the recorded ones, or `rooms`) to a generated base result, in place.
+    Fails closed."""
+    rules = spec["rules"]
+    wr = rules["widen"]
+    reg, net, b = res["region"], res["net"], res["builder"]
+    seed = b.seed
+    base_keys = np.asarray(res["keys"], np.int64)
+    bx_, by_, bz_ = res["x"], res["y"], res["z"]
+    W, Hh = width_targets(net, seed, rules, res["mouths"])
+    X, Z, Fl, T = wide_columns(net, seed, W, Hh, wr["width"][1], wr["height_max"])
+    cx, cy, cz, deck = column_cells(reg, X, Z, Fl, T)
+    rooms = (sysspec.get("nest_rooms") or []) if rooms is None else rooms
+    rsrc = [np.zeros(len(cx), np.int64)]
+    parts = [(cx, cy, cz, deck)]
+    for i, room in enumerate(rooms):
+        rx, ry, rz = nest_room_cells(room, seed)
+        parts.append((rx, ry, rz, np.full(len(rx), int(room["centre"][1]), np.int64)))
+        rsrc.append(np.full(len(rx), i + 1, np.int64))
+    cx = np.concatenate([p[0] for p in parts])
+    cy = np.concatenate([p[1] for p in parts])
+    cz = np.concatenate([p[2] for p in parts])
+    deck = np.concatenate([p[3] for p in parts])
+    src = np.concatenate(rsrc)
+    stats = {"swept_cells": int((src == 0).sum())}
+    # the rules: unblocked, cover everywhere, floor limit; outside every mouth zone; not at or under a base lantern
+    keep = added_allowed(reg, rules, res["mouths"], cx, cy, cz)
+    lan = set()
+    for (x, y, z) in res["lanterns"]:
+        lan |= {(x, y, z), (x, y - 1, z)}
+    if lan:
+        keep &= np.array([(int(a), int(b_), int(c)) not in lan for a, b_, c in zip(cx, cy, cz)], bool)
+    k = reg.key(cx, cy, cz)
+    pos = np.searchsorted(base_keys, k)
+    pos[pos >= len(base_keys)] = len(base_keys) - 1
+    new = base_keys[pos] != k
+    room_lost = [i for i in range(len(rooms)) if not keep[src == i + 1].all()]
+    if room_lost:
+        raise CaveSystemError("%s: nest room(s) %s break the cover, blocked, floor or mouth-zone rule" % (sysspec["id"], [rooms[i]["id"] for i in room_lost]))
+    sel = keep & new
+    k, deck, src = k[sel], deck[sel], src[sel]
+    # one cell claimed by two runs of different decks is a merge: drop every copy
+    o = np.lexsort((deck, k))
+    k, deck, src = k[o], deck[o], src[o]
+    first = np.r_[True, k[1:] != k[:-1]]
+    dk_lo = deck[first]
+    dk_hi = np.maximum.reduceat(deck, np.nonzero(first)[0])
+    uk = k[first]
+    usrc = np.minimum.reduceat(np.where(src > 0, -src, 0), np.nonzero(first)[0])      # a room cell keeps its room
+    usrc = -usrc
+    split = (dk_hi - dk_lo) > wr["deck_tolerance"]
+    stats["dropped_two_decks"] = int(split.sum())
+    uk, udeck, usrc = uk[~split], dk_lo[~split], usrc[~split]
+    # decks against the union
+    allk = np.concatenate([base_keys, uk])
+    alld = np.concatenate([run_floors(base_keys), udeck])
+    o = np.argsort(allk, kind="stable")
+    allk, alld = allk[o], alld[o]
+    isnew = np.zeros(len(allk), bool)
+    isnew[np.searchsorted(allk, uk)] = True
+    test = np.nonzero(isnew)[0]
+    bad = deck_mismatch(reg, allk, alld, test, wr["deck_tolerance"], wr["deck_gap"])
+    badk = allk[test[bad]]
+    pos = np.searchsorted(uk, badk)
+    room_hit = sorted({int(usrc[p]) for p in pos if usrc[p] > 0})
+    if room_hit:
+        raise CaveSystemError("%s: nest room(s) %s come within %d of a carved cell on another deck" % (sysspec["id"], [rooms[i - 1]["id"] for i in room_hit], wr["deck_gap"]))
+    stats["dropped_deck"] = int(bad.sum())
+    okmask = np.ones(len(uk), bool)
+    okmask[pos] = False
+    uk, usrc = uk[okmask], usrc[okmask]
+    # connected to a mouth; then the floors that need a climb of two are lowered, as for the base
+    keys = np.unique(np.concatenate([base_keys, uk]))
+    starts = []
+    for m in res["mouths"]:
+        n_ = net.n[m["node"]]
+        for dy in range(0, 4):
+            starts.append(int(reg.key(np.array([int(round(n_[0]))]), np.array([int(round(n_[1])) + dy]), np.array([int(round(n_[2]))]))[0]))
+    seen = flood_from(reg, keys, np.unique(np.array(starts, np.int64)))
+    stats["dropped_disconnected"] = int((~seen).sum())
+    keys = keys[seen]
+    ux, uy, uz = reg.unkey(keys)
+    cells = set(zip(ux.tolist(), uy.tolist(), uz.tolist()))
+    cells, repaired = repair_steps(cells, (res["mouths"][0]["x"], res["mouths"][0]["z"]), reg.gnd)
+    stats["repaired"] = repaired
+    base_set = set(zip(bx_.tolist(), by_.tolist(), bz_.tolist()))
+    cells, pruned, left = prune_unwalkable(cells, base_set, res["mouths"], reg.gnd)
+    stats["dropped_unwalkable"] = pruned
+    if repaired or pruned:
+        arr = np.array(sorted(cells), np.int64)
+        keys = np.unique(reg.key(arr[:, 0], arr[:, 1], arr[:, 2]))
+        ux, uy, uz = reg.unkey(keys)
+    # the base must be whole inside the result
+    p = np.searchsorted(keys, base_keys)
+    p[p >= len(keys)] = len(keys) - 1
+    if not (keys[p] == base_keys).all():
+        raise CaveSystemError("%s: the widened volume lost %d live cells" % (sysspec["id"], int((keys[p] != base_keys).sum())))
+    # every room whole, its block a rock cell under an open floor, its spawn box and its clearance kept
+    for i, room in enumerate(rooms):
+        rx, ry, rz = nest_room_cells(room, seed)
+        rk = np.unique(reg.key(rx, ry, rz))
+        others = np.setdiff1d(keys, rk, assume_unique=True)
+        p = np.searchsorted(keys, rk)
+        p[p >= len(keys)] = len(keys) - 1
+        if not (keys[p] == rk).all():
+            raise CaveSystemError("%s: nest room %s is not whole in the result" % (sysspec["id"], room["id"]))
+        probs = room_problems(reg, rules, room, seed, others, res["mouths"])
+        if probs:
+            raise CaveSystemError("%s: %s" % (sysspec["id"], "; ".join(probs)))
+    res.update({"base_keys": base_keys, "base_x": bx_, "base_y": by_, "base_z": bz_, "keys": keys,
+                "x": ux.astype(np.int64), "y": uy.astype(np.int64), "z": uz.astype(np.int64)})
+    probs = walk_problems(res)
+    trapped = trap_count(res)
+    if trapped:
+        probs.append("%d standing cells can be walked to but cannot walk back out of any mouth" % trapped)
+    if probs:
+        raise CaveSystemError("%s: the widened volume cannot be walked: %s" % (sysspec["id"], "; ".join(probs)))
+    blocks = {tuple(r["block"]) for r in rooms}
+    res["ores"] = [o_ for o_ in dress_ore(reg, rules, seed, keys, None) if (o_[0], o_[1], o_[2]) not in blocks]
+    cells = set(zip(res["x"].tolist(), res["y"].tolist(), res["z"].tolist()))
+    for (x, y, z) in res["lanterns"]:
+        if (x, y, z) not in cells or (x, y - 1, z) in cells or (x, y + 1, z) not in cells:
+            raise CaveSystemError("%s: the base lantern at %s no longer stands on a floor" % (sysspec["id"], (x, y, z)))
+    stats.update({"base_cells": int(len(base_keys)), "cells": int(len(keys)), "added_cells": int(len(keys) - len(base_keys)),
+                  "room_cells": {r["id"]: int(len(np.unique(reg.key(*nest_room_cells(r, seed))))) for r in rooms}})
+    res["widen"] = stats
+    res["width_targets"] = W
+    return res
+
+
+def site_nests(spec, sysspec, res):
+    """[room record] for one system, sited on a WIDENED result with no rooms: nodes of side branches (dead ends), in a seeded order,
+    each tried with a few headings square to the passage and a few sizes; a room is taken when room_problems finds nothing and it
+    stands `spacing` from every other. The most `count[1]` are taken; fewer than `count[0]` fails closed."""
+    rules = spec["rules"]
+    nr = rules["nests"]
+    reg, net, b = res["region"], res["net"], res["builder"]
+    seed = b.seed
+    keys = res["keys"]
+    xs, ys, zs = reg.unkey(keys)
+    colmin = {}
+    for x, y, z in zip(xs.tolist(), ys.tolist(), zs.tolist()):
+        colmin.setdefault((x, z), []).append(y)
+    nbr = {}
+    for i, j in net.edges:
+        nbr.setdefault(i, []).append(j)
+        nbr.setdefault(j, []).append(i)
+    W = res["width_targets"]
+    themes = sysspec.get("nest_themes") or []
+    if len(themes) < nr["count"][1]:
+        raise CaveSystemError("%s: %d nest themes for up to %d rooms" % (sysspec["id"], len(themes), nr["count"][1]))
+    cands = []
+    for bi, br in enumerate(net.branches):
+        if br["kind"] not in ("side", "descent", "ascent"):
+            continue
+        nodes = br["nodes"]
+        for k in range(10, len(nodes) - 3, 5):
+            cands.append((br["kind"] != "side", h32(seed, 501, nodes[k]), nodes[k]))
+    cands.sort()
+    rooms = []
+    why_not = {"candidates": len(cands)}
+    for _s, _h, i in cands:
+        if len(rooms) >= nr["count"][1]:
+            break
+        n = net.n[i]
+        if any(math.hypot(n[0] - c["x"], n[2] - c["z"]) <= max(c["a"], c["b"]) * 1.5 + 20 for c in list(res["caverns"]) + list(res["halls"])):
+            continue
+        if any(math.hypot(n[0] - r["centre"][0], n[2] - r["centre"][2]) < nr["spacing"] for r in rooms):
+            continue
+        nb = nbr.get(i) or []
+        if len(nb) != 2:
+            continue
+        a, c = net.n[nb[0]], net.n[nb[1]]
+        hd = math.atan2(c[2] - a[2], c[0] - a[0])
+        x0, z0 = int(round(n[0])), int(round(n[2]))
+        ys_ = [y for y in colmin.get((x0, z0), []) if abs(y - n[1]) <= 3]
+        if not ys_:
+            continue
+        yf = min(ys_)
+        rng = rnd(seed, "nest", i)
+        done = False
+        for side in (1, -1):
+            for jit in (0.0, 0.35, -0.35):
+                ang = hd + side * math.pi / 2 + jit
+                for _t in range(3):
+                    # radii whose noisy walls (+-wall_noise) still measure across[0] to across[1]
+                    r_lo = nr["across"][0] / 2.0 / (1 - nr["wall_noise"])
+                    r_hi = nr["across"][1] / 2.0 / (1 + nr["wall_noise"])
+                    ra = rng.uniform(r_lo, r_hi)
+                    rb = rng.uniform(r_lo, ra)
+                    tall = rng.randint(nr["tall"][0], nr["tall"][1])
+                    ls = rng.uniform(nr["spur_len"][0], nr["spur_len"][1])
+                    wall = W[i] / 2.0 * 1.2
+                    dcen = wall + ls + ra
+                    cx, cz = int(round(n[0] + dcen * math.cos(ang))), int(round(n[2] + dcen * math.sin(ang)))
+                    if any(math.hypot(cx - r["centre"][0], cz - r["centre"][2]) < nr["spacing"] for r in rooms):
+                        continue
+                    ex, ez = n[0] + (wall + ls + 2) * math.cos(ang), n[2] + (wall + ls + 2) * math.sin(ang)
+                    sr = int(math.floor(0.7 * min(ra, rb)))
+                    room = {"id": "%s%s_%d" % (NEST_PREFIX, sysspec["id"], len(rooms) + 1), "theme": themes[len(rooms)]["theme"],
+                            "centre": [cx, yf, cz], "radius": [round(ra, 2), round(rb, 2)], "wall_noise": nr["wall_noise"],
+                            "angle": round(ang, 4), "tall": tall,
+                            "spur": [[round(n[0], 2), yf, round(n[2], 2)], [round(ex, 2), yf, round(ez, 2)]],
+                            "spur_width": nr["spur_width"], "spur_height": nr["spur_height"], "attach_radius": round(wall + 2, 2),
+                            "block": [cx, yf - 1, cz], "spawn_range": sr, "cancel_range": int(math.ceil(max(ra, rb))) + 1,
+                            "across": "%d by %d" % (round(2 * ra), round(2 * rb)), "attach_node": i}
+                    others = keys
+                    rp = room_problems(reg, rules, room, seed, others, res["mouths"])
+                    if rp:
+                        for q_ in rp:
+                            why_not[q_.split(": ", 1)[1][:24]] = why_not.get(q_.split(": ", 1)[1][:24], 0) + 1
+                        continue
+                    rk = np.unique(reg.key(*nest_room_cells(room, seed)))
+                    # the cancel sphere stops short of every passage
+                    dmin = 1e9
+                    bx_, by_, bz_ = room["block"]
+                    near = (np.abs(xs - bx_) <= room["cancel_range"] + 1) & (np.abs(zs - bz_) <= room["cancel_range"] + 1)
+                    if near.any():
+                        dmin = float(np.sqrt((xs[near] - bx_) ** 2 + (ys[near] - by_) ** 2 + (zs[near] - bz_) ** 2).min())
+                    if dmin <= room["cancel_range"]:
+                        continue
+                    room["cells"] = int(len(rk))
+                    rooms.append(room)
+                    done = True
+                    break
+                if done:
+                    break
+            if done:
+                break
+    if len(rooms) < nr["count"][0]:
+        raise CaveSystemError("%s: only %d nest room(s) could be sited, %d wanted (%s)" % (sysspec["id"], len(rooms), nr["count"][0], why_not))
+    for r in rooms:
+        r["place"] = "%s, a nest room off a side branch" % sysspec["name"]
+        r["sited_by"] = "python tools/cave_systems.py nests --site (2026-10-23), on the widened volume"
+    return rooms
+
+
+def trap_count(res):
+    """Standing cells the first mouth's walk reaches from which no mouth can be walked back to (a one-way drop into a dead end)."""
+    reg = res["region"]
+    cells = set(zip(res["x"].tolist(), res["y"].tolist(), res["z"].tolist()))
+    stand, reached, out = walk_sets(cells, res["mouths"], reg.gnd)
+    return sum(1 for p in reached if p not in out)
+
+
+def walk_sets(cells, mouths, gnd):
+    """(standing cells, those the first mouth's walk reaches, those from which some mouth can be walked back to)."""
+    stand = standing_cells(cells, gnd)
+    rev = {}
+    for (x, y, z) in stand:
+        for dx, dz in NB4:
+            for dy in (0, 1, -1, -2, -3):
+                p = (x + dx, y + dy, z + dz)
+                if p not in stand:
+                    continue
+                if dy == 1 and not ((x, y + 2, z) in cells or y + 2 > gnd(x, z)):
+                    continue
+                if dy < 0 and not ((x + dx, y + 1, z + dz) in cells or y + 1 > gnd(x + dx, z + dz)):
+                    continue
+                rev.setdefault(p, []).append((x, y, z))
+                break
+    out, srcs = set(), []
+    for m in mouths:
+        near = [p for p in stand if abs(p[0] - m["x"]) <= 3 and abs(p[2] - m["z"]) <= 3]
+        if near:
+            srcs.append(max(near, key=lambda p: p[1]))
+    q = deque(srcs)
+    out.update(srcs)
+    while q:
+        c = q.popleft()
+        for a in rev.get(c, ()):
+            if a not in out:
+                out.add(a)
+                q.append(a)
+    if not srcs:
+        return stand, set(), set()
+    return stand, set(walk_from(stand, cells, srcs[0], gnd)), out
+
+
+def prune_unwalkable(cells, base_set, mouths, gnd, rounds=8):
+    """Drop the added cells of every column holding a standing cell that the first mouth cannot walk to, or that cannot walk back
+    out of some mouth, until none is left (the base is never touched). Returns (cells, cells dropped, base standing cells left bad)."""
+    dropped = 0
+    for _ in range(rounds):
+        stand, reached, back = walk_sets(cells, mouths, gnd)
+        bad = [p for p in stand if p not in reached or p not in back]
+        if not bad:
+            return cells, dropped, 0
+        cols = {(p[0], p[2]) for p in bad}
+        rm = {c for c in cells if (c[0], c[2]) in cols and c not in base_set}
+        if not rm:
+            return cells, dropped, len(bad)
+        cells = cells - rm
+        dropped += len(rm)
+    stand, reached, back = walk_sets(cells, mouths, gnd)
+    return cells, dropped, sum(1 for p in stand if p not in reached or p not in back)
+
+
+def passage_widths(res, keys, zone, sample=4):
+    """Measured widths: at every `sample`-th node outside the mouth zones and the caverns, the run of carved cells one above the
+    floor along the line square to the passage through the node. Returns a list of ints."""
+    reg, net = res["region"], res["net"]
+    xs, ys, zs = reg.unkey(np.asarray(keys))
+    cells = set(zip(xs.tolist(), ys.tolist(), zs.tolist()))
+    nbr = {}
+    for i, j in net.edges:
+        nbr.setdefault(i, []).append(j)
+        nbr.setdefault(j, []).append(i)
+    out = []
+    for i in range(0, len(net.n), sample):
+        n = net.n[i]
+        if any(math.hypot(n[0] - m["x"], n[2] - m["z"]) <= zone for m in res["mouths"]):
+            continue
+        if any(math.hypot(n[0] - c["x"], n[2] - c["z"]) <= max(c["a"], c["b"]) * 1.4 + 4 for c in list(res["caverns"]) + list(res["halls"])):
+            continue
+        nb = nbr.get(i) or []
+        if not nb:
+            continue
+        a = net.n[nb[0]]
+        b = net.n[nb[-1]] if len(nb) > 1 else n
+        dx, dz = (b[0] - a[0]), (b[2] - a[2])
+        L = math.hypot(dx, dz)
+        if L < 0.5:
+            continue
+        px, pz = -dz / L, dx / L
+        x0, z0 = int(round(n[0])), int(round(n[2]))
+        col = [y for y in range(int(round(n[1])) - 3, int(round(n[1])) + 4) if (x0, y, z0) in cells]
+        if not col:
+            continue
+        fy = min(col) + 1
+        w = 0
+        for side in (1, -1):
+            for s in range(1 if side == 1 else 1, 30):
+                x, z = int(round(n[0] + px * s * side)), int(round(n[2] + pz * s * side))
+                if (x, fy, z) in cells:
+                    w += 1
+                else:
+                    break
+        if (x0, fy, z0) in cells:
+            out.append(w + 1)
+    return out
+
+
 def system_pack(spec, sysspec, res):
     rules = spec["rules"]
-    files, stats = tile_functions(sysspec["id"], res["region"], rules, res["x"], res["y"], res["z"], res["ores"], res["lanterns"])
+    base = (res["base_x"], res["base_y"], res["base_z"]) if "base_x" in res else None
+    files, stats = tile_functions(sysspec["id"], res["region"], rules, res["x"], res["y"], res["z"], res["ores"], res["lanterns"], base)
     return files, stats
 
 
@@ -1690,8 +2399,23 @@ def summarise(spec, sysspec, res, files, stats):
     for name, v in files.items():
         if name.endswith("_carve"):
             base = name[:-6]
-            exec_lines = max(exec_lines, len(files[base + "_air"]) * 2 + len(files[base + "_shell"]) + len(files[base + "_dress"]))
+            exec_lines = max(exec_lines, (len(files.get(base + "_air", ())) + len(files.get(base + "_wide", ()))) * 2
+                             + len(files[base + "_shell"]) + len(files[base + "_dress"]))
     xs, zs = res["x"], res["z"]
+    wd = res.get("widen")
+    if wd is not None:
+        zone = spec["rules"]["mouth_zone"]
+        wb = passage_widths(res, res["base_keys"], zone)
+        ww = passage_widths(res, res["keys"], zone)
+
+        def dist(ws):
+            ws = np.array(ws)
+            return {"samples": int(len(ws)), "p05": int(np.percentile(ws, 5)), "p25": int(np.percentile(ws, 25)), "median": int(np.median(ws)),
+                    "p75": int(np.percentile(ws, 75)), "p95": int(np.percentile(ws, 95)), "max": int(ws.max()),
+                    "3-4": int(((ws >= 3) & (ws <= 4)).sum()), "5-9": int(((ws >= 5) & (ws <= 9)).sum()),
+                    "10-15": int(((ws >= 10) & (ws <= 15)).sum()), "over_15": int((ws > 15).sum()), "under_3": int((ws < 3).sum())}
+        wd = dict(wd, measured_width_base=dist(wb), measured_width_widened=dist(ww),
+                  live_cells_sha256=cells_digest(res["base_x"], res["base_y"], res["base_z"]))
     return {
         "id": sysspec["id"], "name": sysspec["name"], "centre": sysspec["centre"], "radius": sysspec["radius"],
         "centreline_blocks": round(net.length), "nodes": len(net.n), "branches": len(net.branches),
@@ -1705,6 +2429,7 @@ def summarise(spec, sysspec, res, files, stats):
         "bounds": [int(xs.min()), int(res["y"].min()), int(zs.min()), int(xs.max()), int(res["y"].max()), int(zs.max())],
         "clipped": res["removed"], "disconnected_dropped": res["disconnected"],
         "functions": len(files), "seed_attempt": res.get("attempt"), "rejected_attempts": res.get("rejected"), "walk_far": res.get("walk_far"),
+        "widen": wd,
     }
 
 
@@ -1790,6 +2515,11 @@ def build(spec=None, only=None, out=OUT, plan=PLAN):
         for n, p in bad[:10]:
             print("REFUSED %s: %s" % (n, p))
         raise SystemExit("%d function problem(s): nothing written" % len(bad))
+    probs = nest_problems(spec)
+    if probs:
+        for q in probs[:10]:
+            print("REFUSED:", q)
+        raise SystemExit("the nest rooms' records in data/ do not match the rooms (python tools/cave_systems.py nests --write): nothing written")
     write_pack(files, index_lines(files), out)
     plan = Path(plan)
     plan.parent.mkdir(parents=True, exist_ok=True)
@@ -2055,16 +2785,61 @@ def cmd_map(spec, only):
 
 # ------------------------------------------------------------------ CLI
 
+def nest_meta(sysspec):
+    """Every recorded room of a system with the fields tools/nest_rooms.py needs to write its records."""
+    return [dict(r, owner_file="data/cave_systems.json", generated_by=GENERATED, step="R9CS") for r in sysspec.get("nest_rooms") or []]
+
+
+def nest_problems(spec):
+    rooms = [r for s in spec["systems"] for r in nest_meta(s)]
+    import nest_rooms as NR
+    return NR.record_problems(rooms, NEST_PREFIX) if rooms else []
+
+
+def cmd_nests(spec, site, write, jar):
+    import nest_rooms as NR
+    if site:
+        g = G.Ground()
+        for s in spec["systems"]:
+            res = generate(spec, s, g, rooms=[])
+            rooms = site_nests(spec, s, res)
+            s["nest_rooms"] = rooms
+            for r in rooms:
+                print("%s %s: centre %s, %s across, tall %d, block %s, spawn_range %d, theme %s"
+                      % (s["id"], r["id"], r["centre"], r["across"], r["tall"], r["block"], r["spawn_range"], r["theme"]))
+        SPEC.write_text(json.dumps(spec, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+        print("wrote the rooms into %s" % SPEC.relative_to(ROOT))
+    if write:
+        import battle_sim
+        species = NR.load_species(jar or battle_sim.find_jar())
+        rooms = [r for s in spec["systems"] for r in nest_meta(s)]
+        themes = {t["theme"]: t for s in spec["systems"] for t in s.get("nest_themes") or []}
+        habs, ents = NR.sync(rooms, themes, species, NEST_PREFIX)
+        for h in habs:
+            print("%s: %s, %d-%d: %s" % (h["id"], h["display_name"], h["level_band"]["minimum"], h["level_band"]["maximum"],
+                                         ", ".join("%s %s" % (e["pokemon"], e["level"]) for e in h["entries"])))
+        print("wrote %d Habitat Block records and %d pools (%d entries) into data/habitat_blocks.json and data/spawns.json" % (len(rooms), len(habs), len(ents)))
+    probs = nest_problems(load())
+    for q in probs:
+        print("PROBLEM:", q)
+    return 1 if probs else 0
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("mode", choices=("site", "report", "build", "map"))
+    p.add_argument("mode", choices=("site", "report", "build", "map", "nests"))
     p.add_argument("system", nargs="?")
     p.add_argument("--source-root")
     p.add_argument("--server-dir", help="accepted for tools/reapply.py prepare's sake; not read")
+    p.add_argument("--site", action="store_true", help="nests: site the rooms anew into data/cave_systems.json (moves rooms: never once applied)")
+    p.add_argument("--write", action="store_true", help="nests: write their Habitat Block and pool records (needs a Cobblemon jar)")
+    p.add_argument("--jar", help="nests --write: the Cobblemon jar the species and evolutions are read from (default tools/battle_sim.py find_jar)")
     a = p.parse_args(argv)
     spec = load()
     if a.mode == "site":
         return cmd_site(spec, a.system)
+    if a.mode == "nests":
+        return cmd_nests(spec, a.site, a.write, a.jar)
     if a.mode == "map":
         return cmd_map(spec, a.system)
     if a.mode == "report":

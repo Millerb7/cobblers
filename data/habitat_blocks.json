@@ -11431,6 +11431,342 @@
         "max_spawns_per_activation": 2
       },
       "why": "An added nest (tools/tree_birds.py, data/tree_bird_nests.json). Cobblemon 1.8.2 re-centres a buried block's spawn zone on the nearest air in its column (docs/world-building/SAPLING_BIRDS.md, 'Where the birds stand'), so this block is a cell of a limb 11.7 from the trunk axis whose zone is centred 413 over the ground and holds 1049 standing cells; it spawns the crown band's species."
+    },
+    {
+      "id": "cave_nest_old_seams_1_block",
+      "place": "The Old Seams, a nest room off a side branch (data/cave_systems.json): the floor cell under the middle of the nest room cave_nest_old_seams_1",
+      "pool": "cobblers:cave_nest_old_seams_1_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2163,
+        "y": -8,
+        "z": 5223
+      },
+      "mimic": "minecraft:deepslate",
+      "activated": {
+        "spawn_range": 5,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 9,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "generated_by": "tools/cave_systems.py",
+      "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 5 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 9 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
+    },
+    {
+      "id": "cave_nest_old_seams_2_block",
+      "place": "The Old Seams, a nest room off a side branch (data/cave_systems.json): the floor cell under the middle of the nest room cave_nest_old_seams_2",
+      "pool": "cobblers:cave_nest_old_seams_2_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2071,
+        "y": -7,
+        "z": 5072
+      },
+      "mimic": "minecraft:deepslate",
+      "activated": {
+        "spawn_range": 4,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 8,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "generated_by": "tools/cave_systems.py",
+      "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 4 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 8 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
+    },
+    {
+      "id": "cave_nest_old_seams_3_block",
+      "place": "The Old Seams, a nest room off a side branch (data/cave_systems.json): the floor cell under the middle of the nest room cave_nest_old_seams_3",
+      "pool": "cobblers:cave_nest_old_seams_3_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1867,
+        "y": -9,
+        "z": 4900
+      },
+      "mimic": "minecraft:deepslate",
+      "activated": {
+        "spawn_range": 5,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 10,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "generated_by": "tools/cave_systems.py",
+      "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 5 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 10 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
+    },
+    {
+      "id": "cave_nest_hollow_reach_1_block",
+      "place": "The Hollow Reach, a nest room off a side branch (data/cave_systems.json): the floor cell under the middle of the nest room cave_nest_hollow_reach_1",
+      "pool": "cobblers:cave_nest_hollow_reach_1_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2332,
+        "y": 30,
+        "z": 3484
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 5,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 10,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "generated_by": "tools/cave_systems.py",
+      "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 5 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 10 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
+    },
+    {
+      "id": "cave_nest_hollow_reach_2_block",
+      "place": "The Hollow Reach, a nest room off a side branch (data/cave_systems.json): the floor cell under the middle of the nest room cave_nest_hollow_reach_2",
+      "pool": "cobblers:cave_nest_hollow_reach_2_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2511,
+        "y": 23,
+        "z": 3302
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 4,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 9,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "generated_by": "tools/cave_systems.py",
+      "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 4 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 9 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
+    },
+    {
+      "id": "cave_nest_frostpeak_deeps_1_block",
+      "place": "The Frostpeak Deeps, a nest room off a side branch (data/cave_systems.json): the floor cell under the middle of the nest room cave_nest_frostpeak_deeps_1",
+      "pool": "cobblers:cave_nest_frostpeak_deeps_1_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 608,
+        "y": 23,
+        "z": 688
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 4,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 10,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "generated_by": "tools/cave_systems.py",
+      "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 4 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 10 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
+    },
+    {
+      "id": "cave_nest_frostpeak_deeps_2_block",
+      "place": "The Frostpeak Deeps, a nest room off a side branch (data/cave_systems.json): the floor cell under the middle of the nest room cave_nest_frostpeak_deeps_2",
+      "pool": "cobblers:cave_nest_frostpeak_deeps_2_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 604,
+        "y": -32,
+        "z": 258
+      },
+      "mimic": "minecraft:deepslate",
+      "activated": {
+        "spawn_range": 5,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 10,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "generated_by": "tools/cave_systems.py",
+      "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 5 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 10 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
+    },
+    {
+      "id": "cave_nest_frostpeak_deeps_3_block",
+      "place": "The Frostpeak Deeps, a nest room off a side branch (data/cave_systems.json): the floor cell under the middle of the nest room cave_nest_frostpeak_deeps_3",
+      "pool": "cobblers:cave_nest_frostpeak_deeps_3_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 708,
+        "y": 88,
+        "z": 511
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 5,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 9,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "generated_by": "tools/cave_systems.py",
+      "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 5 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 9 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
+    },
+    {
+      "id": "mine_nest_mn_craters_1_block",
+      "place": "The Old Craters Drift, a nest room off a dead-end drift on level 2 (data/mine_networks.json): the floor cell under the middle of the nest room mine_nest_mn_craters_1",
+      "pool": "cobblers:mine_nest_mn_craters_1_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6480,
+        "y": 85,
+        "z": 5547
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 4,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 8,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "generated_by": "tools/mine_networks.py",
+      "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 4 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 8 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9MN, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
+    },
+    {
+      "id": "mine_nest_mn_craters_2_block",
+      "place": "The Old Craters Drift, a nest room off a dead-end drift on level 1 (data/mine_networks.json): the floor cell under the middle of the nest room mine_nest_mn_craters_2",
+      "pool": "cobblers:mine_nest_mn_craters_2_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6559,
+        "y": 101,
+        "z": 5410
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 4,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 8,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "generated_by": "tools/mine_networks.py",
+      "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 4 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 8 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9MN, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
+    },
+    {
+      "id": "mine_nest_mn_gorge_1_block",
+      "place": "The Hollow Seam, a nest room off a dead-end drift on level 4 (data/mine_networks.json): the floor cell under the middle of the nest room mine_nest_mn_gorge_1",
+      "pool": "cobblers:mine_nest_mn_gorge_1_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7178,
+        "y": 22,
+        "z": 3337
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 5,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 11,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "generated_by": "tools/mine_networks.py",
+      "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 5 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 11 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9MN, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
+    },
+    {
+      "id": "mine_nest_mn_gorge_2_block",
+      "place": "The Hollow Seam, a nest room off a dead-end drift on level 2 (data/mine_networks.json): the floor cell under the middle of the nest room mine_nest_mn_gorge_2",
+      "pool": "cobblers:mine_nest_mn_gorge_2_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6937,
+        "y": 54,
+        "z": 3490
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 5,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 11,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "generated_by": "tools/mine_networks.py",
+      "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 5 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 11 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9MN, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
+    },
+    {
+      "id": "mine_nest_mn_ridgeback_1_block",
+      "place": "The Ridgeback Workings, a nest room off a dead-end drift on level 4 (data/mine_networks.json): the floor cell under the middle of the nest room mine_nest_mn_ridgeback_1",
+      "pool": "cobblers:mine_nest_mn_ridgeback_1_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4885,
+        "y": 21,
+        "z": 1176
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 4,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 8,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "generated_by": "tools/mine_networks.py",
+      "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 4 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 8 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9MN, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
+    },
+    {
+      "id": "mine_nest_mn_ridgeback_2_block",
+      "place": "The Ridgeback Workings, a nest room off a dead-end drift on level 2 (data/mine_networks.json): the floor cell under the middle of the nest room mine_nest_mn_ridgeback_2",
+      "pool": "cobblers:mine_nest_mn_ridgeback_2_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5047,
+        "y": 53,
+        "z": 1438
+      },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 4,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 7,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "planned",
+      "generated_by": "tools/mine_networks.py",
+      "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 4 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 7 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9MN, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
     }
   ]
 }

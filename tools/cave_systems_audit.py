@@ -38,6 +38,18 @@ What it checks, per system (a PROBLEM line for each failure; exit 1):
   palette    nothing but air, stone, deepslate, the spec's ores and the lantern is placed; every ore that is a spawn condition has
              a data/spawn_block_policy.json whitelist entry scoped `cave_systems`
   size       six players: standing columns and ore blocks per player are reported and must exceed a floor
+  traps      (2026-10-23) every standing cell the first mouth's walk reaches can walk back out of SOME mouth (the walk's step
+             rules read backwards): no one-way drop into a dead end
+  live       (2026-10-23) the cells of the `_air` functions are data's live_carve (count and sha256 of the sorted int32 triples):
+             what is in the live world is still carved, in its own functions; every live cell is in the replayed volume; no cell
+             is ADDED within the mouth zone of a mouth (the mouths stay as carved)
+  nests      (2026-10-23) 2 or 3 rooms a system, each with one activated Habitat Block record (data/habitat_blocks.json, ids
+             `cave_nest_`) in the floor cell under the record's centre, mimicking the floor's rock, not an ore; the record's radii
+             and wall noise give 12 to 20 across; every column inside the inner bound open three high; no carved cell within 3
+             of the room but the room and its spur (a dead end); nothing but the room in the spawner's box; the middle walked to
+             from the first mouth; the pool in data/spawns.json with every level inside the band of the sub-region the block
+             stands in (read here from data/regions.json and data/spawns.json). These blocks' own (x, z) are the only points
+             excused from the authored check
 
 What it does NOT check (CLAUDE.md "Our list is not the world"): anything outside data/ (donor templates, other built packs,
 build/paint's trees and water raster, derived/routes' legs, the pending water export): none of them exists in a fresh
@@ -49,6 +61,7 @@ sand and gravel falling, mobs and Pokemon spawning in the dark.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import re
@@ -77,6 +90,9 @@ SHELL_MAX = 6
 ZONE_CAP = 60
 TILE = 192
 LANTERN_REACH = 60
+NEST_PREFIX = "cave_nest_"
+NESTS = (2, 3)                 # the brief: 2 to 3 nest rooms a system
+ROOM_ACROSS = (12, 20)         # the brief: a room 12 to 20 across, at the narrowest and widest its noisy wall can be
 FILL_RE = re.compile(r"^fill (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (\S+)(?: replace (\S+))?$")
 SET_RE = re.compile(r"^setblock (-?\d+) (-?\d+) (-?\d+) (\S+)$")
 FN_RE = re.compile(r"^function cobblers:%s/(\S+)$" % FOLDER)
@@ -187,7 +203,40 @@ def authored_inputs():
                 t = i / max(n, 1)
                 pts.append((a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t))
     rift = [r for r in jload(ROOT / "data" / "regions.json")["regions"] if r["id"] == "the_rift"][0]["polygons"]
+    # the nest rooms' own Habitat Blocks sit in the floor of rooms this pack carves: their exact (x, z) are not an authored place
+    # for this check (the nest check below proves each is where a room is); nothing else is excused
+    own = {(b["position"]["x"], b["position"]["z"]) for b in nest_blocks()}
+    pts = [p for p in pts if (p[0], p[1]) not in own]
     return np.array(pts, float).reshape(-1, 2), rects, rift
+
+
+def nest_blocks():
+    """The Habitat Block records of this pack's nest rooms: ids starting `cave_nest_` in data/habitat_blocks.json."""
+    return [b for b in jload(ROOT / "data" / "habitat_blocks.json")["blocks"] if str(b.get("id", "")).startswith(NEST_PREFIX)]
+
+
+def cells_digest(X, Y, Z):
+    """The data's live_carve definition: sha256 of int32 little-endian (x, y, z) triples sorted by x, then y, then z."""
+    a = np.unique(np.stack([np.asarray(X, np.int64), np.asarray(Y, np.int64), np.asarray(Z, np.int64)], axis=1), axis=0)
+    return len(a), hashlib.sha256(np.ascontiguousarray(a).astype("<i4").tobytes()).hexdigest()
+
+
+def band_at(x, z):
+    """(sub-region, min, max) of a point from data/regions.json polygons and data/spawns.json bands, read here for itself."""
+    sp = {s["id"]: s for s in jload(ROOT / "data" / "spawns.json")["subregions"]}
+    for r in jload(ROOT / "data" / "regions.json")["subregions"]:
+        if r["id"] not in sp:
+            continue
+        for poly in r["polygons"]:
+            inside, n = False, len(poly)
+            for i in range(n):
+                (x0, z0), (x1, z1) = poly[i], poly[(i + 1) % n]
+                if (z0 > z) != (z1 > z) and x < x0 + (z - z0) * (x1 - x0) / (z1 - z0):
+                    inside = not inside
+            if inside:
+                b = sp[r["id"]]["level_band"]
+                return r["id"], int(b["minimum"]), int(b["maximum"])
+    return None, None, None
 
 
 def _points_of(d):
@@ -739,6 +788,191 @@ class Audit:
         self.report[sysid]["ore_spawn_blocks_policy_covered"] = sorted({o[3] for o in ore} & sb)
         return ore
 
+    # -- 6. the live carve: the 2026-10-22 cells are still carved, in their own functions, and nothing was added at a mouth
+    def check_live(self, sysid, X, Y, Z, mouths):
+        rec = ((self.spec.get("live_carve") or {}).get("systems") or {}).get(sysid)
+        if not rec:
+            self.bad(sysid, "data/cave_systems.json live_carve has no record: what is in the world cannot be checked")
+            return None
+        xs, ys, zs = [], [], []
+        for name, lines in self.fns.items():
+            if not (name.startswith(sysid + "_") and name.endswith("_air")):
+                continue
+            for raw in lines:
+                m = FILL_RE.match(raw.strip())
+                if m and m.group(7) == "minecraft:air" and m.group(8) is None:
+                    v = [int(q) for q in m.groups()[:6]]
+                    a, b_, c = box_cells((min(v[0], v[3]), min(v[1], v[4]), min(v[2], v[5]), max(v[0], v[3]), max(v[1], v[4]), max(v[2], v[5])))
+                    xs.append(a)
+                    ys.append(b_)
+                    zs.append(c)
+        if not xs:
+            self.bad(sysid, "no `_air` function carves anything: the live carve is not in the pack")
+            return None
+        LX, LY, LZ = np.concatenate(xs), np.concatenate(ys), np.concatenate(zs)
+        n, dg = cells_digest(LX, LY, LZ)
+        self.report[sysid]["live_cells"] = n
+        if n != rec["cells"] or dg != rec["sha256"]:
+            self.bad(sysid, "the `_air` functions carve %d cells (sha256 %s...), not the live carve's %d (%s...): the pack no longer carves "
+                            "what is in the world" % (n, dg[:12], rec["cells"], rec["sha256"][:12]))
+        key = (X.astype(np.int64) * 8192 + Z) * 512 + (Y + 64)
+        lk = np.unique((LX.astype(np.int64) * 8192 + LZ) * 512 + (LY + 64))
+        isin = np.isin(lk, key)
+        if not isin.all():
+            self.bad(sysid, "%d live cells are not carved by the replayed pack (a re-run would leave them as they are, but the pack "
+                            "no longer describes the world)" % int((~isin).sum()))
+        added = ~np.isin(key, lk)
+        self.report[sysid]["added_cells"] = int(added.sum())
+        zone_r = min(self.rules["mouth_zone"], ZONE_CAP)
+        for m in mouths:
+            hit = added & ((X - m["x"]) ** 2 + (Z - m["z"]) ** 2 <= zone_r ** 2)
+            if hit.any():
+                self.bad(sysid, "%d cells added inside mouth %s's zone (the mouths stay as carved)" % (int(hit.sum()), m["id"]))
+        return added
+
+    # -- 7. the nest rooms: one activated Habitat Block in each room's floor, the room whole and a dead end off its spur
+    def check_nests(self, sysid, sysspec, X, Y, Z, ore):
+        rooms = sysspec.get("nest_rooms") or []
+        self.report[sysid]["nest_rooms"] = []
+        if not NESTS[0] <= len(rooms) <= NESTS[1]:
+            self.bad(sysid, "%d nest rooms (%d to %d wanted)" % (len(rooms), NESTS[0], NESTS[1]))
+        blocks = {b["id"]: b for b in jload(ROOT / "data" / "habitat_blocks.json")["blocks"]}
+        habs = {h["id"]: h for h in jload(ROOT / "data" / "spawns.json")["habitats"]}
+        cells = set(zip(X.tolist(), Y.tolist(), Z.tolist()))
+        ores = {(o[0], o[1], o[2]) for o in ore}
+        mine = [b for b in blocks.values() if str(b["id"]).startswith(NEST_PREFIX + sysid + "_")]
+        if len(mine) != len(rooms):
+            self.bad(sysid, "%d nest Habitat Blocks for %d rooms" % (len(mine), len(rooms)))
+        dist = getattr(self, "_dist", {}) or {}
+        for r in rooms:
+            rid = r["id"]
+            b = blocks.get(rid + "_block")
+            if b is None:
+                self.bad(sysid, "%s: no Habitat Block record %s_block" % (rid, rid))
+                continue
+            bx, by, bz = (b["position"][k] for k in "xyz")
+            cx, yf, cz = r["centre"]
+            a, bb = r["radius"]
+            ang, tall, wn = r["angle"], int(r["tall"]), float(r["wall_noise"])
+            (sx, _sy, sz), (ex, _ey, ez) = r["spur"]
+            hw = r["spur_width"] / 2.0
+            row = {"id": rid, "block": [bx, by, bz], "pool": b["pool"]}
+            msgs = []
+            if (bx, bz) != (cx, cz) or by != yf - 1:
+                msgs.append("the block %s is not the floor cell under the room's middle %s" % ((bx, by, bz), (cx, yf - 1, cz)))
+            if b.get("style") != "activated" or b.get("replace_spawns") is not False:
+                msgs.append("not an activated, non-replacing block")
+            if b.get("mimic") != ("minecraft:deepslate" if by < 0 else "minecraft:stone"):
+                msgs.append("mimic %s is not the floor's rock" % b.get("mimic"))
+            if (bx, by, bz) in cells or (bx, by + 1, bz) not in cells or (bx, by + 2, bz) not in cells:
+                msgs.append("the block is not a rock cell under two open cells")
+            if (bx, by, bz) in ores:
+                msgs.append("an ore is written at the block")
+            # across, from the record's own radii and wall noise: the narrowest and widest the noisy wall can make it
+            lo_, hi_ = 2 * min(a, bb) * (1 - wn), 2 * max(a, bb) * (1 + wn)
+            row["across_bounds"] = [round(lo_, 1), round(hi_, 1)]
+            if lo_ < ROOM_ACROSS[0] - 1e-6 or hi_ > ROOM_ACROSS[1] + 1e-6:
+                msgs.append("its radii and wall noise allow %.1f to %.1f across, not %d to %d" % (lo_, hi_, ROOM_ACROSS[0], ROOM_ACROSS[1]))
+            # classify every carved cell near the room: inside the room's outer bound, or in the spur's corridor, or foreign
+            ca, sa = math.cos(ang), math.sin(ang)
+            reach = int(math.ceil(max(a, bb) * (1 + wn))) + 4
+            near = [(x, y, z) for x in range(cx - reach, cx + reach + 1) for z in range(cz - reach, cz + reach + 1)
+                    for y in range(yf - 4, yf + tall + 4) if (x, y, z) in cells]
+
+            def rho(x, z):
+                u = ((x - cx) * ca + (z - cz) * sa) / a
+                v = (-(x - cx) * sa + (z - cz) * ca) / bb
+                return math.sqrt(u * u + v * v)
+
+            def in_spur(x, z):
+                dx, dz = ex - sx, ez - sz
+                L2 = dx * dx + dz * dz or 1.0
+                t = max(0.0, min(1.0, ((x - sx) * dx + (z - sz) * dz) / L2))
+                return math.hypot(x - (sx + t * dx), z - (sz + t * dz)) <= hw + 1e-9
+
+            def own(x, y, z):
+                return ((yf <= y < yf + tall and rho(x, z) <= 1 / (1 - wn))
+                        or (yf <= y < yf + int(r["spur_height"]) and in_spur(x, z)))
+            # "within 3 of the room", taken from below so a room that keeps 3 clear always passes: the room certainly holds its
+            # inner bound (rho < 1 / (1 + wn)) at least three high (yf..yf+2); the inner ellipse scaled by 1 + 3 / its larger radius
+            # is within 3 of it, and so are the cells from three under its floor to three over its third cell
+            lim = 1 / (1 + wn) + 3.0 / max(a, bb)
+            foreign = [c for c in near if not own(*c) and yf - 3 <= c[1] <= yf + 5 and rho(c[0], c[2]) <= lim]
+            if foreign:
+                msgs.append("%d carved cells within 3 of the room are neither room nor spur (first %s): the room is not a dead end"
+                            % (len(foreign), foreign[0]))
+            inner_miss = [(x, z) for x in range(cx - reach, cx + reach + 1) for z in range(cz - reach, cz + reach + 1)
+                          if rho(x, z) < 1 / (1 + wn) and not ((x, yf, z) in cells and (x, yf + 1, z) in cells and (x, yf + 2, z) in cells)]
+            if inner_miss:
+                msgs.append("%d columns inside the room's inner bound are not open three high (first %s)" % (len(inner_miss), inner_miss[0]))
+            sr = int(b["activated"]["spawn_range"])
+            box_foreign = [c for c in near if abs(c[0] - bx) <= sr and abs(c[1] - by) <= sr and abs(c[2] - bz) <= sr
+                           and not own(*c)]
+            if box_foreign:
+                msgs.append("the spawn box (spawn_range %d) holds %d carved cells outside the room" % (sr, len(box_foreign)))
+            if dist and (bx, by + 1, bz) not in dist:
+                msgs.append("the room's middle cannot be walked to from the first mouth")
+            pid = str(b["pool"]).split(":", 1)[-1]
+            h = habs.get(pid)
+            sub, lo, hi = band_at(bx, bz)
+            row.update({"subregion": sub, "band": [lo, hi]})
+            if h is None or not h.get("entries"):
+                msgs.append("pool %s is not in data/spawns.json habitats, or is empty" % pid)
+            else:
+                row["species"] = ["%s %s" % (e["pokemon"], e["level"]) for e in h["entries"]]
+                for e in h["entries"]:
+                    lv = [int(q) for q in str(e["level"]).split("-")]
+                    if lo is None or min(lv) < lo or max(lv) > hi:
+                        msgs.append("%s at %s is outside the band of %s (%s-%s)" % (e["pokemon"], e["level"], sub, lo, hi))
+            others = [o for o in blocks.values() if o is not b and abs(o["position"]["x"] - bx) <= reach and abs(o["position"]["z"] - bz) <= reach
+                      and abs(o["position"]["y"] - by) <= reach]
+            if others:
+                msgs.append("another Habitat Block is in the room: %s" % others[0]["id"])
+            for q in msgs:
+                self.bad(sysid, "nest %s: %s" % (rid, q))
+            self.report[sysid]["nest_rooms"].append(row)
+        for i, r in enumerate(rooms):
+            for s in rooms[i + 1:]:
+                d = math.hypot(r["centre"][0] - s["centre"][0], r["centre"][2] - s["centre"][2])
+                if d < self.rules["nests"]["spacing"]:
+                    self.bad(sysid, "nests %s and %s are %.0f apart (%d wanted)" % (r["id"], s["id"], d, self.rules["nests"]["spacing"]))
+
+    def check_traps(self, sysid, X, Y, Z, mouths):
+        """Every standing cell the first mouth's walk reaches can walk back out of SOME mouth (a one-way drop into a dead end is a
+        softlock). The step rules are check_walk's, read backwards."""
+        cells = set(zip(X.tolist(), Y.tolist(), Z.tolist()))
+        stand = {(x, y, z) for (x, y, z) in cells if (x, y + 1, z) in cells and (x, y - 1, z) not in cells}
+        rev = {}
+        for (x, y, z) in stand:
+            for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                for dy in (0, 1, -1, -2, -3):
+                    p = (x + dx, y + dy, z + dz)
+                    if p not in stand:
+                        continue
+                    if dy == 1 and (x, y + 2, z) not in cells:
+                        continue
+                    if dy < 0 and (x + dx, y + 1, z + dz) not in cells:
+                        continue
+                    rev.setdefault(p, []).append((x, y, z))
+                    break
+        out = set()
+        for m in mouths:
+            c = [p for p in stand if abs(p[0] - m["x"]) <= 3 and abs(p[2] - m["z"]) <= 3]
+            if c:
+                out.add(max(c, key=lambda p: p[1]))
+        q = deque(out)
+        while q:
+            c = q.popleft()
+            for a in rev.get(c, ()):
+                if a not in out:
+                    out.add(a)
+                    q.append(a)
+        reached = getattr(self, "_standing", set())
+        trapped = [p for p in reached if p not in out]
+        self.report[sysid]["trapped_standing_cells"] = len(trapped)
+        if trapped:
+            self.bad(sysid, "%d standing cells can be walked to but no mouth can be walked back to from them (first %s)" % (len(trapped), min(trapped)))
+
     # -- the whole run
     def run(self):
         self.replay()
@@ -765,9 +999,13 @@ class Audit:
             self.check_water(sysid, X, Z)
             self.check_authored(sysid, X, Z)
             self.check_mouths(sysid, X, Y, Z, s["mouths"])
-            self.check_walk(sysid, X, Y, Z, s["mouths"])
+            self._standing = set()
+            self._dist = self.check_walk(sysid, X, Y, Z, s["mouths"])
+            self.check_traps(sysid, X, Y, Z, s["mouths"])
             self.check_caverns(sysid, X, Y, Z)
-            self.check_dress(sysid, X, Y, Z, s["mouths"])
+            ore = self.check_dress(sysid, X, Y, Z, s["mouths"])
+            self.check_live(sysid, X, Y, Z, s["mouths"])
+            self.check_nests(sysid, s, X, Y, Z, ore or [])
             rp = self.report[sysid]
             if rp.get("reachable_floor_columns", 0) < 6 * 1500:
                 self.bad(sysid, "only %s reachable floor columns: under 1500 per player for six players" % rp.get("reachable_floor_columns"))

@@ -28,6 +28,7 @@ DATA = ROOT / "data"
 # geometry; scanned as an authored place it would make each network keep 32 blocks from its own crew and regrow differently
 # once the file existed (found the first time it was written: the main-line cells vanished)
 SKIP_FILES = {"mine_networks.json", "mine_crew_trainers.json", "world.json", "regions.json", "cells.json"}
+NEST_PREFIX = "mine_nest_"
 
 
 # ------------------------------------------------------------------ rasters
@@ -107,6 +108,10 @@ def _num(v):
 
 def _walk(o, pts, rects, segs):
     if isinstance(o, dict):
+        if str(o.get("id", "")).startswith(NEST_PREFIX):
+            # the networks' own nest-room Habitat Blocks (tools/nest_rooms.py) sit inside them: scanned as authored places they
+            # would make each network keep 32 from its own rooms and regrow, as mine_crew_trainers.json would have
+            return
         if _num(o.get("x")) and _num(o.get("z")):
             pts.append((o["x"], o["z"]))
         if all(_num(o.get(k)) for k in ("min_x", "max_x", "min_z", "max_z")):
