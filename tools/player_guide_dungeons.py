@@ -138,9 +138,20 @@ class Dex:
 
     def item(self, ident):
         if ident in ITEM_NAMES:
-            return ITEM_NAMES[ident]
-        ns, _, path = ident.rpartition(":")
-        return self.lang.get("item.%s.%s" % (ns, path)) or pretty(ident)
+            name = ITEM_NAMES[ident]
+        else:
+            ns, _, path = ident.rpartition(":")
+            name = self.lang.get("item.%s.%s" % (ns, path)) or pretty(ident)
+        # an item named after a legendary-class Pokemon names that Pokemon (the owner, 2026-10-23: "hide calyrex on the
+        # site"; the page printed "Calyrex Crown"): the drop is listed by kind only, as the page's prizes are
+        if not hasattr(self, "_legend_words"):
+            self._legend_words = {self.name(sp).lower() for sp, s in self.species.items()
+                                  if s["labels"] & LEGEND_LABELS and self.name(sp)}
+        words = set(re.findall(r"[a-z][a-z'-]*", name.lower()))
+        if words & self._legend_words:
+            self.withheld_items = getattr(self, "withheld_items", set()) | {ident}
+            return "a legendary relic"
+        return name
 
 
 # ------------------------------------------------------------------------------------------------ small formatters

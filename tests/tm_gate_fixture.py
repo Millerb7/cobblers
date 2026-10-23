@@ -25,6 +25,27 @@ SHELF_GEM = {
     "psywave": "psychic", "calmmind": "psychic", "skillswap": "psychic",
     "overheat": "fire", "fireblast": "fire", "fissure": "ground", "earthquake": "ground",
 }
+# the 29 answer TMs the tier shelves sell since 2026-10-22 (data/markets.json price_policies.tm_tier, ECONOMY_V3.md 3.3),
+# each at its power-rule badge, so the shelf moves no craft badge: with their recipes here the fixture server crafts
+# every shelf TM, as the real one does
+SHELF_GEM.update({
+    "absorb": "grass", "dig": "ground", "sandtomb": "ground", "mudslap": "ground",
+    "flamecharge": "fire", "aerialace": "flying", "wingattack": "flying", "icywind": "ice", "bugbite": "bug",
+    "acidspray": "poison", "psybeam": "psychic", "bulldoze": "ground", "mudshot": "ground", "confusion": "psychic",
+    "crunch": "dark", "darkpulse": "dark", "shadowclaw": "ghost", "signalbeam": "bug",
+    "surf": "water", "liquidation": "water", "stoneedge": "rock", "powergem": "rock",
+    "icepunch": "ice", "energyball": "grass", "leafblade": "grass",
+    "dracometeor": "dragon", "moonblast": "fairy", "closecombat": "fighting", "psyshock": "psychic",
+})
+# the 18 utility TMs the first two tier shelves sell since 2026-10-22 (data/markets.json price_policies.tm_tier.utility;
+# the owner: "some tms that arent op should be accessible"), each at its power-rule badge, so again no craft badge moves
+SHELF_GEM.update({
+    "firespin": "fire", "whirlpool": "water", "smog": "poison", "astonish": "ghost", "infestation": "bug",
+    "endure": "normal", "healbell": "normal", "attract": "normal",
+    "protect": "normal", "falseswipe": "normal", "rocksmash": "fighting", "ember": "fire", "thundershock": "electric",
+    "vinewhip": "grass", "watergun": "water", "gust": "flying", "raindance": "water", "sunnyday": "fire",
+})
+LEADER_SHELF = 23   # the eight leaders' first-win pools; the rest of SHELF_GEM are the tier shelves' TMs
 # discs chosen so the grade envelope is easy to state: diamond 3 (Thunder), emerald 5 (Toxic), netherite 7 (Overheat)
 SHELF_DISC = {"thunder": "diamond", "earthquake": "diamond", "overheat": "netherite", "fissure": "netherite",
               "toxic": "emerald", "calmmind": "emerald"}

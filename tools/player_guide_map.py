@@ -60,6 +60,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import compile_spawns  # noqa: E402
 import player_site  # noqa: E402  the shared header, footer, stylesheet and manifest of docs/player/
 import terrain  # noqa: E402
+import entrance_sites  # noqa: E402  the six caves and mines: entrances, depth, towns, trails
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = ROOT / "docs" / "player" / "region-map.html"
@@ -498,7 +499,7 @@ function setVB(){svg.setAttribute('viewBox',vb.join(' '));const r=svg.getBoundin
  const upp=Math.max(vb[2]/(r.width||800),vb[3]/(r.height||800));
  svg.querySelectorAll('.lbl').forEach(t=>{const px=+t.dataset.s;t.setAttribute('font-size',(px*upp).toFixed(1));
  t.setAttribute('stroke-width',(px*upp/5).toFixed(1));if(t.dataset.dy)t.setAttribute('dy',(-px*upp*0.9).toFixed(1))});
- svg.querySelectorAll('.dot').forEach(c=>c.setAttribute('r',(3.5*upp).toFixed(1)));
+ svg.querySelectorAll('.dot,.pit').forEach(c=>c.setAttribute('r',(3.5*upp).toFixed(1)));
  const al=document.getElementById('L-alabels');const show=document.getElementById('t-alabels').checked&&upp<8;
  al.style.display=show?'':'none';}
 window.addEventListener('resize',()=>setVB());
@@ -528,7 +529,7 @@ document.getElementById('zreset').onclick=()=>{vb=W.slice();setVB()};
 function fitTo(b){const pad=Math.max(b[2],b[3])*0.35+120;const w=Math.max(b[2]+2*pad,MINW*2),h=Math.max(b[3]+2*pad,MINW*2);
  const r=svg.getBoundingClientRect();const asp=r.width/r.height||1;let nw=Math.max(w,h*asp),nh=nw/asp;
  vb=[b[0]+b[2]/2-nw/2,b[1]+b[3]/2-nh/2,nw,nh];setVB()}
-['routes','outlines','towns','alabels','centre'].forEach(k=>{const c=document.getElementById('t-'+k);
+['routes','outlines','towns','alabels','centre','caves'].forEach(k=>{const c=document.getElementById('t-'+k);
  c.onchange=()=>{document.getElementById('L-'+k).style.display=c.checked?'':'none';setVB()}});
 function clearMarks(){svg.classList.remove('has-sel','has-hit');svg.querySelectorAll('.sel,.hit').forEach(n=>n.classList.remove('sel','hit'))}
 function table(rows,showPos){let h='';const groups={};rows.forEach(r=>(groups[r.pos]=groups[r.pos]||[]).push(r));
@@ -606,6 +607,59 @@ def wild_species(pack_pools=None):
     bucket_weights = {b: float(cfg["worldBuckets"][b]) for b in BUCKETS}
     model = build_model(pack_pools if pack_pools is not None else compile_pack(), small, sea, bucket_weights)
     return {r["sp"]: r["name"] for a in model["areas"] for r in a["rows"]}
+
+
+UNDERGROUND = Path(__file__).resolve().parent.parent / "data" / "underground_spawns.json"
+SHOWN_RARITIES = ("common", "uncommon")   # rare and ultra-rare finds stay a discovery, as the rest of the site keeps them
+
+
+def underground_cell(system_id):
+    """What lives underground in one system, by depth band, from data/underground_spawns.json (the same data the server's
+    cobblers_underground_spawns pack is generated from): common and uncommon species with their levels."""
+    doc = json.loads(UNDERGROUND.read_text(encoding="utf-8"))
+    rec = next((s for s in doc["systems"] if s["id"] == system_id), None)
+    if rec is None:
+        return "none mapped"
+    out = []
+    for band, label in (("shallow", "Upper"), ("mid", "Middle"), ("deep", "Deep")):
+        b = rec["bands"].get(band)
+        if not b:
+            continue
+        names = ["%s %s" % (sp.replace("_", " ").title(), lv) for sp, lv, rarity, _w in b["entries"] if rarity in SHOWN_RARITIES]
+        rare = any(rarity not in SHOWN_RARITIES for _sp, _lv, rarity, _w in b["entries"])
+        out.append("<b>%s</b> (y%d to y%d): %s%s" % (label, b["minY"], b["maxY"], html.escape(", ".join(names)),
+                                                    ", and rarer finds" if rare else ""))
+    return "<br>".join(out)
+
+
+def caves_section(sites):
+    """The "Caves and mines" section: one row a place. See tools/entrance_sites.py for where each figure comes from."""
+    e = html.escape
+    rows = ""
+    for st in sites:
+        ents = "".join("<li>Entrance %d: x %d, z %d, ground y%d</li>" % (k + 1, en["x"], en["z"], en["y"])
+                       for k, en in enumerate(st["entrances"]))
+        trail = ""
+        if st["trails"]:
+            trail = "; ".join("a lantern-lit trail from %s to its entrance, signposted where it starts" % e(t["from"]) for t in st["trails"])
+        else:
+            trail = "no trail and no sign: follow the waypoint"
+        town = ("Ask a resident of %s: they will offer a map waypoint to one entrance." % e(st["guide_town"])) if st["guide_town"] else ""
+        lv = ("%d-%d" % st["levels"]) if st["levels"] else "not on a mapped encounter area"
+        rows += ('<tr data-cave><td><strong>%s</strong><br>%s</td><td><ul>%s</ul></td><td>%s</td><td>%s</td><td class="n">%s</td>'
+                 '<td>%s</td></tr>'
+                 % (e(st["name"]), "cave system" if st["kind"] == "cave" else "mine", ents, e(st["depth"]),
+                    "%s %s" % (trail, town), e(lv), underground_cell(st["id"])))
+    return ('<section class="doc" id="caves"><h2>Caves and mines</h2><p>Six large places to dig and to fight in the dark, with '
+            'coal, iron, copper, lapis, gold, redstone and diamond in the walls, richer the deeper and the farther from a town. '
+            'The three <b>cave systems</b> are natural passages in the west; the three <b>mines</b> are old timbered workings in '
+            'the east, with rails, inclines and ladders between their levels. Their entrances are the orange dots on the map '
+            '(the "Caves and mines" layer). Bring light: the only lanterns are at the entrances.</p>'
+            '<table><thead><tr><th>Place</th><th>Entrances</th><th>How deep</th><th>Finding it</th><th class="n">Wild levels '
+            'at the entrances</th><th>Underground Pokemon</th></tr></thead><tbody>%s</tbody></table>'
+            '<p class="small">Wild levels are those of the surface encounter areas the entrances stand in (the tables above); '
+            'underground Pokemon spawn by depth (the last column; a few nest rooms off side passages hold more). Depths are '
+            'the plans these places were generated from (about, not surveyed in a running game).</p></section>' % rows)
 
 
 def build_page(pack_pools, source_note):
@@ -691,6 +745,16 @@ def build_page(pack_pools, source_note):
         labelled.append(name)
     alabels = "".join('<text class="lbl area-l" x="%d" y="%d" data-s="11">%s</text>'
                       % (*label_point(a["boxes"]), html.escape(a["name"])) for a in areas if a["kind"] != "route")
+    import ground as G
+    gr = G.Ground()
+    sites = entrance_sites.sites(gr, areas)
+    pit_svg = ""
+    for st in sites:
+        for k, en in enumerate(st["entrances"]):
+            pit_svg += '<circle class="pit" cx="%d" cy="%d" r="28"><title>%s, entrance %d (x %d, z %d)</title></circle>' % (
+                en["x"], en["z"], html.escape(st["name"]), k + 1, en["x"], en["z"])
+        pit_svg += '<text class="lbl pit-l" x="%d" y="%d" data-s="11" data-dy="1">%s</text>' % (
+            st["entrances"][0]["x"], st["entrances"][0]["z"], html.escape(st["name"]))
     img = base64.b64encode(jpeg).decode("ascii")
     svg = ('<svg id="map" xmlns="http://www.w3.org/2000/svg" viewBox="%d %d %d %d" preserveAspectRatio="xMidYMid meet" '
            'role="img" aria-label="Shaded relief map of the region with its encounter areas">'
@@ -699,8 +763,8 @@ def build_page(pack_pools, source_note):
            '<rect x="12" width="12" height="24" fill="#222"/></pattern></defs>'
            '<image href="data:image/jpeg;base64,%s" x="0" y="0" width="8192" height="8192" preserveAspectRatio="none"/>'
            '<g id="L-areas">%s</g><g id="L-outlines">%s</g><g id="L-routes">%s</g><g id="L-centre">%s</g>'
-           '<g id="L-alabels">%s</g><g id="L-towns">%s</g></svg>'
-           % (*view, img, area_svg, outlines, route_svg, centre, alabels, town_svg))
+           '<g id="L-alabels">%s</g><g id="L-towns">%s</g><g id="L-caves">%s</g></svg>'
+           % (*view, img, area_svg, outlines, route_svg, centre, alabels, town_svg, pit_svg))
 
     notes = data_notes(model, bucket_weights)
     ex = model["excluded"]
@@ -754,6 +818,7 @@ def build_page(pack_pools, source_note):
         'spawns under a roof or in a cave.</li>'
         '<li>No campaign spawn is limited by biome: the area is the condition. Conditions that do apply are written '
         'under the Pokemon\'s name.</li></ul></section>' % (sea, bw))
+    caves_html = caves_section(sites)
     excluded_html = (
         '<section class="doc" id="not-covered"><h2>What this map does not show</h2><ul>'
         '<li><b>It is not everything.</b> Outside the campaign\'s areas the modpack\'s own default spawns still run '
@@ -783,9 +848,10 @@ def build_page(pack_pools, source_note):
             '<label><input type="checkbox" id="t-centre" checked> Route lines</label>'
             '<label><input type="checkbox" id="t-outlines" checked> Borders</label>'
             '<label><input type="checkbox" id="t-alabels" checked> Area names</label>'
-            '<label><input type="checkbox" id="t-towns" checked> Towns</label></div>'
-            '<div id="coord">x - z -</div></section><aside id="panel"></aside></main>%s%s%s%s'
-            % (svg, intro, legend, excluded_html, notes_html))
+            '<label><input type="checkbox" id="t-towns" checked> Towns</label>'
+            '<label><input type="checkbox" id="t-caves" checked> Caves and mines</label></div>'
+            '<div id="coord">x - z -</div></section><aside id="panel"></aside></main>%s%s%s%s%s'
+            % (svg, intro, legend, caves_html, excluded_html, notes_html))
     end = ('<script id="data" type="application/json">%s</script><script>%s</script>\n'
            % (json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/"), JS))
     page = player_site.page(GUIDE, body, body_class="page-map", tools_html=tools, end_html=end,

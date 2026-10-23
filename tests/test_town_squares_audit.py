@@ -852,3 +852,23 @@ def test_mutation_tent_built_without_clearing_its_footprint_is_caught(tmp_path, 
     caught = {k.rsplit(":", 1)[0] for c, k, _m in res["problems"] if c == "stall" and k.endswith(":air0")}
     n = sum(len(t["stalls"]) for t in A.load(ROOT / "data" / "plaza_centres.json")["towns"].values())
     assert len(caught) == n == 49     # 43 until 2026-10-05; the six new squares added 8, the Displaced City's 2 held (data/held/)
+
+
+# Without it a TM shelf line (data/markets.json price_policies.tm_tier, 2026-10-22: TM shops for both modes) could be
+# sold under its tier's price, at a tier its counter does not sell, or above its craft badge, and this audit would pass
+# it: it is gated by its tier and its town, priced against the PATH income (income_basis.path), read from the data
+def test_a_tm_tier_line_is_gated_by_its_tier_and_the_path_income():
+    import copy
+    doc = A.load(ROOT / "data" / "markets.json")
+    power = lambda d: [m for c, k, m in A.item_checks(d, set(), set())[0] if c == "power" and "tmcraft:" in m]  # noqa: E731
+    assert power(doc) == []
+    tm = [(c, it) for c in doc["counters"] for it in c.get("stock") or [] if it.get("price_rule") == "tm_tier"]
+    assert len(tm) == 80        # 62 + the 18 utility lines of 2026-10-22 (price_policies.tm_tier.utility)
+    for mutate, why in ((lambda it: it.update(price=it["price"] - 100), "under the rule"),
+                        (lambda it: it.update(tier=it["tier"] + 1), "on a counter that sells tier"),
+                        (lambda it: it.update(gate_badge=it["tier"] + 1), "before its craft badge")):
+        bad = copy.deepcopy(doc)
+        line = next(it for c in bad["counters"] if c["id"] == "viltri_quay" for it in c["stock"]
+                    if it.get("price_rule") == "tm_tier")
+        mutate(line)
+        assert any(why in m for m in power(bad)), (why, power(bad))

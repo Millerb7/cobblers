@@ -22,6 +22,13 @@ tool runs and recorded in the output's "derivation", so the rule can be re-check
   site       a placed Habitat Block pool that is not Victory Road's, not an elder tree's and not a sapling's: a
              building or hollow with a table of its own (the Route 1 mansion). Titled by its settlement's title.
 
+  dungeon    (2026-10-23, the owner) each data/dungeons.json dungeon is ONE encounter, whatever its level; they are listed
+             under the output's top-level "dungeons", not in "zones", so every consumer of the area zones is unchanged.
+  legendaries (2026-10-23, the owner: "nuzlocke page should show dungeons and legendaries per area, so a player can
+             count those"; named, on the Nuzlocke page only) every legendary-class encounter OUR data authors
+             (legendary_register() lists its sources) is a row under "legendaries" of the zone whose ground holds it.
+             Starters and gifts are not wild encounters and get no row; see LEGEND_NOT_COVERED.
+
 NOT ZONES (each listed in the output with its reason): a heart (ENCOUNTER_DESIGN.md section 10: a rarer spot inside
 an area, never a first-encounter area); an elder tree's or sapling's Habitat Block pool (a few blocks inside its
 sub-region, named for it: an encounter there is that sub-region's); a Habitat Block pool with no placed block (not in
@@ -52,7 +59,8 @@ VR_SUBTITLE = "Victory Road"
 # fungal_south and untitled by any settlement, so once placed they would otherwise raise below
 # cave_*: the cave kit's pools (tools/caves.py, data/caves.json), each a few dozen blocks inside the sub-region its chamber is in;
 # sanctuary_*: the legendary sanctuaries' court pools that replaced them on 2026-10-12 (tools/sanctuaries.py), the same kind of site
-MICRO_SITE = re.compile(r"^(elder|sapling|fungal|scar_tarn|cave|sanctuary|tbird)_|_sapling_")  # tbird_: a tree's storey nests (tools/tree_birds.py), part of their tree
+# mine_nest_*: the mine networks' nest rooms (tools/mine_networks.py, 2026-10-22), the same kind of site as the cave kit's
+MICRO_SITE = re.compile(r"^(elder|sapling|fungal|scar_tarn|cave|sanctuary|tbird|mine_nest)_|_sapling_")  # tbird_: a tree's storey nests (tools/tree_birds.py), part of their tree
 
 
 def load(name):
@@ -80,7 +88,7 @@ def level_span(spawns, scope):
 def settlement_at(x, z):
     """(id, name) of the titled settlement whose box holds the column, from tools/location_titles.py's own list."""
     import location_titles as LT
-    for s in LT.settlements(LT.regions()):
+    for s in LT.settlements(LT.regions(), with_y=False):      # the column box only: no derived/cavern plan needed
         x0, z0, x1, z1 = s["box"]
         if x0 <= x <= x1 and z0 <= z <= z1:
             return s["id"], s["name"], s["region"]
@@ -268,6 +276,12 @@ def build(ground=None):
     kinds = {}
     for z in zones:
         kinds[z["kind"]] = kinds.get(z["kind"], 0) + 1
+    # ---------------------------------------------------------------- legendaries per zone, and the dungeon zones
+    by_zone, legend_report = legendary_register(zones)
+    for z in zones:
+        if by_zone.get(z["zone"]):
+            z["legendaries"] = by_zone[z["zone"]]
+    dungeon_zones = dungeons()
     return {
         "schema": "cobblers.nuzlocke_zones/1",
         "generated_by": "tools/nuzlocke_zones.py from data/regions.json, encounter_design.json, spawns.json, "
@@ -278,7 +292,9 @@ def build(ground=None):
                 "sapling, a heart). A route leg is not a zone: it crosses several. docs/mechanics/NUZLOCKE_ZONES.md.",
         "titles": "Every zone is titled on entry by cobblers_titles (tools/location_titles.py): land, sea, waterway "
                   "and cave zones by their own name over their subtitle; a site zone by its settlement's title.",
-        "counts": dict(sorted(kinds.items()), total=len(zones), not_zones=len(not_zones)),
+        "counts": dict(sorted(kinds.items()), total=len(zones), not_zones=len(not_zones),
+                       dungeons=len(dungeon_zones), legendaries=legend_report["rows"],
+                       legendary_species=legend_report["species"]),
         "derivation": {
             "tables_are_subregions": "data/encounter_design.json has %d tables and data/regions.json %d sub-regions, "
                                      "the same ids" % (len(tables), len(sub_ids)),
@@ -287,8 +303,261 @@ def build(ground=None):
         },
         "legs": legs,
         "zones": zones,
+        "dungeon_rule": DUNGEON_RULE,
+        "dungeons": dungeon_zones,
+        "legendary_register": legend_report["register"],
         "not_zones": not_zones,
     }
+
+
+# ------------------------------------------------------------------------------------------------ legendaries, dungeons
+LEGEND_LABELS = {"legendary", "mythical", "ultra_beast", "paradox"}      # the labels the site never names elsewhere
+DUNGEON_RULE = ("The owner, 2026-10-23: \"i think it shouldnt do the rift site necessarily, just dungeon name so like if "
+                "im doing the night shift, i have 1 encounter no matter the level.\" Each data/dungeons.json dungeon is "
+                "ONE encounter zone, whatever band the run is drawn at and wherever its rift opened. A legendary-class "
+                "boss or prize inside a dungeon belongs to that one encounter and is not a row of its own.")
+# data/adopted_legendary_sites.json site id -> the species its altar or tower holds. The record's `legendary` is display
+# text ("Calyrex, with Spectrier", "Necrozma (Dawn Wings)"), so the species ids are typed here and each is checked
+# against that text when the register is built; a new site with no entry here stops the build.
+SITE_SPECIES = {
+    "adopted_mew_temple": ["mew"], "adopted_crown_cemetery": ["calyrex", "spectrier"],
+    "adopted_zapdos_tower": ["zapdos"], "adopted_articuno_shrine": ["articuno"],
+    "adopted_dawn_tower": ["necrozma"], "adopted_dusk_tower": ["necrozma"], "adopted_moltres_tower": ["moltres"],
+    "adopted_crown_spire": ["glastrier"], "sweep_newmoon_island": ["darkrai"],
+}
+# data/dungeon_prize_roster.json lists these as `placed`, but the place is a dungeon's prize pool (its `where` says so)
+DUNGEON_PRIZES = ("volcanion", "zarude", "regidrago")
+# roster species that are neither a row, a dungeon's, nor a starter line, each with why
+EXCLUDED = {
+    "mewtwo": "a gift: the COBBLEVERSE-DP fossil revive (the owner: \"Mewtwo stays on the fossil route\"); no place to count it in",
+    "entei": "a boss fight in a pocket dimension entered from the Nether (data/entei_boss.json); the Nether is not a catch zone here and the fight is a dungeon-type boss",
+    "eternatus": "OUT by the owner until a Galar Particle supply exists (data/adopted_legendary_sites.json owner_decisions_2026_10_02)",
+    "lugia": "data/legendaries.json lugia is BLOCKED (the trench cannot exist): nowhere in the world",
+    "wochien": "a Nether shrine that stays where Cobbleverse generates it; the Nether is not a catch zone here",
+    "chienpao": "a Nether shrine that stays where Cobbleverse generates it; the Nether is not a catch zone here",
+    "tinglu": "a Nether shrine that stays where Cobbleverse generates it; the Nether is not a catch zone here",
+    "chiyu": "a Nether shrine that stays where Cobbleverse generates it; the Nether is not a catch zone here",
+}
+LEGEND_NOT_COVERED = [
+    "Dungeon bosses and prizes (data/dungeon_prize_roster.json status to_dungeon, and the prize pools of data/dungeons.json): the dungeon is one encounter, so its legendary is that encounter, not a row.",
+    "Starters and gifts: every species of a data/mythical_starters.json line (the starter screen and its evolutions), the fossil revive, rideable mounts (data/water_mounts.json) and quest or shop items. A species that also has a WILD entry in data/spawns.json (Poipole at the two Necrozma towers) is a row through that entry.",
+    "The Nether and its tables, the Nether boss pockets (Entei) and the Nether shrines Cobbleverse generates.",
+    "Anything Cobbleverse's own datapacks or mods spawn that this repository's data does not name: inherited legendary spawn presets not switched off by data/spawn_suppression.json, structures that generate on their own, Cobblemon raid dens, Terapagos on amethyst in caves. This register is read from OUR data, not from the world (CLAUDE.md 'Our list is not the world').",
+    "Hidden rows of the same site: a row is the species at its authored site; nothing here says a site is built, gated open or findable in a running game.",
+]
+
+
+_LEGEND = []
+
+
+def compact(s):
+    """A species id in the jar's spelling: first word, lower case, letters and digits ("articuno galarian" -> articuno,
+    "cobblemon:hoopa" -> hoopa, "Type: Null" -> typenull is the caller's job)."""
+    return re.sub(r"[^a-z0-9]", "", (str(s).split() or [""])[0].split(":")[-1].lower())
+
+
+def legend_class():
+    """The Cobblemon jar's species ids whose labels include legendary, mythical, ultra_beast or paradox."""
+    if not _LEGEND:
+        import zipfile
+        import player_guide_battles as PB
+        z = zipfile.ZipFile(PB.find_jar())
+        out = set()
+        for n in z.namelist():
+            m = re.fullmatch(r"data/cobblemon/species/[^/]+/([a-z0-9_]+)\.json", n)
+            if m and set(json.loads(z.read(n).decode("utf-8")).get("labels") or []) & LEGEND_LABELS:
+                out.add(m.group(1))
+        if len(out) < 100:
+            raise SystemExit("only %d legendary-class species in the Cobblemon jar: wrong jar?" % len(out))
+        _LEGEND.append(out)
+    return _LEGEND[0]
+
+
+class Locator:
+    """The zone a world column belongs to: the sub-region polygon holding it, else the sea band whose boxes hold it
+    (the same boxes the spawn pack and the titles use). A column in neither is an error, not a guess."""
+
+    def __init__(self, zones):
+        self.subs = load("regions.json")["subregions"]
+        self.ids = {z["zone"] for z in zones}
+        self.bands = None
+
+    def zone(self, x, z):
+        """The zone id, or None when the column is in a sub-region that is not a zone (under the sea)."""
+        import subregion_boxes as SB
+        for s in self.subs:
+            if any(SB.point_in_polygon(x, z, poly) for poly in s["polygons"]):
+                return s["id"] if s["id"] in self.ids else None
+        if self.bands is None:
+            import location_titles as LT
+            self.bands = LT._marine_bands()
+        for bid, boxes in self.bands.items():
+            if bid in self.ids and any(b[0] <= x <= b[1] and b[2] <= z <= b[3] for b in boxes):
+                return bid
+        raise SystemExit("column (%d, %d) is in no sub-region polygon and no sea band: no zone holds it" % (x, z))
+
+
+def dungeons():
+    """One encounter zone per data/dungeons.json dungeon, by its player-facing name."""
+    out = [{"zone": "dungeon_" + d["id"], "dungeon": d["id"], "name": d["name"],
+            "table": "data/dungeons.json dungeons.%s" % d["id"]} for d in load("dungeons.json")["dungeons"]]
+    if len({d["name"] for d in out}) != len(out):
+        raise SystemExit("two dungeons share a player-facing name")
+    return out
+
+
+def legendary_register(zones, loc=None):
+    """({zone id: [row]}, report): every legendary-class encounter OUR data authors, placed in the zone whose ground holds it.
+
+    A row is {species, sources}; no coordinate is written (see the comment at the end). The zone is the one holding the
+    column its source gives (Locator): for an encounter in a pocket dimension or underground, the column of its entrance
+    or the surface above it. Sources, each read from its own file:
+      data/legendaries.json            sited chambers, grottos and the tree crown, and the Celebi wake (sapling_celebi.json)
+      data/adopted_legendary_sites.json  every adopted and sweep site, its footprint centre (tools/adopted_sites.py)
+      data/sanctuaries.json            each occupant and co-occupant, at the sanctuary's centre
+      data/spawns.json                 every ambient, non-heart entry of a legendary-class species, by its scope
+      hoopa_cradle, frostpeak_keep(_quest), coldwater_station, rayquaza_sky, research_station
+                                       the authored one-off encounters, each at the position its own file gives
+    The register is then checked against data/dungeon_prize_roster.json (a record of every legendary-class species and
+    its one home): a roster species that is none of a row, a dungeon's, a starter's or a listed exclusion stops the build.
+    """
+    import adopted_sites as A
+    legend = legend_class()
+    loc = loc or Locator(zones)
+    found, not_placed = {}, []
+
+    def put(zid, species, source, at):
+        sp = compact(species)
+        if sp not in legend:
+            raise SystemExit("%s names %r, which the Cobblemon jar does not label legendary-class" % (source, species))
+        row = found.setdefault((zid, sp), {"species": sp, "sources": [], "at": at})
+        if row["at"] is None:
+            row["at"] = at
+        if source not in row["sources"]:
+            row["sources"].append(source)
+
+    def add(species, x, z, source):
+        zid = loc.zone(int(x), int(z))
+        if zid is None:
+            not_placed.append({"species": compact(species), "what": source,
+                               "why": "its column (%d, %d) is in a sub-region under the sea, which is not a zone" % (x, z)})
+            return
+        put(zid, species, source, [int(x), int(z)])
+
+    # ---- data/legendaries.json
+    for r in load("legendaries.json")["encounters"]:
+        src = "data/legendaries.json %s (%s)" % (r["id"], r["kind"])
+        if r["status"] == "sited":
+            at = r["mouth"] if r["kind"] == "lake_grotto" else r["portal"]
+            add(r["species"], at[0], at[1], src)
+        elif r["status"] == "gate_only" and r["kind"] == "sapling_wake":
+            pos = load("sapling_celebi.json")["position"]
+            add(r["species"], pos[0], pos[2], src + " at data/sapling_celebi.json position")
+        else:
+            not_placed.append({"species": compact(r["species"]), "what": src,
+                               "why": "status %s (%s): not in the world" % (r["status"], r.get("blocked_by") or "not built")})
+    # ---- data/adopted_legendary_sites.json
+    placements = load("placements.json")["placements"]
+    sites = A.sites()
+    if set(SITE_SPECIES) != {s["id"] for s in sites}:
+        raise SystemExit("adopted sites and tools/nuzlocke_zones.py SITE_SPECIES differ: %s"
+                         % sorted(set(SITE_SPECIES) ^ {s["id"] for s in sites}))
+    site_at = {}
+    for s in sites:
+        x, z = A.centre(s, placements)
+        site_at[s.get("scheduled_as") or s["id"]] = (x, z)
+        for sp in SITE_SPECIES[s["id"]]:
+            if sp not in re.sub(r"[^a-z0-9 ]", " ", s["legendary"].lower()).split():
+                raise SystemExit("%s: SITE_SPECIES says %s, its legendary text says %r" % (s["id"], sp, s["legendary"]))
+            add(sp, x, z, "data/adopted_legendary_sites.json %s" % s["id"])
+    # ---- data/sanctuaries.json
+    for s in load("sanctuaries.json")["sanctuaries"]:
+        occ = s["occupant"]
+        for sp in [occ["species"]] + list(occ.get("co_occupants") or []):
+            add(sp, s["site"]["centre"][0], s["site"]["centre"][1], "data/sanctuaries.json %s (%s)" % (s["id"], occ["mode"]))
+    # ---- data/spawns.json: wild entries of a legendary-class species, by scope
+    spawns = load("spawns.json")
+    zone_by = {z["zone"]: z for z in zones}
+    pool_zone = {p: z["zone"] for z in zones for p in z.get("pools") or ()}
+    sunk = {s["id"] for s in load("regions.json")["subregions"]} - set(zone_by)
+    sites_by_id = {p["id"]: p for p in spawns.get("placement_sites") or []}
+    placed = {}
+    for b in load("habitat_blocks.json")["blocks"]:
+        if b.get("status") == "placed":
+            placed.setdefault(b["pool"].split(":", 1)[1], []).append(b)
+    for e in spawns["entries"]:
+        if not (e.get("ambient") and e.get("weight", 0) > 0 and not e.get("heart")) or compact(e["species"]) not in legend:
+            continue
+        sc, src = e["scope"], "data/spawns.json entry %s in %s" % (e["species"], e["scope"])
+        if sc in zone_by:
+            put(sc, e["species"], src, None)
+        elif sc in sunk:
+            not_placed.append({"species": compact(e["species"]), "what": src, "why": "its sub-region is under the sea and not a zone"})
+        elif sc in pool_zone:
+            put(pool_zone[sc], e["species"], src, None)
+        elif sc in sites_by_id:
+            x, z = site_at[sites_by_id[sc]["placement"]]
+            add(e["species"], x, z, src)
+        elif sc in placed:
+            p = placed[sc][0]["position"]
+            add(e["species"], p["x"], p["z"], src)
+        elif e["mechanism"] == "habitat_block":
+            not_placed.append({"species": compact(e["species"]), "what": src, "why": "no placed Habitat Block carries the pool: not in the world yet"})
+        else:
+            raise SystemExit("%s: a legendary-class wild entry whose scope is no zone, site or pool this tool knows" % src)
+    # ---- the authored one-offs, each at its own file's position
+    h = load("hoopa_cradle.json")
+    add(h["species"], h["spot"][0], h["spot"][2], "data/hoopa_cradle.json spot (underground, at the surface above it)")
+    g = load("frostpeak_keep_quest.json")["giratina"]
+    c = load("frostpeak_keep.json")["site"]["centre"]
+    add(g["species"], c[0], c[1], "data/frostpeak_keep_quest.json giratina at data/frostpeak_keep.json site.centre")
+    cw = load("coldwater_station.json")["site"]
+    add("kyogre", cw["corner"][0] + cw["size"] // 2, cw["corner"][1] + cw["size"] // 2,
+        "data/kyogre_cave.json, entered from the Coldwater Station (data/coldwater_station.json site)")
+    ry = load("rayquaza_sky.json")["site"]["summit"]
+    add("rayquaza", ry["x"], ry["z"], "data/rayquaza_sky.json site.summit")
+    sh = load("research_station.json")["shrine"]
+    for sp in ("latias", "latios"):
+        add(sp, sh[sp]["at"][0], sh[sp]["at"][1], "data/research_station.json shrine.%s" % sp)
+    for row in found.values():
+        row["sources"].sort()
+
+    # ---- the roster cross-check: every legendary-class species has one home, and this tool must know which
+    roster = load("dungeon_prize_roster.json")["species"]
+    rows_species = {sp for _z, sp in found}
+    starters = {compact(s) for ln in load("mythical_starters.json")["lines"] for s in ln.get("learnset_from") or []}
+    held = sorted(sp for sp, v in roster.items() if v.get("status") == "to_dungeon" or sp in DUNGEON_PRIZES)
+    excluded = []
+    for sp, v in sorted(roster.items()):
+        if sp in rows_species or sp in held:
+            continue
+        if sp in starters:
+            excluded.append({"species": sp, "why": "a starter line (data/mythical_starters.json) or a gift, not a wild encounter"})
+        elif sp in EXCLUDED:
+            excluded.append({"species": sp, "why": EXCLUDED[sp]})
+        else:
+            raise SystemExit("data/dungeon_prize_roster.json gives %s a home (%s: %s) that neither a row, a dungeon, a "
+                             "starter line nor EXCLUDED in tools/nuzlocke_zones.py covers: add it to the register"
+                             % (sp, v.get("status"), v.get("where") or v.get("home")))
+    bad = [sp for sp in DUNGEON_PRIZES if sp not in roster]
+    if bad:
+        raise SystemExit("DUNGEON_PRIZES names species the roster does not hold: %s" % bad)
+    # a species that has a row from another source is not "missing": the pool's entry is the same encounter
+    not_placed = [n for n in not_placed if n["species"] not in rows_species]
+    # Rows carry NO coordinates. Other tools read every data/*.json for "authored places" to keep clear of (tools/
+    # frostpeak_keep.py found the Giratina keep's own centre in this file and refused its site): a position belongs to the
+    # file that authors it, and the zone a row is in already says where it was placed.
+    by_zone = {}
+    for (zid, _sp), row in sorted(found.items()):
+        by_zone.setdefault(zid, []).append({"species": row["species"], "sources": row["sources"]})
+    report = {"rows": len(found), "species": len(rows_species),
+              "register": {"rule": "A legendary-class encounter our data authors is one row in the zone whose ground "
+                                   "holds it, with its own checkbox on the Nuzlocke page: the area's catch is still its "
+                                   "first ordinary encounter, and a player counts the legendary beside it. Named on the "
+                                   "Nuzlocke page only (the owner, 2026-10-23: \"Named ... Only on the Nuzlocke page; the map and other pages keep hiding them\").",
+                           "not_covered": LEGEND_NOT_COVERED, "not_placed": not_placed, "excluded": excluded,
+                           "dungeon_held": held}}
+    return by_zone, report
 
 
 def _line_hits(points, waterway):

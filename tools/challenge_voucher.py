@@ -1,33 +1,25 @@
 #!/usr/bin/env python
 """The Challenge voucher's schedule, computed from data: data/challenge_mode.json `voucher.computed`.
 
-The owner, after the 2026-10-10 overnight (docs/STATE.md 'Owner decisions after the 2026-10-10 overnight' (2)):
-"front-load it. More per gym early, the same total by the end. The point is a real choice: overspend early for power
-and ration later, or hold back and buy late. Take the ladder's measured total rather than my $100k guess."
+The owner, 2026-10-22: "i dont see enough cushion for challenge players, they should have it easier." The rule
+(data/challenge_mode.json voucher.rule, from the build brief of the same day):
 
-This is the SCHEDULE only. Nothing here grants anything: the grant (Oak's action, a give in each leader's reward
-function, the mode tag, once per player) is a later unit's (docs/mechanics/ECONOMY_OVERHAUL.md BUILD LIST U6).
-The reasoning is docs/mechanics/SERVICES_AND_CRAFTING.md.
+  BASKET(t) = six Pokemon trained at tier t -- each a level raise, an EV spread and all six IVs, at
+              data/training_services.json's price_by_tier[t] -- plus two answer TMs for the next boss at the TM
+              shelf's tier-t unit price (data/markets.json price_policies.tm_tier, tools/markets.py tm_tier_unit),
+              counted only when some tier-t shelf line answers that boss (no shelf sells TMs at tier 0).
+  GRANT     = BASKET(t) x voucher.rule.multiplier (1.5), rounded UP to voucher.rule.round_to, where t is the badges
+              the player holds when the grant is paid: Oak's at the mode choice is tier 0 (the first leg), the gym-N
+              clear is tier N (the leg it opens).
 
-THE TOTAL = Oak's cash + the answer kits at bank value + the power kit at Mart prices.
-  - Oak's cash: the largest multiple of price_policies.income_gate.round_to STRICTLY below the cheapest income-gate
-    line on any counter (data/markets.json), so the voucher alone buys no gated power line before badge 1
-    (ECONOMY_OVERHAUL.md 4.4's own rule, recomputed here instead of carried).
-  - The kits: voucher.kits, each material priced at data/bank.json's price (tools/bank.py prices). The QUANTITIES are
-    ECONOMY_OVERHAUL.md 1.4's (RELAYED: a design, no barter line carries them yet, U4); the prices are measured.
-  - The power kit: the six power items at data/traders.json stock_policy.mart.training's price. It is there because
-    of the services decision: with the EV service priced above the hour it saves (data/training_services.json
-    price_rule), a Challenge player, who plays with no Minecraft by the owner's design, trains EVs by battle with a
-    power item held; that is the spend the decision obliges.
+Every price the basket reads rises with badges (the owner, 2026-10-21), so the grants RISE too: the old front-loading
+(the owner after the 2026-10-10 overnight, decision (2): "more per gym early, the same total by the end") cannot hold
+together with "each grant covers its badge's basket" -- a front-loaded schedule would either pay gym 1 the largest
+basket of the game or pay later gyms less than their basket. The brief allows the later grants to be larger; this
+tool chooses the rule over the shape and says so in the block it writes (`shape_chosen`).
 
-THE SHAPE (voucher.shape): Oak's grant is the cash above; the rest is shared over the eight gym-clear grants in
-inverse proportion to the measured Challenge income of the leg each grant opens (data/markets.json
-income_basis.challenge.leg_by_badge; the gym-8 grant opens Victory Road and the League, income_basis.post_badge_8).
-The poorest leg gets the most, and every grant after the first is smaller than the one before it.
-
-DELIVERY (voucher.delivery): a grant pays the next unpaid kits in materials first, whole kits only, then cash. Cash
-cannot buy back a material (no seller sells raw ore or diamonds, rule B1), so a kit has to ride on a grant early
-enough; the tool fails if any kit would arrive after the gym it answers.
+THE GRANT itself is built elsewhere: Oak's step by the Challenge confirm (data/quests.json effect challenge_voucher,
+whose cash --check holds to Oak's step), the eight gym steps by tools/progression_pack.py voucher_grants, in cash.
 
   python tools/challenge_voucher.py            # print the schedule
   python tools/challenge_voucher.py --write    # write voucher.computed into data/challenge_mode.json
@@ -46,118 +38,116 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 CHALLENGE = ROOT / "data" / "challenge_mode.json"
 MARKETS = ROOT / "data" / "markets.json"
-TRADERS = ROOT / "data" / "traders.json"
+SERVICES = ROOT / "data" / "training_services.json"
 GENERATED_BY = "tools/challenge_voucher.py --write"
+STEPS = [("oak_mode_choice", 0)] + [("gym%d_cleared" % n, n) for n in range(1, 9)]
+# the boss a tier-t answer line answers: data/markets.json counter lines carry it in `answers`, by its first word
+NEXT_BOSS = {1: "kanto_misty", 2: "kanto_ltsurge", 3: "kanto_erika", 4: "kanto_koga", 5: "kanto_sabrina",
+             6: "kanto_blaine", 7: "kanto_giovanni", 8: "the League"}
 
 
 def read(p):
     return json.loads(Path(p).read_text(encoding="utf-8"))
 
 
-def oak_cash(markets):
-    """(cash, cheapest income-gate price): the largest multiple of round_to strictly below the cheapest line."""
-    pol = markets["price_policies"]["income_gate"]
-    step = int(pol["round_to"])
-    gated = [int(l["price"]) for c in markets["counters"] for l in c.get("stock") or []
-             if l.get("price_rule") == "income_gate"]
-    if not gated:
-        raise SystemExit("no income_gate line on any counter: Oak's cash has no bar to stay under")
-    low = min(gated)
-    return ((low - 1) // step) * step, low
+def team_cost(services, t, team):
+    """One tier's training for `team` Pokemon: a raise, an EV spread and every IV each."""
+    s = services["services"]
+    per = int(s["raise"]["price_by_tier"][str(t)]) + int(s["ev"]["price_by_tier"][str(t)]) \
+        + 6 * int(s["iv"]["price_per_stat_by_tier"][str(t)])
+    return team * per
 
 
-def kit_value(kit, prices):
-    total = 0
-    for part in ("tm", "held", "extra"):
-        for item, n in (kit.get(part) or {}).items():
-            if item not in prices:
-                raise SystemExit("voucher.kits for_leg %s: %s is not bought by the bank, so it has no value here"
-                                 % (kit.get("for_leg"), item))
-            total += prices[item] * int(n)
-    return total
+def tm_cost(markets, t, n):
+    """n answer TMs at tier t, or 0 when no tier-t shelf line answers the next boss."""
+    import markets as M
+    answers = [it for _c, it, _h in M.tm_tier_lines(markets)
+               if it.get("tier") == t and str(it.get("answers", "")).startswith(NEXT_BOSS.get(t, "?"))]
+    return (n * M.tm_tier_unit(markets, t), len(answers)) if answers else (0, 0)
 
 
-def power_kit_value(v, traders):
-    want = v["power_kit"]["items"]
-    have = {}
-    for tier in traders["stock_policy"]["mart"]["training"]["tiers"]:
-        for it in tier["items"]:
-            have[it["item"]] = int(it["price"])
-    missing = [i for i in want if i not in have]
-    if missing:
-        raise SystemExit("voucher.power_kit: %s not on the Mart's training shelf" % ", ".join(missing))
-    return sum(have[i] for i in want)
+def compute(cdoc=None, markets=None, services=None):
+    cdoc = cdoc if cdoc is not None else read(CHALLENGE)
+    markets = markets if markets is not None else read(MARKETS)
+    services = services if services is not None else read(SERVICES)
+    rule = cdoc["voucher"]["rule"]
+    mult = Fraction(str(rule["multiplier"]))
+    step = int(rule["round_to"])
+    team, tms = int(rule["team"]), int(rule["answer_tms"])
+    sched = []
+    for at, t in STEPS:
+        train = team_cost(services, t, team)
+        tm, lines = tm_cost(markets, t, tms)
+        basket = train + tm
+        value = int(-(-(mult * basket) // step)) * step
+        sched.append({"at": at, "tier": t, "training": train, "tms": tm, "answer_lines": lines, "basket": basket,
+                      "value": value, "cash": value})
+    total = sum(g["value"] for g in sched)
+    vals = [g["value"] for g in sched[1:]]
+    rising = all(b >= a for a, b in zip(vals, vals[1:]))
+    return {
+        "generated_by": GENERATED_BY,
+        "rule": "grant = basket(t) x %s rounded up to $%d; basket(t) = %d Pokemon x (raise + EV spread + six IVs) at "
+                "data/training_services.json price_by_tier[t] + %d answer TMs at data/markets.json price_policies.tm_tier's "
+                "tier-t price (none at tier 0: no shelf sells TMs there); t = badges held when paid"
+                % (rule["multiplier"], step, team, tms),
+        "shape_chosen": "RISING%s: each grant covers its own badge's basket (the owner, 2026-10-22), and every price in "
+                        "the basket rises with badges (2026-10-21), so the later grants are larger. Front-loading (the "
+                        "owner's 2026-10-10 decision (2)) would pay gym 1 more than its basket or a later gym less than "
+                        "its own, and the 2026-10-22 brief lets the later grants be larger"
+                        % ("" if rising else " (NOT monotone: a basket fell)"),
+        "total": total,
+        "schedule": sched,
+    }
 
 
-def opens_income(markets, v):
-    """[(grant flag, income of the leg the grant opens)] for the eight gym-clear grants."""
-    ch = markets["income_basis"]["challenge"]["leg_by_badge"]
-    post = markets["income_basis"]["post_badge_8"]["challenge"]
+def problems(c, rule):
+    """The schedule's own invariants, beyond equality with the file: every grant at least multiplier x its basket and
+    a whole multiple of round_to, Oak first, then the eight gyms in order."""
     out = []
-    for n in range(1, 9):
-        inc = int(ch[str(n + 1)]) if n < 8 else int(post["victory_road"]) + int(post["league"])
-        out.append(("gym%d_cleared" % n, inc))
+    mult, step = Fraction(str(rule["multiplier"])), int(rule["round_to"])
+    if [g["at"] for g in c["schedule"]] != [s for s, _ in STEPS]:
+        out.append("the steps are not Oak then gyms 1-8: %s" % [g["at"] for g in c["schedule"]])
+    for g in c["schedule"]:
+        if g["value"] < mult * g["basket"] or g["value"] % step or g["cash"] != g["value"]:
+            out.append("%s: value %d against basket %d" % (g["at"], g["value"], g["basket"]))
     return out
 
 
-def compute(cdoc=None, markets=None, traders=None, bank_prices=None):
-    import bank
-    cdoc = cdoc if cdoc is not None else read(CHALLENGE)
-    markets = markets if markets is not None else read(MARKETS)
-    traders = traders if traders is not None else read(TRADERS)
-    prices = bank_prices if bank_prices is not None else bank.prices(bank.load())
-    v = cdoc["voucher"]
-    cash0, low = oak_cash(markets)
-    kits = sorted(v["kits"], key=lambda k: k["for_leg"])
-    kv = [(k["for_leg"], kit_value(k, prices)) for k in kits]
-    kits_total = sum(x for _, x in kv)
-    pk = power_kit_value(v, traders)
-    total = cash0 + kits_total + pk
-    rest = total - cash0
-    grants = opens_income(markets, v)
-    w = [Fraction(1, inc) for _, inc in grants]
-    raw = [rest * x / sum(w) for x in w]
-    step = int(v["shape"]["round_to"])
-    vals = [int(r // step) * step for r in raw]
-    vals[0] += rest - sum(vals)                     # the rounding goes to the first gym grant: the total is exact
-    sched = [{"at": "oak_mode_choice", "value": cash0, "cash": cash0, "kits": []}]
-    queue = list(kv)
-    late = []
-    for (flag, inc), val in zip(grants, vals):
-        budget, carried = val, []
-        while queue and queue[0][1] <= budget:
-            leg, x = queue.pop(0)
-            budget -= x
-            carried.append(leg)
-        sched.append({"at": flag, "opens_income": inc, "value": val, "kits": carried, "cash": budget})
-    # every kit must be in hand before the gym it answers: the kit for leg L (to badge L) by the grant at gym L-1's
-    # clear; the League kit (for_leg 9) by gym 8's
-    where = {leg: i for i, g in enumerate(sched) for leg in g["kits"]}
-    for leg, _ in kv:
-        if leg not in where:
-            late.append("the kit for leg %d is on no grant: the grants after it are each smaller than it" % leg)
-        elif where[leg] > leg - 1:
-            late.append("the kit for leg %d arrives at %s, after the gym it answers" % (leg, sched[where[leg]]["at"]))
-    if late:
-        raise SystemExit("voucher: " + "; ".join(late))
-    vals_all = [g["value"] for g in sched[1:]]
-    if any(b > a for a, b in zip(vals_all, vals_all[1:])):
-        raise SystemExit("voucher: a gym grant is larger than the one before it, so the schedule is not front-loaded")
-    back = [cash0] + [x for _, x in kv]
-    return {
-        "generated_by": GENERATED_BY,
-        "oak_cash": cash0,
-        "oak_cash_bar": "the cheapest income_gate line on any counter is $%d (data/markets.json); Oak's cash is the "
-                        "largest multiple of $%d strictly below it" % (low, int(markets["price_policies"]["income_gate"]["round_to"])),
-        "kits_value_by_leg": {str(leg): x for leg, x in kv},
-        "kits_total": kits_total,
-        "power_kit_value": pk,
-        "total": total,
-        "total_was": "ECONOMY_OVERHAUL.md 4.4: $4,000 + $10,748 = about $14,750 (RELAYED review N148); this adds the "
-                     "power kit the services decision obliges ($%d)" % pk,
-        "schedule": sched,
-        "back_loaded_was": back,
-    }
+OAK_GIFTS_FN = "cobblers:challenge/oak_gifts"
+
+
+def gift_problems(doc, markets, quests):
+    """data/challenge_mode.json tm_gifts against the shelves (the owner, 2026-10-22: "challenge mode should be given
+    tms"): each gym step gives exactly the tier-N shelf lines that answer the boss after gym N (the lines tm_cost reads
+    for the basket), the Oak step names the first boss and is called by Oak's voucher transition, once."""
+    import markets as M
+    g = doc.get("tm_gifts")
+    if not g:
+        return ["data/challenge_mode.json has no tm_gifts block"]
+    out = []
+    steps = g.get("by_step") or {}
+    if list(steps) != [s for s, _ in STEPS]:
+        out.append("the steps are not Oak then gyms 1-8: %s" % list(steps))
+    for at, t in STEPS:
+        if at == "oak_mode_choice":
+            continue
+        want = sorted({it["item"] for _c, it, _h in M.tm_tier_lines(markets)
+                       if it.get("tier") == t and str(it.get("answers", "")).startswith(NEXT_BOSS[t])})
+        got = sorted((steps.get(at) or {}).get("items") or [])
+        if got != want:
+            out.append("%s gives %s, the tier-%d shelf answers %s with %s" % (at, got, t, NEXT_BOSS[t], want))
+    oak = steps.get("oak_mode_choice") or {}
+    if not str(oak.get("boss", "")).startswith("kanto_brock") or not oak.get("items"):
+        out.append("oak_mode_choice must give the first boss's (kanto_brock) answers")
+    trans = [t for q in quests["quests"] for t in q.get("transitions") or []
+             if any(e.get("kind") == "challenge_voucher" and e.get("at") == "oak_mode_choice" for e in t.get("effects") or [])]
+    calls = [t for t in trans if any(e.get("kind") == "function" and e.get("function") == OAK_GIFTS_FN
+                                     for e in t.get("effects") or [])]
+    if len(trans) != 1 or len(calls) != 1:
+        out.append("Oak's voucher transition must call %s once (found %d voucher transition(s), %d calling it)"
+                   % (OAK_GIFTS_FN, len(trans), len(calls)))
+    return out
 
 
 def render(v):
@@ -179,11 +169,6 @@ def render(v):
                     lines.append("      %s: %s%s" % (json.dumps(kk), json.dumps(c[kk], ensure_ascii=False),
                                                      "," if j < len(ck) - 1 else ""))
             lines.append("    }%s" % ("," if i < len(keys) - 1 else ""))
-        elif k == "kits":
-            lines.append("    \"kits\": [")
-            for k_i, kit in enumerate(v[k]):
-                lines.append("      %s%s" % (json.dumps(kit, ensure_ascii=False), "," if k_i < len(v[k]) - 1 else ""))
-            lines.append("    ]%s" % ("," if i < len(keys) - 1 else ""))
         else:
             lines.append("    %s: %s%s" % (json.dumps(k), json.dumps(v[k], ensure_ascii=False), "," if i < len(keys) - 1 else ""))
     lines.append("  }")
@@ -202,14 +187,12 @@ def splice(text, block):
 
 
 def report(c):
-    print("total $%d = Oak cash $%d + kits $%d + power kit $%d" % (c["total"], c["oak_cash"], c["kits_total"],
-                                                                 c["power_kit_value"]))
+    print("total $%d over %d grants (%s)" % (c["total"], len(c["schedule"]), c["shape_chosen"].split(":")[0]))
     cum = 0
     for g in c["schedule"]:
         cum += g["value"]
-        print("  %-16s $%6d  (cash $%d, kits for legs %s)  cumulative $%d"
-              % (g["at"], g["value"], g["cash"], g["kits"] or "-", cum))
-    print("  back-loaded (ECONOMY_OVERHAUL 4.4): %s" % c["back_loaded_was"])
+        print("  %-16s tier %d  training $%6d + TMs $%5d = basket $%6d  -> grant $%6d  cumulative $%d"
+              % (g["at"], g["tier"], g["training"], g["tms"], g["basket"], g["value"], cum))
 
 
 def main(argv=None):
@@ -220,6 +203,11 @@ def main(argv=None):
     text = CHALLENGE.read_text(encoding="utf-8")
     doc = json.loads(text)
     c = compute(doc)
+    bad = problems(c, doc["voucher"]["rule"])
+    if bad:
+        for b in bad:
+            print("PROBLEM %s" % b)
+        return 1
     if a.check:
         if doc["voucher"].get("computed") != c:
             print("data/challenge_mode.json voucher.computed is not what tools/challenge_voucher.py computes: run --write")
@@ -230,14 +218,21 @@ def main(argv=None):
         quests = json.loads((CHALLENGE.parent / "quests.json").read_text(encoding="utf-8"))
         paid = [e for q in quests["quests"] for t in q.get("transitions") or [] for e in t.get("effects") or []
                 if e.get("kind") == "challenge_voucher"]
-        bad = [e for e in paid if steps.get(e.get("at")) != e.get("cash")]
-        if bad:
-            for e in bad:
+        wrong = [e for e in paid if steps.get(e.get("at")) != e.get("cash")]
+        if wrong:
+            for e in wrong:
                 print("data/quests.json challenge_voucher at %r pays %r, the schedule says %r"
                       % (e.get("at"), e.get("cash"), steps.get(e.get("at"))))
             return 1
-        print("voucher current: total $%d over %d grants; %d paid by quest effects, matching"
-              % (c["total"], len(c["schedule"]), len(paid)))
+        gift_bad = gift_problems(doc, read(MARKETS), quests)
+        for b in gift_bad:
+            print("PROBLEM tm_gifts: %s" % b)
+        if gift_bad:
+            return 1
+        print("voucher current: total $%d over %d grants; %d paid by quest effects, matching; TM gifts: %d steps, "
+              "%d TMs, each gym's the shelf's answer set" % (c["total"], len(c["schedule"]), len(paid),
+                                                             len(doc["tm_gifts"]["by_step"]),
+                                                             sum(len(s["items"]) for s in doc["tm_gifts"]["by_step"].values())))
         return 0
     if a.write:
         v = dict(doc["voucher"])

@@ -10,7 +10,10 @@
   "site": 1,
   "waterway": 1,
   "total": 89,
-  "not_zones": 32
+  "not_zones": 32,
+  "dungeons": 13,
+  "legendaries": 46,
+  "legendary_species": 41
  },
  "derivation": {
   "tables_are_subregions": "data/encounter_design.json has 61 tables and data/regions.json 61 sub-regions, the same ids",
@@ -375,6 +378,14 @@
     "tbird_elder_northgate_east_1_mid",
     "tbird_elder_northgate_east_2_low",
     "tbird_elder_northgate_east_2_mid"
+   ],
+   "legendaries": [
+    {
+     "species": "glastrier",
+     "sources": [
+      "data/adopted_legendary_sites.json adopted_crown_spire"
+     ]
+    }
    ]
   },
   {
@@ -397,6 +408,26 @@
     "tbird_elder_north_pine_isle_1_mid",
     "tbird_elder_north_pine_isle_2_low",
     "tbird_elder_north_pine_isle_2_mid"
+   ],
+   "legendaries": [
+    {
+     "species": "necrozma",
+     "sources": [
+      "data/adopted_legendary_sites.json adopted_dawn_tower"
+     ]
+    },
+    {
+     "species": "poipole",
+     "sources": [
+      "data/spawns.json entry poipole in dawn_tower"
+     ]
+    },
+    {
+     "species": "regigigas",
+     "sources": [
+      "data/legendaries.json regigigas (sealed_chamber)"
+     ]
+    }
    ]
   },
   {
@@ -437,7 +468,21 @@
    "geometry": "data/regions.json subregions.fungal_north polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
-   "sites": []
+   "sites": [],
+   "legendaries": [
+    {
+     "species": "darkrai",
+     "sources": [
+      "data/adopted_legendary_sites.json sweep_newmoon_island"
+     ]
+    },
+    {
+     "species": "zapdos",
+     "sources": [
+      "data/adopted_legendary_sites.json adopted_zapdos_tower"
+     ]
+    }
+   ]
   },
   {
    "zone": "fungal_south",
@@ -471,6 +516,26 @@
     "sapling_palm_sunset_west",
     "tbird_sapling_palm_sunset_west_low",
     "tbird_sapling_palm_sunset_west_mid"
+   ],
+   "legendaries": [
+    {
+     "species": "necrozma",
+     "sources": [
+      "data/adopted_legendary_sites.json adopted_dusk_tower"
+     ]
+    },
+    {
+     "species": "poipole",
+     "sources": [
+      "data/spawns.json entry poipole in dusk_tower"
+     ]
+    },
+    {
+     "species": "tapukoko",
+     "sources": [
+      "data/legendaries.json tapukoko (sealed_chamber)"
+     ]
+    }
    ]
   },
   {
@@ -490,6 +555,14 @@
     "sapling_palm_sunset_east",
     "tbird_sapling_palm_sunset_east_low",
     "tbird_sapling_palm_sunset_east_mid"
+   ],
+   "legendaries": [
+    {
+     "species": "tapulele",
+     "sources": [
+      "data/legendaries.json tapulele (sealed_chamber)"
+     ]
+    }
    ]
   },
   {
@@ -574,6 +647,32 @@
     "tbird_elder_long_isle_south_2_mid",
     "tbird_elder_long_isle_south_3_low",
     "tbird_elder_long_isle_south_3_mid"
+   ],
+   "legendaries": [
+    {
+     "species": "buzzwole",
+     "sources": [
+      "data/spawns.json entry buzzwole in long_isle_south"
+     ]
+    },
+    {
+     "species": "mew",
+     "sources": [
+      "data/adopted_legendary_sites.json adopted_mew_temple"
+     ]
+    },
+    {
+     "species": "pheromosa",
+     "sources": [
+      "data/spawns.json entry pheromosa in long_isle_south"
+     ]
+    },
+    {
+     "species": "tapubulu",
+     "sources": [
+      "data/legendaries.json tapubulu (sealed_chamber)"
+     ]
+    }
    ]
   },
   {
@@ -638,7 +737,15 @@
    "legs": [
     "route_04_surge_to_erika"
    ],
-   "sites": []
+   "sites": [],
+   "legendaries": [
+    {
+     "species": "regice",
+     "sources": [
+      "data/legendaries.json regice (sealed_chamber)"
+     ]
+    }
+   ]
   },
   {
    "zone": "lower_trough",
@@ -674,7 +781,15 @@
     "route_03_misty_to_surge",
     "route_04_surge_to_erika"
    ],
-   "sites": []
+   "sites": [],
+   "legendaries": [
+    {
+     "species": "miraidon",
+     "sources": [
+      "data/sanctuaries.json sanctuary_broken_relay (area_boss)"
+     ]
+    }
+   ]
   },
   {
    "zone": "mt_vessu",
@@ -699,6 +814,26 @@
     "sapling_crag_mt_vessu",
     "tbird_sapling_crag_mt_vessu_low",
     "tbird_sapling_crag_mt_vessu_mid"
+   ],
+   "legendaries": [
+    {
+     "species": "enamorus",
+     "sources": [
+      "data/legendaries.json enamorus (sealed_chamber)"
+     ]
+    },
+    {
+     "species": "thundurus",
+     "sources": [
+      "data/legendaries.json thundurus (sealed_chamber)"
+     ]
+    },
+    {
+     "species": "tornadus",
+     "sources": [
+      "data/legendaries.json tornadus (sealed_chamber)"
+     ]
+    }
    ]
   },
   {
@@ -720,7 +855,15 @@
     "route_03_misty_to_surge",
     "route_04_surge_to_erika"
    ],
-   "sites": []
+   "sites": [],
+   "legendaries": [
+    {
+     "species": "landorus",
+     "sources": [
+      "data/legendaries.json landorus (sealed_chamber)"
+     ]
+    }
+   ]
   },
   {
    "zone": "rift_trunk",
@@ -758,7 +901,15 @@
    "legs": [
     "victory_road"
    ],
-   "sites": []
+   "sites": [],
+   "legendaries": [
+    {
+     "species": "hoopa",
+     "sources": [
+      "data/hoopa_cradle.json spot (underground, at the surface above it)"
+     ]
+    }
+   ]
   },
   {
    "zone": "rift_south_west_arm",
@@ -792,7 +943,15 @@
    "legs": [
     "victory_road"
    ],
-   "sites": []
+   "sites": [],
+   "legendaries": [
+    {
+     "species": "registeel",
+     "sources": [
+      "data/legendaries.json registeel (sealed_chamber)"
+     ]
+    }
+   ]
   },
   {
    "zone": "crater_rim_north_west",
@@ -829,6 +988,14 @@
     "sapling_scorched_great_crater",
     "tbird_sapling_scorched_great_crater_low",
     "tbird_sapling_scorched_great_crater_mid"
+   ],
+   "legendaries": [
+    {
+     "species": "moltres",
+     "sources": [
+      "data/adopted_legendary_sites.json adopted_moltres_tower"
+     ]
+    }
    ]
   },
   {
@@ -844,7 +1011,30 @@
    "geometry": "data/regions.json subregions.east_cones polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
-   "sites": []
+   "sites": [
+    "mine_nest_mn_craters_1_pool",
+    "mine_nest_mn_craters_2_pool"
+   ],
+   "legendaries": [
+    {
+     "species": "groudon",
+     "sources": [
+      "data/legendaries.json groudon (sealed_chamber)"
+     ]
+    },
+    {
+     "species": "koraidon",
+     "sources": [
+      "data/sanctuaries.json sanctuary_sunscar (area_boss)"
+     ]
+    },
+    {
+     "species": "rayquaza",
+     "sources": [
+      "data/rayquaza_sky.json site.summit"
+     ]
+    }
+   ]
   },
   {
    "zone": "plateau_west",
@@ -861,7 +1051,15 @@
    "legs": [
     "route_08_blaine_to_giovanni"
    ],
-   "sites": []
+   "sites": [],
+   "legendaries": [
+    {
+     "species": "regirock",
+     "sources": [
+      "data/legendaries.json regirock (sealed_chamber)"
+     ]
+    }
+   ]
   },
   {
    "zone": "plateau_south",
@@ -907,9 +1105,20 @@
    "land_share": 1.0,
    "legs": [],
    "sites": [
+    "cave_nest_frostpeak_deeps_1_pool",
+    "cave_nest_frostpeak_deeps_2_pool",
+    "cave_nest_frostpeak_deeps_3_pool",
     "sapling_frost_frostpeak",
     "tbird_sapling_frost_frostpeak_low",
     "tbird_sapling_frost_frostpeak_mid"
+   ],
+   "legendaries": [
+    {
+     "species": "articuno",
+     "sources": [
+      "data/adopted_legendary_sites.json adopted_articuno_shrine"
+     ]
+    }
    ]
   },
   {
@@ -925,7 +1134,15 @@
    "geometry": "data/regions.json subregions.frostpeak_strand polygons, 32-block raster",
    "land_share": 0.992,
    "legs": [],
-   "sites": []
+   "sites": [],
+   "legendaries": [
+    {
+     "species": "giratina",
+     "sources": [
+      "data/frostpeak_keep_quest.json giratina at data/frostpeak_keep.json site.centre"
+     ]
+    }
+   ]
   },
   {
    "zone": "tilpey_north_shore",
@@ -965,7 +1182,15 @@
    "geometry": "data/regions.json subregions.tilpey_waters polygons, 32-block raster",
    "land_share": 0.26,
    "legs": [],
-   "sites": []
+   "sites": [],
+   "legendaries": [
+    {
+     "species": "uxie",
+     "sources": [
+      "data/legendaries.json uxie (lake_grotto)"
+     ]
+    }
+   ]
   },
   {
    "zone": "tilpey_south_shore",
@@ -1026,6 +1251,14 @@
     "tbird_elder_tilpey_east_shore_1_mid",
     "tbird_elder_tilpey_east_shore_2_low",
     "tbird_elder_tilpey_east_shore_2_mid"
+   ],
+   "legendaries": [
+    {
+     "species": "dialga",
+     "sources": [
+      "data/sanctuaries.json sanctuary_stopped_clock (area_boss)"
+     ]
+    }
    ]
   },
   {
@@ -1101,6 +1334,20 @@
     "tbird_elder_peak_pond_hollow_2_mid",
     "tbird_elder_peak_pond_hollow_3_low",
     "tbird_elder_peak_pond_hollow_3_mid"
+   ],
+   "legendaries": [
+    {
+     "species": "calyrex",
+     "sources": [
+      "data/adopted_legendary_sites.json adopted_crown_cemetery"
+     ]
+    },
+    {
+     "species": "spectrier",
+     "sources": [
+      "data/adopted_legendary_sites.json adopted_crown_cemetery"
+     ]
+    }
    ]
   },
   {
@@ -1136,7 +1383,9 @@
    "legs": [
     "route_05_erika_to_koga"
    ],
-   "sites": []
+   "sites": [
+    "mine_nest_mn_ridgeback_1_pool"
+   ]
   },
   {
    "zone": "marshy_marsh",
@@ -1155,12 +1404,21 @@
     "elder_marshy_marsh_1",
     "elder_marshy_marsh_2",
     "elder_marshy_marsh_3",
+    "mine_nest_mn_ridgeback_2_pool",
     "tbird_elder_marshy_marsh_1_low",
     "tbird_elder_marshy_marsh_1_mid",
     "tbird_elder_marshy_marsh_2_low",
     "tbird_elder_marshy_marsh_2_mid",
     "tbird_elder_marshy_marsh_3_low",
     "tbird_elder_marshy_marsh_3_mid"
+   ],
+   "legendaries": [
+    {
+     "species": "azelf",
+     "sources": [
+      "data/legendaries.json azelf (lake_grotto)"
+     ]
+    }
    ]
   },
   {
@@ -1193,7 +1451,18 @@
    "geometry": "data/regions.json subregions.eastern_moor polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
-   "sites": []
+   "sites": [
+    "mine_nest_mn_gorge_1_pool",
+    "mine_nest_mn_gorge_2_pool"
+   ],
+   "legendaries": [
+    {
+     "species": "kyogre",
+     "sources": [
+      "data/kyogre_cave.json, entered from the Coldwater Station (data/coldwater_station.json site)"
+     ]
+    }
+   ]
   },
   {
    "zone": "glacier_foot_fields",
@@ -1246,6 +1515,14 @@
     "tbird_elder_lake_viltri_hollow_1_mid",
     "tbird_elder_lake_viltri_hollow_2_low",
     "tbird_elder_lake_viltri_hollow_2_mid"
+   ],
+   "legendaries": [
+    {
+     "species": "meloetta",
+     "sources": [
+      "data/sanctuaries.json sanctuary_singing_hollow (rare_spawn)"
+     ]
+    }
    ]
   },
   {
@@ -1309,6 +1586,32 @@
     "tbird_world_tree_foothill_woods_high",
     "tbird_world_tree_foothill_woods_low",
     "tbird_world_tree_foothill_woods_mid"
+   ],
+   "legendaries": [
+    {
+     "species": "articuno",
+     "sources": [
+      "data/spawns.json entry articuno galarian in tbird_world_tree_foothill_woods_crown"
+     ]
+    },
+    {
+     "species": "hooh",
+     "sources": [
+      "data/legendaries.json hooh (tree_crown)"
+     ]
+    },
+    {
+     "species": "moltres",
+     "sources": [
+      "data/spawns.json entry moltres galarian in tbird_world_tree_foothill_woods_crown"
+     ]
+    },
+    {
+     "species": "zapdos",
+     "sources": [
+      "data/spawns.json entry zapdos galarian in tbird_world_tree_foothill_woods_crown"
+     ]
+    }
    ]
   },
   {
@@ -1346,6 +1649,8 @@
     "route_02_brock_to_misty"
    ],
    "sites": [
+    "cave_nest_hollow_reach_1_pool",
+    "cave_nest_hollow_reach_2_pool",
     "elder_viltri_plateau_1",
     "elder_viltri_plateau_2",
     "elder_viltri_plateau_3",
@@ -1399,6 +1704,14 @@
     "sapling_lakeshore_arrow_lake_shores",
     "tbird_sapling_lakeshore_arrow_lake_shores_low",
     "tbird_sapling_lakeshore_arrow_lake_shores_mid"
+   ],
+   "legendaries": [
+    {
+     "species": "mesprit",
+     "sources": [
+      "data/legendaries.json mesprit (lake_grotto)"
+     ]
+    }
    ]
   },
   {
@@ -1419,7 +1732,11 @@
    "legs": [
     "route_01_pallet_to_brock"
    ],
-   "sites": []
+   "sites": [
+    "cave_nest_old_seams_1_pool",
+    "cave_nest_old_seams_2_pool",
+    "cave_nest_old_seams_3_pool"
+   ]
   },
   {
    "zone": "pallet_meadows",
@@ -1508,7 +1825,21 @@
     "route_08_blaine_to_giovanni",
     "victory_road"
    ],
-   "sites": []
+   "sites": [],
+   "legendaries": [
+    {
+     "species": "nihilego",
+     "sources": [
+      "data/sanctuaries.json sanctuary_tide_shrine (rare_spawn)"
+     ]
+    },
+    {
+     "species": "tapufini",
+     "sources": [
+      "data/sanctuaries.json sanctuary_tide_shrine (rare_spawn)"
+     ]
+    }
+   ]
   },
   {
    "zone": "rift_foot",
@@ -1590,6 +1921,14 @@
    ],
    "sites": [
     "route_1_sapling_crown"
+   ],
+   "legendaries": [
+    {
+     "species": "celebi",
+     "sources": [
+      "data/legendaries.json celebi_wake (sapling_wake) at data/sapling_celebi.json position"
+     ]
+    }
    ]
   },
   {
@@ -1624,7 +1963,21 @@
    "species": 12,
    "geometry": "tools/compile_spawns.py marine_bands (open sea 96-256 blocks from land)",
    "legs": [],
-   "access": "a Pokemon that carries a player on water"
+   "access": "a Pokemon that carries a player on water",
+   "legendaries": [
+    {
+     "species": "latias",
+     "sources": [
+      "data/research_station.json shrine.latias"
+     ]
+    },
+    {
+     "species": "latios",
+     "sources": [
+      "data/research_station.json shrine.latios"
+     ]
+    }
+   ]
   },
   {
    "zone": "windward_depths",
@@ -2105,6 +2458,252 @@
    "titled_by": "settlement"
   }
  ],
+ "dungeon_rule": "The owner, 2026-10-23: \"i think it shouldnt do the rift site necessarily, just dungeon name so like if im doing the night shift, i have 1 encounter no matter the level.\" Each data/dungeons.json dungeon is ONE encounter zone, whatever band the run is drawn at and wherever its rift opened. A legendary-class boss or prize inside a dungeon belongs to that one encounter and is not a row of its own.",
+ "dungeons": [
+  {
+   "zone": "dungeon_night_shift",
+   "dungeon": "night_shift",
+   "name": "The Night Shift",
+   "table": "data/dungeons.json dungeons.night_shift"
+  },
+  {
+   "zone": "dungeon_jungle",
+   "dungeon": "jungle",
+   "name": "The Overgrown Temple",
+   "table": "data/dungeons.json dungeons.jungle"
+  },
+  {
+   "zone": "dungeon_flooded_ruin",
+   "dungeon": "flooded_ruin",
+   "name": "The Drowned Reliquary",
+   "table": "data/dungeons.json dungeons.flooded_ruin"
+  },
+  {
+   "zone": "dungeon_ash_bell",
+   "dungeon": "ash_bell",
+   "name": "The Ash Bell",
+   "table": "data/dungeons.json dungeons.ash_bell"
+  },
+  {
+   "zone": "dungeon_soul_ossuary",
+   "dungeon": "soul_ossuary",
+   "name": "The Soul Ossuary",
+   "table": "data/dungeons.json dungeons.soul_ossuary"
+  },
+  {
+   "zone": "dungeon_moth_cathedral",
+   "dungeon": "moth_cathedral",
+   "name": "The Moth Cathedral",
+   "table": "data/dungeons.json dungeons.moth_cathedral"
+  },
+  {
+   "zone": "dungeon_dragonspiral",
+   "dungeon": "dragonspiral",
+   "name": "The Dragonspiral",
+   "table": "data/dungeons.json dungeons.dragonspiral"
+  },
+  {
+   "zone": "dungeon_field_of_swords",
+   "dungeon": "field_of_swords",
+   "name": "The Field of Swords",
+   "table": "data/dungeons.json dungeons.field_of_swords"
+  },
+  {
+   "zone": "dungeon_warped_lab",
+   "dungeon": "warped_lab",
+   "name": "The Warped Laboratory",
+   "table": "data/dungeons.json dungeons.warped_lab"
+  },
+  {
+   "zone": "dungeon_crucible",
+   "dungeon": "crucible",
+   "name": "The Crucible",
+   "table": "data/dungeons.json dungeons.crucible"
+  },
+  {
+   "zone": "dungeon_starfall",
+   "dungeon": "starfall",
+   "name": "The Starfall Crater",
+   "table": "data/dungeons.json dungeons.starfall"
+  },
+  {
+   "zone": "dungeon_street",
+   "dungeon": "street",
+   "name": "The Street That Ends at Nothing",
+   "table": "data/dungeons.json dungeons.street"
+  },
+  {
+   "zone": "dungeon_patriarch",
+   "dungeon": "patriarch",
+   "name": "Under the Patriarch",
+   "table": "data/dungeons.json dungeons.patriarch"
+  }
+ ],
+ "legendary_register": {
+  "rule": "A legendary-class encounter our data authors is one row in the zone whose ground holds it, with its own checkbox on the Nuzlocke page: the area's catch is still its first ordinary encounter, and a player counts the legendary beside it. Named on the Nuzlocke page only (the owner, 2026-10-23: \"Named ... Only on the Nuzlocke page; the map and other pages keep hiding them\").",
+  "not_covered": [
+   "Dungeon bosses and prizes (data/dungeon_prize_roster.json status to_dungeon, and the prize pools of data/dungeons.json): the dungeon is one encounter, so its legendary is that encounter, not a row.",
+   "Starters and gifts: every species of a data/mythical_starters.json line (the starter screen and its evolutions), the fossil revive, rideable mounts (data/water_mounts.json) and quest or shop items. A species that also has a WILD entry in data/spawns.json (Poipole at the two Necrozma towers) is a row through that entry.",
+   "The Nether and its tables, the Nether boss pockets (Entei) and the Nether shrines Cobbleverse generates.",
+   "Anything Cobbleverse's own datapacks or mods spawn that this repository's data does not name: inherited legendary spawn presets not switched off by data/spawn_suppression.json, structures that generate on their own, Cobblemon raid dens, Terapagos on amethyst in caves. This register is read from OUR data, not from the world (CLAUDE.md 'Our list is not the world').",
+   "Hidden rows of the same site: a row is the species at its authored site; nothing here says a site is built, gated open or findable in a running game."
+  ],
+  "not_placed": [
+   {
+    "species": "lugia",
+    "what": "data/legendaries.json lugia (lake_grotto)",
+    "why": "status blocked (owner_decision: the trench does not exist and cannot be heightmap terrain): not in the world"
+   }
+  ],
+  "excluded": [
+   {
+    "species": "chienpao",
+    "why": "a Nether shrine that stays where Cobbleverse generates it; the Nether is not a catch zone here"
+   },
+   {
+    "species": "chiyu",
+    "why": "a Nether shrine that stays where Cobbleverse generates it; the Nether is not a catch zone here"
+   },
+   {
+    "species": "cosmoem",
+    "why": "a starter line (data/mythical_starters.json) or a gift, not a wild encounter"
+   },
+   {
+    "species": "cosmog",
+    "why": "a starter line (data/mythical_starters.json) or a gift, not a wild encounter"
+   },
+   {
+    "species": "entei",
+    "why": "a boss fight in a pocket dimension entered from the Nether (data/entei_boss.json); the Nether is not a catch zone here and the fight is a dungeon-type boss"
+   },
+   {
+    "species": "eternatus",
+    "why": "OUT by the owner until a Galar Particle supply exists (data/adopted_legendary_sites.json owner_decisions_2026_10_02)"
+   },
+   {
+    "species": "fluttermane",
+    "why": "a starter line (data/mythical_starters.json) or a gift, not a wild encounter"
+   },
+   {
+    "species": "kubfu",
+    "why": "a starter line (data/mythical_starters.json) or a gift, not a wild encounter"
+   },
+   {
+    "species": "lugia",
+    "why": "data/legendaries.json lugia is BLOCKED (the trench cannot exist): nowhere in the world"
+   },
+   {
+    "species": "lunala",
+    "why": "a starter line (data/mythical_starters.json) or a gift, not a wild encounter"
+   },
+   {
+    "species": "melmetal",
+    "why": "a starter line (data/mythical_starters.json) or a gift, not a wild encounter"
+   },
+   {
+    "species": "meltan",
+    "why": "a starter line (data/mythical_starters.json) or a gift, not a wild encounter"
+   },
+   {
+    "species": "mewtwo",
+    "why": "a gift: the COBBLEVERSE-DP fossil revive (the owner: \"Mewtwo stays on the fossil route\"); no place to count it in"
+   },
+   {
+    "species": "naganadel",
+    "why": "a starter line (data/mythical_starters.json) or a gift, not a wild encounter"
+   },
+   {
+    "species": "silvally",
+    "why": "a starter line (data/mythical_starters.json) or a gift, not a wild encounter"
+   },
+   {
+    "species": "solgaleo",
+    "why": "a starter line (data/mythical_starters.json) or a gift, not a wild encounter"
+   },
+   {
+    "species": "tinglu",
+    "why": "a Nether shrine that stays where Cobbleverse generates it; the Nether is not a catch zone here"
+   },
+   {
+    "species": "typenull",
+    "why": "a starter line (data/mythical_starters.json) or a gift, not a wild encounter"
+   },
+   {
+    "species": "urshifu",
+    "why": "a starter line (data/mythical_starters.json) or a gift, not a wild encounter"
+   },
+   {
+    "species": "wochien",
+    "why": "a Nether shrine that stays where Cobbleverse generates it; the Nether is not a catch zone here"
+   }
+  ],
+  "dungeon_held": [
+   "arceus",
+   "blacephalon",
+   "brutebonnet",
+   "celesteela",
+   "cobalion",
+   "cresselia",
+   "deoxys",
+   "diancie",
+   "fezandipiti",
+   "genesect",
+   "gougingfire",
+   "greattusk",
+   "guzzlord",
+   "heatran",
+   "ironboulder",
+   "ironbundle",
+   "ironcrown",
+   "ironhands",
+   "ironjugulis",
+   "ironleaves",
+   "ironmoth",
+   "ironthorns",
+   "irontreads",
+   "ironvaliant",
+   "jirachi",
+   "kartana",
+   "keldeo",
+   "kyurem",
+   "magearna",
+   "manaphy",
+   "marshadow",
+   "munkidori",
+   "ogerpon",
+   "okidogi",
+   "palkia",
+   "pecharunt",
+   "phione",
+   "ragingbolt",
+   "raikou",
+   "regidrago",
+   "regieleki",
+   "reshiram",
+   "roaringmoon",
+   "sandyshocks",
+   "screamtail",
+   "shaymin",
+   "slitherwing",
+   "stakataka",
+   "suicune",
+   "terapagos",
+   "terrakion",
+   "victini",
+   "virizion",
+   "volcanion",
+   "walkingwake",
+   "xerneas",
+   "xurkitree",
+   "yveltal",
+   "zacian",
+   "zamazenta",
+   "zarude",
+   "zekrom",
+   "zeraora",
+   "zygarde"
+  ]
+ },
  "not_zones": [
   {
    "zone": "desert_wreck_strand",
@@ -2253,7 +2852,7 @@
   },
   {
    "zone": "elder_* / sapling_*",
-   "what": "195 placed elder-tree and sapling Habitat Block pools",
+   "what": "209 placed elder-tree and sapling Habitat Block pools",
    "why": "a few blocks inside the sub-region each is named for: an encounter there is that sub-region's, listed under its zone's \"sites\""
   },
   {

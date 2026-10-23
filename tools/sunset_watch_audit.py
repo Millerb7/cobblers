@@ -207,7 +207,7 @@ def check_footprint(rep, E, R, data=DATA):
                 R.err("footprint", "a clear %s reaches (%d, %d) outside the record's boxes" % (a, x, z))
                 return
     # nothing else authored lies within 16 blocks of the main box (our own records excluded)
-    mine = {"sunset_watch.json", "habitat_blocks.json", "spawns.json", "rewards.json", "world_probes.json", "dialogue.json",
+    mine = {"sunset_watch.json", "habitat_blocks.json", "spawns.json", "fishing_fill.json", "underground_spawns.json", "rewards.json", "world_probes.json", "dialogue.json",
             "progression.json", "quests.json", "regions.json", "system_contracts.json", "id_authorship.json"}
     main_box = boxes[0] if boxes[0]["id"] == "sunset_watch_all" else boxes[1]
     x0, z0 = main_box["min"][0] - 16, main_box["min"][1] - 16

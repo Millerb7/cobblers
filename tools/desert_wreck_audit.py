@@ -91,7 +91,7 @@ FACING = {"north": (0, 0, -1), "south": (0, 0, 1), "east": (1, 0, 0), "west": (-
 CLEARABLE = {"minecraft:dead_bush", "minecraft:short_grass", "minecraft:tall_grass", "minecraft:fern",
              "minecraft:large_fern", "minecraft:cactus", "minecraft:sugar_cane", "#minecraft:logs", "#minecraft:leaves"}
 NOT_PLACES = {"desert_wreck.json", "regions.json", "cells.json", "world.json", "route_paths.json", "id_authorship.json",
-              "spawns.json", "spawn_blocks.json", "spawn_block_policy.json", "encounter_design.json"}
+              "spawns.json", "fishing_fill.json", "underground_spawns.json", "spawn_blocks.json", "spawn_block_policy.json", "encounter_design.json"}
 OWN_IDS = re.compile(r"^(habitat\.)?desert_wreck")
 
 

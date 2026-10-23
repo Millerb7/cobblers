@@ -34,6 +34,11 @@ WHO COUNTS, per leg N (on the way to badge N), in the player guide's meeting ord
   - the leader (data/gym_trainers.json, emitted at its upstream id).
   Then Victory Road (data/vr_trainers.json, by route_progress) and the League (data/league_trainers.json, by order).
 
+THE PATH (income_basis.path, 2026-10-22; docs/mechanics/ECONOMY_V3.md section 2): the same battles, keeping only the
+ones the path forces (on_path: leaders, eye-contact juniors and route/Victory Road trainers), keyed by badges held.
+It sits BESIDE the road figures and changes none of them: the road is the ceiling (what a thorough player can hold),
+the path the floor (what everyone has) that services, TM shelves and the Challenge voucher are priced against.
+
 WHAT IT DOES NOT COUNT, on purpose, and says so in the block it writes:
   - wild battles: they pay nothing. CobbleDollars would pay them under the same formula, but
     earnCobbleDollarsFromWildPokemon is false in modpack/config/cobbledollars/common.json (the owner, after the
@@ -162,12 +167,40 @@ def legs():
     return out
 
 
+PATH_SEATS = ("data/route_trainers.json", "data/late_route_trainers.json", "data/vr_trainers.json",
+              "data/gym_junior_trainers.json")
+
+
+def eye_contact():
+    """{trainer id: its seat's eye_contact} over every seated route, Victory Road and gym-junior trainer."""
+    out = {}
+    for name in PATH_SEATS:
+        for s in doc(name)["trainers"]:
+            out[s["id"]] = s.get("eye_contact") is True
+    return out
+
+
+def on_path(tid, kind, eyes):
+    """Whether a counted battle is one the PATH forces (data/markets.json income_basis.path; docs/mechanics/
+    ECONOMY_V3.md section 2; the owner, 2026-10-21: "so far no one is doing optional fights just the gym trainers and
+    leaders"): a leader or League member always (the badge is the fight); a route, Victory Road or gym-junior trainer
+    when its seat has eye contact (it starts the battle on sight, so it cannot be walked past). The mansion's five are
+    NOT on the path: they battle on sight inside, but entering the mansion is the player's choice. The HQ tower is
+    after badge 8 and in no badge's figure either way."""
+    if kind in ("leader", "league"):
+        return True
+    if kind in ("route", "junior"):
+        return eyes.get(tid) is True
+    return False
+
+
 def measure(mult=None):
     import route_trainers as RT
     import challenge_mode as CM
     mult = multiplier() if mult is None else mult
     pack = RT.files()
     sfx = CM.suffix()
+    eyes = eye_contact()
     counted = set()
     model = {"multiplier": mult, "suffix": sfx, "legs": []}
     for leg, rows in legs():
@@ -183,6 +216,7 @@ def measure(mult=None):
                 raise SystemExit("%s is counted twice" % tid)
             counted.add(tid)
             rowout.append({"id": tid, "file": fid, "kind": kind, "challenge_file": (fid + sfx) if c else None,
+                           "path": on_path(tid, kind, eyes),
                            "normal": {"S": sum(nl), "expected": expected(nl, mult), "exact": exact(nl, mult)},
                            "challenge": {"S": sum(cl), "expected": expected(cl, mult), "exact": exact(cl, mult)}})
         model["legs"].append({"leg": leg, "trainers": rowout})
@@ -194,15 +228,49 @@ def measure(mult=None):
     return model
 
 
-def totals(model, mode, field="expected"):
+def totals(model, mode, field="expected", path_only=False):
     leg, cum, run = {}, {}, 0.0
     for L in model["legs"]:
-        v = sum(r[mode][field] for r in L["trainers"])
+        v = sum(r[mode][field] for r in L["trainers"] if r["path"] or not path_only)
         leg[L["leg"]] = v
         if L["leg"] != "hq_tower":
             run += v
             cum[L["leg"]] = run
     return leg, cum
+
+
+PATH_LEGS = [1, 2, 3, 4, 5, 6, 7, 8, "vr"]   # the leg played while holding 0..8 badges
+
+
+def path_block(model):
+    """income_basis.path: the same battles, counting only those the path forces (on_path). Keyed by the badges a
+    player HOLDS while playing the leg (0..7 the gym legs 1..8, 8 Victory Road), because every price that reads it
+    (data/training_services.json, the tm_tier counter lines, data/challenge_mode.json voucher) is charged to a player
+    by the badges held."""
+    nl, nc = totals(model, "normal", path_only=True)
+    cl, cc = totals(model, "challenge", path_only=True)
+    held = lambda d: {str(i): int(round(d[k])) for i, k in enumerate(PATH_LEGS)}   # noqa: E731
+    cum = lambda d: {str(k): int(round(d[k])) for k in PATH_LEGS}                  # noqa: E731
+    S = lambda mode: {str(L["leg"]): [t[mode]["S"] for t in L["trainers"] if t["path"]]   # noqa: E731
+                      for L in model["legs"] if L["leg"] in PATH_LEGS}
+    return {
+        "decision": "the owner, 2026-10-21: 'so far no one is doing optional fights just the gym trainers and leaders. "
+                    "which is what i expected and emphasized, so idk why the economy was balanced around a different "
+                    "play style'; 2026-10-22: 'make every change global'. docs/mechanics/ECONOMY_V3.md sections 2-3.1",
+        "counts_trainers": "the fights the path forces: every gym's juniors (eye contact, data/gym_junior_trainers.json), "
+                           "every leader, every route trainer whose seat has eye_contact true (data/route_trainers.json, "
+                           "data/late_route_trainers.json: Route 1's one today) and Victory Road's ten (all eye contact). "
+                           "NOT the mansion's five (entering it is a choice), route trainers a player can walk past, the "
+                           "League (its own figure under post_badge_8), the HQ tower; each beaten once",
+        "used_by": "the prices a player is MEANT to afford: data/training_services.json price_rule, data/markets.json "
+                   "price_policies.tm_tier, data/challenge_mode.json voucher.rule. The road figures above "
+                   "(cumulative_by_badge, leg_by_badge) stay the ceiling the income gate, the bank's parity rule and "
+                   "the curve read",
+        "leg_by_badges_held": held(nl),
+        "cumulative_by_badge": cum(nc),
+        "challenge": {"leg_by_badges_held": held(cl), "cumulative_by_badge": cum(cc)},
+        "level_sums": {"normal": S("normal"), "challenge": S("challenge")},
+    }
 
 
 def block(model, old):
@@ -257,6 +325,7 @@ def block(model, old):
                               "normal_cumulative_by_badge": r(xc, badges),
                               "challenge_cumulative_by_badge": r(yc, badges)},
         "level_sums": {"normal": S("normal"), "challenge": S("challenge")},
+        "path": path_block(model),
         "target_ratio": old["target_ratio"],
         "target_source": old["target_source"],
         "counts": old["counts"],
@@ -269,7 +338,7 @@ def render(b):
     lines = ["  \"income_basis\": {"]
     items = list(b.items())
     for i, (k, v) in enumerate(items):
-        if isinstance(v, dict) and k in ("challenge", "post_badge_8", "exact_expectation", "level_sums",
+        if isinstance(v, dict) and k in ("challenge", "post_badge_8", "exact_expectation", "level_sums", "path",
                                          "superseded_model_b"):
             lines.append("    %s: {" % json.dumps(k))
             sub = list(v.items())

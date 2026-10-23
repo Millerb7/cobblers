@@ -18,7 +18,7 @@
   "rules": {
     "south_of_z": 4096,
     "authored_clearance": 96,
-    "authored_clearance_exempt_files": {"fungal_isle.json": "the Fungal Isle (2026-10-09) is the fairy ring's own island, grown over round it at the owner's request; its builder kept 22 blocks clear of the ring itself"},
+    "authored_clearance_exempt_files": {"fishing_fill.json": "fishing cover cells (tools/fishing_cover.py, 2026-10-22): water cells that name which fishing table applies, not a place on land", "underground_spawns.json": "the caves' and mines' underground spawn boxes (tools/underground_spawns.py, 2026-10-22): spawn volumes below ground, not a place", "fungal_isle.json": "the Fungal Isle (2026-10-09) is the fairy ring's own island, grown over round it at the owner's request; its builder kept 22 blocks clear of the ring itself"},
     "authored_clearance_exempt": {"fungal_glowcap_hollow_ward": "the Fungal Isle's Glowcap Hollow nest (data/fungal_isle.json, 2026-10-09) stands 63 blocks from Grandmother Cap's fairy ring on purpose: the ring is the isle's own, and the hollow's builder kept 22 blocks clear of it. The owner asked for the isle to be full of life round it"},
     "authored_clearance_why": "the brief of 2026-10-03: at least 96 blocks from any x/z authored in data/*.json. tools/southern_residents.py authored_points() scans EVERY other data file (dicts with x and z, [x, z], [x, y, z] read both ways, [x0, z0, x1, z1] boxes) and checks every written column, clear, NPC spot, anchor and cache, not just the centre. Our own records in data/quests.json and data/rewards.json are skipped by id",
     "keep_out_box": {"box": [3450, 4700, 4250, 5450], "why": "the Mega farm being built on the night of 2026-10-03 (the brief)"},

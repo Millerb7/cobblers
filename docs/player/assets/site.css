@@ -172,6 +172,7 @@ stroke-opacity:.9}
 text-anchor:middle;dominant-baseline:middle}
 .lbl.town{font-weight:700;fill:#fffbe8}.lbl.area-l{font-style:italic;fill:#e9f2ff}
 .dot{fill:#fffbe8;stroke:#000;stroke-opacity:.7;vector-effect:non-scaling-stroke;pointer-events:none}
+.pit{fill:#ff9f1c;stroke:#000;stroke-opacity:.8;vector-effect:non-scaling-stroke;pointer-events:none}.lbl.pit-l{font-weight:700;fill:#ffd9a0}
 section.doc{max-width:62rem;margin:0 auto;padding:.6rem 1rem}
 section.doc h2{font-size:1.05rem;margin:1.2rem 0 .3rem}
 section.doc li{margin:.15rem 0}

@@ -11,8 +11,8 @@ new runs in the game:
                  (tools/ground.py, rounded, plus one), never on a world. Placed over RCON by tools/reapply.py R17TS
                  after a restart, as the ferrymen are (R17F), because NPC classes load only at a boot.
   the dialogue   one per keeper, compiled from a conversation built here in memory: a hub, then one page per service
-                 that offers Slot 1..6. The EV and IV options are visible only to a player holding gym2_cleared and
-                 gym8_cleared; the functions check the same flags again. Each slot option runs its own two-line
+                 that offers Slot 1..6. The hub carries one option per service per tier (0-8 badges held), each
+                 visible only to a player at that tier, so the button shows that player's price. Each slot option runs its own two-line
                  function that writes the slot into storage and calls the service's macro function with it: a
                  dialogue `function` effect takes a bare id, so the slot travels in the function's name.
   the slot read  testpartyslot @s <slot> level=L for L = 1..max_level, returning the first L that matches, or 0
@@ -21,6 +21,10 @@ new runs in the game:
   the cap        `$execute store result score @s cob_ts_cap run rctmod player get level_cap @s$(x)` on a macro line
                  (EXP-046; tools/levelcap_pack.py). `level=` fires no experience event, so rctmod never clamps it:
                  the raise writes EXACTLY the score it has just read, through `req.cap`, and no level is authored.
+  the price      RISES WITH BADGES (the owner, 2026-10-21; data/training_services.json price_rule): each run function
+                 reads the tier (the highest gymN_cleared held; for EV and IV raised to the slot's level band) and
+                 hands over to <service>/pay_<tier>, which charges that tier's price and does the edit. A run
+                 function charges nothing; the dialogue's price is a label, never trusted.
   the payment    the ferry's checked sequence (tools/ferries.py trip_lines): read the balance, refuse when short,
                  set the click's cooldown, charge through `$cobbledollars remove @s $(amount)`, re-read, and do
                  nothing unless it fell by exactly the price. Every refusal before the charge charges nothing. A raise
@@ -167,11 +171,47 @@ def cooldown_check():
             "execute if score @s %s > #now %s run return 0" % (COOLDOWN, SCORE)]
 
 
+TIERS = range(0, 9)
+ORDINAL = {1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth", 6: "sixth", 7: "seventh", 8: "eighth"}
+
+
+def tier_prices(doc, key):
+    """{tier: price} services.<key> charges: raise and ev a Pokemon, iv a stat (price_rule, the owner 2026-10-21)."""
+    svc = doc["services"][key]
+    field = "price_per_stat_by_tier" if key == "iv" else "price_by_tier"
+    return {t: int(svc[field][str(t)]) for t in TIERS}
+
+
+def badge_tier_lines():
+    """#tier = the highest N whose gymN_cleared advancement the player holds, 0 with none (price_rule.tier)."""
+    return (["# the tier: the highest gym badge held (data/training_services.json price_rule.tier.badges_held), read now",
+             "scoreboard players set #tier %s 0" % SCORE]
+            + ["execute if entity @s[advancements={%s:flag/gym%d_cleared=true}] run scoreboard players set #tier %s %d"
+               % (NS, n, SCORE, n) for n in range(1, 9)])
+
+
+def band_lines(doc):
+    """Raise #tier to the slot's level band (#lv, read by slot_read): the smallest t whose cap holds the level."""
+    caps = doc["price_rule"]["cap_by_badges_held"]
+    return (["# raised to the slot's level band: a Pokemon above the cap of the badges held costs the tier its level needs"]
+            + ["execute if score #lv %s matches %d.. if score #tier %s matches ..%d run scoreboard players set #tier %s %d"
+               % (SCORE, int(caps[str(t - 1)]) + 1, SCORE, t - 1, SCORE, t) for t in range(1, 9)])
+
+
+def dispatch(prefix):
+    """Run <prefix>/pay_<tier> for the tier just read; nothing else charges."""
+    return (["# each tier's price is its own function, so the amount charged is the amount the tier's line names"]
+            + ["execute if score #tier %s matches %d run return run function %s with storage %s req"
+               % (SCORE, t, fn_id("%s/pay_%d" % (prefix, t)), STORAGE) for t in TIERS]
+            + ["return 0"])
+
+
 def gate_check(doc, svc):
     flag = svc.get("gate")
     if not flag:
         return []
-    req = "your %s badge" % {"gym2_cleared": "second", "gym8_cleared": "eighth"}.get(flag, flag)
+    m = re.fullmatch(r"gym(\d)_cleared", flag)
+    req = "your %s badge" % ORDINAL[int(m.group(1))] if m else flag
     return ["# the dialogue hides this option without %s; checked again here, before anything is read or taken" % flag,
             "execute unless entity @s[advancements={%s:flag/%s=true}] run return run tellraw @s %s"
             % (NS, flag, text(fill(doc["messages"]["gated"], requirement=req), "gold"))]
@@ -209,7 +249,7 @@ def payment(doc, price):
 
 def raise_run(doc):
     svc, m = doc["services"]["raise"], doc["messages"]
-    price, top = int(svc["price"]), int(svc["max_cap"])
+    top = int(svc["max_cap"])
     return (["# Generated by tools/training_services.py from data/training_services.json: raise one Pokemon to the",
              "# player's RCT level cap. As the player, from a keeper's dialogue. Macro: $(slot) and $(x) (the cap read)."]
             + cooldown_check() + gate_check(doc, svc)
@@ -222,6 +262,14 @@ def raise_run(doc):
             + slot_read(doc)
             + ["execute if score #lv %s = @s %s run return run tellraw @s %s" % (SCORE, CAP, text(m["slot_at_cap"], "gold")),
                "execute if score #lv %s > @s %s run return run tellraw @s %s" % (SCORE, CAP, text(m["slot_above_cap"], "gold"))]
+            + badge_tier_lines() + dispatch("raise"))
+
+
+def raise_pay(doc, price):
+    """raise/pay_<tier>: the charge at one tier's price, the edit to the cap raise/run read, the refund."""
+    m = doc["messages"]
+    return (["# Generated by tools/training_services.py: the raise at $%d, called by raise/run for its tier with the" % price,
+             "# request it built (slot, cap). Nothing before this function has taken anything."]
             + payment(doc, price)
             + ["# the edit, to exactly the cap read above; a slot that does not read back at the cap is refunded",
                "scoreboard players set #done %s 0" % SCORE,
@@ -239,12 +287,25 @@ def raise_apply():
             "$return run testpartyslot @s $(slot) level=$(cap)"]
 
 
-def stat_run(doc, key, price, done_key, apply_rel, header):
-    svc, m = doc["services"][key], doc["messages"]
-    done = fill(m[done_key].replace("{spread}", "$(name)").replace("{stat}", "$(name)"), price=price)
+def stat_run(doc, key, prefix, header):
+    """<prefix>/run: refusals, the slot read, the tier (badges held, raised to the slot's level band), then the tier's
+    pay function. Charges nothing itself."""
+    svc = doc["services"][key]
     return (["# Generated by tools/training_services.py from data/training_services.json: %s" % header,
-             "# As the player, from a keeper's dialogue. Macro: $(slot), $(props) and $(name), written by the slot option."]
-            + cooldown_check() + gate_check(doc, svc) + slot_read(doc) + payment(doc, price)
+             "# As the player, from a keeper's dialogue. Macro: $(slot), $(props) and $(name), written by the slot option.",
+             "# the slot, recorded; the line also keeps this a macro function, as the `function ... with` call that",
+             "# reaches it was written for (before 2026-10-22 its own tellraw was the macro line)",
+             "$scoreboard players set #slot %s $(slot)" % SCORE]
+            + cooldown_check() + gate_check(doc, svc) + slot_read(doc) + badge_tier_lines() + band_lines(doc)
+            + dispatch(prefix))
+
+
+def stat_pay(doc, price, done_key, apply_rel, header):
+    m = doc["messages"]
+    done = fill(m[done_key].replace("{spread}", "$(name)").replace("{stat}", "$(name)"), price=price)
+    return (["# Generated by tools/training_services.py: %s at $%d, called by its run function for its tier" % (header, price),
+             "# with the slot option's request. Macro: $(slot), $(props) and $(name)."]
+            + payment(doc, price)
             + ["function %s with storage %s req" % (fn_id(apply_rel), STORAGE),
                "$tellraw @s %s" % text(done, "green")])
 
@@ -277,12 +338,11 @@ def wrapper(run_rel, slot, **extra):
 
 
 def iv_options(doc):
-    """[(option id, display name, stats, price)] for the IV page."""
+    """[(option id, display name, stats, kind)] for the IV page: kind "one" (a stat's price) or "all" (six times)."""
     svc = doc["services"]["iv"]
-    per = int(svc["price_per_stat"])
-    out = [(s, STAT_NAMES[s], (s,), per) for s in STATS]
+    out = [(s, STAT_NAMES[s], (s,), "one") for s in STATS]
     if svc.get("all_six"):
-        out.append(("all", "every stat", STATS, per * len(STATS)))
+        out.append(("all", "every stat", STATS, "all"))
     return out
 
 
@@ -295,28 +355,44 @@ def functions(doc):
     files[fn_path("refund")] = ["# CobbleDollars' give, VERIFIED from the jar (EXP-040)", "$cobbledollars give @s $(amount)"]
     files[fn_path("slot_level")] = slot_level_lines(int(doc["max_level"]))
     files[fn_path("raise/run")] = raise_run(doc)
+    for t, price in tier_prices(doc, "raise").items():
+        files[fn_path("raise/pay_%d" % t)] = raise_pay(doc, price)
     files[fn_path("raise/apply")] = raise_apply()
     for n in SLOTS:
         files[fn_path("raise/slot%d" % n)] = wrapper("raise/run", n)
     ev = doc["services"]["ev"]
-    files[fn_path("ev/run")] = stat_run(doc, "ev", int(ev["price"]), "ev_done", "ev/apply", "an EV spread")
+    files[fn_path("ev/run")] = stat_run(doc, "ev", "ev", "an EV spread")
+    for t, price in tier_prices(doc, "ev").items():
+        files[fn_path("ev/pay_%d" % t)] = stat_pay(doc, price, "ev_done", "ev/apply", "an EV spread")
     files[fn_path("ev/apply")] = ev_apply()
     for sp in ev["spreads"]:
         for n in SLOTS:
             files[fn_path("ev/%s/slot%d" % (sp["id"], n))] = wrapper("ev/run", n, props=ev_props(sp), name=sp["name"])
     iv = doc["services"]["iv"]
-    prices = sorted({p for _, _, _, p in iv_options(doc)})
-    for p in prices:
-        files[fn_path("iv/run_%d" % p)] = stat_run(doc, "iv", p, "iv_done", "iv/apply", "IVs, $%d" % p)
+    per = tier_prices(doc, "iv")
+    for kind, k in (("one", 1), ("all", len(STATS))):
+        files[fn_path("iv/%s/run" % kind)] = stat_run(doc, "iv", "iv/%s" % kind, "IVs, %d stat(s)" % k)
+        for t, p in per.items():
+            files[fn_path("iv/%s/pay_%d" % (kind, t))] = stat_pay(doc, p * k, "iv_done", "iv/apply", "IVs, %d stat(s)" % k)
     files[fn_path("iv/apply")] = iv_apply()
-    for oid, name, stats, p in iv_options(doc):
+    for oid, name, stats, kind in iv_options(doc):
         for n in SLOTS:
-            files[fn_path("iv/%s/slot%d" % (oid, n))] = wrapper("iv/run_%d" % p, n, props=iv_props(stats, int(iv["value"])),
-                                                                 name=name)
+            files[fn_path("iv/%s/slot%d" % (oid, n))] = wrapper("iv/%s/run" % kind, n,
+                                                                 props=iv_props(stats, int(iv["value"])), name=name)
     return files
 
 
 # -------------------------------------------------------------------------------------------------------- the dialogue
+def tier_condition(t):
+    """Visible to a player whose highest gym badge is t: holds gym t (t >= 1) and no later one."""
+    flag = lambda n: {"kind": "flag", "flag": "gym%d_cleared" % n}   # noqa: E731
+    parts = [flag(t)] if t >= 1 else []
+    later = [flag(n) for n in range(t + 1, 9)]
+    if later:
+        parts.append({"kind": "not", "condition": {"kind": "any", "conditions": later}})
+    return parts[0] if len(parts) == 1 else {"kind": "all", "conditions": parts}
+
+
 def conversation(doc, k):
     """(conversation, quest) for one keeper, in data/dialogue.json's and data/quests.json's shape."""
     m, svc = doc["messages"], doc["services"]
@@ -335,14 +411,23 @@ def conversation(doc, k):
         return {"id": node, "kind": "choice", "speaker": sp, "text": prompt, "responses": rs}
 
     ivs = iv_options(doc)
-    prices = dict(raise_price=svc["raise"]["price"], ev_price=svc["ev"]["price"], iv_price=svc["iv"]["price_per_stat"],
-                  iv_all_price=svc["iv"]["price_per_stat"] * len(STATS))
     flag = lambda f: {"kind": "flag", "flag": f}   # noqa: E731
-    hub = [{"id": "r_raise", "text": fill(m["raise_option"], **prices), "next": "raise"},
-           {"id": "r_ev", "text": fill(m["ev_option"], **prices), "next": "ev", "visible_when": flag(svc["ev"]["gate"])},
-           {"id": "r_iv", "text": fill(m["iv_option"], **prices), "next": "iv", "visible_when": flag(svc["iv"]["gate"])},
-           {"id": "r_leave", "text": m["leave"], "actions": [{"kind": "close_dialogue"}]}]
-    nodes = [{"id": "hub", "kind": "choice", "speaker": sp, "text": fill(m["greeting"], **prices), "responses": hub},
+    raise_p, ev_p, iv_p = tier_prices(doc, "raise"), tier_prices(doc, "ev"), tier_prices(doc, "iv")
+    hub = []
+    for key, tmpl, nxt, price in (("raise", "raise_option", "raise", lambda t: dict(raise_price=raise_p[t])),
+                                  ("ev", "ev_option", "ev", lambda t: dict(ev_price=ev_p[t])),
+                                  ("iv", "iv_option", "iv", lambda t: dict(iv_price=iv_p[t]))):
+        gate = svc[key].get("gate")
+        for t in TIERS:
+            # one option a tier, shown only to a player holding exactly that many badges (the highest gymN_cleared),
+            # so the price on the button is the badges' price; the function re-reads the tier and never trusts it
+            cond = tier_condition(t)
+            if gate:
+                cond = {"kind": "all", "conditions": [flag(gate), cond]}
+            hub.append({"id": "r_%s_t%d" % (key, t), "text": fill(m[tmpl], **price(t)), "next": nxt,
+                        "visible_when": cond})
+    hub.append({"id": "r_leave", "text": m["leave"], "actions": [{"kind": "close_dialogue"}]})
+    nodes = [{"id": "hub", "kind": "choice", "speaker": sp, "text": m["greeting"], "responses": hub},
              slot_page("raise", "hub", m["raise_page"], "raise")]
     ev_rs = [{"id": "r_ev_%s" % s["id"], "text": "%s (%s)" % (s["name"], ", ".join(
         "%d %s" % (s["evs"][st], STAT_NAMES[st]) for st in STATS if st in s["evs"])), "next": "ev_%s" % s["id"]}
@@ -352,12 +437,12 @@ def conversation(doc, k):
     for s in svc["ev"]["spreads"]:
         nodes.append(slot_page("ev_%s" % s["id"], "ev", fill(m["ev_slot_page"], spread=s["name"]), "ev/%s" % s["id"]))
     iv_rs = []
-    for oid, name, stats, p in ivs:
-        label = fill(m["iv_all"], **prices) if oid == "all" else "%s ($%d)" % (name, p)
+    for oid, name, stats, _kind in ivs:
+        label = m["iv_all"] if oid == "all" else name
         iv_rs.append({"id": "r_iv_%s" % oid, "text": label, "next": "iv_%s" % oid})
     iv_rs.append({"id": "r_iv_back", "text": m["back"], "next": "hub"})
     nodes.append({"id": "iv", "kind": "choice", "speaker": sp, "text": m["iv_page"], "responses": iv_rs})
-    for oid, name, stats, p in ivs:
+    for oid, name, stats, _kind in ivs:
         nodes.append(slot_page("iv_%s" % oid, "iv", fill(m["iv_slot_page"], stat=name[0].upper() + name[1:]),
                                "iv/%s" % oid))
     kid = keeper_id(k)
@@ -409,10 +494,10 @@ def static_problems(doc, prog, planned):
     if not (f and f.get("scope") == "player" and f.get("type") == "enum" and f.get("initial") == "hub"):
         out.append("%s is not a declared player enum field with initial hub in data/progression.json" % CURSOR)
     s = doc.get("services") or {}
-    for key, pk in (("raise", "price"), ("ev", "price"), ("iv", "price_per_stat")):
-        v = (s.get(key) or {}).get(pk)
-        if not (type(v) is int and v > 0):
-            out.append("services.%s.%s must be a whole number of CobbleDollars above 0" % (key, pk))
+    for key, pk in (("raise", "price_by_tier"), ("ev", "price_by_tier"), ("iv", "price_per_stat_by_tier")):
+        v = (s.get(key) or {}).get(pk) or {}
+        if sorted(v) != sorted(str(t) for t in TIERS) or not all(type(x) is int and x > 0 for x in v.values()):
+            out.append("services.%s.%s must price every tier 0-8 in whole CobbleDollars above 0" % (key, pk))
         g = (s.get(key) or {}).get("gate")
         if g is not None and (g not in flags or g not in planned):
             out.append("services.%s.gate %r is not a declared and planned progression flag" % (key, g))
@@ -434,50 +519,51 @@ def static_problems(doc, prog, planned):
     return out + price_rule_problems(doc)
 
 
-def rule_price(doc, key, markets=None, bank=None):
-    """The price price_rule gives services.<key>: the smallest multiple of round_to STRICTLY above hours_saved x the
-    fight hour of the anchor leg (data/markets.json income_basis.leg_by_badge[anchor] / data/bank.json
-    effort_model.max_leg_hours, the fight hour R5 already prices gathering against). None if the rule does not apply."""
-    r = doc.get("price_rule") or {}
-    a = (r.get("applies_to") or {}).get(key)
-    if not a:
-        return None
+RULE_FIELDS = {"raise": ("raise", "price_by_tier"), "ev": ("ev", "price_by_tier"), "iv": ("iv_per_stat", "price_per_stat_by_tier")}
+
+
+def rule_price(doc, key, t, markets=None):
+    """The price price_rule gives services.<key> at tier t (the owner, 2026-10-21: RISES WITH BADGES): the smallest
+    multiple of round_to AT OR ABOVE fractions[key] x data/markets.json income_basis.path.leg_by_badges_held[t], what
+    the path pays in the leg a player holding t badges is playing."""
+    r = doc["price_rule"]
     markets = markets if markets is not None else json.loads((ROOT / "data" / "markets.json").read_text(encoding="utf-8"))
-    bank = bank if bank is not None else json.loads((ROOT / "data" / "bank.json").read_text(encoding="utf-8"))
-    leg = Fraction(int(markets["income_basis"]["leg_by_badge"][str(r["anchor_badge"])]))
-    hour = leg / Fraction(bank["effort_model"]["max_leg_hours"])
+    leg = Fraction(int(markets["income_basis"]["path"]["leg_by_badges_held"][str(t)]))
+    want = Fraction(str(r["fractions"][RULE_FIELDS[key][0]])) * leg
     step = int(r["round_to"])
-    return (int(Fraction(a["hours_saved"]) * hour) // step + 1) * step
+    return int(-(-want // step)) * step
 
 
-def price_rule_problems(doc, markets=None, bank=None):
-    """price_rule (the owner after the 2026-10-10 overnight: services against craftables, docs/mechanics/
-    SERVICES_AND_CRAFTING.md): every service it names carries exactly the rule's price, so a re-measured income
-    re-prices the service instead of leaving it cheap. A service the rule does not name says why in not_applied."""
+def price_rule_problems(doc, markets=None, legendaries=None):
+    """price_rule: every tier of every service carries exactly the rule's price, and the level bands the EV and IV
+    tiers read are the level-cap bounds data/legendaries.json authors. A re-measured path income re-prices every tier."""
     r = doc.get("price_rule")
     if not r:
-        return ["no price_rule: the services' prices are not tied to what crafting saves"]
+        return ["no price_rule: the services' prices are not tied to the path income"]
+    if not (type(r.get("round_to")) is int and r["round_to"] > 0 and isinstance(r.get("fractions"), dict)
+            and r.get("tiers") == list(TIERS)):
+        return ["price_rule: round_to must be a positive whole number, fractions a table, tiers exactly 0..8"]
     out = []
-    if not (type(r.get("anchor_badge")) is int and 1 <= r["anchor_badge"] <= 8 and type(r.get("round_to")) is int
-            and r["round_to"] > 0):
-        return ["price_rule: anchor_badge must be 1..8 and round_to a positive whole number"]
     s = doc.get("services") or {}
-    named = set(r.get("applies_to") or {}) | set(r.get("not_applied") or {})
-    for key in s:
-        if key not in named:
-            out.append("price_rule: services.%s is neither in applies_to nor in not_applied" % key)
-    for key, a in sorted((r.get("applies_to") or {}).items()):
-        field = a.get("field")
-        if key not in s or field not in s[key]:
-            out.append("price_rule.applies_to.%s: no services.%s.%s" % (key, key, field))
+    if sorted(s) != sorted(RULE_FIELDS):
+        out.append("price_rule prices raise, ev and iv; services has %s" % sorted(s))
+    for key, (frac, field) in sorted(RULE_FIELDS.items()):
+        if frac not in r["fractions"]:
+            out.append("price_rule.fractions has no %s" % frac)
             continue
-        if not (a.get("hours_saved") and a.get("why")):
-            out.append("price_rule.applies_to.%s: needs hours_saved and why" % key)
-            continue
-        want = rule_price(doc, key, markets, bank)
-        if s[key][field] != want:
-            out.append("services.%s.%s is $%s; price_rule gives $%d (%s h x the leg-%d fight hour, rounded up past it "
-                       "to $%d)" % (key, field, s[key][field], want, a["hours_saved"], r["anchor_badge"], r["round_to"]))
+        have = (s.get(key) or {}).get(field) or {}
+        for t in TIERS:
+            want = rule_price(doc, key, t, markets)
+            if have.get(str(t)) != want:
+                out.append("services.%s.%s[%d] is $%s; price_rule gives $%d (%s x the path leg played holding %d "
+                           "badges, rounded up to $%d)" % (key, field, t, have.get(str(t)), want, r["fractions"][frac],
+                                                           t, r["round_to"]))
+    leg = legendaries if legendaries is not None else json.loads(
+        (ROOT / "data" / "legendaries.json").read_text(encoding="utf-8"))
+    bounds = {k: v for k, v in leg["level_caps"]["upper_bound_by_badges"].items() if k != "champion"}
+    if r.get("cap_by_badges_held") != bounds:
+        out.append("price_rule.cap_by_badges_held %s is not data/legendaries.json level_caps.upper_bound_by_badges %s"
+                   % (r.get("cap_by_badges_held"), bounds))
     return out
 
 
@@ -499,7 +585,15 @@ def output_problems(doc, files):
         bad = function_limits.check_lines(ls, p)
         if bad:
             out.append("%s: %s" % (p, bad[:2]))
-    runs = [p for p in files if re.search(r"/(raise/run|ev/run|iv/run_\d+)\.mcfunction$", p)]
+    for p in [p for p in files if re.search(r"/(raise|ev|iv/one|iv/all)/run\.mcfunction$", p)]:
+        ls = files[p]
+        if any(l.startswith("function %s " % fn_id("charge")) for l in ls):
+            out.append("%s charges: only a tier's pay function may" % p)
+        pre = p[:-len("run.mcfunction")]
+        got = sorted(int(m.group(1)) for l in ls for m in [re.search(r"/pay_(\d+) with storage", l)] if m)
+        if got != list(TIERS) or any(pre + "pay_%d.mcfunction" % t not in files for t in TIERS):
+            out.append("%s does not dispatch to one pay function per tier 0-8: %s" % (p, got))
+    runs = [p for p in files if re.search(r"/(raise|ev|iv/one|iv/all)/pay_\d+\.mcfunction$", p)]
     for p in runs:
         ls = files[p]
         charge = [i for i, l in enumerate(ls) if l.startswith("function %s " % fn_id("charge"))]

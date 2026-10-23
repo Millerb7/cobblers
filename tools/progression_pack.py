@@ -16,7 +16,8 @@ the unlock for its town's waystone, so both read the same data. The pack:
   function/flag/<id>/granted           reward: re-sync this player's waystones, offer that player a
                                        Xaero's waypoint to the next gym (gym_markers, one gym ahead), and
                                        give the leader's rewards once (loot_table/first_win/<trainer>), and
-                                       call carry when the flag declares one
+                                       call carry when the flag declares one; a Challenge player also gets
+                                       that badge's voucher step in cash (voucher_grants)
   function/flag/<id>/carry             carries_stage flags only (the gym badges): `runmolang` on THIS player's
                                        q.player.data() moves the reveal's stage up to the badge's stage, never
                                        down (the owner, 2026-10-05: playable end to end). NOT yet run in game
@@ -182,7 +183,96 @@ def plan(doc: dict, series: str | None = None, placements: dict | None = None) -
     return {"namespace": ns, "series": active, "flags": flags,
             "waystones": waystones, "unplaced": sorted(unplaced), "markers": markers,
             "empty_loot_tables": empty_loot, "empty_functions": empty_fn, "first_win": first_win,
+            "voucher": voucher_grants(flags) if active == "kanto" else {"tag": None, "by_flag": {}},
             "waystone_gate": bool(_obj(doc.get("waystone_gate") or {"enforced": True}, "waystone_gate").get("enforced", True))}
+
+
+CHALLENGE = ROOT / "data" / "challenge_mode.json"
+
+
+def voucher_grants(flags, path: Path = CHALLENGE, strict: bool = False) -> dict:
+    """{"tag": the Challenge player's tag, "by_flag": {gym flag: dollars}}: the Challenge voucher's gym-clear steps
+    (data/challenge_mode.json voucher.computed.schedule, every step but Oak's, which the Challenge confirm pays).
+    Paid in CASH, the step's whole value (the owner, 2026-10-21: "just give him money i dont care"), not the kits of
+    materials voucher.delivery describes. strict (the real build, main): a step naming a flag this series does not
+    have is a fault; otherwise (a test fixture with a few flags) that step is left out."""
+    if not path.exists():
+        return {"tag": None, "by_flag": {}, "gifts": {}, "oak_gifts": None}
+    doc = json.loads(path.read_text(encoding="utf8"))
+    tag = doc["mode"]["tag"]
+    have = {f["id"] for f in flags}
+    gifts, oak = tm_gifts(doc, have, strict)
+    by_flag = {}
+    for step in doc["voucher"]["computed"]["schedule"]:
+        if step["at"] == "oak_mode_choice":
+            continue
+        if step["at"] not in have:
+            if not strict:
+                continue
+            raise ProgressionError("challenge voucher: step %r names no flag of data/progression.json" % step["at"])
+        if not isinstance(step["value"], int) or step["value"] <= 0:
+            raise ProgressionError("challenge voucher: step %r has no positive value" % step["at"])
+        by_flag[step["at"]] = step["value"]
+    return {"tag": tag, "by_flag": by_flag, "gifts": gifts, "oak_gifts": oak}
+
+
+ITEM_ID = re.compile(r"^[a-z0-9_.-]+:[a-z0-9_./-]+$")
+SCORES = ROOT / "docs" / "mechanics" / "TM_POWER_GATE.json"
+
+
+def tm_gifts(doc: dict, have: set, strict: bool = False):
+    """({gym flag: [TM item]}, Oak's {"items": [...], "case": {...} or None} or None) from data/challenge_mode.json
+    tm_gifts (the owner, 2026-10-22: "challenge mode should be given tms"). Each TM must be one the server crafts: a
+    row of docs/mechanics/TM_POWER_GATE.json, which tools/tm_gate.py fails closed unless it covers every TMCraft TM the
+    server's jars craft. Which TMs a step names (the shelf's answers) is tools/challenge_voucher.py --check's to prove."""
+    g = doc.get("tm_gifts")
+    if not g:
+        return {}, None
+    known = set(json.loads(SCORES.read_text(encoding="utf8"))["tms"])
+    out, oak = {}, None
+    for at, step in (g.get("by_step") or {}).items():
+        items = step.get("items") or []
+        bad = [i for i in items if not (isinstance(i, str) and i in known)]
+        if bad or not items or len(set(items)) != len(items):
+            raise ProgressionError("challenge tm_gifts %s: %s" % (
+                at, "not TMs the server crafts (docs/mechanics/TM_POWER_GATE.json): %s" % bad if bad
+                else "no items, or an item twice"))
+        if at == "oak_mode_choice":
+            oak = {"items": list(items), "case": None}
+            continue
+        if at not in have:
+            if strict:
+                raise ProgressionError("challenge tm_gifts: step %r names no flag of data/progression.json" % at)
+            continue
+        out[at] = list(items)
+    case = g.get("case")
+    if case:
+        if oak is None or case.get("at") != "oak_mode_choice":
+            raise ProgressionError("challenge tm_gifts case: given at Oak's Challenge confirm only (at oak_mode_choice)")
+        if not (isinstance(case.get("item"), str) and ITEM_ID.match(case["item"])
+                and isinstance(case.get("name"), str) and case["name"].strip()):
+            raise ProgressionError("challenge tm_gifts case: needs an item id and a name")
+        oak["case"] = {"item": case["item"], "name": case["name"]}
+    return out, oak
+
+
+def oak_gift_lines(oak: dict) -> list:
+    """The commands of <ns>:challenge/oak_gifts, run as the player by Oak's Challenge confirm (data/quests.json, a
+    `function` effect on the transition that also pays the voucher's first step, once)."""
+    lines = ["# Generated by tools/progression_pack.py from data/challenge_mode.json tm_gifts (by_step oak_mode_choice).",
+             "# Run as the player by Oak's Challenge confirm: the same transition pays the voucher's first step, once."]
+    lines += ["give @s %s 1" % i for i in oak["items"]]
+    if oak.get("case"):
+        c = oak["case"]
+        name = json.dumps({"text": c["name"], "italic": False}, separators=(",", ":"))
+        if "'" in name:
+            raise ProgressionError("challenge tm_gifts case: a name with a single quote cannot be written")
+        # Minecraft 1.21.1 item component syntax: custom_name takes a text component as a quoted SNBT string
+        lines.append("give @s %s[custom_name='%s'] 1" % (c["item"], name))
+    lines.append("tellraw @s " + json.dumps({"text": "Challenge TMs: %d for the first gym%s." % (
+        len(oak["items"]), ", and a %s to keep them in" % oak["case"]["name"] if oak.get("case") else ""),
+        "color": "gold"}))
+    return lines
 
 
 def _carry(fid: str, spec, doc: dict) -> dict:
@@ -325,6 +415,11 @@ def files(p: dict) -> dict:
         "pack_format": PACK_FORMAT,
         "description": "Cobblers progression flags and waystone unlocks (generated, series %s)"
                        % p["series"]}}, indent=2) + "\n"
+    oak = (p.get("voucher") or {}).get("oak_gifts")
+    if oak:
+        # Oak's Challenge confirm calls this (data/quests.json, a `function` effect): the first gym's answer TMs and
+        # the TM case, once, because that transition is written once (data/challenge_mode.json tm_gifts)
+        out["data/%s/function/challenge/oak_gifts.mcfunction" % ns] = "\n".join(oak_gift_lines(oak)) + "\n"
 
     for flag in p["flags"]:
         out["data/%s/advancement/flag/%s.json" % (ns, flag["id"])] = \
@@ -349,6 +444,22 @@ def files(p: dict) -> dict:
             if fw["one_of"]:
                 pools.append({"rolls": 1, "entries": [{"type": "minecraft:item", "name": i} for i in fw["one_of"]]})
             out["data/%s/loot_table/first_win/%s.json" % (ns, tid)] = json.dumps({"pools": pools}, indent=2) + "\n"
+        cash = p.get("voucher", {}).get("by_flag", {}).get(flag["id"])
+        if cash:
+            # a Challenge player's voucher step for this badge, once (this reward runs only when the flag is first
+            # granted), in cash (voucher_grants)
+            tag = p["voucher"]["tag"]
+            granted += ["execute if entity @s[tag=%s] run cobbledollars give @s %d" % (tag, cash),
+                        "execute if entity @s[tag=%s] run tellraw @s " % tag + json.dumps(
+                            {"text": "Challenge Fund: $%s for this badge." % format(cash, ","), "color": "gold"})]
+        gifts = p.get("voucher", {}).get("gifts", {}).get(flag["id"])
+        if gifts:
+            # the next boss's answer TMs, given to a Challenge player once, beside the cash (data/challenge_mode.json
+            # tm_gifts; the owner, 2026-10-22: "challenge mode should be given tms")
+            tag = p["voucher"]["tag"]
+            granted += ["execute if entity @s[tag=%s] run give @s %s 1" % (tag, i) for i in gifts]
+            granted.append("execute if entity @s[tag=%s] run tellraw @s " % tag + json.dumps(
+                {"text": "Challenge TMs: %d for the next gym." % len(gifts), "color": "gold"}))
         if flag.get("carries_stage"):
             # the badge carries the reveal forward (data/progression.json flags[].carries_stage): runs once, as the
             # winner, because a held advancement never re-runs its reward. Its own function, so the reward reads as
@@ -484,6 +595,8 @@ def main(argv=None) -> int:
     args = ap.parse_args(argv)
     try:
         p = plan(load(args.data), args.series, json.loads(args.placements.read_text(encoding="utf8")))
+        if p["series"] == "kanto":
+            voucher_grants(p["flags"], strict=True)     # every voucher step's badge flag exists, or nothing is written
         if args.report:
             return report(p, args.report)
         written = write(p, args.out)

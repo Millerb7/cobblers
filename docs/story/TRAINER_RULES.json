@@ -46,6 +46,74 @@
       "generated_default": "normal"
     }
   },
+  "boss_evs": {
+    "why": "Gym leaders, the Elite Four and the Champion carry competitive EV spreads (the owner, 2026-10-22). rctapi reads `evs` {hp, atk, def, spa, spd, spe} on a team member: PokemonModel.evs -> PokemonModelConverter -> Pokemon.setEV (rctapi 0.16.2-beta; 1546 bundled rctmod 0.19.2-beta trainer members carry it). A missing stat is 0. generate_trainers.py applies `roles` through `spreads` to every boss member (both modes) and `overrides` last; it fails if a member has no role or a role/override names a species the team does not hold.",
+    "spreads": {
+      "fast_physical": {"atk": 252, "spe": 252, "hp": 4},
+      "fast_special": {"spa": 252, "spe": 252, "hp": 4},
+      "fast_support": {"hp": 252, "spe": 252, "spd": 4},
+      "bulky_physical": {"hp": 252, "atk": 252, "def": 4},
+      "bulky_special": {"hp": 252, "spa": 252, "spd": 4},
+      "physical_wall": {"hp": 252, "def": 252, "spd": 4},
+      "special_wall": {"hp": 252, "spd": 252, "def": 4},
+      "balanced_wall": {"hp": 252, "def": 128, "spd": 128}
+    },
+    "roles": {
+      "gym_01_brock": {
+        "normal": {"geodude": "physical_wall", "bonsly": "special_wall", "onix": "physical_wall"},
+        "challenge": {"hippopotas": "physical_wall", "lileep": "special_wall", "carkol": "physical_wall", "dwebble": "fast_physical", "nosepass": "physical_wall", "onix": "fast_physical"}
+      },
+      "gym_02_misty": {
+        "normal": {"horsea": "fast_special", "lombre": "bulky_special", "starmie": "fast_special"},
+        "challenge": {"slowpoke": "physical_wall", "tentacool": "special_wall", "goldeen": "fast_physical", "shellder": "bulky_physical", "azumarill": "bulky_physical", "starmie": "fast_special"}
+      },
+      "gym_03_surge": {
+        "normal": {"electabuzz": "fast_special", "magneton": "bulky_special", "boltund": "fast_physical", "raichu": "fast_special"},
+        "challenge": {"kilowattrel": "fast_special", "lanturn": "special_wall", "emolga": "fast_physical", "vikavolt": "bulky_special", "raichu": "fast_special", "pawmot": "fast_physical"}
+      },
+      "gym_04_erika": {
+        "normal": {"bellossom": "special_wall", "roserade": "fast_special", "victreebel": "fast_physical", "vileplume": "bulky_special"},
+        "challenge": {"whimsicott": "fast_support", "ferroseed": "physical_wall", "breloom": "fast_physical", "cradily": "special_wall", "lurantis": "bulky_physical", "ludicolo": "bulky_special"}
+      },
+      "gym_05_koga": {
+        "normal": {"crobat": "fast_support", "weezing": "physical_wall", "toxtricity": "bulky_special", "drapion": "bulky_physical", "venomoth": "fast_special"},
+        "challenge": {"ariados": "fast_physical", "skuntank": "bulky_physical", "tentacruel": "special_wall", "roserade": "fast_special", "toxicroak": "fast_physical", "glimmora": "bulky_special"}
+      },
+      "gym_06_sabrina": {
+        "normal": {"hatterene": "bulky_special", "slowbro": "physical_wall", "bronzong": "balanced_wall", "exeggutor": "bulky_special", "alakazam": "fast_special"},
+        "challenge": {"indeedee": "bulky_special", "gallade": "fast_physical", "gardevoir": "fast_special", "reuniclus": "bulky_special", "espeon": "fast_special", "alakazam": "fast_special"}
+      },
+      "gym_07_blaine": {
+        "normal": {"torkoal": "physical_wall", "arcanine": "fast_physical", "magcargo": "bulky_special", "typhlosion": "fast_special", "charizard": "fast_special"},
+        "challenge": {"talonflame": "fast_physical", "chandelure": "bulky_special", "scovillain": "bulky_special", "infernape": "fast_physical", "charizard": "fast_physical", "volcarona": "fast_special"}
+      },
+      "gym_08_giovanni": {
+        "normal": {"hippowdon": "physical_wall", "persian": "fast_physical", "mudsdale": "balanced_wall", "nidoqueen": "bulky_special", "krookodile": "fast_physical", "rhyperior": "bulky_physical"},
+        "challenge": {"claydol": "physical_wall", "gastrodon": "special_wall", "gliscor": "fast_physical", "donphan": "bulky_physical", "excadrill": "fast_physical", "garchomp": "fast_physical"}
+      },
+      "elite_01_lorelei": {
+        "normal": {"froslass": "fast_support", "mamoswine": "bulky_physical", "jynx": "fast_special", "weavile": "fast_physical", "walrein": "physical_wall", "lapras": "bulky_special"},
+        "challenge": {"abomasnow": "bulky_special", "cloyster": "fast_physical", "crabominable": "bulky_physical", "frosmoth": "fast_special", "cetitan": "bulky_physical", "lapras": "bulky_special"}
+      },
+      "elite_02_bruno": {
+        "normal": {"hitmontop": "fast_physical", "machamp": "bulky_physical", "hariyama": "bulky_physical", "lucario": "fast_special", "heracross": "fast_physical", "hitmonlee": "fast_physical"},
+        "challenge": {"scrafty": "balanced_wall", "hitmonchan": "bulky_physical", "medicham": "fast_physical", "quaquaval": "fast_physical", "conkeldurr": "bulky_physical", "annihilape": "bulky_physical"}
+      },
+      "elite_03_agatha": {
+        "normal": {"mismagius": "fast_support", "spiritomb": "special_wall", "banette": "bulky_physical", "dusknoir": "bulky_physical", "chandelure": "fast_special", "gengar": "fast_special"},
+        "challenge": {"cofagrigus": "physical_wall", "sableye": "special_wall", "mimikyu": "fast_physical", "trevenant": "bulky_physical", "jellicent": "physical_wall", "golurk": "bulky_physical"}
+      },
+      "elite_04_lance": {
+        "normal": {"aerodactyl": "fast_physical", "gyarados": "fast_physical", "flygon": "fast_physical", "baxcalibur": "bulky_physical", "dragalge": "bulky_special", "dragonite": "bulky_physical"},
+        "challenge": {"duraludon": "bulky_special", "tyrantrum": "bulky_physical", "kingdra": "bulky_special", "hydreigon": "fast_special", "goodra": "bulky_special", "dragonite": "fast_physical"}
+      },
+      "champion_blue": {
+        "normal": {"pidgeot": "fast_special", "exeggutor": "bulky_special", "rhydon": "bulky_physical", "arcanine": "fast_physical", "alakazam": "fast_special", "blastoise": "bulky_special"},
+        "challenge": {"aerodactyl": "fast_physical", "machamp": "bulky_physical", "scizor": "bulky_physical", "magnezone": "bulky_special", "gengar": "fast_special", "tyranitar": "bulky_physical"}
+      }
+    },
+    "overrides": {}
+  },
   "ai_profiles": {
     "route_standard": {
       "moveBias": 1.0,
@@ -716,9 +784,65 @@
         "highhorsepower",
         "rockslide",
         "bodypress",
-        "heavy_slam"
+        "heavyslam"
       ]
-    }
+    },
+    "roggenrola": {"species": "roggenrola", "moveset": ["tackle", "harden", "sandattack", "smackdown"]},
+    "dwebble": {"species": "dwebble", "moveset": ["smackdown", "furycutter", "sandattack", "withdraw"]},
+    "hippopotas": {"species": "hippopotas", "moveset": ["sandattack", "bite", "yawn", "tackle"]},
+    "rolycoly": {"species": "rolycoly", "moveset": ["smackdown", "rapidspin", "rockpolish", "smokescreen"]},
+    "nosepass": {"species": "nosepass", "moveset": ["rockthrow", "block", "thunderwave", "harden"]},
+    "tentacool": {"species": "tentacool", "moveset": ["acid", "bubblebeam", "toxicspikes", "wrap"]},
+    "chinchou": {"species": "chinchou", "moveset": ["bubblebeam", "spark", "confuseray", "thunderwave"]},
+    "goldeen": {"species": "goldeen", "moveset": ["hornattack", "waterpulse", "drillrun", "agility"]},
+    "slowpoke": {"species": "slowpoke", "moveset": ["confusion", "waterpulse", "yawn", "slackoff"]},
+    "marill": {"species": "marill", "moveset": ["aquajet", "bubblebeam", "rollout", "charm"]},
+    "starmie": {"species": "starmie", "moveset": ["waterpulse", "thunderwave", "recover", "swift"]},
+    "wattrel": {"species": "wattrel", "moveset": ["spark", "pluck", "quickattack", "roost"]},
+    "joltik": {"species": "joltik", "moveset": ["electroweb", "bugbite", "thunderwave", "slash"]},
+    "pikachu": {"species": "pikachu", "moveset": ["spark", "grassknot", "surf", "quickattack"]},
+    "cottonee": {"species": "cottonee", "moveset": ["charm", "stunspore", "megadrain", "fairywind"]},
+    "shroomish": {"species": "shroomish", "moveset": ["stunspore", "megadrain", "headbutt", "leechseed"]},
+    "pelipper": {"species": "pelipper", "moveset": ["raindance", "waterpulse", "wingattack", "supersonic"]},
+    "ferroseed": {"species": "ferroseed", "moveset": ["gyroball", "metalclaw", "curse", "pinmissile"]},
+    "breloom": {"species": "breloom", "moveset": ["machpunch", "megadrain", "stunspore", "headbutt"]},
+    "lileep": {"species": "lileep", "moveset": ["ancientpower", "megadrain", "confuseray", "acid"]},
+    "whimsicott": {"species": "whimsicott", "moveset": ["charm", "tailwind", "encore", "gigadrain"]},
+    "ludicolo": {"species": "ludicolo", "moveset": ["waterpulse", "gigadrain", "icywind", "fakeout"]},
+    "ariados": {"species": "ariados", "moveset": ["toxicspikes", "poisonjab", "suckerpunch", "bugbite"]},
+    "qwilfish": {"species": "qwilfish", "moveset": ["poisonjab", "aquatail", "spikes", "toxicspikes"]},
+    "weepinbell": {"species": "weepinbell", "moveset": ["razorleaf", "poisonpowder", "knockoff", "wrap"]},
+    "tentacruel": {"species": "tentacruel", "moveset": ["scald", "sludgebomb", "rapidspin", "toxicspikes"]},
+    "toxicroak": {"species": "toxicroak", "moveset": ["suckerpunch", "poisonjab", "drainpunch", "swordsdance"]},
+    "kirlia": {"species": "kirlia", "moveset": ["psychicterrain", "psybeam", "drainingkiss", "calmmind"]},
+    "medicham": {"species": "medicham", "moveset": ["zenheadbutt", "drainpunch", "bulletpunch", "calmmind"]},
+    "indeedee": {"species": "indeedee", "moveset": ["psychicterrain", "psychic", "playrough", "calmmind"]},
+    "gallade": {"species": "gallade", "moveset": ["psychocut", "leafblade", "nightslash", "closecombat"]},
+    "espeon": {"species": "espeon", "moveset": ["psychic", "dazzlinggleam", "calmmind", "morningsun"]},
+    "xatu": {"species": "xatu", "moveset": ["psychic", "airslash", "nightshade", "confuseray"]},
+    "reuniclus": {"species": "reuniclus", "moveset": ["psychic", "focusblast", "calmmind", "recover"]},
+    "gardevoir": {"species": "gardevoir", "moveset": ["psychic", "moonblast", "calmmind", "mysticalfire"]},
+    "alakazam": {"species": "alakazam", "moveset": ["psychic", "focusblast", "dazzlinggleam", "nastyplot"]},
+    "talonflame": {"species": "talonflame", "moveset": ["tailwind", "flamecharge", "willowisp", "acrobatics"]},
+    "lampent": {"species": "lampent", "moveset": ["energyball", "hex", "willowisp", "flamecharge"]},
+    "monferno": {"species": "monferno", "moveset": ["grassknot", "machpunch", "flamewheel", "uturn"]},
+    "rapidash": {"species": "rapidash", "moveset": ["flareblitz", "wildcharge", "stomp", "agility"]},
+    "ninetales": {"species": "ninetales", "moveset": ["flamethrower", "extrasensory", "willowisp", "nastyplot"]},
+    "charizard": {"species": "charizard", "moveset": ["dragondance", "flareblitz", "earthquake", "airslash"]},
+    "houndoom": {"species": "houndoom", "moveset": ["flamethrower", "thunderfang", "crunch", "willowisp"]},
+    "magmortar": {"species": "magmortar", "moveset": ["flamethrower", "thunderbolt", "focusblast", "confuseray"]},
+    "infernape": {"species": "infernape", "moveset": ["grassknot", "machpunch", "flamethrower", "uturn"]},
+    "chandelure": {"species": "chandelure", "moveset": ["energyball", "flamethrower", "shadowball", "willowisp"]},
+    "volcarona": {"species": "volcarona", "moveset": ["quiverdance", "gigadrain", "flamethrower", "bugbuzz"]},
+    "gliscor": {"species": "gliscor", "moveset": ["earthquake", "acrobatics", "knockoff", "swordsdance"]},
+    "gastrodon": {"species": "gastrodon", "moveset": ["muddywater", "earthpower", "recover", "icebeam"]},
+    "claydol": {"species": "claydol", "moveset": ["earthpower", "icebeam", "rapidspin", "stealthrock"]},
+    "excadrill": {"species": "excadrill", "moveset": ["earthquake", "ironhead", "rockslide", "swordsdance"]},
+    "palossand": {"species": "palossand", "moveset": ["gigadrain", "shadowball", "earthpower", "shoreup"]},
+    "flygon": {"species": "flygon", "moveset": ["earthquake", "dragonclaw", "firepunch", "uturn"]},
+    "krookodile": {"species": "krookodile", "moveset": ["earthquake", "crunch", "stoneedge", "gunkshot"]},
+    "mamoswine": {"species": "mamoswine", "moveset": ["earthquake", "iceshard", "iciclecrash", "stoneedge"]},
+    "dugtrio": {"species": "dugtrio", "moveset": ["earthquake", "suckerpunch", "stoneedge", "slash"]}
   },
   "bosses": [
     {
@@ -3171,7 +3295,7 @@
             "highhorsepower",
             "rockslide",
             "bodypress",
-            "heavy_slam"
+            "heavyslam"
           ],
           "ability": "stamina",
           "heldItem": "leftovers",
@@ -3257,7 +3381,7 @@
                 "highhorsepower",
                 "rockslide",
                 "bodypress",
-                "heavy_slam"
+                "heavyslam"
               ],
               "ability": "stamina",
               "heldItem": "leftovers",
@@ -5422,6 +5546,7 @@
           "role": "one_pokemon",
           "name": "Trail Novice",
           "lesson": "Introduces trainer sight lines, accuracy changes, and priority without threatening the first-route team.",
+          "challenge_team_species": ["roggenrola"],
           "team_species": [
             "pidgey"
           ],
@@ -5447,6 +5572,7 @@
           "role": "specialist",
           "name": "Meadow Apiarist",
           "lesson": "Uses two gentle Bug-area species to teach switching and accessible Flying or Electric answers.",
+          "challenge_team_species": ["combee", "dwebble"],
           "team_species": [
             "combee",
             "surskit"
@@ -5477,6 +5603,7 @@
           "role": "observer",
           "name": "Vale Naturalist",
           "lesson": "Uses two fast wetland species to reinforce Water as a Brock answer without pretending the dry River of Shrews vale contains a fishable river.",
+          "challenge_team_species": ["lotad", "wooper"],
           "team_species": [
             "buizel",
             "surskit"
@@ -5508,6 +5635,7 @@
           "role": "gym_prep",
           "name": "Plateau Guide",
           "lesson": "A bulky opener followed by Grass and Water pressure is the final rehearsal for Brock.",
+          "challenge_team_species": ["hippopotas", "rolycoly", "dwebble", "nosepass"],
           "team_species": [
             "wooloo",
             "fomantis",
@@ -5545,6 +5673,13 @@
       },
       "challenge": {
         "ai_profile": "route_challenge",
+        "intent": "Rehearses Brock's Challenge answer: Rock bodies under sand that one special Water or Grass hit does not finish, and a Water-only team stalled by Lotad. Multi-hit, physical Fighting or Steel, and status win; the final guide is a small Brock.",
+        "extra_member_roles": [],
+        "held_item": "oran_berry"
+      },
+      "superseded_challenge": {
+        "superseded_why": "the route's Challenge before 2026-10-21: Normal's species with an oran berry and an extra ambient member on the final rehearsal, so it rehearsed Normal's Water/Grass answer, which Brock's redesigned Challenge punishes. Replaced by each placement's challenge_team_species (docs/mechanics/CHALLENGE_ROUTES.md); extra_member_roles is emptied so build_route_mode does not add a second extra on top of a Normal+1 list. Kept as authored work; nothing reads this key.",
+        "ai_profile": "route_challenge",
         "intent": "Same lesson with one berry threshold and an extra member only on the final rehearsal.",
         "extra_member_roles": [
           "gym_prep"
@@ -5580,6 +5715,7 @@
           "role": "one_pokemon",
           "name": "Ravine Scrapper",
           "lesson": "Shows that setup and recovery can be denied and that the resulting opening should be used immediately.",
+          "challenge_team_species": ["tentacool"],
           "team_species": [
             "corphish"
           ],
@@ -5607,6 +5743,7 @@
           "role": "specialist",
           "name": "Glowbug Keeper",
           "lesson": "Status, stat control, and recovery show how low damage becomes dangerous when tempo is lost.",
+          "challenge_team_species": ["illumise", "chinchou"],
           "team_species": [
             "volbeat",
             "illumise"
@@ -5652,6 +5789,7 @@
           "role": "specialist",
           "name": "North Bank Angler",
           "lesson": "Rewards shoreline exploration and teaches that physical Water pressure and high physical Defence call for Grass or special Electric attacks before Misty.",
+          "challenge_team_species": ["goldeen", "shellder"],
           "team_species": [
             "krabby",
             "shellder"
@@ -5685,6 +5823,7 @@
           "role": "gym_prep",
           "name": "Lake Surveyor",
           "lesson": "Rain, speed control, and a Water/Grass core rehearse Misty and show why Electric alone is incomplete.",
+          "challenge_team_species": ["slowpoke", "tentacool", "marill", "starmie"],
           "team_species": [
             "lombre",
             "mareep",
@@ -5723,6 +5862,13 @@
       },
       "challenge": {
         "ai_profile": "route_challenge",
+        "intent": "Rehearses Misty's Challenge answer: Liquid Ooze Tentacool, a Water/Electric Chinchou, a Drill Run Goldeen beside a Skill Link Shellder, and Psychic Water types. Split Electric (a flier for Drill Run), non-draining Grass, Ground for the Poison, Dark for the Psychics.",
+        "extra_member_roles": [],
+        "held_item": "oran_berry"
+      },
+      "superseded_challenge": {
+        "superseded_why": "the route's Challenge before 2026-10-21: Normal's species with an oran berry and an extra ambient member on the final rehearsal, rehearsing Normal's Electric/Grass answer, which Misty's redesigned Challenge punishes (Lightning Rod, Liquid Ooze). Replaced by each placement's challenge_team_species (docs/mechanics/CHALLENGE_ROUTES.md); extra_member_roles emptied so no second extra is added. Kept as authored work; nothing reads this key.",
+        "ai_profile": "route_challenge",
         "intent": "Sharper move choice and one extra final-rehearsal member; no rain lock or coverage trap.",
         "extra_member_roles": [
           "gym_prep"
@@ -5758,6 +5904,7 @@
           "role": "one_pokemon",
           "name": "Climbing Novice",
           "lesson": "Rock Tomb demonstrates speed control and Howl presents a visible setup turn to punish.",
+          "challenge_team_species": ["wattrel"],
           "team_species": [
             "rockruff"
           ],
@@ -5783,6 +5930,7 @@
           "role": "observer",
           "name": "Grove Ranger",
           "lesson": "Complementary Fighting and Flying/Psychic pressure teaches that one resistance is not a switching plan.",
+          "challenge_team_species": ["joltik", "emolga"],
           "team_species": [
             "heracross",
             "noctowl"
@@ -5814,6 +5962,7 @@
           "role": "specialist",
           "name": "Groundkeeper",
           "lesson": "Bunnelby demonstrates Ground damage while Skiddo demonstrates the Electric-resistant fallback.",
+          "challenge_team_species": ["chinchou", "pikachu"],
           "team_species": [
             "bunnelby",
             "skiddo"
@@ -5845,6 +5994,7 @@
           "role": "strategist",
           "name": "Signal Watcher",
           "lesson": "Paralysis and control preview Surge's tempo while the dialogue names Ground, Grass, and priority as answers.",
+          "challenge_team_species": ["emolga", "pachirisu", "kilowattrel"],
           "team_species": [
             "pachirisu",
             "volbeat"
@@ -5878,6 +6028,7 @@
           "role": "gym_prep",
           "name": "Vessu Ranger",
           "lesson": "A Ground immunity, action denial, and an Electric-resistant recovery user form the final Surge rehearsal.",
+          "challenge_team_species": ["kilowattrel", "chinchou", "joltik", "pikachu"],
           "team_species": [
             "wooper",
             "makuhita",
@@ -5914,6 +6065,13 @@
         "intent": "Learn Ground immunity, resistance, priority, and recovery after lost tempo."
       },
       "challenge": {
+        "ai_profile": "route_challenge",
+        "intent": "Rehearses Surge's Challenge answer: Electric fliers Ground cannot touch, Bug/Electric that takes Ground neutrally, and grounded Electrics carrying Water and Grass Knot for a Ground switch-in. Rock (Rock Slide, badge 1) for the fliers, Ground only into the grounded.",
+        "extra_member_roles": [],
+        "held_item": "cheri_berry"
+      },
+      "superseded_challenge": {
+        "superseded_why": "the route's Challenge before 2026-10-21: Normal's species with a cheri berry and an extra ambient member on the strategist and final rehearsal; its intent ('without hidden Ground counters') taught the Ground answer that Surge's redesigned Challenge is built against (CHALLENGE_MODE_TEAMS.md section 7). Replaced by each placement's challenge_team_species (docs/mechanics/CHALLENGE_ROUTES.md); extra_member_roles emptied so no second extra is added. Kept as authored work; nothing reads this key.",
         "ai_profile": "route_challenge",
         "intent": "A single status-curing berry and fuller rehearsal teams, without hidden Ground counters.",
         "extra_member_roles": [
@@ -5952,6 +6110,7 @@
           "role": "one_pokemon",
           "name": "Snowfield Novice",
           "lesson": "One Ice attacker previews Grass pressure.",
+          "challenge_team_species": ["cottonee"],
           "team_species": [
             "bergmite"
           ]
@@ -5965,6 +6124,7 @@
           "role": "observer",
           "name": "Alpine Ranger",
           "lesson": "Ice and Flying coverage are combined.",
+          "challenge_team_species": ["lotad", "shroomish"],
           "team_species": [
             "swablu",
             "bergmite"
@@ -5979,6 +6139,7 @@
           "role": "specialist",
           "name": "Campfire Keeper",
           "lesson": "Fire attacks preview Erika's weaknesses.",
+          "challenge_team_species": ["pelipper", "lombre"],
           "team_species": [
             "fletchinder",
             "smoochum"
@@ -5993,6 +6154,7 @@
           "role": "strategist",
           "name": "Ridge Scout",
           "lesson": "Hazards punish careless switching.",
+          "challenge_team_species": ["cottonee", "ferroseed", "lileep", "breloom"],
           "team_species": [
             "skiploom",
             "fletchinder",
@@ -6008,6 +6170,7 @@
           "role": "observer",
           "name": "Bird Watcher",
           "lesson": "Flying offense is made visible before Erika.",
+          "challenge_team_species": ["lileep", "ludicolo"],
           "team_species": [
             "swablu",
             "fletchinder"
@@ -6022,6 +6185,7 @@
           "role": "gym_prep",
           "name": "Naturalist",
           "lesson": "Sun interaction previews Erika's central mechanic.",
+          "challenge_team_species": ["whimsicott", "ferroseed", "breloom", "ludicolo"],
           "team_species": [
             "skiploom",
             "fletchinder",
@@ -6035,6 +6199,13 @@
         "intent": "Carry Ice and Flying answers across the massif, then see sun empower Fire near Erika."
       },
       "challenge": {
+        "ai_profile": "route_challenge",
+        "intent": "Rehearses Erika's Challenge answer: Prankster rain that halves Fire, Water/Grass bodies that take Ice and Fire neutrally, Iron Barbs and Mach Punch for contact and Ice, Rock for Flying. Poison and Dark (Prankster cannot touch Dark), bulky Flying, Fighting or Fire for the Steel one.",
+        "extra_member_roles": [],
+        "held_item": "sitrus_berry"
+      },
+      "superseded_challenge": {
+        "superseded_why": "the route's Challenge before 2026-10-21: Normal's species with a sitrus berry and an extra ambient member on the strategist and final rehearsal, rehearsing Normal's sun/Fire/Ice answer, which Erika's redesigned rain Challenge punishes. Replaced by each placement's challenge_team_species (docs/mechanics/CHALLENGE_ROUTES.md); extra_member_roles emptied so no second extra is added. Kept as authored work; nothing reads this key.",
         "ai_profile": "route_challenge",
         "intent": "Longer teams combine weather with one beneficiary; no hazards or sleep chain.",
         "extra_member_roles": [
@@ -6073,6 +6244,7 @@
           "role": "one_pokemon",
           "name": "Field Hand",
           "lesson": "A single Poison-type introduces status.",
+          "challenge_team_species": ["skorupi"],
           "team_species": [
             "stunky"
           ]
@@ -6086,6 +6258,7 @@
           "role": "observer",
           "name": "Field Medic",
           "lesson": "Recovery and status management become explicit.",
+          "challenge_team_species": ["ariados", "skuntank"],
           "team_species": [
             "stunky",
             "wooper"
@@ -6100,6 +6273,7 @@
           "role": "specialist",
           "name": "Mind Reader",
           "lesson": "Psychic attacks preview one Koga answer.",
+          "challenge_team_species": ["qwilfish", "weepinbell"],
           "team_species": [
             "hattrem",
             "toxel"
@@ -6114,6 +6288,8 @@
           "role": "gym_prep",
           "name": "Trail Warden",
           "lesson": "Levitate and mixed Poison typings block a one-button Ground sweep.",
+          "challenge_team_species": ["ariados", "tentacruel", "skuntank", "toxicroak"],
+          "challenge_held_item": "black_sludge",
           "team_species": [
             "stunky",
             "toxel",
@@ -6127,6 +6303,13 @@
         "intent": "Poison creates a clock; Psychic needs a second line when Dark blocks it."
       },
       "challenge": {
+        "ai_profile": "route_challenge",
+        "intent": "Rehearses Koga's Challenge answer: Toxic Spikes on entry, Dark Poison types that block Psychic, Water and Grass Poison types that hit a Ground switch-in. Steel, which none of it poisons, with a Psychic or Ground partner for the Fighting and Fire it carries.",
+        "extra_member_roles": [],
+        "held_item": "sitrus_berry"
+      },
+      "superseded_challenge": {
+        "superseded_why": "the route's Challenge before 2026-10-21: Normal's species with a sitrus berry and an extra ambient member on the final rehearsal, rehearsing Normal's Ground/Psychic answer, which Koga's redesigned Challenge punishes; its intent also ruled out hazards, which are now the leader's engine. Replaced by each placement's challenge_team_species (docs/mechanics/CHALLENGE_ROUTES.md); extra_member_roles emptied so no second extra is added. Kept as authored work; nothing reads this key.",
         "ai_profile": "route_challenge",
         "intent": "One held berry threshold and fuller payoff teams; direct poison replaces hazard attrition.",
         "extra_member_roles": [
@@ -6164,6 +6347,7 @@
           "role": "one_pokemon",
           "name": "Marsh Novice",
           "lesson": "A Dark attacker previews Sabrina's weakness.",
+          "challenge_team_species": ["kirlia"],
           "team_species": [
             "skuntank"
           ]
@@ -6177,6 +6361,7 @@
           "role": "observer",
           "name": "Marsh Ranger",
           "lesson": "Dark and Steel resistances are combined.",
+          "challenge_team_species": ["medicham", "hattrem"],
           "team_species": [
             "hattrem",
             "palpitoad"
@@ -6191,6 +6376,7 @@
           "role": "specialist",
           "name": "Night Courier",
           "lesson": "Priority Dark damage is demonstrated.",
+          "challenge_team_species": ["indeedee", "gallade"],
           "team_species": [
             "nuzleaf",
             "skuntank"
@@ -6205,6 +6391,7 @@
           "role": "strategist",
           "name": "Lake Pathfinder",
           "lesson": "Trick Room speed inversion is introduced.",
+          "challenge_team_species": ["hattrem", "espeon", "xatu", "reuniclus"],
           "team_species": [
             "hattrem",
             "seismitoad",
@@ -6220,6 +6407,7 @@
           "role": "gym_prep",
           "name": "Displaced Archivist",
           "lesson": "Mixed Psychic/Fairy coverage rehearses Sabrina's team shape.",
+          "challenge_team_species": ["indeedee", "gardevoir", "gallade", "alakazam"],
           "team_species": [
             "hattrem",
             "seismitoad",
@@ -6233,6 +6421,13 @@
         "intent": "Trick Room reverses speed; priority and bulk still function."
       },
       "challenge": {
+        "ai_profile": "route_challenge",
+        "intent": "Rehearses Sabrina's Challenge answer: Psychic Terrain that stops Sucker Punch and powers Psychic moves, Fairy and Fighting halves that punish Dark, Focus Blast for the Dark switch-in. Ghost and Poison carry the fight; Dark only once the terrain has run out.",
+        "extra_member_roles": [],
+        "held_item": "sitrus_berry"
+      },
+      "superseded_challenge": {
+        "superseded_why": "the route's Challenge before 2026-10-21: Normal's species with a sitrus berry and an extra ambient member on the strategist and final rehearsal, rehearsing Normal's Dark/priority answer, which Sabrina's redesigned Psychic Terrain Challenge punishes; its intent also ruled out terrain, which is now the leader's engine. Replaced by each placement's challenge_team_species (docs/mechanics/CHALLENGE_ROUTES.md); extra_member_roles emptied so no second extra is added. Kept as authored work; nothing reads this key.",
         "ai_profile": "route_challenge",
         "intent": "One extra beneficiary on the final rehearsals, without terrain or doubles.",
         "extra_member_roles": [
@@ -6270,6 +6465,7 @@
           "role": "one_pokemon",
           "name": "Expedition Novice",
           "lesson": "A solo Water attacker previews Blaine.",
+          "challenge_team_species": ["talonflame"],
           "team_species": [
             "golduck"
           ]
@@ -6283,6 +6479,7 @@
           "role": "observer",
           "name": "Bridge Hand",
           "lesson": "Water and Ground offense are paired.",
+          "challenge_team_species": ["lampent", "centiskorch"],
           "team_species": [
             "swanna",
             "rhyhorn"
@@ -6297,6 +6494,7 @@
           "role": "specialist",
           "name": "Shore Battler",
           "lesson": "Fast Water pressure is made visible.",
+          "challenge_team_species": ["monferno", "rapidash"],
           "team_species": [
             "golduck",
             "swanna"
@@ -6311,6 +6509,7 @@
           "role": "strategist",
           "name": "Crater Geologist",
           "lesson": "Rock pressure previews Charizard.",
+          "challenge_team_species": ["fletchinder", "ninetales", "magmar", "charizard"],
           "team_species": [
             "rhydon",
             "carkol",
@@ -6326,6 +6525,7 @@
           "role": "observer",
           "name": "Ash-Path Ranger",
           "lesson": "Sun and coverage punish a single Water answer.",
+          "challenge_team_species": ["houndoom", "magmortar"],
           "team_species": [
             "magmar",
             "carkol"
@@ -6340,6 +6540,7 @@
           "role": "gym_prep",
           "name": "Prospector",
           "lesson": "Weather control and priority rehearse Blaine's closing turns.",
+          "challenge_team_species": ["talonflame", "chandelure", "infernape", "volcarona"],
           "team_species": [
             "torkoal",
             "magmar",
@@ -6353,6 +6554,13 @@
         "intent": "Contest sun with Water, Ground, Rock, or your own weather."
       },
       "challenge": {
+        "ai_profile": "route_challenge",
+        "intent": "Rehearses Blaine's Challenge answer: no sun, but Tailwind that outspeeds the Water answer and Fire types carrying Energy Ball, Grass Knot, Wild Charge and Thunder coverage for it, with Will-O-Wisp for the physical one. Rock and Stealth Rock, which the Fire teams cannot cover.",
+        "extra_member_roles": [],
+        "held_item": "sitrus_berry"
+      },
+      "superseded_challenge": {
+        "superseded_why": "the route's Challenge before 2026-10-21: Normal's species with a sitrus berry and an extra ambient member on the strategist and final rehearsal, rehearsing Normal's anti-sun Water answer, which Blaine's redesigned Tailwind Challenge punishes. Replaced by each placement's challenge_team_species (docs/mechanics/CHALLENGE_ROUTES.md); extra_member_roles emptied so no second extra is added. Kept as authored work; nothing reads this key.",
         "ai_profile": "route_challenge",
         "intent": "One extra weather beneficiary and a held threshold; Water is checked only once per team.",
         "extra_member_roles": [
@@ -6391,6 +6599,7 @@
           "role": "one_pokemon",
           "name": "Crater Novice",
           "lesson": "A solo Ground attacker opens the final leg.",
+          "challenge_team_species": ["gliscor"],
           "team_species": [
             "mudbray"
           ]
@@ -6404,6 +6613,7 @@
           "role": "observer",
           "name": "Crater Scout",
           "lesson": "Mixed terrain types discourage a monotype answer.",
+          "challenge_team_species": ["gastrodon", "donphan"],
           "team_species": [
             "donphan",
             "kilowattrel"
@@ -6418,6 +6628,7 @@
           "role": "specialist",
           "name": "Grassland Keeper",
           "lesson": "Grass offense answers Rock and Ground bodies.",
+          "challenge_team_species": ["claydol", "excadrill"],
           "team_species": [
             "cacturne",
             "golisopod"
@@ -6432,6 +6643,7 @@
           "role": "strategist",
           "name": "Sand Runner",
           "lesson": "Weather and Ground immunity create a positioning check.",
+          "challenge_team_species": ["palossand", "gastrodon", "gliscor", "flygon"],
           "team_species": [
             "krokorok",
             "kilowattrel",
@@ -6447,6 +6659,7 @@
           "role": "observer",
           "name": "Plateau Ranger",
           "lesson": "Fighting and Dark coverage broaden the lesson.",
+          "challenge_team_species": ["krookodile", "mamoswine"],
           "team_species": [
             "mudbray",
             "kilowattrel"
@@ -6461,6 +6674,7 @@
           "role": "strategist",
           "name": "Rift Surveyor",
           "lesson": "Tailwind and split offense preview a possible doubles identity.",
+          "challenge_team_species": ["dugtrio", "donphan", "palossand", "gliscor"],
           "team_species": [
             "mudsdale",
             "cacturne",
@@ -6476,6 +6690,7 @@
           "role": "gym_prep",
           "name": "Final Warden",
           "lesson": "A balanced three-member core tests preparation without defining Giovanni's format.",
+          "challenge_team_species": ["claydol", "gastrodon", "excadrill", "flygon"],
           "team_species": [
             "mudsdale",
             "cacturne",
@@ -6489,6 +6704,13 @@
         "intent": "Solve Ground cores through Water/Grass offense, immunity, Fighting, and priority."
       },
       "challenge": {
+        "ai_profile": "route_challenge",
+        "intent": "Rehearses Giovanni's Challenge answer: no sand, but Water/Ground and Ghost/Ground bodies that eat Water, Ice Beam and Ice Shard for the Grass answer, Levitate and Flying for Ground. Ice and Fairy, with Water kept for the Steel/Ground Excadrill.",
+        "extra_member_roles": [],
+        "held_item": "sitrus_berry"
+      },
+      "superseded_challenge": {
+        "superseded_why": "the route's Challenge before 2026-10-21: Normal's species with a sitrus berry and an extra ambient member on the strategists and final rehearsal, rehearsing Normal's sand/Water/Grass answer, which Giovanni's redesigned Challenge punishes (Storm Drain, Ice Beam, Mold Breaker). Replaced by each placement's challenge_team_species (docs/mechanics/CHALLENGE_ROUTES.md); extra_member_roles emptied so no second extra is added. Kept as authored work; nothing reads this key.",
         "ai_profile": "route_challenge",
         "intent": "Sand changes thresholds and final teams gain one member; no doubles or trapping.",
         "extra_member_roles": [
@@ -6523,6 +6745,10 @@
         "intent": "Ten short cave examinations revisit one learned tool each across a 4 / rest / 6 ascent."
       },
       "challenge": {
+        "intent": "The same ten cave stands, levels and caps, each previewing an engine of the Challenge League: Lorelei's Aurora Veil and snow, Agatha's Ghosts and Trick Room, Bruno's No Guard and Intimidate, Blue's sand, Lance's rain and Steel-dragons. One held item per fight, and a five-member final examiner."
+      },
+      "superseded_challenge": {
+        "superseded_why": "the Victory Road Challenge intent before 2026-10-21; the old per-examiner Challenge teams are kept under each placement's superseded_challenge. Nothing reads this key.",
         "intent": "The same ten cave fights and caps, with one item threshold per fight and a five-member final examiner."
       },
       "placements": [
@@ -6569,27 +6795,15 @@
               }
             ],
             "challenge": [
-              {
-                "species": "lycanroc",
-                "level": 56,
-                "moveset": [
-                  "rockslide",
-                  "bulldoze",
-                  "quickattack",
-                  "howl"
-                ],
-                "heldItem": "sitrus_berry"
-              },
-              {
-                "species": "heracross",
-                "level": 57,
-                "moveset": [
-                  "brickbreak",
-                  "megahorn",
-                  "aerialace",
-                  "bulldoze"
-                ]
-              }
+              {"species": "abomasnow", "level": 56, "ability": "snowwarning", "moveset": ["auroraveil", "icywind", "blizzard", "gigadrain"], "heldItem": "light_clay"},
+              {"species": "cetitan", "level": 57, "ability": "slushrush", "moveset": ["bellydrum", "iciclecrash", "iceshard", "earthquake"]}
+            ]
+          },
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two with a sitrus berry, so it previewed nothing of the redesigned Challenge League. Replaced by a Lorelei preview (Aurora Veil, snow, Slush Rush); docs/mechanics/CHALLENGE_ROUTES.md. Kept beside teams, not inside it, because the generator requires teams to hold exactly normal and challenge. Nothing reads this key.",
+            "team": [
+              {"species": "lycanroc", "level": 56, "moveset": ["rockslide", "bulldoze", "quickattack", "howl"], "heldItem": "sitrus_berry"},
+              {"species": "heracross", "level": 57, "moveset": ["brickbreak", "megahorn", "aerialace", "bulldoze"]}
             ]
           },
           "dialogue_text": {
@@ -6641,27 +6855,15 @@
               }
             ],
             "challenge": [
-              {
-                "species": "drapion",
-                "level": 56,
-                "moveset": [
-                  "toxic",
-                  "knockoff",
-                  "poisonjab",
-                  "bulldoze"
-                ]
-              },
-              {
-                "species": "toxapex",
-                "level": 57,
-                "moveset": [
-                  "venoshock",
-                  "recover",
-                  "liquidation",
-                  "haze"
-                ],
-                "heldItem": "sitrus_berry"
-              }
+              {"species": "gengar", "level": 56, "ability": "cursedbody", "moveset": ["toxic", "hex", "sludgebomb", "protect"], "heldItem": "black_sludge"},
+              {"species": "jellicent", "level": 57, "ability": "cursedbody", "moveset": ["scald", "hex", "willowisp", "recover"]}
+            ]
+          },
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two with a sitrus berry. Replaced by an Agatha preview (Ghosts that status you, then Hex); docs/mechanics/CHALLENGE_ROUTES.md. Kept beside teams because the generator requires teams to hold exactly normal and challenge. Nothing reads this key.",
+            "team": [
+              {"species": "drapion", "level": 56, "moveset": ["toxic", "knockoff", "poisonjab", "bulldoze"]},
+              {"species": "toxapex", "level": 57, "moveset": ["venoshock", "recover", "liquidation", "haze"], "heldItem": "sitrus_berry"}
             ]
           },
           "dialogue_text": {
@@ -6714,28 +6916,15 @@
               }
             ],
             "challenge": [
-              {
-                "species": "torkoal",
-                "level": 57,
-                "moveset": [
-                  "lavaplume",
-                  "bodypress",
-                  "yawn",
-                  "protect"
-                ],
-                "ability": "drought",
-                "heldItem": "heat_rock"
-              },
-              {
-                "species": "coalossal",
-                "level": 58,
-                "moveset": [
-                  "flamethrower",
-                  "rockslide",
-                  "bodypress",
-                  "rapidspin"
-                ]
-              }
+              {"species": "machamp", "level": 57, "ability": "noguard", "moveset": ["dynamicpunch", "knockoff", "stoneedge", "bulletpunch"]},
+              {"species": "hitmonchan", "level": 58, "ability": "ironfist", "moveset": ["drainpunch", "machpunch", "icepunch", "thunderpunch"], "heldItem": "punching_glove"}
+            ]
+          },
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's sun pair with a heat rock. The Challenge League has no sun; replaced by a Bruno preview (No Guard Dynamic Punch, punches that cover Flying and Water answers); docs/mechanics/CHALLENGE_ROUTES.md. Kept beside teams because the generator requires teams to hold exactly normal and challenge. Nothing reads this key.",
+            "team": [
+              {"species": "torkoal", "level": 57, "moveset": ["lavaplume", "bodypress", "yawn", "protect"], "ability": "drought", "heldItem": "heat_rock"},
+              {"species": "coalossal", "level": 58, "moveset": ["flamethrower", "rockslide", "bodypress", "rapidspin"]}
             ]
           },
           "dialogue_text": {
@@ -6787,27 +6976,15 @@
               }
             ],
             "challenge": [
-              {
-                "species": "weezing",
-                "level": 57,
-                "moveset": [
-                  "willowisp",
-                  "sludgebomb",
-                  "flamethrower",
-                  "painsplit"
-                ]
-              },
-              {
-                "species": "mudsdale",
-                "level": 58,
-                "moveset": [
-                  "highhorsepower",
-                  "rockslide",
-                  "bodypress",
-                  "heavyslam"
-                ],
-                "heldItem": "sitrus_berry"
-              }
+              {"species": "scrafty", "level": 57, "ability": "intimidate", "moveset": ["fakeout", "drainpunch", "knockoff", "bulkup"]},
+              {"species": "mudsdale", "level": 58, "ability": "stamina", "moveset": ["highhorsepower", "closecombat", "heavyslam", "rockslide"], "heldItem": "sitrus_berry"}
+            ]
+          },
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two with a sitrus berry. Replaced by a Bruno preview (Intimidate and Fake Out in front of a Fighting-covered Mudsdale, which the shared dialogue names); docs/mechanics/CHALLENGE_ROUTES.md. Kept beside teams because the generator requires teams to hold exactly normal and challenge. Nothing reads this key.",
+            "team": [
+              {"species": "weezing", "level": 57, "moveset": ["willowisp", "sludgebomb", "flamethrower", "painsplit"]},
+              {"species": "mudsdale", "level": 58, "moveset": ["highhorsepower", "rockslide", "bodypress", "heavyslam"], "heldItem": "sitrus_berry"}
             ]
           },
           "dialogue_text": {
@@ -6860,28 +7037,15 @@
               }
             ],
             "challenge": [
-              {
-                "species": "gigalith",
-                "level": 57,
-                "moveset": [
-                  "rockslide",
-                  "bodypress",
-                  "protect",
-                  "stealthrock"
-                ],
-                "ability": "sandstream",
-                "heldItem": "smooth_rock"
-              },
-              {
-                "species": "excadrill",
-                "level": 58,
-                "moveset": [
-                  "earthquake",
-                  "ironhead",
-                  "rockslide",
-                  "rapidspin"
-                ]
-              }
+              {"species": "tyranitar", "level": 57, "ability": "sandstream", "moveset": ["stealthrock", "crunch", "stoneedge", "dragondance"], "heldItem": "smooth_rock"},
+              {"species": "scizor", "level": 58, "ability": "technician", "moveset": ["bulletpunch", "uturn", "knockoff", "swordsdance"]}
+            ]
+          },
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's sand pair with a smooth rock. Replaced by a Champion Blue preview (Tyranitar's sand and Stealth Rock, Technician Scizor); docs/mechanics/CHALLENGE_ROUTES.md. Kept beside teams because the generator requires teams to hold exactly normal and challenge. Nothing reads this key.",
+            "team": [
+              {"species": "gigalith", "level": 57, "moveset": ["rockslide", "bodypress", "protect", "stealthrock"], "ability": "sandstream", "heldItem": "smooth_rock"},
+              {"species": "excadrill", "level": 58, "moveset": ["earthquake", "ironhead", "rockslide", "rapidspin"]}
             ]
           },
           "dialogue_text": {
@@ -6933,27 +7097,15 @@
               }
             ],
             "challenge": [
-              {
-                "species": "bronzong",
-                "level": 57,
-                "moveset": [
-                  "trickroom",
-                  "gyroball",
-                  "bodypress",
-                  "hypnosis"
-                ]
-              },
-              {
-                "species": "hariyama",
-                "level": 58,
-                "moveset": [
-                  "fakeout",
-                  "closecombat",
-                  "knockoff",
-                  "heavyslam"
-                ],
-                "heldItem": "sitrus_berry"
-              }
+              {"species": "dusknoir", "level": 57, "ability": "frisk", "moveset": ["trickroom", "shadowpunch", "painsplit", "willowisp"], "heldItem": "mental_herb"},
+              {"species": "golurk", "level": 58, "ability": "noguard", "moveset": ["dynamicpunch", "poltergeist", "earthquake", "icepunch"]}
+            ]
+          },
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's Trick Room pair with a sitrus berry. Replaced by an Agatha preview (a Ghost Trick Room setter that Taunt cannot stop, then No Guard Golurk that punishes the Dark answer); docs/mechanics/CHALLENGE_ROUTES.md. Kept beside teams because the generator requires teams to hold exactly normal and challenge. Nothing reads this key.",
+            "team": [
+              {"species": "bronzong", "level": 57, "moveset": ["trickroom", "gyroball", "bodypress", "hypnosis"]},
+              {"species": "hariyama", "level": 58, "moveset": ["fakeout", "closecombat", "knockoff", "heavyslam"], "heldItem": "sitrus_berry"}
             ]
           },
           "dialogue_text": {
@@ -7006,28 +7158,15 @@
               }
             ],
             "challenge": [
-              {
-                "species": "politoed",
-                "level": 58,
-                "moveset": [
-                  "surf",
-                  "icywind",
-                  "encore",
-                  "protect"
-                ],
-                "ability": "drizzle",
-                "heldItem": "mystic_water"
-              },
-              {
-                "species": "lanturn",
-                "level": 59,
-                "moveset": [
-                  "discharge",
-                  "surf",
-                  "icebeam",
-                  "confuseray"
-                ]
-              }
+              {"species": "pelipper", "level": 58, "ability": "drizzle", "moveset": ["hurricane", "scald", "uturn", "roost"], "heldItem": "damp_rock"},
+              {"species": "kingdra", "level": 59, "ability": "swiftswim", "moveset": ["hydropump", "dracometeor", "icebeam", "flashcannon"]}
+            ]
+          },
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's rain pair with a mystic water. Replaced by a Lance preview (rain for a Swift Swim Kingdra whose Flash Cannon answers the Fairy check); docs/mechanics/CHALLENGE_ROUTES.md. Kept beside teams because the generator requires teams to hold exactly normal and challenge. Nothing reads this key.",
+            "team": [
+              {"species": "politoed", "level": 58, "moveset": ["surf", "icywind", "encore", "protect"], "ability": "drizzle", "heldItem": "mystic_water"},
+              {"species": "lanturn", "level": 59, "moveset": ["discharge", "surf", "icebeam", "confuseray"]}
             ]
           },
           "dialogue_text": {
@@ -7079,27 +7218,15 @@
               }
             ],
             "challenge": [
-              {
-                "species": "aggron",
-                "level": 58,
-                "moveset": [
-                  "stealthrock",
-                  "heavyslam",
-                  "rockslide",
-                  "bodypress"
-                ],
-                "heldItem": "sitrus_berry"
-              },
-              {
-                "species": "crobat",
-                "level": 59,
-                "moveset": [
-                  "toxic",
-                  "airslash",
-                  "bite",
-                  "roost"
-                ]
-              }
+              {"species": "duraludon", "level": 58, "ability": "stalwart", "moveset": ["stealthrock", "flashcannon", "dragonpulse", "thunderwave"]},
+              {"species": "dragonite", "level": 59, "ability": "multiscale", "moveset": ["dragondance", "extremespeed", "earthquake", "roost"], "heldItem": "heavy_duty_boots"}
+            ]
+          },
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's Stealth Rock pair with a sitrus berry. Replaced by a Lance preview (a Steel/Dragon rock setter that walls Ice and Fairy, then a Boots Multiscale Dragonite the rocks never touch); docs/mechanics/CHALLENGE_ROUTES.md. Kept beside teams because the generator requires teams to hold exactly normal and challenge. Nothing reads this key.",
+            "team": [
+              {"species": "aggron", "level": 58, "moveset": ["stealthrock", "heavyslam", "rockslide", "bodypress"], "heldItem": "sitrus_berry"},
+              {"species": "crobat", "level": 59, "moveset": ["toxic", "airslash", "bite", "roost"]}
             ]
           },
           "dialogue_text": {
@@ -7151,27 +7278,15 @@
               }
             ],
             "challenge": [
-              {
-                "species": "mismagius",
-                "level": 59,
-                "moveset": [
-                  "taunt",
-                  "willowisp",
-                  "hex",
-                  "painsplit"
-                ],
-                "heldItem": "colbur_berry"
-              },
-              {
-                "species": "klinklang",
-                "level": 59,
-                "moveset": [
-                  "shiftgear",
-                  "geargrind",
-                  "chargebeam",
-                  "thunderwave"
-                ]
-              }
+              {"species": "trevenant", "level": 59, "ability": "naturalcure", "moveset": ["trickroom", "woodhammer", "shadowclaw", "willowisp"], "heldItem": "mental_herb"},
+              {"species": "mimikyu", "level": 59, "ability": "disguise", "moveset": ["swordsdance", "playrough", "shadowclaw", "shadowsneak"]}
+            ]
+          },
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's Taunt-and-setup pair with a colbur berry. Replaced by an Agatha preview (a second Trick Room setter, then Disguise Mimikyu setting up under it); docs/mechanics/CHALLENGE_ROUTES.md. Kept beside teams because the generator requires teams to hold exactly normal and challenge. Nothing reads this key.",
+            "team": [
+              {"species": "mismagius", "level": 59, "moveset": ["taunt", "willowisp", "hex", "painsplit"], "heldItem": "colbur_berry"},
+              {"species": "klinklang", "level": 59, "moveset": ["shiftgear", "geargrind", "chargebeam", "thunderwave"]}
             ]
           },
           "dialogue_text": {
@@ -7243,57 +7358,21 @@
               }
             ],
             "challenge": [
-              {
-                "species": "crobat",
-                "level": 58,
-                "moveset": [
-                  "tailwind",
-                  "airslash",
-                  "toxic",
-                  "uturn"
-                ],
-                "heldItem": "focus_sash"
-              },
-              {
-                "species": "mudsdale",
-                "level": 59,
-                "moveset": [
-                  "highhorsepower",
-                  "rockslide",
-                  "bodypress",
-                  "heavyslam"
-                ]
-              },
-              {
-                "species": "starmie",
-                "level": 59,
-                "moveset": [
-                  "surf",
-                  "psychic",
-                  "icywind",
-                  "recover"
-                ]
-              },
-              {
-                "species": "cacturne",
-                "level": 59,
-                "moveset": [
-                  "needlearm",
-                  "suckerpunch",
-                  "knockoff",
-                  "leechseed"
-                ]
-              },
-              {
-                "species": "heracross",
-                "level": 60,
-                "moveset": [
-                  "closecombat",
-                  "megahorn",
-                  "stoneedge",
-                  "earthquake"
-                ]
-              }
+              {"species": "crobat", "level": 58, "ability": "innerfocus", "moveset": ["tailwind", "bravebird", "toxic", "uturn"], "heldItem": "focus_sash"},
+              {"species": "aerodactyl", "level": 59, "ability": "pressure", "moveset": ["stoneedge", "earthquake", "icefang", "taunt"]},
+              {"species": "abomasnow", "level": 59, "ability": "snowwarning", "moveset": ["auroraveil", "blizzard", "woodhammer", "iceshard"]},
+              {"species": "goodra", "level": 59, "ability": "gooey", "moveset": ["dracometeor", "sludgebomb", "thunderbolt", "fireblast"]},
+              {"species": "kingambit", "level": 60, "ability": "defiant", "moveset": ["swordsdance", "kowtowcleave", "ironhead", "suckerpunch"]}
+            ]
+          },
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's four plus Cacturne, with the Focus Sash Crobat the shared dialogue names. Replaced by a League final examination: the same sash Tailwind Crobat, then Aerodactyl, an Aurora Veil Abomasnow, a Gooey Goodra and a Defiant Kingambit; docs/mechanics/CHALLENGE_ROUTES.md. Kept beside teams because the generator requires teams to hold exactly normal and challenge. Nothing reads this key.",
+            "team": [
+              {"species": "crobat", "level": 58, "moveset": ["tailwind", "airslash", "toxic", "uturn"], "heldItem": "focus_sash"},
+              {"species": "mudsdale", "level": 59, "moveset": ["highhorsepower", "rockslide", "bodypress", "heavyslam"]},
+              {"species": "starmie", "level": 59, "moveset": ["surf", "psychic", "icywind", "recover"]},
+              {"species": "cacturne", "level": 59, "moveset": ["needlearm", "suckerpunch", "knockoff", "leechseed"]},
+              {"species": "heracross", "level": 60, "moveset": ["closecombat", "megahorn", "stoneedge", "earthquake"]}
             ]
           },
           "dialogue_text": {
@@ -7448,7 +7527,9 @@
               "level": 17
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "roggenrola",
               "moveset": [
@@ -7480,6 +7561,12 @@
               "level": 17,
               "heldItem": "sitrus_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "nosepass", "level": 16, "ability": "sturdy", "moveset": ["sandstorm", "rockthrow", "thunderwave", "block"]},
+            {"species": "dwebble", "level": 16, "ability": "sturdy", "moveset": ["smackdown", "shellsmash", "furycutter", "sandattack"]},
+            {"species": "nacli", "level": 17, "moveset": ["rockthrow", "mudshot", "headbutt", "harden"], "heldItem": "sitrus_berry"}
           ]
         },
         "dialogue_text": {
@@ -7517,7 +7604,9 @@
               "level": 18
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "binacle",
               "moveset": [
@@ -7549,6 +7638,12 @@
               "level": 18,
               "heldItem": "sitrus_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "lileep", "level": 17, "ability": "stormdrain", "moveset": ["ancientpower", "megadrain", "confuseray", "acid"]},
+            {"species": "tyrunt", "level": 17, "moveset": ["bite", "rocktomb", "stomp", "dragontail"]},
+            {"species": "larvitar", "level": 18, "moveset": ["rockslide", "bite", "scaryface", "mudslap"], "heldItem": "sitrus_berry"}
           ]
         },
         "dialogue_text": {
@@ -7586,7 +7681,9 @@
               "level": 19
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "rolycoly",
               "moveset": [
@@ -7618,6 +7715,12 @@
               "level": 19,
               "heldItem": "sitrus_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "binacle", "level": 18, "moveset": ["rocktomb", "furyswipes", "mudslap", "withdraw"]},
+            {"species": "onix", "level": 18, "ability": "sturdy", "moveset": ["rockpolish", "rocktomb", "smackdown", "bind"]},
+            {"species": "carkol", "level": 19, "ability": "flamebody", "moveset": ["flamecharge", "smackdown", "rapidspin", "smokescreen"], "heldItem": "sitrus_berry"}
           ]
         },
         "dialogue_text": {
@@ -7655,7 +7758,9 @@
               "level": 22
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "buizel",
               "moveset": [
@@ -7687,6 +7792,12 @@
               "level": 22,
               "heldItem": "sitrus_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "goldeen", "level": 21, "ability": "lightningrod", "moveset": ["hornattack", "waterpulse", "drillrun", "agility"]},
+            {"species": "tentacool", "level": 21, "ability": "liquidooze", "moveset": ["acid", "bubblebeam", "toxicspikes", "wrap"]},
+            {"species": "shellder", "level": 22, "ability": "skilllink", "moveset": ["iciclespear", "watergun", "withdraw", "supersonic"], "heldItem": "sitrus_berry"}
           ]
         },
         "dialogue_text": {
@@ -7724,7 +7835,9 @@
               "level": 23
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "krabby",
               "moveset": [
@@ -7756,6 +7869,12 @@
               "level": 23,
               "heldItem": "sitrus_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "slowpoke", "level": 22, "ability": "regenerator", "moveset": ["yawn", "waterpulse", "confusion", "slackoff"]},
+            {"species": "marill", "level": 22, "ability": "hugepower", "moveset": ["aquajet", "bubblebeam", "rollout", "playrough"]},
+            {"species": "staryu", "level": 23, "moveset": ["scald", "thunderwave", "recover", "rapidspin"], "heldItem": "sitrus_berry"}
           ]
         },
         "dialogue_text": {
@@ -7793,7 +7912,9 @@
               "level": 27
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "magnemite",
               "moveset": [
@@ -7825,6 +7946,12 @@
               "level": 27,
               "heldItem": "cheri_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "wattrel", "level": 26, "ability": "voltabsorb", "moveset": ["spark", "pluck", "quickattack", "roost"]},
+            {"species": "emolga", "level": 26, "ability": "motordrive", "moveset": ["acrobatics", "spark", "encore", "quickattack"]},
+            {"species": "chinchou", "level": 27, "ability": "voltabsorb", "moveset": ["bubblebeam", "spark", "confuseray", "thunderwave"], "heldItem": "cheri_berry"}
           ]
         },
         "dialogue_text": {
@@ -7862,7 +7989,9 @@
               "level": 28
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "emolga",
               "moveset": [
@@ -7894,6 +8023,12 @@
               "level": 28,
               "heldItem": "cheri_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "joltik", "level": 27, "moveset": ["electroweb", "bugbite", "thunderwave", "slash"]},
+            {"species": "pikachu", "level": 27, "ability": "lightningrod", "moveset": ["spark", "grassknot", "surf", "quickattack"]},
+            {"species": "flaaffy", "level": 28, "moveset": ["thundershock", "cottonspore", "thunderwave", "takedown"], "heldItem": "cheri_berry"}
           ]
         },
         "dialogue_text": {
@@ -7931,7 +8066,9 @@
               "level": 29
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "plusle",
               "moveset": [
@@ -7963,6 +8100,12 @@
               "level": 29,
               "heldItem": "cheri_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "vikavolt", "level": 28, "ability": "levitate", "moveset": ["bugbuzz", "energyball", "spark", "thunderwave"]},
+            {"species": "lanturn", "level": 28, "ability": "voltabsorb", "moveset": ["scald", "spark", "confuseray", "thunderwave"]},
+            {"species": "luxio", "level": 29, "moveset": ["spark", "bite", "charge", "leer"], "heldItem": "cheri_berry"}
           ]
         },
         "dialogue_text": {
@@ -8000,7 +8143,9 @@
               "level": 32
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "nuzleaf",
               "moveset": [
@@ -8032,6 +8177,12 @@
               "level": 32,
               "heldItem": "lum_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "cottonee", "level": 31, "ability": "prankster", "moveset": ["charm", "stunspore", "megadrain", "encore"]},
+            {"species": "lombre", "level": 31, "ability": "swiftswim", "moveset": ["bubblebeam", "megadrain", "fakeout", "icywind"]},
+            {"species": "gloom", "level": 32, "moveset": ["gigadrain", "acid", "sleeppowder", "moonblast"], "heldItem": "lum_berry"}
           ]
         },
         "dialogue_text": {
@@ -8069,7 +8220,9 @@
               "level": 33
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "cacturne",
               "moveset": [
@@ -8101,6 +8254,12 @@
               "level": 33,
               "heldItem": "lum_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "ferroseed", "level": 32, "ability": "ironbarbs", "moveset": ["gyroball", "metalclaw", "curse", "leechseed"]},
+            {"species": "lileep", "level": 32, "moveset": ["ancientpower", "gigadrain", "confuseray", "rocktomb"]},
+            {"species": "tangela", "level": 33, "moveset": ["gigadrain", "ancientpower", "stunspore", "knockoff"], "heldItem": "lum_berry"}
           ]
         },
         "dialogue_text": {
@@ -8138,7 +8297,9 @@
               "level": 33
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "sunflora",
               "moveset": [
@@ -8170,6 +8331,12 @@
               "level": 33,
               "heldItem": "lum_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "whimsicott", "level": 32, "ability": "prankster", "moveset": ["tailwind", "encore", "gigadrain", "moonblast"]},
+            {"species": "lurantis", "level": 32, "ability": "contrary", "moveset": ["superpower", "leafblade", "xscissor", "synthesis"]},
+            {"species": "breloom", "level": 33, "ability": "technician", "moveset": ["machpunch", "forcepalm", "megadrain", "stunspore"], "heldItem": "lum_berry"}
           ]
         },
         "dialogue_text": {
@@ -8207,7 +8374,9 @@
               "level": 37
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "grimer",
               "moveset": [
@@ -8239,6 +8408,12 @@
               "level": 37,
               "heldItem": "black_sludge"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "ariados", "level": 36, "moveset": ["toxicspikes", "poisonjab", "suckerpunch", "bugbite"]},
+            {"species": "tentacruel", "level": 36, "ability": "liquidooze", "moveset": ["scald", "sludgebomb", "rapidspin", "toxicspikes"]},
+            {"species": "skorupi", "level": 37, "moveset": ["poisonfang", "bite", "toxicspikes", "pinmissile"], "heldItem": "black_sludge"}
           ]
         },
         "dialogue_text": {
@@ -8276,7 +8451,9 @@
               "level": 38
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "qwilfish",
               "moveset": [
@@ -8308,6 +8485,12 @@
               "level": 38,
               "heldItem": "black_sludge"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "drapion", "level": 37, "moveset": ["crunch", "poisonjab", "firefang", "knockoff"]},
+            {"species": "roserade", "level": 37, "moveset": ["gigadrain", "shadowball", "sludgebomb", "toxicspikes"]},
+            {"species": "arbok", "level": 38, "moveset": ["poisonfang", "glare", "crunch", "acidspray"], "heldItem": "black_sludge"}
           ]
         },
         "dialogue_text": {
@@ -8345,7 +8528,9 @@
               "level": 39
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "toxapex",
               "moveset": [
@@ -8377,6 +8562,12 @@
               "level": 39,
               "heldItem": "black_sludge"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "glimmora", "level": 38, "ability": "toxicdebris", "moveset": ["earthpower", "energyball", "sludgewave", "stealthrock"]},
+            {"species": "toxicroak", "level": 38, "ability": "dryskin", "moveset": ["suckerpunch", "poisonjab", "drainpunch", "swordsdance"]},
+            {"species": "skuntank", "level": 39, "moveset": ["nightslash", "toxic", "suckerpunch", "flamethrower"], "heldItem": "black_sludge"}
           ]
         },
         "dialogue_text": {
@@ -8414,7 +8605,9 @@
               "level": 42
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "kirlia",
               "moveset": [
@@ -8446,6 +8639,12 @@
               "level": 42,
               "heldItem": "lum_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "indeedee", "level": 41, "ability": "psychicsurge", "moveset": ["expandingforce", "playrough", "shadowball", "calmmind"]},
+            {"species": "kirlia", "level": 41, "moveset": ["psychic", "calmmind", "magicalleaf", "drainingkiss"]},
+            {"species": "hattrem", "level": 42, "moveset": ["psychic", "lifedew", "disarmingvoice", "calmmind"], "heldItem": "lum_berry"}
           ]
         },
         "dialogue_text": {
@@ -8483,7 +8682,9 @@
               "level": 43
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "girafarig",
               "moveset": [
@@ -8515,6 +8716,12 @@
               "level": 43,
               "heldItem": "lum_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "espeon", "level": 42, "ability": "magicbounce", "moveset": ["psychic", "dazzlinggleam", "calmmind", "morningsun"]},
+            {"species": "gallade", "level": 42, "ability": "sharpness", "moveset": ["psychocut", "leafblade", "nightslash", "closecombat"]},
+            {"species": "bronzong", "level": 43, "moveset": ["extrasensory", "payback", "hypnosis", "gyroball"], "heldItem": "lum_berry"}
           ]
         },
         "dialogue_text": {
@@ -8552,7 +8759,9 @@
               "level": 44
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "slowpoke",
               "moveset": [
@@ -8584,6 +8793,12 @@
               "level": 44,
               "heldItem": "lum_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "reuniclus", "level": 43, "ability": "magicguard", "moveset": ["psychic", "focusblast", "calmmind", "recover"]},
+            {"species": "gardevoir", "level": 43, "moveset": ["moonblast", "psychic", "calmmind", "mysticalfire"]},
+            {"species": "grumpig", "level": 44, "moveset": ["psybeam", "powergem", "zenheadbutt", "bounce"], "heldItem": "lum_berry"}
           ]
         },
         "dialogue_text": {
@@ -8621,7 +8836,9 @@
               "level": 44
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "chimecho",
               "moveset": [
@@ -8653,6 +8870,12 @@
               "level": 44,
               "heldItem": "lum_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "xatu", "level": 43, "moveset": ["psychic", "airslash", "nightshade", "confuseray"]},
+            {"species": "alakazam", "level": 43, "ability": "magicguard", "moveset": ["psychic", "focusblast", "dazzlinggleam", "nastyplot"]},
+            {"species": "medicham", "level": 44, "moveset": ["zenheadbutt", "highjumpkick", "calmmind", "forcepalm"], "heldItem": "lum_berry"}
           ]
         },
         "dialogue_text": {
@@ -8690,7 +8913,9 @@
               "level": 47
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "magmar",
               "moveset": [
@@ -8722,6 +8947,12 @@
               "level": 47,
               "heldItem": "sitrus_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "ninetales", "level": 46, "moveset": ["flamethrower", "extrasensory", "willowisp", "nastyplot"]},
+            {"species": "lampent", "level": 46, "ability": "flashfire", "moveset": ["energyball", "hex", "flamethrower", "confuseray"]},
+            {"species": "camerupt", "level": 47, "moveset": ["lavaplume", "earthpower", "yawn", "flamethrower"], "heldItem": "sitrus_berry"}
           ]
         },
         "dialogue_text": {
@@ -8759,7 +8990,9 @@
               "level": 48
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "salazzle",
               "moveset": [
@@ -8791,6 +9024,12 @@
               "level": 48,
               "heldItem": "sitrus_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "infernape", "level": 47, "moveset": ["grassknot", "machpunch", "flamethrower", "uturn"]},
+            {"species": "magmortar", "level": 47, "ability": "flamebody", "moveset": ["flamethrower", "thunderbolt", "focusblast", "confuseray"]},
+            {"species": "pyroar", "level": 48, "moveset": ["flamethrower", "hypervoice", "nobleroar", "workup"], "heldItem": "sitrus_berry"}
           ]
         },
         "dialogue_text": {
@@ -8828,7 +9067,9 @@
               "level": 49
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "torkoal",
               "moveset": [
@@ -8860,6 +9101,12 @@
               "level": 49,
               "heldItem": "sitrus_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "volcarona", "level": 48, "ability": "flamebody", "moveset": ["quiverdance", "gigadrain", "flamethrower", "bugbuzz"]},
+            {"species": "charizard", "level": 48, "moveset": ["dragondance", "flareblitz", "earthquake", "airslash"]},
+            {"species": "centiskorch", "level": 49, "moveset": ["firelash", "bugbite", "coil", "crunch"], "heldItem": "sitrus_berry"}
           ]
         },
         "dialogue_text": {
@@ -8897,7 +9144,9 @@
               "level": 49
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "heatmor",
               "moveset": [
@@ -8929,6 +9178,12 @@
               "level": 49,
               "heldItem": "sitrus_berry"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "chandelure", "level": 48, "ability": "flashfire", "moveset": ["energyball", "shadowball", "flamethrower", "willowisp"]},
+            {"species": "houndoom", "level": 48, "moveset": ["flamethrower", "thunderfang", "suckerpunch", "nastyplot"]},
+            {"species": "talonflame", "level": 49, "ability": "galewings", "moveset": ["tailwind", "bravebird", "flareblitz", "willowisp"], "heldItem": "heavy_duty_boots"}
           ]
         },
         "dialogue_text": {
@@ -8966,7 +9221,9 @@
               "level": 52
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "marowak",
               "moveset": [
@@ -8998,6 +9255,12 @@
               "level": 52,
               "heldItem": "leftovers"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "gastrodon", "level": 51, "ability": "stormdrain", "moveset": ["scald", "earthpower", "recover", "icebeam"]},
+            {"species": "claydol", "level": 51, "ability": "levitate", "moveset": ["earthpower", "icebeam", "rapidspin", "stealthrock"]},
+            {"species": "donphan", "level": 52, "moveset": ["earthquake", "iceshard", "gunkshot", "knockoff"], "heldItem": "leftovers"}
           ]
         },
         "dialogue_text": {
@@ -9035,7 +9298,9 @@
               "level": 53
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "claydol",
               "moveset": [
@@ -9067,6 +9332,12 @@
               "level": 53,
               "heldItem": "leftovers"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "excadrill", "level": 52, "ability": "moldbreaker", "moveset": ["earthquake", "ironhead", "rockslide", "swordsdance"]},
+            {"species": "palossand", "level": 52, "moveset": ["shadowball", "earthpower", "gigadrain", "shoreup"]},
+            {"species": "gliscor", "level": 53, "ability": "poisonheal", "moveset": ["earthquake", "knockoff", "swordsdance", "protect"], "heldItem": "toxic_orb"}
           ]
         },
         "dialogue_text": {
@@ -9104,7 +9375,9 @@
               "level": 53
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "golem",
               "moveset": [
@@ -9136,6 +9409,12 @@
               "level": 53,
               "heldItem": "leftovers"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "flygon", "level": 52, "ability": "levitate", "moveset": ["earthquake", "dragonclaw", "firepunch", "uturn"]},
+            {"species": "krookodile", "level": 52, "ability": "intimidate", "moveset": ["earthquake", "crunch", "stoneedge", "gunkshot"]},
+            {"species": "whiscash", "level": 53, "moveset": ["earthquake", "waterpulse", "amnesia", "zenheadbutt"], "heldItem": "leftovers"}
           ]
         },
         "dialogue_text": {
@@ -9173,7 +9452,9 @@
               "level": 54
             }
           ],
-          "challenge": [
+          "superseded_challenge": {
+            "superseded_why": "the Challenge team before 2026-10-21: Normal's two plus one member and the held item, so it rehearsed Normal's answer. Replaced to rehearse the leader's redesigned Challenge (docs/mechanics/CHALLENGE_ROUTES.md), levels kept slot by slot. Kept as authored work; nothing reads it (build_gym_trainers reads teams.normal and teams.challenge only).",
+            "team": [
             {
               "species": "gastrodon",
               "moveset": [
@@ -9205,6 +9486,12 @@
               "level": 54,
               "heldItem": "leftovers"
             }
+          ]
+          },
+          "challenge": [
+            {"species": "mamoswine", "level": 53, "moveset": ["earthquake", "iceshard", "iciclecrash", "stoneedge"]},
+            {"species": "nidoqueen", "level": 53, "moveset": ["earthpower", "sludgebomb", "icebeam", "stealthrock"]},
+            {"species": "nidoking", "level": 54, "moveset": ["earthpower", "poisonjab", "megahorn", "thunderbolt"], "heldItem": "leftovers"}
           ]
         },
         "dialogue_text": {

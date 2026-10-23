@@ -115,6 +115,115 @@ def test_an_excluded_sub_region_is_under_the_sea_at_every_sampled_column():
             assert m.any() and h[m].max() < sea, sid
 
 
+# ------------------------------------------------------------------------------------------------ legendaries, dungeons
+# The owner, 2026-10-23: "nuzlocke page should show dungeons and legendaries per area, so a player can count those" and
+# "just dungeon name ... i have 1 encounter no matter the level".
+
+
+def _inside(poly, x, z):
+    hit = False
+    for i in range(len(poly)):
+        (x1, z1), (x2, z2) = poly[i], poly[(i + 1) % len(poly)]
+        if (z1 > z) != (z2 > z) and x < (x2 - x1) * (z - z1) / (z2 - z1) + x1:
+            hit = not hit
+    return hit
+
+
+def _zone_at(x, z):
+    """The sub-region holding the column: even-odd over data/regions.json polygons, written here."""
+    return next(s["id"] for s in data("regions.json")["subregions"] if any(_inside(p, x, z) for p in s["polygons"]))
+
+
+def row_problems(by_zone):
+    """What an independent reading of the sources says the register must hold and does not: every sited chamber and
+    grotto of data/legendaries.json and every sanctuary occupant, in the zone its own coordinate falls in."""
+    have = {(zone, r["species"]) for zone, rows in by_zone.items() for r in rows}
+    out = []
+    for r in data("legendaries.json")["encounters"]:
+        if r["status"] == "sited":
+            at = r["mouth"] if r["kind"] == "lake_grotto" else r["portal"]
+            if (_zone_at(*at), r["species"]) not in have:
+                out.append("%s is not a row of %s" % (r["species"], _zone_at(*at)))
+    for s in data("sanctuaries.json")["sanctuaries"]:
+        o = s["occupant"]
+        for sp in [o["species"]] + list(o.get("co_occupants") or []):
+            if (_zone_at(*s["site"]["centre"]), sp) not in have:
+                out.append("%s is not a row of %s" % (sp, _zone_at(*s["site"]["centre"])))
+    return out
+
+
+def test_the_file_holds_the_legendaries_the_sources_place():
+    d = doc()
+    by_zone = {z["zone"]: z["legendaries"] for z in d["zones"] if z.get("legendaries")}
+    assert not row_problems(by_zone)
+    assert d["counts"]["legendaries"] == sum(len(v) for v in by_zone.values()) > 40
+    assert all(z["zone"] in {y["zone"] for y in d["zones"]} for z in d["zones"] if z.get("legendaries"))
+    # no row appears twice in a zone, and a dungeon's own legendary is not also a row
+    for rows in by_zone.values():
+        assert len({r["species"] for r in rows}) == len(rows)
+    held = set(d["legendary_register"]["dungeon_held"])
+    assert not held & {r["species"] for rows in by_zone.values() for r in rows}
+
+
+def test_the_register_says_what_it_does_not_cover():
+    reg = doc()["legendary_register"]
+    assert len(reg["not_covered"]) >= 4 and "Our list is not the world" in " ".join(reg["not_covered"])
+    assert {e["species"] for e in reg["excluded"]} >= {"lugia", "entei", "mewtwo"}
+    assert any("lugia" == n["species"] for n in reg["not_placed"]) or any("lugia" == e["species"] for e in reg["excluded"])
+
+
+def test_each_dungeon_is_one_zone_by_its_player_facing_name():
+    d = doc()
+    want = [(x["id"], x["name"]) for x in data("dungeons.json")["dungeons"]]
+    assert [(x["dungeon"], x["name"]) for x in d["dungeons"]] == want
+    assert d["counts"]["dungeons"] == len(want) >= 13
+    assert len({x["zone"] for x in d["dungeons"]}) == len(want)
+    assert not {x["zone"] for x in d["dungeons"]} & {z["zone"] for z in d["zones"]}, "a dungeon id is also an area id"
+    assert "Night Shift" in " ".join(n for _i, n in want)
+
+
+def test_a_generator_mutation_is_caught_by_the_independent_reading(monkeypatch):
+    """Mutate the CODE, leave the data alone (CLAUDE.md 'How to prove an audit is independent'): a locator that puts every
+    column in the wrong zone, a footprint centre moved 3,000 blocks, and a dungeon list that loses one must each make the
+    independent reading above report a problem (or stop the build)."""
+    zones = doc()["zones"]
+    by_zone, _ = NZ.legendary_register(zones)
+    assert not row_problems(by_zone), "the unmutated generator already disagrees with the sources"
+    ids = [z["zone"] for z in zones if z["kind"] == "land"]
+    monkeypatch.setattr(NZ.Locator, "zone", lambda self, x, z: ids[(x + z) % len(ids)])
+    wrong, _ = NZ.legendary_register(zones)
+    assert row_problems(wrong), "a locator that scatters the columns went unnoticed"
+    monkeypatch.undo()
+    import adopted_sites as A
+    real = A.centre
+    monkeypatch.setattr(A, "centre", lambda s, placements=None: [real(s, placements)[0] + 3000, real(s, placements)[1]])
+    try:
+        moved, _ = NZ.legendary_register(zones)
+    except SystemExit:
+        moved = None                       # a column outside every zone stops the build: also caught
+    if moved is not None:
+        assert {(z, r["species"]) for z, rows in moved.items() for r in rows} != \
+            {(z, r["species"]) for z, rows in by_zone.items() for r in rows}, "moving the sites changed no row"
+    monkeypatch.undo()
+    real_load = NZ.load
+    monkeypatch.setattr(NZ, "load", lambda n: dict(real_load(n), dungeons=real_load(n)["dungeons"][1:]) if n == "dungeons.json" else real_load(n))
+    assert len(NZ.dungeons()) == len(data("dungeons.json")["dungeons"]) - 1, "the mutation did not apply"
+    assert [x["name"] for x in NZ.dungeons()] != [x["name"] for x in doc()["dungeons"]]
+
+
+def test_a_site_with_no_species_entry_stops_the_build(monkeypatch):
+    """SITE_SPECIES types the species of an adopted site; a site that is added without one must not pass silently."""
+    zones = doc()["zones"]
+    mutated = dict(NZ.SITE_SPECIES)
+    mutated.pop("adopted_mew_temple")
+    monkeypatch.setattr(NZ, "SITE_SPECIES", mutated)
+    with pytest.raises(SystemExit):
+        NZ.legendary_register(zones)
+    monkeypatch.setattr(NZ, "SITE_SPECIES", dict(NZ.SITE_SPECIES, adopted_mew_temple=["mewtwo"]))
+    with pytest.raises(SystemExit):
+        NZ.legendary_register(zones)
+
+
 PACK = ROOT / "build" / "datapacks" / "cobblers_spawns"
 
 

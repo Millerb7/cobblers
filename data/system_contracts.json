@@ -573,6 +573,7 @@
         "shrines.py": "not covered: a block source (data/shrines.json blocks) that names the spawn conditions file only in its docstring and does not read it; not yet one of this contract's sources (the test author's to add), and its built functions are checked by shrines_audit.py and by the built-packs test here",
         "route4_events.py": "checker: refuses any spawn-condition block it writes that its SPAWN_OK does not declare (pink_petals, cherry_leaves and water, at the hollow and the gate, each with a data/spawn_block_policy.json entry scoped to route4_events); its built functions are checked by the built-packs test here and by tests/test_route4_events.py",
         "shrines_audit.py": "checker: the built shrines functions, against data/shrines.json blocks and the spawn conditions",
+        "entrance_trails_audit.py": "checker: the built cobblers_entrance_trails functions (dirt_path, gravel, coarse_dirt, spruce fences, lanterns, signs), every block against data/spawn_blocks.json",
         "maze_shrines.py": "source: maze_shrines",
         "maze_shrines_audit.py": "checker: the built maze_shrines functions, against data/maze_shrines.json blocks and the spawn conditions",
         "scar_tarn_audit.py": "checker: the built scar_tarn functions (the tarn and its five wood arms, 2026-10-12): check_forest() reads data/spawn_blocks.json and the scar_tarn whitelist in data/spawn_block_policy.json and fails any spawn-condition block but the allowed water",
@@ -653,6 +654,9 @@
         "new_places_land_audit.py": "checker: B4 of the 2026-10-09 places (the independent land audit: reads data/spawn_blocks.json to refuse a spawn-condition block the policy does not allow)",
         "long_count.py": "checker: the Long Count's builder (data/long_count.json, 2026-10-09): check_all() reads data/spawn_blocks.json and refuses to build a site that writes a block a spawn condition names (an oak leaf is one, so the young trees' leaves are azalea leaves). A builder's guard, not an audit; the independent audit (tools/long_count_audit.py) is owed, data/long_count.json audit_checklist",
         "caves.py": "source: caves",
+        "mine_networks.py": "checker: the mine networks generator (tools/mine_networks.py, 2026-10-22): reads data/spawn_blocks.json and the policy entry scoped mine_networks before it writes rails and ore",
+        "mine_networks_audit.py": "checker: the built cobblers_mine_networks pack (source mine_networks): its block writes, rails and ores among them, against data/spawn_blocks.json and the policy entry scoped mine_networks (2026-10-22)",
+        "cave_systems_audit.py": "checker: the built cobblers_cave_systems pack (source cave_systems): its ore and dressing writes against data/spawn_blocks.json and the policy entry scoped cave_systems (2026-10-22)",
         "caves_audit.py": "checker: the built cobblers_caves pack (source caves): every block it writes against data/spawn_blocks.json and the policy entries scoped to caves",
         "sanctuaries.py": "source: sanctuaries",
         "rayquaza_sky.py": "checker: its own cells (tools/rayquaza_sky.py spawn_block_problems refuses, at build, every block data/spawn_blocks.json lists unless a data/spawn_block_policy.json entry scoped to rayquaza_sky allows it; none does); its built packs cobblers_rayquaza and cobblers_rayquaza_build are also judged by the built-pack check like every other pack",
@@ -1210,14 +1214,14 @@
       "constrained_by": [
         "markets"
       ],
-      "statement": "Every advancement the generated TM gate tests is cobblers:flag/gymB_cleared for a badge B some gated recipe needs, an advancement tools/progression_pack.py writes with a real trigger (not minecraft:impossible) for a trainer_defeat flag that data/markets.json `badges` names; and a shelf line's gate_badge B is the badge of the leader whose first-win pool holds that TM, so the gate's B is the shelf's B. A renamed flag (every crafted TM locked for ever), a flag the progression pack stops writing, or a shelf line priced on another leader's badge breaks it without touching data/tm_gate.json.",
+      "statement": "Every advancement the generated TM gate tests is cobblers:flag/gymB_cleared for a badge B some gated recipe needs, an advancement tools/progression_pack.py writes with a real trigger (not minecraft:impossible) for a trainer_defeat flag that data/markets.json `badges` names; and a shelf line's gate_badge B is the badge of the leader whose first-win pool holds that TM, or, for a TM in no leader's pool (the tier shelves' answers since 2026-10-22, data/markets.json price_policies.tm_tier), its power-rule badge in the committed score table, so the gate's B is the shelf's B and no answer line moves a craft badge. A renamed flag (every crafted TM locked for ever), a flag the progression pack stops writing, or a shelf line priced on another leader's badge breaks it without touching data/tm_gate.json.",
       "stated_in": [
         {
           "at": "data/tm_gate.json:12",
           "quote": "minecraft:tick with the player holding cobblers:flag/<flag> (tools/progression_pack.py)"
         },
         {
-          "at": "data/markets.json:77",
+          "at": "data/markets.json:86",
           "quote": "gates on the badge its leader gives"
         }
       ],

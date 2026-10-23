@@ -19,8 +19,9 @@ Sources of truth: the lists are `data/encounter_design.json` (a table's `fishing
 Cobbleverse's own fishing details are inherited details, so inside those boxes they were taken out, and until now
 `data/spawns.json` held no fishing entry at all. A Poke Rod there hooked loot and no Pokemon. So the question "replace or
 sit beside upstream fishing" was already answered by the suppression: the authored lists **replace** it, over exactly
-the cells the suppression empties. Outside them (`data/spawn_suppression.json` `retain_defaults`: open ocean outside
-the sea bands, unauthored caves, the Nether) the inherited fishing stands as before.
+the cells the suppression empties. ~~Outside them (`retain_defaults`: open ocean outside the sea bands, unauthored caves,
+the Nether) the inherited fishing stands as before.~~ **Superseded 2026-10-22 (section 4b): no inherited fishing detail
+is live anywhere.** That sentence is what let a Pyukumuku bite off Pallet's west shore.
 
 ## 2. The mechanism (verified from the 1.8.0 jar, 2026-10-16)
 
@@ -72,10 +73,42 @@ the sea bands, unauthored caves, the Nether) the inherited fishing stands as bef
 - Files: `spawn_pool_world/fishing/subregions/<sub>.json`, `spawn_pool_world/fishing/marine/<band>.json`, kept apart
   from each place's world roster so the readers of those files (the heart, rare-spawn and design tests) see only the
   world roster.
-- **Gap:** 748 corridor cells of 8 blocks (47,872 blocks, 1.8% of the corridors) lie in no sub-region raster and no sea
-  band. Their inherited fishing is suppressed and no list reaches them; whether any is water was not measured.
-- **Cost:** 20,811 more spawn details over 1,912 boxes (46 sub-regions 14,463, 19 sea bands 6,348), on a pack whose
-  sub-region files hold 52,178. The server holds every detail in memory.
+- **Gap:** measured 2026-10-22 on the canonical heightmap (`python tools/fishing_cover.py measure`): of 60,648,961
+  columns of water (sea, painted lakes, river channels) 386,261 (0.64%) had no list and 30,371 had two (a coarse sea-band
+  cell that took in a strip of a coast sub-region's raster). Section 4b closes both.
+- **Cost:** 25,996 spawn details over 2,345 boxes (64 areas), measured from `compile_spawns.py` 2026-10-22; before the
+  cover 20,122 over 1,847. The server holds every detail in memory.
+
+## 4b. Nothing inherited, and every water has exactly one table (the owner, 2026-10-22)
+
+The owner: *"go through the fishing spawns and sure that up, i dont want another moment of my friend getting a mon he
+doesnt want in an area."* On 2026-10-21 a friend fishing off Pallet's west shore hooked a Pyukumuku that the guide lists
+only for South Strand, Southern Reef and the South-east dunes.
+
+- **What was inherited** (read from the snapshot `cobblers-local/server-snapshot-2026-10-05` with Cobblemon-additions
+  4.1.6, and again with the 1.8.2 mod set: the counts are the same): 603 fishing details over 160 species, 599 in 160
+  files of `COBBLEVERSE-DP-v31.zip` (`cobblemon:` paths; at the same path they win over the Cobblemon jar's own file, so no jar fishing detail is
+  effective) and 4 in one `cobblemon-additions` file. None in a spawn-detail preset.
+- **Why Pyukumuku:** `pyukumuku-4` is a fishing detail on `#cobblemon:is_beach` and `#cobblemon:is_ocean`, common bucket,
+  weight 2 (x3 and x5 with a lure). 103 columns of sea in a 150 x 200 window off Pallet's west shore (x1000-1150,
+  z5300-5500) were in no sub-region raster, no sea band and no suppression box, so that detail was live on the rod
+  there. Overall 23,664 of 24,688 stride columns with no authored table were also unsuppressed. Read from data and the
+  generators; not cast in game.
+- **Fix, one:** `tools/suppress_inherited_spawns.py` drops every inherited detail whose `spawnablePositionType` is
+  `fishing` from every inherited file, in every dimension, inside and outside every box (`remove_fishing`); a file left
+  empty is re-emitted `"enabled": false`. It fails closed afterwards if any inherited path still carries one
+  (`verify_no_fishing`, a raw-text scan). Non-fishing inherited spawns are untouched: `retain_defaults` still keeps them.
+- **Fix, two:** `tools/fishing_cover.py plan` writes `data/fishing_fill.json`, and `build_fishing` applies it. Every
+  32-block cell of the playable world holds exactly one fishing table, except cells a spawn-free zone touches (nothing
+  spawns there). Two tables on a cell: the sea band keeps it if it holds open sea, else the sub-region (946 cells ceded).
+  No table on a cell that holds water: the nearest sea band (open sea; 534 of the 596 filled cells) or the nearest
+  sub-region with a fishing list (62), by chessboard distance. Dry land far from water is not filled: a pond there
+  would catch nothing, not something wrong.
+- **Result** (`python tools/fishing_cover.py measure`): water columns with no table 386,261 -> 0, with two 30,371 -> 0.
+  `python tools/fishing_audit.py` re-derives it from the compiled details (not from the plan), checks each owning area
+  is a section of the guide with the same species, and, given the built suppression pack, that nothing inherited is live.
+- **Not covered:** water the heightmap and `landmarks.json` do not hold (a pool a town builds) in a cell no table
+  reaches: it catches nothing. A dungeon's own fishing pools. What the game does with any of this; not cast.
 
 ## 5. Per region: what you fish and why
 
@@ -155,7 +188,8 @@ Nothing here has been cast in game. The proof, on staging, with a Poke Rod and n
 
 1. Cast 50 times in three areas (a lake: Lake Viltri; a coast: West Shore; a sea band: the Windward shallows), record
    every catch with `/checkspawn` or the hooked species: only the area's list should come up.
-2. Cast just outside an authored area (open ocean past a sea band's clip): the inherited fishing should come up there.
+2. Cast at the Pallet west shore gap (x1024-1087, z5312-5375, bobber on the water): since 2026-10-22 the nearest band's
+   list (Sunset Sea shallows) should come up and no Pyukumuku. Cast in open ocean past every band: the nearest band's list.
 3. Cast in a dry area's puddle: nothing, as now.
 4. Read whether an empty bucket retries or skips (rule 4 assumes the worst).
 

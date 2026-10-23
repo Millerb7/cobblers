@@ -292,8 +292,11 @@ def test_every_seated_trainer_with_a_challenge_team_gets_a_challenge_copy(files)
 
 def test_no_seat_without_a_challenge_team_gets_a_copy(files):
     have = {s["id"] for s in SEATED}
+    # a seat file may carry its own record with a Challenge team (the mine crews, 2026-10-22): those get a copy too, and
+    # the property is "no Challenge team, no copy", read from the record the tool reads
+    recs = RT.load()[0]
     for s in RT.load()[1]:
-        if s["id"] not in have:
+        if s["id"] not in have and not CM.has_challenge(recs.get(s["id"]) or {}):
             assert "data/rctmod/trainers/%s.json" % (s["id"] + SFX) not in files, s["id"]
 
 

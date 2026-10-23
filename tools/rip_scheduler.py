@@ -21,6 +21,9 @@ MECHANISM (principle 6: datapack functions and scoreboard timers; no mod, no scr
   cap, pick  each pass counts the open rips (a recount, so a crash cannot leave a wrong count). Below open_min it opens one;
              below open_max it opens one with a 1-in-K chance (K from extra_open_every_minutes). "Opens one" = a uniform random
              candidate (`random value 1..M`); if that candidate is not eligible this pass, nothing opens and the next pass draws again.
+  near       one opening in near_player_share is drawn near a player instead (the owner, 2026-10-21: "focus some closer to
+             players, not all though"): a random online overworld player, then a uniform random candidate within
+             near_player_radius of them that is closed and whose region has none open; none such, the uniform pick.
   open       cobblers:rips/o<i>, all in one tick: the checks (below), forceload the footprint's chunks, SAVE (rip.under), write the
              rip (tools/dungeon.py rip_lines: the plane cleared to rip.restore, the themed patch), stand the click and the oval
              (rip_entity_lines), set the state and the timer, tell every player, release the chunks.
@@ -85,7 +88,9 @@ OBJ = {"s": "rp.s", "t": "rp.t", "l": "rp.l", "v": "rp.v"}       # 16 characters
 HOLDER = "#r%d"
 KNOWN = ("enabled", "open_min", "open_max", "lifetime_minutes", "lifetime_jitter_minutes", "close_when_entered",
          "close_after_entry_seconds", "sites", "gated_sites", "announce", "one_open_per_region", "extra_open_every_minutes",
-         "pass_seconds", "hold_y")
+         "pass_seconds", "hold_y", "near_player_share", "near_player_radius")
+TARGET_TAG = "rp.target"               # the one player pick_near draws near, tagged for the length of that function
+STORE = "%s:rips" % NS                 # the storage pick_near hands its count to near_draw through
 OVERWORLD = "minecraft:overworld"
 CHECK_BELOW, CHECK_ABOVE = 1, 6        # blocks under the ground and over it that count as "on" the rip
 DX_AIR = 8                             # the siting window's 9 columns (dx is the span from the first block)
@@ -134,6 +139,8 @@ def settings_problems(doc):
     integer("extra_open_every_minutes", 1)
     integer("pass_seconds", 1, 600)
     integer("hold_y", 0)
+    integer("near_player_share", 0)
+    integer("near_player_radius", 16, 4096)
     if not bad:
         if v["open_min"] > v["open_max"]:
             bad.append("open_min %d is above open_max %d" % (v["open_min"], v["open_max"]))
@@ -324,6 +331,57 @@ def functions(ddoc, rdoc):
     pick += ["execute if score #pick %s matches %d run function %s" % (V, k, F("o%d" % i)) for k, (i, _r) in enumerate(cands, 1)]
     out["pick"] = pick
 
+    # ---- the near pick (the owner, 2026-10-21: "focus some closer to players, not all though") ---------------------
+    # one online overworld player at random; every candidate that is closed, whose region has none open, and whose
+    # check point is within near_player_radius of that player (a horizontal square, every height) is flagged #n<i>;
+    # a uniform random one of the flagged opens. None flagged: the ordinary pick
+    R = v["near_player_radius"]
+    top = overworld_top()
+    near = [HEAD, "# a candidate near one random player (near_player_radius %d, horizontal); none near: the uniform pick" % R,
+            "tag @a remove %s" % TARGET_TAG,
+            "execute in %s positioned 0 0 0 run tag @r[distance=0..] add %s" % (OVERWORLD, TARGET_TAG),
+            "execute unless entity @a[tag=%s] run return run function %s" % (TARGET_TAG, F("pick")),
+            "scoreboard players set #nc %s 0" % V]
+    for i, r in cands:
+        px, _py, pz, _sel = check_selector(r)
+        n = "#n%d" % i
+        near.append("scoreboard players set %s %s 0" % (n, V))
+        near.append("execute if score %s %s matches 0 in %s if entity @a[tag=%s,x=%d,y=-64,z=%d,dx=%d,dy=%d,dz=%d] run scoreboard players set %s %s 1"
+                    % (HOLDER % i, S, OVERWORLD, TARGET_TAG, px - R, pz - R, 2 * R, top + 64, 2 * R, n, V))
+        if v["one_open_per_region"]:
+            near += ["execute if score %s %s matches 1.. run scoreboard players set %s %s 0" % (HOLDER % j, S, n, V)
+                     for j, q in cands if j != i and q["region"] == r["region"]]
+        near.append("execute if score %s %s matches 1 run scoreboard players add #nc %s 1" % (n, V, V))
+    near += ["tag @a remove %s" % TARGET_TAG,
+             "execute if score #nc %s matches 0 run return run function %s" % (V, F("pick")),
+             "# random value needs a range of two or more, so one flagged candidate is drawn without it",
+             "execute if score #nc %s matches 1 run scoreboard players set #pick %s 1" % (V, V),
+             "execute store result storage %s n int 1 run scoreboard players get #nc %s" % (STORE, V),
+             "execute if score #nc %s matches 2.. run function %s with storage %s" % (V, F("near_roll"), STORE),
+             "function %s" % F("near_open")]
+    out["pick_near"] = near
+    out["near_roll"] = [HEAD, "# macro: a uniform draw over pick_near's count of flagged candidates",
+                        "$execute store result score #pick %s run random value 1..$(n)" % V]
+    nopen = [HEAD, "# opens the #pick-th flagged candidate, in candidate order", "scoreboard players set #k %s 0" % V]
+    for i, _r in cands:
+        nopen += ["execute if score #n%d %s matches 1 run scoreboard players add #k %s 1" % (i, V, V),
+                  "execute if score #n%d %s matches 1 if score #k %s = #pick %s in %s run return run function %s"
+                  % (i, V, V, V, OVERWORLD, F("o%d" % i))]
+    out["near_open"] = nopen
+    # which pick an opening uses: near one time in near_player_share, else uniform (0: never near; 1: always)
+    share = v["near_player_share"]
+    choose = [HEAD, "# an opening: near a player one time in %d (data/rip_scheduler.json near_player_share), else uniform" % share
+              if share else "# an opening: near_player_share is 0, so always the uniform pick"]
+    if share == 1:
+        choose.append("function %s" % F("pick_near"))
+    elif share >= 2:
+        choose += ["execute store result score #near %s run random value 1..%d" % (V, share),
+                   "execute if score #near %s matches 1 run return run function %s" % (V, F("pick_near")),
+                   "function %s" % F("pick")]
+    else:
+        choose.append("function %s" % F("pick"))
+    out["choose"] = choose
+
     # ---- the pass -------------------------------------------------------------------------------------------------
     K = max(1, v["extra_open_every_minutes"] * 60 // v["pass_seconds"])
     p = [HEAD, "# the pass, every %d s of server time. Re-arms itself first so an error below cannot stop the clock." % v["pass_seconds"],
@@ -346,9 +404,9 @@ def functions(ddoc, rdoc):
     p += ["execute if score %s %s matches 1..2 run scoreboard players add #open %s 1" % (HOLDER % i, S, V) for i, _r in cands]
     p += ["# the cap, then the pick",
           "execute if score #open %s >= #max %s run return 0" % (V, V),
-          "execute if score #open %s < #min %s run return run function %s" % (V, V, F("pick")),
+          "execute if score #open %s < #min %s run return run function %s" % (V, V, F("choose")),
           "execute store result score #roll %s run random value 1..%d" % (V, K),
-          "execute if score #roll %s matches 1 run function %s" % (V, F("pick"))]
+          "execute if score #roll %s matches 1 run function %s" % (V, F("choose"))]
     out["pass"] = p
 
     # ---- init, load, and the operator's three ---------------------------------------------------------------------

@@ -351,13 +351,26 @@ def render_money(m):
                   % (s, dollars(int(mult * 2.25 * b)), dollars(int(mult * 1.5 * b)), dollars(int(mult * 3 * b))))
     legs = []
     ch = ib["challenge"]["leg_by_badge"]
+    path = ib["path"]["leg_by_badges_held"]          # income_basis.path (2026-10-22): the fights the path forces
     for k in sorted(ib["leg_by_badge"], key=int):
-        legs.append('<tr><td>Gym %s</td><td class="n">%s</td><td class="n">%s</td><td class="n">%s</td></tr>'
-                    % (k, dollars(ib["leg_by_badge"][k]), dollars(ch[k]), dollars(ib["cumulative_by_badge"][k])))
+        legs.append('<tr><td>Gym %s</td><td class="n">%s</td><td class="n">%s</td><td class="n">%s</td>'
+                    '<td class="n">%s</td></tr>'
+                    % (k, dollars(ib["leg_by_badge"][k]), dollars(ch[k]), dollars(ib["cumulative_by_badge"][k]),
+                       dollars(path[str(int(k) - 1)])))
     post = ib["post_badge_8"]
     for key, label in (("victory_road", "Victory Road"), ("league", "The Elite Four and the Champion")):
-        legs.append('<tr><td>%s</td><td class="n">%s</td><td class="n">%s</td><td></td></tr>'
-                    % (label, dollars(post["normal"][key]), dollars(post["challenge"][key])))
+        legs.append('<tr><td>%s</td><td class="n">%s</td><td class="n">%s</td><td></td><td class="n">%s</td></tr>'
+                    % (label, dollars(post["normal"][key]), dollars(post["challenge"][key]),
+                       dollars(path["8"]) if key == "victory_road" else ""))
+    # the services' prices rise with badges (the owner, 2026-10-21; data/training_services.json price_rule)
+    sv = m["services"]
+    tiers = []
+    for t in range(0, 9):
+        per = sv["iv"]["price_per_stat_by_tier"][str(t)]
+        tiers.append('<tr><td class="n">%d</td><td class="n">%s</td><td class="n">%s</td><td class="n">%s</td>'
+                     '<td class="n">%s</td></tr>' % (t, dollars(sv["raise"]["price_by_tier"][str(t)]),
+                                                    dollars(sv["ev"]["price_by_tier"][str(t)]), dollars(per),
+                                                    dollars(6 * per)))
     pb = m["produce"]
     paid = produce_buyer.prices(pb)
     sched = ['<tr><td>%s</td><td class="n">%d</td><td class="n">%s</td></tr>'
@@ -377,7 +390,9 @@ def render_money(m):
         '<th class="n">Range</th></tr></thead><tbody>%s</tbody></table></div>'
         '<p>Beating every trainer once on the way to each gym, the gym\'s own trainers and its leader pays about:</p>'
         '<div class="wide"><table><thead><tr><th>Up to and including</th><th class="n">Normal</th>'
-        '<th class="n">Challenge</th><th class="n">Normal, running total</th></tr></thead><tbody>%s</tbody></table>'
+        '<th class="n">Challenge</th><th class="n">Normal, running total</th>'
+        '<th class="n">Normal, the gym\'s trainers, its leader and the trainers who stop you only</th></tr></thead>'
+        '<tbody>%s</tbody></table>'
         '</div><p class="small">Computed from the trainers\' teams, not counted in game; a rematch pays again.</p>'
         '<h3>The bank</h3><p>Every shopkeeper at a counter, a market stall or a Poke Mart opens the bank: shift and '
         'right-click them, or press the Bank button on their shop screen. Put items in and press Sell; each is paid '
@@ -387,18 +402,22 @@ def render_money(m):
         'everything it buys from your inventory at once. %s</p>'
         '<div class="wide"><table><thead><tr><th>Crate</th><th class="n">Items in it</th>'
         '<th class="n">Pays</th></tr></thead><tbody>%s</tbody></table></div>'
-        '<h3>Paid training</h3><p>The coach at each training ground sells three shortcuts. Training by battle, or '
-        'crafting the items (see <a href="#craft">Crafting</a>), is always cheaper.</p><ul>'
-        '<li><b>Train to your cap</b>: %s a Pokemon, raised straight to your level cap (up to a cap of %d).</li>'
-        '<li><b>Effort training</b>: %s a Pokemon, a two-stat training plan%s.</li>'
-        '<li><b>Perfect a stat</b>: %s a stat, or %s for all six%s.</li></ul></section>'
+        '<h3>Paid training</h3><p>The coach at each training ground sells three shortcuts, and the price rises '
+        'with your badges. Training by battle, or crafting the items (see <a href="#craft">Crafting</a>), costs '
+        'time instead of money.</p><ul>'
+        '<li><b>Train to your cap</b>: a Pokemon raised straight to your level cap (up to a cap of %d).</li>'
+        '<li><b>Effort training</b>: a two-stat training plan%s.</li>'
+        '<li><b>Perfect a stat</b>: one stat, or all six%s.</li></ul>'
+        '<p>A Pokemon above the level your badges allow costs the price of the badges its level needs.</p>'
+        '<div class="wide"><table><thead><tr><th class="n">Badges</th><th class="n">Train to cap</th>'
+        '<th class="n">Effort training</th><th class="n">Perfect a stat</th><th class="n">All six</th></tr></thead>'
+        '<tbody>%s</tbody></table></div></section>'
         % (player_site.section_attr("money"),
            "" if not m["wild_pays"] else " (This server's settings say wild Pokemon pay: tell an operator.)",
            "%.2f" % (mult * 2.25 / 10), "".join(ex), "".join(legs), crates, "".join(sched),
-           dollars(sv["raise"]["price"]), sv["raise"]["max_cap"],
-           dollars(sv["ev"]["price"]), ", once you hold %s" % ev_gate if ev_gate else "",
-           dollars(sv["iv"]["price_per_stat"]), dollars(6 * sv["iv"]["price_per_stat"]),
-           ", once you hold %s" % iv_gate if iv_gate else ""))
+           sv["raise"]["max_cap"],
+           ", once you hold %s" % ev_gate if ev_gate else "",
+           ", once you hold %s" % iv_gate if iv_gate else "", "".join(tiers)))
 
 
 def render_buy(m):

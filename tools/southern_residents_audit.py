@@ -85,6 +85,11 @@ class Report:
         self.notes.append(msg)
 
 
+# spawn data, never a place to keep clear of (2026-10-22): fishing cover cells and the caves' underground spawn boxes.
+# Every tool that measures authored clearance through this module skips them, whatever its own exempt list says
+NOT_PLACES = {"fishing_fill.json", "underground_spawns.json"}
+
+
 def jload(name, data=DATA):
     return json.loads((Path(data) / name).read_text(encoding="utf-8"))
 
@@ -540,7 +545,7 @@ def authored(doc, data, record=RECORD):
     # each with its reason in the file; never a smaller clearance
     rules_ = doc.get("rules") or {}
     own |= set(rules_.get("authored_clearance_exempt") or {})
-    skip_files = set(rules_.get("authored_clearance_exempt_files") or {})
+    skip_files = set(rules_.get("authored_clearance_exempt_files") or {}) | NOT_PLACES
     # an area a cell wide or wider is an index, not a place: data/world.json grid.cell_size, and CLAUDE.md "a cell
     # indexes location only". Every column of the map is inside one
     cell = jload("world.json", data)["grid"]["cell_size"]

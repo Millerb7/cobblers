@@ -1,54 +1,51 @@
-# Handover: session 7698338d, ended 2026-10-21 ~01:50
+# Handover: session deb65fc9, ended 2026-10-22 ~04:00
 
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
 
-## 1. Branch
-`build/2026-10-20-fossick` (worktree `.claude/worktrees/mods-182`, holds `derived/`, `build/`, kits). Contains main and
-PR #151's head; adds Fossick (R9OCF), the client pack fixes, the Kyogre lantern, Groudon's quake cavern and its review
-fixes, STATE. Pushed as ONE draft PR that replaces #151 (the owner: "combine all of them"); #151 is left open for the
-owner to close. Head and PR number: see the PR; re-read with `git fetch --prune` and `gh pr list`.
+## 1. Branches
+- `build/2026-10-21-challenge` (worktree `.claude/worktrees/mods-182`): INSTALLED live 2026-10-22 03:40 (STATE "Live
+  install 2026-10-22"). Pushed; no PR yet. Its last commit fixes tools/no_beans.py (not yet installed).
+- `build/2026-10-22-underground` (worktree `.claude/worktrees/underground`, off ef3dca11): the cave systems, the mine
+  networks, the economy v3 design. Pushed; no PR; NOT applied anywhere.
+- The owner's preference is one integration branch and one draft PR per batch: merge both into one PR when handing over.
 
 ## 2. Where it stopped
-- **LIVE is UP at 12G since 01:41** (pid 49280), launched as a Bash background task OF THIS SESSION: it dies when the
-  session ends. The next session must check the PROCESS first and, if it is down, start it durably (section 3).
-- Install done and verified (STATE "Live install 2026-10-21 01:41"). The coordination lock is RELEASED.
-- Friends' bundle: `C:/Users/wnd/Documents/cobblers-client/cobblers-client-0.1.0-bundle.mrpack` sha1 fa8febab (client
-  zip c7a58c9f inside; AllTheMons v4.0 required). Private.
+- **2026-10-23 07:18: the underground batch is live** (STATE "Live install 2026-10-23"); up at 16G, detached;
+  branch head e90467a8+ pushed, no PR yet. Next: one draft PR for the whole branch; the hand payments to the Challenge
+  player; an independent test-author pass over tonight's tools (each builder wrote its own tests).
+- **2026-10-22 13:28: everything is installed** (STATE "Live installs 2026-10-22"); live up at 16G, detached. The
+  bean stand-in is gone (the pack's own sweep loads). Owed by hand to the one Challenge player: $5,000, the badge-1/2 TM
+  gifts and the TM Case (data/challenge_mode.json lists them). Branch head cbe11cb6, pushed, no PR yet: open ONE draft PR.
 
-## 2b. After the handover (2026-10-21 morning, session 71451c17)
-- The owner now runs the server from THEIR OWN PowerShell window (`java -Xmx12G ... *> logs\console-own.log`, pid 36832
-  at start). Durable while that window stays open; stop it by RCON `stop`. The session-owned server was killed when the
-  previous session ended (07:55:58, unclean). A duplicate the owner started was killed before it reached the world.
-- Live hand-fixes to Groudon's cavern (water pockets plugged, lake walls removed, Groudon moved onto the lava by the
-  owner): STATE "Groudon's cavern, seen and hand-fixed live". **Next unit:** carry all three into
-  `tools/groudon_cavern.py`, its data, audit and probes (lake without walls, Groudon's spot on the lava, the cut plugging
-  exposed water), so a rebuild matches. Branch `build/2026-10-21-followups` (docs only so far).
-- The owner's profile "cobblers-client-0.1.0-bundle (1)" was imported from an OLD bundle; the new client zip was copied
-  in; the owner must enable it and AllTheMons in the menu.
+- **Live is UP at 16G, detached** (start-live.ps1, WMI: it survives this session). Check the PROCESS, not just RCON.
+- **The bean stand-in** `C:/Users/wnd/Documents/cobblers-local/bean_sweep.py` runs detached (pid at start 21272) and
+  exits by itself once `cobblers:no_beans/sweep` exists. Install the fixed tools/no_beans.py with the next batch.
+- The coordination lock is held under owner `claude-loot-prepare-2026-10-21`; release it if no session is using the
+  server.
+- **Next:** show the owner the cave and mine maps (docs/world-building/cave_systems/*.png,
+  docs/world-building/MINE_NETWORKS_*.png) and ECONOMY_V3.md section 7's five questions. Then, on the owner's yes:
+  merge underground onto challenge, run prepare (needs the server's RAM: the owner's game held ~15 GB; stop the server
+  or expect MemoryError and resume `--from`), install, `run --only R9CS,R9MN` at 24G, verify by probes.
 
 ## 3. Waiting on the owner
-- The big western crater (~(6118, 213, 5527)): the owner declined a Heatran lair; leave it alone unless asked.
-- **A durable launch:** a one-shot Task Scheduler start (asked; needs a yes), or the owner runs
-  `server/scripts/start-live.ps1` from their own PowerShell window. The WMI launch died after 44 min.
-- Raise the owner's level cap (RCT records through Giovanni) to catch Kyogre/Groudon? Unanswered.
-- Groudon's blackout exemption (no item loss if it wins a full-party battle), as Kyogre has? Unanswered; not applied.
-- Mod updates: 17 on Modrinth (STATE Runtime line). Batch later with a bundle rebuild.
-- In game: the Groudon quake (log in with gym8_cleared, go to the eastern Craters bowl ~(6706, 5510)); Fossick's hill
-  adit at (6764, 5804); the Kyogre shrine lantern; enable the client zip at the TOP of packs and name any Steve NPCs.
+- The underground batch (where, how big, apply when).
+- Economy v3: section 7's questions; the reversal of the 2026-10-10 "service costs more than the play it saves" rule.
+- About 30 loot-fix containers that the live world does not hold (STATE): drop them from data/loot_fixes.json or find
+  where they went.
+- The Greenhollow Berry Specialist as a real stall (needs a seventh slot in a large square).
 
 ## 4. Do not rediscover
-- The owner's account holds GRANTED flags (dive/surf, gym8_cleared, champion_cleared, kyogre attuned, groudon met); RCT's
-  defeat records were not changed, so they disagree for that account.
-- install and strip refuse a world inside the runtime: stop, `mv cobblers-server/cobblers-10240 cobblers-server-next/`,
-  run, move back. `strip` needs `--world-dir`.
-- `presence_audit.py` with no `--only` ran past 15 min; its `--only` names (arena,gulch,dens,relic,extra) do not include
-  world_probes places by name: probe a place's blocks directly (data/world_probes.json places.<id>).
-- A prepare refuses itself if data/ or tools/ change while it runs (happened once tonight); it also needs the lock env.
-- `tests/test_training_grounds.py::test_shared_records_are_in_step_with_the_generator` fails on main too.
-- Steve NPCs left: dungeon bosses/probes/fights (`tools/dungeon*.py` NPC_RESOURCE) and arenas.
-- Groudon review's open item: a blackout-rebuilt legendary loses our tag, so a later R14L could summon a second one
-  (all legendaries, not fixed).
+- A Lootr container must be set to air and placed again: `setblock` to the same block and state does nothing.
+- `execute if block ...` in a chunk that is not yet loaded is false and silent: wait for `execute if loaded` after
+  forceload.
+- One unknown item id makes the server refuse a whole function file (no_beans' patterned beans).
+- RCON commands over about 1,400 bytes close the connection; a CobbleDollars merchant's shop lives at
+  `CobbleDollars.Shop.shop[].offers[].{item, price}`.
+- `prepare --from` leaves the jobs before the resume point stale after any data/tools change: a full prepare is needed
+  before install.
+- town_squares_audit has its own copy of the stall rules; a market exception must be taught to both.
+- Prepare hit MemoryError three times with the server and the owner's game running; stopping the server freed it.
 
 ## 5. Cost
-~960 turns, context over 300k at the end, weighted ~50M (`tools/session_cost.py`). Agents: Groudon builder (Sonnet),
-Opus review, Opus fixer.
+`python tools/session_cost.py`: about 920 turns, context ~300k at the end. Agents tonight: the Challenge designer
+(Opus), the generator builder, the cave systems builder, the mine networks builder, the economy designer (Opus).

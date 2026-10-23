@@ -65,6 +65,11 @@ class SouthError(SystemExit):
     pass
 
 
+# spawn data, never a place to keep clear of (2026-10-22): fishing cover cells and the caves' underground spawn boxes.
+# Every tool that measures authored clearance through this module skips them, whatever its own exempt list says
+NOT_PLACES = {"fishing_fill.json", "underground_spawns.json"}
+
+
 def jload(name):
     return json.loads((ROOT / "data" / name).read_text(encoding="utf-8"))
 
@@ -380,7 +385,7 @@ def authored_points(doc, own_file=None):
             else:
                 for v in o:
                     walk(v, f)
-    skip_files = set((doc.get("rules") or {}).get("authored_clearance_exempt_files") or {})
+    skip_files = set((doc.get("rules") or {}).get("authored_clearance_exempt_files") or {}) | NOT_PLACES
     for p in sorted((ROOT / "data").glob("*.json")):
         if p.resolve() == own_path.resolve() or p.name in skip_files:
             continue

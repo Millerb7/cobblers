@@ -28,9 +28,20 @@ evolution line is already Caught or Failed in another zone shows as a dupe in ev
 wrapped in try/catch everywhere; with storage unavailable the page works for the visit and says so. Export, Import and
 Reset buttons move or clear the state.
 
-SPOILERS. The page names no legendary-class species (the region map's own test, the jar's labels), no heart entry and
-nothing from an elder tree or sapling site (a discovery: its pools are not in a zone's scope). tests/
-test_player_site_leaks.py reads the finished page.
+LEGENDARIES AND DUNGEONS (the owner, 2026-10-23: "nuzlocke page should show dungeons and legendaries per area, so a
+player can count those"; "Named ... Only on the Nuzlocke page; the map and other pages keep hiding them"; "just dungeon
+name ... i have 1 encounter no matter the level"). Each zone card lists, by name, the legendary-class encounters its
+ground holds (data/nuzlocke_zones.json `legendaries`, written by tools/nuzlocke_zones.py from OUR data: what it does
+not cover is in that file's `legendary_register.not_covered`), each with a checkbox of its own, saved in the same
+browser record (`legs`, additive: a save from before this change loads unchanged). Each data/dungeons.json dungeon is
+a zone of its own in a "Dungeons" section after the regions: the same status buttons, no level, no species list.
+Zone keys are unchanged (so saved ticks survive); legendary keys are "l" + a hash of (zone id, species), dungeon keys
+"z" + a hash of "dungeon_<id>".
+
+SPOILERS. Apart from those named rows the page names no legendary-class species: a zone's species list still drops
+them (the jar's labels), as it drops every heart entry and everything from an elder tree or sapling site (a
+discovery: its pools are not in a zone's scope). It says nothing of where in a zone a legendary is. tests/
+test_player_site_leaks.py reads the finished page and allows legendary names on THIS page only.
 
 Not verified: the page has not been opened in a browser from this tool; the script was checked for syntax only.
 """
@@ -56,7 +67,8 @@ GUIDE = {"file": "nuzlocke.html", "title": "Nuzlocke tracker", "label": "Nuzlock
          "generator": "tools/player_guide_nuzlocke.py"}
 esc = player_site.esc
 POS_BIT = {"grounded": 1, "surface": 2, "submerged": 2, "seafloor": 2, "fishing": 4}
-KIND_WORDS = {"land": "Land", "sea": "Open sea", "waterway": "Waterway", "cave": "Cave", "site": "Special place"}
+KIND_WORDS = {"land": "Land", "sea": "Open sea", "waterway": "Waterway", "cave": "Cave", "site": "Special place",
+              "dungeon": "Dungeon"}
 FORM_WORDS = {"alolan": "Alolan", "galarian": "Galarian", "hisuian": "Hisuian", "paldean": "Paldean"}
 SPECIAL_NAMES = {"mrmime": "Mr. Mime", "mimejr": "Mime Jr.", "mrrime": "Mr. Rime", "farfetchd": "Farfetch'd",
                  "sirfetchd": "Sirfetch'd", "nidoranf": "Nidoran F", "nidoranm": "Nidoran M", "porygonz": "Porygon-Z",
@@ -76,6 +88,12 @@ def dex():
         import player_guide_dungeons as PG
         _DEX.append(PG.Dex(PB.find_jar()))
     return _DEX[0]
+
+
+def legend_key(zone_id, species):
+    """The page's key for one legendary row (its checkbox, its saved tick): a hash of the zone's data id and the species
+    id, stable while both are. Distinct from zone keys ("z..."), so a saved tick never lands on the wrong row."""
+    return "l" + hashlib.sha1(("legendary:%s:%s" % (zone_id, species)).encode("utf-8")).hexdigest()[:8]
 
 
 def zone_key(zone_id):
@@ -229,9 +247,14 @@ def collect(caps=None):
         if z["kind"] == "cave":
             place = (leg_ids.index("victory_road"), 100) if "victory_road" in leg_ids else place
         region = z.get("region") or by_name.get(z.get("subtitle")) or "waterways"
+        # the legendary-class encounters the zone's ground holds (data/nuzlocke_zones.json, tools/nuzlocke_zones.py): named
+        # here and on this page only (the owner, 2026-10-23), each with a key of its own
+        legend = sorted(({"species": r["species"], "name": mon_name(r["species"]), "key": legend_key(z["zone"], r["species"])}
+                         for r in z.get("legendaries") or ()), key=lambda r: (r["name"], r["species"]))
         zones.append({"id": z["zone"], "key": zone_key(z["zone"]), "kind": z["kind"], "name": z["name"], "subtitle": z["subtitle"],
                       "region": region, "tier": tier, "tier_own": tier_is_own, "cap": tier_cap[tier],
-                      "levels": lv, "on_path": place is not None, "place": place or (99, 0), "mons": mons})
+                      "levels": lv, "on_path": place is not None, "place": place or (99, 0), "mons": mons,
+                      "legend": legend})
     if mismatched:
         raise SystemExit("data/spawns.json and data/nuzlocke_zones.json disagree on the species count of %s: "
                          "regenerate data/nuzlocke_zones.json (python tools/nuzlocke_zones.py)" % mismatched)
@@ -250,9 +273,17 @@ def collect(caps=None):
     for rid in sorted(first, key=first.get):
         groups.append({"id": rid, "name": region_name.get(rid, rid.replace("_", " ").title()),
                        "zones": [z for z in zones if z["region"] == rid]})
+    # each dungeon is its own zone: one encounter whatever the level (the owner, 2026-10-23), in a section of its own
+    dungeon_zones = [{"id": d["zone"], "key": zone_key(d["zone"]), "kind": "dungeon", "name": d["name"],
+                      "subtitle": "Dungeon", "dungeon": d["dungeon"], "region": "dungeons", "tier": 99, "tier_own": False,
+                      "cap": 0, "levels": None, "on_path": False, "place": (99, 0), "mons": {}, "legend": [],
+                      "no": len(zones) + i} for i, d in enumerate(nz["dungeons"], 1)]
+    if dungeon_zones:
+        groups.append({"id": "dungeons", "name": "Dungeons", "zones": dungeon_zones})
     caps = caps if caps is not None else badge_caps()
-    return {"groups": groups, "zones": zones, "mons": mons, "caps": caps, "tier_cap": tier_cap,
-            "counts": nz["counts"], "dropped": dict(dropped), "total": len(zones)}
+    return {"groups": groups, "zones": zones, "dungeons": dungeon_zones, "mons": mons,
+            "caps": caps, "tier_cap": tier_cap, "counts": nz["counts"], "dropped": dict(dropped), "total": len(zones),
+            "legend_rows": sum(len(z["legend"]) for z in zones)}
 
 
 def band_words(z):
@@ -273,27 +304,46 @@ def how_words(mask):
     return ", ".join(parts)
 
 
+def render_legend(z):
+    """The zone's legendary rows, each with a checkbox of its own (the owner, 2026-10-23: a player counts them as the
+    area's encounters). Empty for a zone with none."""
+    if not z["legend"]:
+        return ""
+    rows = "".join('<li><label><input type="checkbox" data-leg="%s"> %s</label></li>' % (esc(r["key"]), esc(r["name"]))
+                   for r in z["legend"])
+    return ('<div class="nz-legend"><p class="nz-legend-h">Legendary encounters here (%d): tick one when you have used '
+            'it</p><ul>%s</ul></div>' % (len(z["legend"]), rows))
+
+
 def render_zone(z, mons):
-    lv = ("Levels %d-%d" % tuple(z["levels"]) if z["levels"][0] != z["levels"][1] else "Level %d" % z["levels"][0]) \
-        if z["levels"] else "No wild Pokemon listed"
-    names = sorted(((mons[s][0], s, m) for s, m in z["mons"].items()))
-    items = "".join('<li>%s <span class="nz-how">%s</span></li>' % (esc(n), esc(how_words(m))) for n, _s, m in names)
     status = "".join('<button type="button" data-s="%s" aria-pressed="false">%s</button>' % (k, t)
                      for k, t in (("caught", "Caught"), ("failed", "Failed"), ("skipped", "Skipped"), ("", "Unset")))
+    if z["kind"] == "dungeon":
+        # one encounter, whatever the level or wherever the rift opened: no level, no cap, no species list
+        meta = "Dungeon &middot; one encounter, whatever the level &middot; <a href=\"dungeons.html#%s\">the dungeon guide</a>" \
+            % esc(z["dungeon"].replace("_", "-"))
+        lv, names_attr, listing = 0, z["name"], ""
+    else:
+        lv = ("Levels %d-%d" % tuple(z["levels"]) if z["levels"][0] != z["levels"][1] else "Level %d" % z["levels"][0]) \
+            if z["levels"] else "No wild Pokemon listed"
+        names = sorted(((mons[s][0], s, m) for s, m in z["mons"].items()))
+        items = "".join('<li>%s <span class="nz-how">%s</span></li>' % (esc(n), esc(how_words(m))) for n, _s, m in names)
+        meta = "%s &middot; %s &middot; %s" % (esc(KIND_WORDS[z["kind"]]), esc(lv), esc(band_words(z)))
+        lv = z["levels"][0] if z["levels"] else 0
+        names_attr = " ".join([z["name"], z["subtitle"] or ""] + [r["name"] for r in z["legend"]])
+        listing = '<details class="nz-list"><summary>What lives here (%d)</summary><ul>%s</ul></details>' % (len(z["mons"]), items)
     return ('<article class="nz-zone" id="z-%s" data-nz="%s" data-name="%s" data-lo="%d">'
             '<h3><span class="nz-no">#%d</span> %s <small>%s</small></h3>'
-            '<p class="nz-meta">%s &middot; %s &middot; %s<span class="nz-over" hidden> &middot; <b>above your cap</b></span></p>'
+            '<p class="nz-meta">%s<span class="nz-over" hidden> &middot; <b>above your cap</b></span></p>'
             '<div class="nz-ctl"><div class="nz-status" role="group" aria-label="Status of %s">%s</div>'
             '<select class="nz-sp" aria-label="Species met in %s"></select>'
             '<input class="nz-other" type="text" maxlength="40" placeholder="Species (not on the list)" '
             'aria-label="Other species in %s" hidden>'
             '<input class="nz-nick" type="text" maxlength="40" placeholder="Nickname" aria-label="Nickname in %s">'
-            '<p class="nz-note" aria-live="polite"></p></div>'
-            '<details class="nz-list"><summary>What lives here (%d)</summary><ul>%s</ul></details></article>'
-            % (esc(z["key"]), esc(z["key"]), esc(" ".join((z["name"], z["subtitle"] or "")).lower()),
-               z["levels"][0] if z["levels"] else 0, z["no"], esc(z["name"]), esc(z["subtitle"] or ""),
-               esc(KIND_WORDS[z["kind"]]), esc(lv), esc(band_words(z)), esc(z["name"]), status, esc(z["name"]),
-               esc(z["name"]), esc(z["name"]), len(z["mons"]), items))
+            '<p class="nz-note" aria-live="polite"></p></div>%s%s</article>'
+            % (esc(z["key"]), esc(z["key"]), esc(names_attr.lower()), lv, z["no"], esc(z["name"]),
+               esc(z["subtitle"] or ""), meta, esc(z["name"]), status, esc(z["name"]), esc(z["name"]), esc(z["name"]),
+               render_legend(z), listing))
 
 
 SCRIPT = r"""
@@ -302,7 +352,9 @@ SCRIPT = r"""
   var KEY = 'cobblers-nuzlocke-v1', STATUS = ['caught', 'failed', 'skipped'];
   var zones = {}, order = data.zones;
   order.forEach(function (z) { zones[z.id] = z; });
-  var state = { v: 1, badges: 0, zones: {} }, canStore = true, filter = 'all';
+  var legs = {};
+  data.zones.forEach(function (z) { (z.legs || []).forEach(function (l) { legs[l[0]] = z.id; }); });
+  var state = { v: 1, badges: 0, zones: {}, legs: {} }, canStore = true, filter = 'all';
 
   function $(s, r) { return (r || document).querySelector(s); }
   function all(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
@@ -316,8 +368,10 @@ SCRIPT = r"""
     var w = $('#nz-warn'); if (w) w.hidden = canStore;
   }
   function clean(raw) {
-    var out = { v: 1, badges: 0, zones: {} };
+    var out = { v: 1, badges: 0, zones: {}, legs: {} };
     if (!raw || typeof raw !== 'object' || !raw.zones || typeof raw.zones !== 'object') return null;
+    // legendary ticks: an older save has none; an unknown key is dropped
+    if (raw.legs && typeof raw.legs === 'object') Object.keys(raw.legs).forEach(function (k) { if (legs[k] && raw.legs[k] === true) out.legs[k] = true; });
     var b = parseInt(raw.badges, 10);
     if (b >= 0 && b < data.caps.length) out.badges = b;
     Object.keys(raw.zones).forEach(function (id) {
@@ -378,7 +432,9 @@ SCRIPT = r"""
     note.textContent = msg;
     var cap = data.caps[state.badges][1], over = z.lo > cap;
     $('.nz-over', card).hidden = !over;
-    var show = filter === 'all' || (filter === 'open' ? !r.s : r.s === filter);
+    var openLeg = false;
+    all('input[data-leg]', card).forEach(function (b) { b.checked = !!state.legs[b.getAttribute('data-leg')]; if (!b.checked) openLeg = true; });
+    var show = filter === 'all' || (filter === 'open' ? (!r.s || openLeg) : r.s === filter);
     card.hidden = !show;
   }
   function draw() {
@@ -387,6 +443,8 @@ SCRIPT = r"""
     $('#nz-caught').textContent = c.caught; $('#nz-failed').textContent = c.failed;
     $('#nz-skipped').textContent = c.skipped;
     $('#nz-left').textContent = order.length - c.caught - c.failed - c.skipped;
+    var ticked = Object.keys(legs).filter(function (k) { return state.legs[k]; }).length;
+    $('#nz-legs').textContent = ticked;
     $('#nz-cap').textContent = data.caps[state.badges][1];
     $('#nz-badges').value = String(state.badges);
     all('.nz-zone').forEach(function (card) { drawZone(card, u); });
@@ -410,6 +468,13 @@ SCRIPT = r"""
       });
       $('.nz-other', card).addEventListener('input', function (e) { rec(id).other = clip(e.target.value); write(); });
       $('.nz-nick', card).addEventListener('input', function (e) { rec(id).nick = clip(e.target.value); write(); });
+      all('input[data-leg]', card).forEach(function (b) {
+        b.addEventListener('change', function () {
+          var k = b.getAttribute('data-leg');
+          if (b.checked) state.legs[k] = true; else delete state.legs[k];
+          commit();
+        });
+      });
     });
     $('#nz-badges').addEventListener('change', function (e) { state.badges = parseInt(e.target.value, 10) || 0; commit(); });
     all('[data-nzf]').forEach(function (b) {
@@ -440,7 +505,7 @@ SCRIPT = r"""
     $('#nz-reset').addEventListener('click', function () {
       var ok = true; try { ok = confirm('Clear every zone and start a new run?'); } catch (x) {}
       if (!ok) return;
-      state = { v: 1, badges: state.badges, zones: {} }; commit();
+      state = { v: 1, badges: state.badges, zones: {}, legs: {} }; commit();
     });
   }
 
@@ -455,9 +520,11 @@ SCRIPT = r"""
 
 
 def js_data(m):
-    """The data the script needs: zones (id, name, lowest level, [species key, how] rows), species (name, line), caps."""
+    """The data the script needs: zones (id, name, lowest level, [species key, how] rows, [legendary key, name] rows;
+    the dungeon zones follow the area zones), species (name, line), caps."""
     doc = {"zones": [{"id": z["key"], "name": z["name"], "lo": z["levels"][0] if z["levels"] else 0,
-                      "mons": [[s, z["mons"][s]] for s in sorted(z["mons"])]} for z in m["zones"]],
+                      "mons": [[s, z["mons"][s]] for s in sorted(z["mons"])],
+                      "legs": [[r["key"], r["name"]] for r in z["legend"]]} for z in m["zones"] + m["dungeons"]],
            "mons": m["mons"], "caps": [[a, b] for a, b in m["caps"]]}
     return json.dumps(doc, separators=(",", ":"), ensure_ascii=True).replace("<", "\\u003c")
 
@@ -480,7 +547,9 @@ def render(m):
                                    ("failed", "Failed"), ("skipped", "Skipped")))
     body = (
         '<main><h1>Nuzlocke tracker</h1><p class="lead">%d catch zones in the order you meet them, grouped by region: '
-        '%s. In a Nuzlocke the first wild Pokemon you meet in each zone is your only catch there.</p>'
+        '%s. In a Nuzlocke the first wild Pokemon you meet in each zone is your only catch there. After them come '
+        '%d dungeons, one encounter each whatever the level, and each zone lists the legendary Pokemon its ground '
+        'holds (%d in all), with a box to tick for each.</p>'
         '<div class="box"><p><b>Rules this page helps with.</b> One catch per zone. A Pokemon that faints is gone. '
         'The dupes clause: if the first Pokemon you meet is from an evolution line you have already Caught or Failed, '
         'it is a dupe and you may meet another; the species list in each zone marks those for you. Your own Nuzlocke '
@@ -493,7 +562,7 @@ def render(m):
         'without it.</p></div></noscript>'
         '<div class="nz-bar" role="status"><span>Caught <b id="nz-caught">0</b></span>'
         '<span>Failed <b id="nz-failed">0</b></span><span>Skipped <b id="nz-skipped">0</b></span>'
-        '<span>Remaining <b id="nz-left">%d</b></span></div>'
+        '<span>Remaining <b id="nz-left">%d</b></span><span>Legendaries ticked <b id="nz-legs">0</b> of %d</span></div>'
         '<div class="nz-cap"><label for="nz-badges">Badges you hold</label> <select id="nz-badges">%s</select> '
         '<span>Level cap now: <b id="nz-cap">%d</b>. A Pokemon above your cap breaks free from every ball.</span></div>'
         '<div class="filter nz-filter" aria-label="Show zones">%s</div>%s'
@@ -503,10 +572,14 @@ def render(m):
         '<button type="button" id="nz-reset">Reset</button></div>'
         '%s'
         '<section id="not-covered"><h2>What this page leaves out</h2><ul>'
-        '<li>Legendary and mythical Pokemon, and anything you find by exploring (hearts, elder trees, saplings and other '
-        'discoveries): the page lists each zone\'s ordinary wild Pokemon only. A catch from one of those places goes '
-        'under "Other" in the species box.</li>'
-        '<li>Dungeons, the Nether and the trainers\' own Pokemon: not catch zones here.</li>'
+        '<li>Where a legendary is in its zone, what opens the way to it, its level or whether it can be caught: this '
+        'page names the legendaries each zone holds and nothing else about them. Starters and gifts are not wild '
+        'encounters and are not listed, and a dungeon\'s own boss or prize is part of that dungeon\'s one encounter, '
+        'not a separate tick. A legendary that only an add-on of the base game places may be missing.</li>'
+        '<li>Anything else you find by exploring (hearts, elder trees, saplings and other discoveries): the species '
+        'list in each zone is its ordinary wild Pokemon only. A catch from one of those places goes under "Other" in '
+        'the species box.</li>'
+        '<li>The Nether and the trainers\' own Pokemon: not catch zones here.</li>'
         '<li>Which Pokemon you will meet first: the list is what can appear, not what will. Rod catches count as the '
         'zone\'s first encounter only if you decide your rules say so.</li>'
         '<li>Zone borders: a zone is a place the game titles when you enter it; where the borders run is in-game, not '
@@ -514,10 +587,12 @@ def render(m):
         '<li>Whether it works in a running game: the zones come from our data, not from a play-through. Where the game '
         'differs, the game is right: say so.</li></ul></section>'
         '<script id="nz-data" type="application/json">%s</script></main>'
-        % (m["total"], esc(kind_words), m["total"], caps, m["caps"][0][1], filters,
+        % (m["total"], esc(kind_words), len(m["dungeons"]), m["legend_rows"], m["total"] + len(m["dungeons"]),
+           m["legend_rows"], caps, m["caps"][0][1], filters,
            player_site.search_box("[data-nz]", "Find a zone", "e.g. Mt Clay or Viltri", ident="nz-find"), sections,
            js_data(m)))
-    sources = ('<p class="src">From data/nuzlocke_zones.json, data/spawns.json and data/encounter_design.json; '
+    sources = ('<p class="src">From data/nuzlocke_zones.json (which reads data/dungeons.json and the legendary files), '
+               'data/spawns.json and data/encounter_design.json; '
                'evolution lines from the Cobblemon jar; level caps from the battle guide\'s own rule.</p>')
     return player_site.page(GUIDE, body, body_class="page-nuzlocke", not_covered_href="#not-covered",
                             sources_html=sources, end_html="<script>%s</script>\n" % SCRIPT)
@@ -532,8 +607,8 @@ def main(argv=None):
     text = render(m)
     out = Path(a.out)
     entry = GUIDE if out.resolve() == OUT.resolve() else None
-    counts = "%d zones, %d species, %d legendary-class rows left out" % (
-        m["total"], len(m["mons"]), sum(m["dropped"].values()))
+    counts = "%d zones, %d dungeons, %d species, %d legendary rows named, %d legendary-class spawn rows left out of the lists" % (
+        m["total"], len(m["dungeons"]), len(m["mons"]), m["legend_rows"], sum(m["dropped"].values()))
     if a.check:
         ok, why = player_site.check(out, text, entry)
         if not ok:

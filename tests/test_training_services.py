@@ -26,11 +26,12 @@ PREFIX = "data/cobblers/function/"
 FNS = {p[len(PREFIX):-len(".mcfunction")]: ls for p, ls in FILES.items()
        if p.startswith(PREFIX) and p.endswith(".mcfunction")}
 STATS = T.STATS
-# A starting balance that covers the most any one test spends (a raise, an EV spread and seven IV stats), read from the
-# data so a re-priced service (data/training_services.json price_rule) cannot leave a fixture too poor to buy and turn
-# every purchase test into a refusal test. Was a fixed $10,000, below the rule's $17,200 EV price.
-START = 2 * (DOC["services"]["raise"]["price"] + DOC["services"]["ev"]["price"]
-             + 7 * DOC["services"]["iv"]["price_per_stat"])
+# The prices RISE WITH BADGES (the owner, 2026-10-21; price_rule built 2026-10-22): one price a tier, 0-8.
+TIER = {"raise": DOC["services"]["raise"]["price_by_tier"], "ev": DOC["services"]["ev"]["price_by_tier"],
+        "iv": DOC["services"]["iv"]["price_per_stat_by_tier"]}
+# A starting balance that covers the most any one test spends (a raise, an EV spread and seven IV stats) at the
+# dearest tier, read from the data so a re-priced service cannot leave a fixture too poor to buy.
+START = 2 * (max(TIER["raise"].values()) + max(TIER["ev"].values()) + 7 * max(TIER["iv"].values()))
 
 
 class Mon:
@@ -226,8 +227,9 @@ class Player:
         return [l for l in self.log if l.startswith("tellraw")]
 
 
-def price(key):
-    return DOC["services"][key]["price"]
+def price(key, tier=0):
+    """The price of services.<key> (a stat's, for iv) at one tier; the raise tests hold no badge (tier 0)."""
+    return int(TIER[key][str(tier)])
 
 
 # ------------------------------------------------------------------------------------------------- the level rule
@@ -310,11 +312,16 @@ def test_a_second_click_inside_the_cooldown_buys_nothing():
     assert p.balance == START - 2 * price("raise")
 
 
-@pytest.mark.parametrize("rel,flags", [("ev/physical_sweeper/slot1", ()), ("ev/physical_sweeper/slot1", ("gym1_cleared",)),
-                                       ("iv/attack/slot1", ("gym2_cleared",)), ("iv/all/slot1", ("gym7_cleared",))])
-def test_ev_and_iv_without_their_badge_charge_nothing(rel, flags):
+# Changed 2026-10-22: EV and IV were gated on gym 2 and gym 8; the owner's 2026-10-22 "every change global" opens
+# them from the first cap with a price at every tier, so the old "without its badge" refusal is now a purchase at the
+# tier the badges (and the slot's level band) name.
+@pytest.mark.parametrize("rel,flags,tier,stats", [
+    ("ev/physical_sweeper/slot1", (), 0, 0), ("ev/physical_sweeper/slot1", ("gym1_cleared",), 1, 0),
+    ("iv/attack/slot1", ("gym2_cleared",), 2, 1), ("iv/all/slot1", ("gym7_cleared",), 7, 6)])
+def test_ev_and_iv_charge_the_tier_of_the_badges_held(rel, flags, tier, stats):
     p = Player(flags=flags).click(rel)
-    assert p.balance == START and p.edits() == [] and p.told()
+    want = price("ev", tier) if stats == 0 else stats * price("iv", tier)
+    assert p.balance == START - want and p.edits(), (rel, flags, START - p.balance, want)
 
 
 @pytest.mark.parametrize("rel", ["ev/special_wall/slot3", "iv/speed/slot3", "iv/all/slot3"])
@@ -325,7 +332,7 @@ def test_ev_and_iv_on_an_empty_slot_charge_nothing(rel):
 
 def test_ev_and_iv_short_of_money_charge_nothing():
     for rel, key in (("ev/bulky_special/slot1", "ev"), ("iv/all/slot1", "iv")):
-        need = price("ev") if key == "ev" else DOC["services"]["iv"]["price_per_stat"] * 6
+        need = price("ev", 8) if key == "ev" else price("iv", 8) * 6
         p = Player(balance=need - 1, flags=("gym2_cleared", "gym8_cleared")).click(rel)
         assert p.balance == need - 1 and p.edits() == [], rel
 
@@ -336,7 +343,7 @@ def test_an_ev_spread_replaces_the_old_one_whatever_it_was(spread):
     old = Mon(20, evs={"attack": 252, "speed": 252, "hp": 6})          # a full 510 already
     p = Player(party={1: old}, flags=("gym2_cleared",)).click("ev/%s/slot1" % spread["id"])
     assert p.party[1].evs == {s: spread["evs"].get(s, 0) for s in STATS}
-    assert p.balance == START - price("ev")
+    assert p.balance == START - price("ev", 2)
 
 
 def test_without_the_zeroing_the_510_rule_would_keep_the_old_spread():
@@ -354,7 +361,7 @@ def test_every_spread_fits_under_510():
 def test_iv_one_stat_and_all_six():
     p = Player(flags=("gym8_cleared",)).click("iv/special_attack/slot1")
     assert p.party[1].ivs["special_attack"] == 31 and sum(p.party[1].ivs.values()) == 31
-    per = DOC["services"]["iv"]["price_per_stat"]
+    per = price("iv", 8)
     assert p.balance == START - per
     p.time += 100
     p.click("iv/all/slot1")
@@ -362,16 +369,17 @@ def test_iv_one_stat_and_all_six():
 
 
 # --------------------------------------------------------------------------------------------------- the dialogue
-def test_each_keeper_offers_six_slots_per_service_and_gates_ev_and_iv():
+def test_each_keeper_offers_six_slots_per_service_and_one_hub_option_a_tier():
     for k in DOC["keepers"]:
         d = FILES["data/cobblers/dialogues/dlg_training_keeper_%s.json" % T.keeper_id(k)]
         pages = {p["id"]: p for p in d["pages"]}
         hub = {o["value"]: o for o in pages["hub"]["input"]["options"]}
-        assert "isVisible" not in hub["r_raise"]
         text = json.dumps(d)
-        for rid, flag in (("r_ev", "gym2_cleared"), ("r_iv", "gym8_cleared")):
-            tag = re.search(r"has_tag\('([a-z0-9_]+)'\)", hub[rid]["isVisible"]).group(1)
-            assert "advancements={cobblers:flag/%s=true}] run tag @s add %s" % (flag, tag) in text, (rid, flag)
+        for svc in ("raise", "ev", "iv"):
+            for t in range(9):
+                # every tier's option is shown by a probe of the gym flags (changed 2026-10-22: one option a tier)
+                tags = re.findall(r"has_tag\('([a-z0-9_]+)'\)", hub["r_%s_t%d" % (svc, t)]["isVisible"])
+                assert tags and all("run tag @s add %s" % g in text for g in tags), (svc, t)
         for n in range(1, 7):
             assert "training_services/raise/slot%d'" % n in json.dumps(pages["raise"])
         for pid, page in pages.items():

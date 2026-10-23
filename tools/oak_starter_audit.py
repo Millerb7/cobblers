@@ -521,6 +521,11 @@ class Model:
         # the starter state nor the main stage; tools/challenge_voucher.py --check owns the amount
         if re.fullmatch(r"cobbledollars give @s \d+", cmd):
             return 1
+        # the Challenge TM gifts and TM Case (2026-10-22, data/challenge_mode.json tm_gifts, tools/progression_pack.py
+        # oak_gift_lines): give commands only, which move neither the starter state nor the main stage; what they give
+        # is tools/challenge_voucher.py --check's and tools/progression_pack.py's to prove
+        if cmd == "function cobblers:challenge/oak_gifts":
+            return 1
         m = re.fullmatch(r"function cobblers:flag/([a-z0-9_]+)/grant", cmd)
         if m and self._grantable(m.group(1)):
             return 1

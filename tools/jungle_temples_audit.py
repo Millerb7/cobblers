@@ -484,8 +484,9 @@ def authored(data, skip_ids, record=RECORD):
                 for v in o:
                     walk_(v, f)
 
+    # spawn data is never a place to keep clear of (2026-10-22): fishing cover cells, the caves' underground spawn boxes
     for p in sorted(Path(data).glob("*.json")):
-        if p.name != record:
+        if p.name != record and p.name not in ("fishing_fill.json", "underground_spawns.json"):
             walk_(json.loads(p.read_text(encoding="utf-8")), p.name)
     return pts, rects
 

@@ -103,7 +103,8 @@ def render(m):
             '<div class="box"><p>How it works: cast a Poke Rod into water and wait for a bite. What bites depends on '
             'where your bobber lands, not where you stand. Rare and very rare Pokemon bite more often on a rod than '
             'you meet them on foot, so fishing is the best way to the rare end of an area. Shiny and alpha chances '
-            'are Cobblemon\'s own. Bait on the rod is Cobblemon\'s own system too.</p></div>%s%s'
+            'are Cobblemon\'s own. Bait on the rod is Cobblemon\'s own system too. Nothing on a rod comes from '
+            'Cobblemon\'s or Cobbleverse\'s own tables: if it bites in water, it is on this page.</p></div>%s%s'
             '<section id="items"><h2>When it is not a Pokemon</h2><p>About 85 bites in 100 are a Pokemon (bait can '
             'change that); the rest are an item. Of the items, about two in three are ordinary fishing junk, one in six '
             'is Minecraft\'s fishing treasure (enchanted books, name tags, nautilus shells, saddles, bows and rods) and '
@@ -117,7 +118,10 @@ def render(m):
             'odds that what comes is shiny or alpha (common berries 1%% shiny and 5%% alpha, up to 8%% and 20%% for '
             'the rarest).</p></section>'
             '<section id="not-covered"><h2>What this page leaves out</h2><ul>'
-            '<li>Places outside our mapped areas: there, fishing is Cobblemon\'s default for the biome.</li>'
+            '<li>Open water between two areas, and the sea beyond the mapped seas: it fishes like the nearest area of its '
+            'kind (the nearest sea for open water, the nearest area with a fishing list for a pond), so no water '
+            'catches anything this page does not list. The grounds of the gyms, the League, Heaven\'s Arena and the '
+            'relic hall, and the Old Rafts of Pacifidlog, have no wild Pokemon at all, fishing included.</li>'
             '<li>Exact chances: "How often" is the bite\'s rarity group; within a group some Pokemon are more common '
             'than others.</li>'
             '<li>What happens in a running game: this is worked out from our data, not counted cast by cast. Where '
@@ -126,7 +130,8 @@ def render(m):
                                                                  "e.g. Magikarp or Lake Viltri"), sections,
                esc(m["fishing_dungeons"])))
     sources = ('<p class="src">From data/spawns.json (%d fishing entries, expanded from data/encounter_design.json by '
-               'tools/build_encounters.py), and data/regions.json.</p>' % m["entries"])
+               'tools/build_encounters.py), data/regions.json, and the cover data/fishing_fill.json '
+               '(tools/fishing_cover.py) that gives every stretch of water one of these tables.</p>' % m["entries"])
     return player_site.page(GUIDE, body, body_class="page-fishing", not_covered_href="#not-covered",
                             sources_html=sources)
 

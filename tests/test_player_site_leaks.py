@@ -306,6 +306,49 @@ def site_files():
     return sorted(p for p in SITE.rglob("*") if p.is_file())
 
 
+# THE ONE PAGE THAT NAMES LEGENDARIES (the owner, 2026-10-23, verbatim: "nuzlocke page should show dungeons and
+# legendaries per area, so a player can count those"; asked whether to name them, "Named": "Each area lists the
+# legendaries by name ... Only on the Nuzlocke page; the map and other pages keep hiding them"). On this page and no
+# other, a legendary-class SPECIES name is let through. Only the species name: a coordinate, an id, a record's name or a
+# line of its text stays forbidden here as everywhere, and every other file under docs/player/ is held to the full set.
+LEGENDARY_NAMES_PAGE = SITE / "nuzlocke.html"
+LEGEND_LABELS = {"legendary", "mythical", "ultra_beast", "paradox"}
+_LEGEND_IDS = []
+
+
+def legend_class_ids():
+    """The Cobblemon jar's species ids labelled legendary, mythical, ultra_beast or paradox (read, never typed)."""
+    if not _LEGEND_IDS:
+        import sys
+        import zipfile
+        sys.path.insert(0, str(ROOT / "tools"))
+        import player_guide_battles as PB
+        z = zipfile.ZipFile(PB.find_jar())
+        lang = json.loads(z.read("assets/cobblemon/lang/en_us.json").decode("utf-8"))
+        ids = set()
+        for n in z.namelist():
+            m = re.fullmatch(r"data/cobblemon/species/[^/]+/([a-z0-9_]+)\.json", n)
+            if m and set(json.loads(z.read(n).decode("utf-8")).get("labels") or []) & LEGEND_LABELS:
+                ids.add(m.group(1))
+                # the secret files spell a species as an id ("tapukoko"), a display name ("Tapu Koko") or with
+                # punctuation ("Ho-Oh" -> "ho oh"): every spelling the walker may have recorded
+                shown = lang.get("cobblemon.species.%s.name" % m.group(1))
+                if shown:
+                    ids.update({norm(shown), re.sub(r"[^a-z0-9]", "", shown.lower())})
+        assert len(ids) > 100, "read only %d legendary-class species spellings from the jar" % len(ids)
+        _LEGEND_IDS.append(ids)
+    return _LEGEND_IDS[0]
+
+
+def allow_for(path):
+    """(names, coordinates) let through for the page at `path`: allowed(), plus on LEGENDARY_NAMES_PAGE alone the
+    legendary-class species names the secret files carry."""
+    names_ok, coords_ok = allowed()
+    if Path(path).resolve() == LEGENDARY_NAMES_PAGE.resolve():
+        names_ok = names_ok | (set(secrets()["names"]) & legend_class_ids())
+    return names_ok, coords_ok
+
+
 @pytest.fixture(scope="module")
 def sec():
     return secrets()
@@ -319,7 +362,7 @@ def test_the_forbidden_set_is_not_empty(sec):
 
 @pytest.mark.parametrize("path", site_files(), ids=lambda p: p.relative_to(SITE).as_posix())
 def test_no_public_page_leaks_a_secret(path, sec):
-    found = leaks(path.read_text(encoding="utf-8", errors="replace"), sec)
+    found = leaks(path.read_text(encoding="utf-8", errors="replace"), sec, allow_for(path))
     assert not found, "%s carries %d secret(s):\n  %s" % (
         path.relative_to(ROOT).as_posix(), len(found), "\n  ".join("%s %r from %s" % f for f in found[:40]))
 
@@ -406,3 +449,31 @@ def test_the_check_bites(sec):
                       ("<code>%d 64 %d</code>" % (x, z), "coordinate"), ('"label":[%d,%d]' % (x, z), "coordinate"),
                       ("<p>%s</p>" % line.capitalize(), "line")):
         assert any(f[0] == kind for f in leaks(clean + bad, sec)), (kind, bad)
+
+
+def test_legendary_names_are_let_through_on_the_nuzlocke_page_only(sec):
+    """The owner's decision (2026-10-23) names ONE page. Without this, widening allow_for to every page, or to every
+    file, would pass the per-page test above unseen: a species name is a secret on all pages but one."""
+    page = "<p>Regice and Mew.</p>"
+    others = [p for p in site_files() if p.suffix == ".html" and p.resolve() != LEGENDARY_NAMES_PAGE.resolve()]
+    assert others, "no other page to compare"
+    for other in others:
+        assert any(f[0] == "name" and f[1] == "regice" for f in leaks(page, sec, allow_for(other))), other.name
+    assert not leaks(page, sec, allow_for(LEGENDARY_NAMES_PAGE))
+    assert LEGENDARY_NAMES_PAGE.exists()
+
+
+def test_the_nuzlocke_allowance_frees_species_names_and_nothing_else(sec):
+    """What breaks without it: an allowance written as 'this page is exempt' would also pass a coordinate, a record id or
+    a record's name on the Nuzlocke page. Only the legendary-class species names are freed."""
+    names_ok, coords_ok = allow_for(LEGENDARY_NAMES_PAGE)
+    base_names, _ = allowed()
+    freed = names_ok - base_names
+    assert freed and freed <= legend_class_ids(), sorted(freed - legend_class_ids())
+    assert coords_ok == allowed()[1]
+    name = next(v for v in sec["names"] if v not in names_ok and len(v.split()) >= 2)
+    ident = next(v for v in sec["ids"] if ":" not in v and norm(v) not in names_ok and norm(v) not in sec["names"])
+    (x, z) = next(c for c in sec["coords"] if c not in coords_ok)
+    for bad, kind in (("<p>%s</p>" % name.title(), "name"), ('<a id="t-%s">' % ident, "id"),
+                      ("<code>%d 64 %d</code>" % (x, z), "coordinate")):
+        assert any(f[0] == kind for f in leaks("<p>Route 1.</p>" + bad, sec, allow_for(LEGENDARY_NAMES_PAGE))), (kind, bad)

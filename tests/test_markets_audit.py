@@ -270,6 +270,87 @@ def test_trainer_income_is_the_generated_basis_re_summed_from_its_level_sums():
         MA.trainer_income(relayed)
 
 
+# protects the PATH income every service, TM shelf and voucher price reads (2026-10-22; the owner, 2026-10-21: "so far
+# no one is doing optional fights just the gym trainers and leaders"): income_basis.path re-summed from its own path
+# level sums, both modes; a hand-edited leg or a grown roster with an unmoved figure fails. Leg 1 by hand: Route 1's
+# eye-contact trainer and Brock's gym, 0.28125 x (7^2 + 33^2 + 35^2 + 37^2 + 56^2) = 0.28125 x 6868 = 1931.6 -> 1932
+def test_the_path_income_is_re_summed_from_its_own_level_sums():
+    import copy
+    doc = MA.read_json(ROOT / "data" / "markets.json")
+    got = MA.path_income(doc)
+    assert sum(s * s for s in doc["income_basis"]["path"]["level_sums"]["normal"]["1"]) == 6868 and got[0] == 1932
+    for path, why in ((("leg_by_badges_held", "2"), "leg 3"), (("challenge", "cumulative_by_badge", "5"), "leg 5")):
+        edited = copy.deepcopy(doc)
+        node = edited["income_basis"]["path"]
+        for k in path[:-1]:
+            node = node[k]
+        node[path[-1]] += 1
+        with pytest.raises(MA.AuditError, match=why):
+            MA.path_income(edited)
+    grown = copy.deepcopy(doc)
+    grown["income_basis"]["path"]["level_sums"]["normal"]["vr"][0] += 1
+    with pytest.raises(MA.AuditError, match="leg vr"):
+        MA.path_income(grown)
+
+
+# protects the TM shelves for both modes (2026-10-22, ECONOMY_V3.md 3.3; price_policies.tm_tier): every tier-shelf
+# line costs 0.35 of the path leg its tier plays, rounded up to $100, worked here from income_basis.path, not from
+# tools/markets.py; a tier never sells a TM above its craft badge; and every gym town from Viltri to Holdfast sells
+# its tier, so a Challenge player (who does not craft) can buy coverage at every badge 1-8
+def test_every_tier_shelf_line_is_the_path_share_and_every_tier_has_a_shelf():
+    import math
+    doc = MA.read_json(ROOT / "data" / "markets.json")
+    leg = doc["income_basis"]["path"]["leg_by_badges_held"]
+    lines = [(c, it) for c in doc["counters"] for it in c.get("stock") or [] if it.get("price_rule") == "tm_tier"]
+    assert lines
+    # changed 2026-10-22 (the owner: "some tms that arent op should be accessible"; "if a player wants to craft it
+    # should seem worth it"): a utility TM (power badge <= 2 in the committed score table, placed by no outlier group)
+    # costs 0.10 of the path leg of its power badge instead, and every line is at least its crafted route's bank value
+    # / 0.6 (data/tm_craft_cost.json x the bank's prices), both rounded up to $100. Worked here from those files
+    sys.path.insert(0, str(ROOT / "tools"))
+    import bank as B
+    power = {k: v["power_badge"] for k, v in json.loads(
+        (ROOT / "docs" / "mechanics" / "TM_POWER_GATE.json").read_text(encoding="utf-8"))["tms"].items()}
+    outliers = set()
+    for g in json.loads((ROOT / "data" / "tm_gate.json").read_text(encoding="utf-8"))["badge_rule"]["power"]["outliers"]:
+        outliers |= set(g.get("place") or {}) | set(g.get("shelf_agrees") or {})
+    craft = json.loads((ROOT / "data" / "tm_craft_cost.json").read_text(encoding="utf-8"))["by_tm"]
+    bank = B.prices(B.load())
+    utility = 0
+    for c, it in lines:
+        pb = power.get(it["item"])
+        if isinstance(pb, int) and pb <= 2 and it["item"] not in outliers:
+            want = math.ceil(0.10 * leg[str(pb)] / 100) * 100
+            utility += 1
+        else:
+            want = math.ceil(0.35 * leg[str(it["tier"])] / 100) * 100
+        made = sum(float(q) * bank[i] for i, q in craft[it["item"]]["bank_inputs"].items())
+        want = max(want, math.ceil(made / 0.6 / 100) * 100)
+        assert it["price"] == want * it["count"], (c["id"], it["id"], it["price"], want)
+        assert made <= 0.6 * it["price"] / it["count"], (c["id"], it["id"], made, it["price"])
+        assert 1 <= it["gate_badge"] <= it["tier"], (c["id"], it["id"])
+        if c["path"] == "critical":
+            assert it["tier"] in ({c["badge"] - 1} | ({8} if c["badge"] == 8 else set())), (c["id"], it["id"])
+        else:
+            assert it["tier"] == it["gate_badge"], (c["id"], it["id"])
+    assert utility >= 18, utility       # the 18 utility lines of 2026-10-22 and the weak leader TMs already shelved
+    on_path = {it["tier"] for c, it in lines if c["path"] == "critical" and it.get("answers")}
+    assert on_path == set(range(1, 9))
+    assert [math.ceil(0.35 * leg[str(t)] / 100) * 100 for t in range(1, 9)] == \
+        [900, 2200, 3100, 5500, 7600, 9400, 14400, 17300]       # ECONOMY_V3.md 3.3's table
+    # the generator's own rule refuses a hand-typed price and a TM above its tier
+    sys.path.insert(0, str(ROOT / "tools"))
+    import copy
+    import markets as M
+    assert M.tm_tier_problems(doc) == []
+    bad = copy.deepcopy(doc)
+    first = next(it for c in bad["counters"] for it in c.get("stock") or [] if it.get("price_rule") == "tm_tier")
+    first["price"] += 100
+    first["gate_badge"] = first["tier"] + 1
+    probs = M.tm_tier_problems(bad)
+    assert any("is not the tm_tier rule's" in p for p in probs) and any("above its tier" in p for p in probs), probs
+
+
 # --------------------------------------------------------------------------------- the R2 curve on a synthetic shelf
 # A two-town shelf whose every term is worked out on paper (ECONOMY_OVERHAUL section 7 R2):
 #   numerator  home 100 + t1 (200 + group g at its dearest 80) = 380 of convenience, the power line and the stretch

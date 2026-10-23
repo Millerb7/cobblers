@@ -31,7 +31,9 @@ REAL_PLACEMENTS = json.loads((ROOT / "data" / "placements.json").read_text(encod
 NS = "cobblers"
 # `loot` is here for the leaders' first-win rewards only, and in exactly one form: `loot give @s loot <ns>:first_win/<id>`
 # (test_loot_commands_are_only_first_win_gives_to_the_winner pins the form)
-KNOWN_COMMANDS = {"execute", "function", "advancement", "tag", "schedule", "scoreboard", "waystones", "tellraw", "loot"}
+# `give` since 2026-10-22: Oak's Challenge TM gifts and TM Case (data/challenge_mode.json tm_gifts, oak_gifts)
+KNOWN_COMMANDS = {"execute", "function", "advancement", "tag", "schedule", "scoreboard", "waystones", "tellraw", "loot",
+                  "give"}
 # `runmolang` (Cobblemon's command) is known in exactly one place, derived from the data rather than listed: the carry
 # function of a flag that declares carries_stage (data/progression.json flags[].carries_stage, the badge carry). Any
 # other file that grows a runmolang line fails test_every_mcfunction_line_starts_with_a_known_command.

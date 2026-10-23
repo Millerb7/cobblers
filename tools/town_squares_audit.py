@@ -139,6 +139,25 @@ from collections import deque
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+_UTILITY = {}
+
+
+def _utility_power_badge(u, item):
+    """The power badge of a utility TM (data/markets.json price_policies.tm_tier.utility), or None: read from
+    docs/mechanics/TM_POWER_GATE.json and data/tm_gate.json's outlier groups by this audit, never from tools/markets.py."""
+    if not isinstance(u, dict) or not isinstance(item, str):
+        return None
+    if not _UTILITY:
+        scores = json.loads((ROOT / "docs/mechanics/TM_POWER_GATE.json").read_text(encoding="utf-8"))["tms"]
+        gate = json.loads((ROOT / "data/tm_gate.json").read_text(encoding="utf-8"))
+        out = set()
+        for g in gate["badge_rule"]["power"].get("outliers") or []:
+            out |= set(g.get("place") or {}) | set(g.get("shelf_agrees") or {})
+        _UTILITY.update(power={k: v.get("power_badge") for k, v in scores.items()}, outliers=out)
+    pb = _UTILITY["power"].get(item)
+    if not isinstance(pb, int) or pb > int(u["max_power_badge"]) or item in _UTILITY["outliers"]:
+        return None
+    return pb
 sys.path.insert(0, str(ROOT / "tools"))
 
 FUNC_DIR = ROOT / "build" / "datapacks" / "cobblers_plaza_centres" / "data" / "cobblers" / "function" / "plaza_centres"
@@ -185,6 +204,9 @@ POWER_VANILLA = re.compile(r"minecraft:(?:potion|splash_potion|lingering_potion|
 # ---- the theme vocabulary: per theme word, the item paths (minecraft: assumed) that read as that stall's goods.
 COOKED = {"bread", "baked_potato", "cooked_beef", "cooked_chicken", "cooked_mutton", "cooked_porkchop", "cooked_rabbit",
           "cooked_cod", "cooked_salmon", "rabbit_stew", "mushroom_stew", "beetroot_soup", "pumpkin_pie"}
+# a theme read by a rule instead of a word list (the owner, 2026-10-21, Viltri's Berry Grower: "a held item berry
+# trainer"): an item reads as `berries` when it is one of Cobblemon's berries
+THEME_RULES = {"berries": lambda item: item.startswith("cobblemon:") and item.endswith("_berry")}
 THEME_WORDS = {
     # 2026-10-05, Arrow Creeks Farm's stand: what the owner's farm makes ("milk, leather, yadda yadda") and its fields
     "farm goods": {"milk_bucket", "white_wool", "leather", "honey_bottle", "honeycomb", "egg", "feather", "carrot",
@@ -1146,9 +1168,14 @@ def item_checks(markets_doc, spawn, ids):
                               "has no item model with an item-tag entry" % (kind, rec["id"], item)))
             else:
                 unchecked.add(ns)
+            # an OWNER EXCEPTION (the owner, 2026-10-21, the berry stall; tools/markets.py OWNER_WAIVABLE): a line whose
+            # owner_exception quotes the owner waives exactly the rules it names, for that line; a malformed one waives
+            # nothing (and tools/markets.py check refuses it)
+            ex = it.get("owner_exception")
+            waived = set(ex.get("waives") or []) if isinstance(ex, dict) and "owner" in str(ex.get("decision") or "").lower() else set()
             placed = PLACES_BLOCK.get(item, item)
             for b in {placed, GROWS.get(placed, placed)}:
-                if b in spawn:
+                if b in spawn and "spawn_block" not in waived:
                     P.append(("items", "%s:%s:spawn" % (rec["id"], item), "%s %s: %s puts down %s, a spawn-condition "
                               "block" % (kind, rec["id"], item, b)))
             power = (ns == "cobblemon" and path.endswith("_ball")) or path.endswith("poke_ball") or \
@@ -1172,7 +1199,43 @@ def item_checks(markets_doc, spawn, ids):
             # still needs a badge gate
             why = "is not badge-gated and declares no gate_badge"
             gb = it.get("gate_badge")
-            if not gated and kind == "counter" and "gate_badge" in it:
+            # changed 2026-10-22 (docs/mechanics/ECONOMY_V3.md 3.3, the TM shelves for both modes; the owner 2026-10-21:
+            # prices rise with badges and the economy is priced for the path a player actually walks): a counter TM
+            # line under price_rule tm_tier is gated by its TIER, not the road's income. It passes when its tier T is
+            # at or above its gate_badge, the counter may sell T (gym N's town tier N-1, gym 8's also 8; an off-path
+            # counter at the line's own badge), and one unit costs at least the rule's share of what the PATH pays in
+            # the leg played holding T badges (income_basis.path, read from the data and recomputed here)
+            if kind == "counter" and it.get("price_rule") == "tm_tier":
+                gated = False    # the tier is this line's gate, even where a dropped badge gate is also recorded
+                pol =(markets_doc.get("price_policies") or {}).get("tm_tier") or {}
+                path_leg = ((markets_doc.get("income_basis") or {}).get("path") or {}).get("leg_by_badges_held") or {}
+                t, n, b = it.get("tier"), it.get("count") or 1, rec.get("badge")
+                may = ({b - 1} | ({8} if b == 8 else set())) if rec.get("path") == "critical" and isinstance(b, int) \
+                    else {gb}
+                try:
+                    floor = math.ceil(float(pol["fraction"]) * int(path_leg[str(t)]) / int(pol["round_to"])) * int(pol["round_to"])
+                    # changed 2026-10-22 (the owner: "some tms that arent op should be accessible"): a UTILITY line
+                    # (price_policies.tm_tier.utility) is floored at its own share of the path leg of its TM's power
+                    # badge instead. Which TM is utility is derived here from the committed score table and the
+                    # outlier groups, read by this audit itself, not from tools/markets.py
+                    upb = _utility_power_badge(pol.get("utility"), it.get("item"))
+                    if upb is not None:
+                        u = pol["utility"]
+                        floor = math.ceil(float(u["fraction"]) * int(path_leg[str(upb)]) / int(u["round_to"])) \
+                            * int(u["round_to"])
+                except (KeyError, TypeError, ValueError):
+                    floor = None
+                if floor is None:
+                    why = "is a tm_tier line with no readable price_policies.tm_tier or income_basis.path tier %r" % (t,)
+                elif not (isinstance(gb, int) and isinstance(t, int) and gb <= t):
+                    why = "is a tm_tier line at tier %r with gate_badge %r: a TM sold before its craft badge" % (t, gb)
+                elif t not in may:
+                    why = "is a tm_tier line at tier %d on a counter that sells tier %s" % (t, sorted(may))
+                elif isinstance(it.get("price"), (int, float)) and it["price"] >= floor * n:
+                    gated = True
+                else:
+                    why = "is a tm_tier line at tier %d costing %r, under the rule's $%d" % (t, it.get("price"), floor)
+            if not gated and kind == "counter" and "gate_badge" in it and it.get("price_rule") != "tm_tier":
                 inc = ((markets_doc.get("income_basis") or {}).get("cumulative_by_badge") or {})
                 n = it.get("count") or 1
                 if isinstance(gb, bool) or not isinstance(gb, int) or str(gb) not in inc:
@@ -1185,7 +1248,7 @@ def item_checks(markets_doc, spawn, ids):
                            "2026-10-09: a price under the income gate is free)"
                            % (gb, "%.0f" % (it["price"] / n) if isinstance(it.get("price"), (int, float)) else
                               repr(it.get("price")), inc[str(gb)], gb))
-            if power and not gated:
+            if power and not gated and "power_gate" not in waived:
                 P.append(("power", "%s:%s" % (rec["id"], item), "%s %s: %s is a ball, battle item or boost and %s"
                           % (kind, rec["id"], item, why)))
     return P, unchecked
@@ -1195,6 +1258,11 @@ def theme_checks(markets_doc):
     P = []
     for s in markets_doc.get("stalls") or []:
         words = THEME_WORDS.get(s.get("sells"))
+        rule = THEME_RULES.get(s.get("sells"))
+        if rule:
+            P += [("theme", "%s:%s" % (s["id"], it["item"]), "%s (%s): %s does not read as %r"
+                   % (s["id"], s.get("sells"), it["item"], s.get("sells"))) for it in s.get("stock") or [] if not rule(it["item"])]
+            continue
         if words is None:
             P.append(("theme", s["id"], "%s: theme %r has no vocabulary here" % (s["id"], s.get("sells"))))
             continue
