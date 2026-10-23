@@ -875,9 +875,9 @@
       "conversation": "dlg_entrance_guide_ridgeback",
       "settlement": "gym4_town",
       "at": [
-        4332,
+        4310,
         111,
-        1538
+        1580
       ],
       "yaw": 54,
       "ground": {
@@ -886,7 +886,7 @@
         "source": "data/placements.json settlements.gym4_town.plan.plaza.y"
       },
       "faces": "the plaza centre at (4309, 1555)",
-      "why": "On Greenhollow's green, four blocks in from its east edge and 16 north of the east lane, clear of the east stalls (data/plaza_centres.json gym4_town, 14 away); the Ridgeback trail leaves by the east lane (data/entrance_trails.json trail_ridgeback)."
+      "why": "On Greenhollow's green, south half, clear of the parterres, the stalls and every walked line (moved 2026-10-22 from (4332, 1538), which stood on gym4_parterre_4: tools/plaza_centre.py build refused it, and the npc_seats.py check passes here); the Ridgeback trail leaves by the east lane (data/entrance_trails.json trail_ridgeback)."
     },
     {
       "id": "npc_fisher_glacial_tear",
