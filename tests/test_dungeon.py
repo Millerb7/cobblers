@@ -403,6 +403,11 @@ FAKES = {
     # the blackout's two E1 functions (built in tools/blackout_pack.py): record, and remove the tag as they do
     TAIL_END: ["tag @s remove %s" % RUN_TAG, "scoreboard players add @s tailend 1"],
     BACKSTOP: ["tag @s remove %s" % RUN_TAG, "scoreboard players add @s stale 1"],
+    # the dungeon risk's five entry points (tools/dungeon_risk.py, 2026-10-23): empty here, because its storage paths,
+    # item entities, merchant and runmolang are not modelled by pocket_sim; they run on tests/risk_sim.py instead
+    # (tests/test_dungeon_risk.py)
+    **{"cobblers:dungeons/risk/%s" % n: ["# risk/%s: run by tests/test_dungeon_risk.py" % n]
+       for n in ("load", "tick", "begin", "won", "forfeit", "catch")},
 }
 
 

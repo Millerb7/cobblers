@@ -984,7 +984,10 @@ class World:
             return False
         mon.alive = False
         p.party.append(mon.nbt["Pokemon"]["Species"])
-        self.run_callback("pokemon_captured", query={"pokemon": {"species": {"identifier": mon.nbt["Pokemon"]["Species"]}},
+        # id and is_shiny: Cobblemon 1.8.2's PokemonMoLangFunctions (the UUID as text; getShiny), which the dungeon
+        # risk's callback reads (tools/dungeon_risk.py)
+        self.run_callback("pokemon_captured", query={"pokemon": {"species": {"identifier": mon.nbt["Pokemon"]["Species"]},
+                                                                 "id": "pk-%d" % len(p.party), "is_shiny": 0},
                                                      "player": {"uuid": p.uid}})
         return True
 
