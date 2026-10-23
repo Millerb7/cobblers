@@ -11452,7 +11452,7 @@
         "max_spawns_per_activation": 2,
         "max_spawns": 5
       },
-      "status": "planned",
+      "status": "placed",
       "generated_by": "tools/cave_systems.py",
       "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 5 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 9 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
     },
@@ -11476,7 +11476,7 @@
         "max_spawns_per_activation": 2,
         "max_spawns": 5
       },
-      "status": "planned",
+      "status": "placed",
       "generated_by": "tools/cave_systems.py",
       "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 4 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 8 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
     },
@@ -11500,7 +11500,7 @@
         "max_spawns_per_activation": 2,
         "max_spawns": 5
       },
-      "status": "planned",
+      "status": "placed",
       "generated_by": "tools/cave_systems.py",
       "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 5 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 10 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
     },
@@ -11524,7 +11524,7 @@
         "max_spawns_per_activation": 2,
         "max_spawns": 5
       },
-      "status": "planned",
+      "status": "placed",
       "generated_by": "tools/cave_systems.py",
       "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 5 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 10 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
     },
@@ -11548,7 +11548,7 @@
         "max_spawns_per_activation": 2,
         "max_spawns": 5
       },
-      "status": "planned",
+      "status": "placed",
       "generated_by": "tools/cave_systems.py",
       "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 4 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 9 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
     },
@@ -11572,7 +11572,7 @@
         "max_spawns_per_activation": 2,
         "max_spawns": 5
       },
-      "status": "planned",
+      "status": "placed",
       "generated_by": "tools/cave_systems.py",
       "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 4 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 10 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
     },
@@ -11596,7 +11596,7 @@
         "max_spawns_per_activation": 2,
         "max_spawns": 5
       },
-      "status": "planned",
+      "status": "placed",
       "generated_by": "tools/cave_systems.py",
       "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 5 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 10 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
     },
@@ -11620,7 +11620,7 @@
         "max_spawns_per_activation": 2,
         "max_spawns": 5
       },
-      "status": "planned",
+      "status": "placed",
       "generated_by": "tools/cave_systems.py",
       "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 5 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 9 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9CS, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
     },
@@ -11644,7 +11644,7 @@
         "max_spawns_per_activation": 2,
         "max_spawns": 5
       },
-      "status": "planned",
+      "status": "placed",
       "generated_by": "tools/mine_networks.py",
       "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 4 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 8 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9MN, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
     },
@@ -11668,7 +11668,7 @@
         "max_spawns_per_activation": 2,
         "max_spawns": 5
       },
-      "status": "planned",
+      "status": "placed",
       "generated_by": "tools/mine_networks.py",
       "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 4 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 8 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9MN, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
     },
@@ -11692,7 +11692,7 @@
         "max_spawns_per_activation": 2,
         "max_spawns": 5
       },
-      "status": "planned",
+      "status": "placed",
       "generated_by": "tools/mine_networks.py",
       "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 5 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 11 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9MN, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
     },
@@ -11716,7 +11716,7 @@
         "max_spawns_per_activation": 2,
         "max_spawns": 5
       },
-      "status": "planned",
+      "status": "placed",
       "generated_by": "tools/mine_networks.py",
       "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 5 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 11 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9MN, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
     },
@@ -11740,7 +11740,7 @@
         "max_spawns_per_activation": 2,
         "max_spawns": 5
       },
-      "status": "planned",
+      "status": "placed",
       "generated_by": "tools/mine_networks.py",
       "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 4 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 8 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9MN, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
     },
@@ -11764,7 +11764,7 @@
         "max_spawns_per_activation": 2,
         "max_spawns": 5
       },
-      "status": "planned",
+      "status": "placed",
       "generated_by": "tools/mine_networks.py",
       "why": "A nest room (the owner, 2026-10-22: 'some random room ... where we have habitat blocks spawning a nest'): one ACTIVATED block in the floor under the room's middle keeps up to 5 of the theme alive, 2 refilled at a time, TICK at chance 1. spawn_range 4 keeps the spawner's box inside the room (the generator and its audit check that no other carved cell is in it); cancel_range 7 cancels the pack's natural spawns in the room and not in the passage the spur leaves. The mimic is the rock the floor is (deepslate under y0). Carved by R9MN, which runs BEFORE R9E; never data-merged or read back by force-loading (docs/STATE.md, the 2026-10-20 crash)."
     }
