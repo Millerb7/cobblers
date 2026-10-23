@@ -781,6 +781,114 @@
       "why": "Wick Doran (data/fishermen.json): Lake Viltri's north shore, on the strip between Misty's gym and the east pier; early (the second town)"
     },
     {
+      "id": "npc_entrance_guide_old_seams",
+      "conversation": "dlg_entrance_guide_old_seams",
+      "settlement": "hometown",
+      "at": [
+        1514,
+        119,
+        5296
+      ],
+      "yaw": -117,
+      "ground": {
+        "kind": "heightmap",
+        "y": 118,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the east gate where the Old Seams trail starts at (1522, 5292)",
+      "why": "Pallet has no plaza, so the seat takes the heightmap's ground, on the cross street's east arm 9 blocks from the gate the Old Seams trail leaves by (data/entrance_trails.json trail_old_seams, 1522,5292). Nothing is placed within 20 blocks of it but Oak's Lab, 30 away."
+    },
+    {
+      "id": "npc_entrance_guide_hollow_reach",
+      "conversation": "dlg_entrance_guide_hollow_reach",
+      "settlement": "gym1_town",
+      "at": [
+        1744,
+        139,
+        3604
+      ],
+      "yaw": -108,
+      "ground": {
+        "kind": "plaza",
+        "y": 138,
+        "source": "data/placements.json settlements.gym1_town.plan.plaza.y"
+      },
+      "faces": "the north avenue's mouth onto the plaza at (1756, 3600)",
+      "why": "On Stoneford's plaza, four blocks in from its north edge and twelve west of the north avenue's mouth, the avenue the Hollow Reach trail leaves by (data/entrance_trails.json trail_hollow_reach_stoneford). 20 blocks from the nearest stall (data/plaza_centres.json gym1_town)."
+    },
+    {
+      "id": "npc_entrance_guide_frostpeak_deeps",
+      "conversation": "dlg_entrance_guide_frostpeak_deeps",
+      "settlement": "gym3_town",
+      "at": [
+        1664,
+        175,
+        1388
+      ],
+      "yaw": -67,
+      "ground": {
+        "kind": "plaza",
+        "y": 174,
+        "source": "data/placements.json settlements.gym3_town.plan.plaza.y"
+      },
+      "faces": "the plaza centre at (1676, 1393)",
+      "why": "On Highwire's belvedere, two blocks in from its north edge and four from its west edge, facing in. 10 blocks from the nearest stall (data/plaza_centres.json gym3_town)."
+    },
+    {
+      "id": "npc_entrance_guide_craters",
+      "conversation": "dlg_entrance_guide_craters",
+      "settlement": "mining_town",
+      "at": [
+        6602,
+        138,
+        5690
+      ],
+      "yaw": -61,
+      "ground": {
+        "kind": "plaza",
+        "y": 137,
+        "source": "data/placements.json settlements.mining_town.plan.plaza.y"
+      },
+      "faces": "the plaza centre at (6620, 5700)",
+      "why": "On Fossick's pithead yard, two blocks in from its north-west corner, facing in; the Old Craters Drift trail leaves by the bowl walk just north of it (data/entrance_trails.json trail_craters). 20 blocks from the centrepiece."
+    },
+    {
+      "id": "npc_entrance_guide_gorge",
+      "conversation": "dlg_entrance_guide_gorge",
+      "settlement": "gorge_hamlet",
+      "at": [
+        6803,
+        114,
+        4363
+      ],
+      "yaw": -68,
+      "ground": {
+        "kind": "plaza",
+        "y": 113,
+        "source": "data/placements.json settlements.gorge_hamlet.plan.plaza.y"
+      },
+      "faces": "the well at the yard's centre at (6813, 4367)",
+      "why": "In the yard just inside the gate, 4 blocks north of the dune trail's last stretch and 10 from the well; the plan's own bridge-keeper (the stone-tip elder) stands at the well's south side. Faces the well."
+    },
+    {
+      "id": "npc_entrance_guide_ridgeback",
+      "conversation": "dlg_entrance_guide_ridgeback",
+      "settlement": "gym4_town",
+      "at": [
+        4332,
+        111,
+        1538
+      ],
+      "yaw": 54,
+      "ground": {
+        "kind": "plaza",
+        "y": 110,
+        "source": "data/placements.json settlements.gym4_town.plan.plaza.y"
+      },
+      "faces": "the plaza centre at (4309, 1555)",
+      "why": "On Greenhollow's green, four blocks in from its east edge and 16 north of the east lane, clear of the east stalls (data/plaza_centres.json gym4_town, 14 away); the Ridgeback trail leaves by the east lane (data/entrance_trails.json trail_ridgeback)."
+    },
+    {
       "id": "npc_fisher_glacial_tear",
       "conversation": "dlg_fisher_glacial_tear",
       "at": [

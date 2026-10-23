@@ -26105,6 +26105,600 @@
         "trainer": "compact_cp14_loyalist_2",
         "skill": 4
       }
+    },
+    {
+      "id": "dlg_entrance_guide_old_seams",
+      "quest_id": "ambient_entrance_guides",
+      "npc_id": "npc_entrance_guide_old_seams",
+      "npc_name": "Wren Tolliver",
+      "source": "data/entrance_trails.json guides (the owner, 2026-10-22: \"an npc to give a waypoint to a mine would be cool\")",
+      "scope": "player",
+      "speakers": {
+        "guide": "Wren Tolliver"
+      },
+      "cursor": {
+        "progression_field": "quest.ambient_entrance_guides.old_seams_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "Forty years I followed coal under the hill east of here, and it never once ran out of surprises. Take a pick, and torches; the Old Seams are dark past the mouth.",
+          "next": "offer"
+        },
+        {
+          "id": "offer",
+          "kind": "choice",
+          "speaker": "guide",
+          "text": "A lantern trail leaves the east gate for the nearest mouth. Shall I put it on your map?",
+          "responses": [
+            {
+              "id": "r_mark",
+              "text": "Mark it on my map.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "mark_old_seams"
+                }
+              ],
+              "next": "marked"
+            },
+            {
+              "id": "r_later",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "marked",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "There. Follow the lanterns, and tell the dark I said hello.",
+          "next": "again"
+        },
+        {
+          "id": "again",
+          "kind": "choice",
+          "speaker": "guide",
+          "text": "Lost the mark? I can give it to you again.",
+          "responses": [
+            {
+              "id": "r_again",
+              "text": "Mark it again.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "mark_old_seams"
+                }
+              ],
+              "next": "marked"
+            },
+            {
+              "id": "r_done",
+              "text": "Never mind.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dlg_entrance_guide_hollow_reach",
+      "quest_id": "ambient_entrance_guides",
+      "npc_id": "npc_entrance_guide_hollow_reach",
+      "npc_name": "Corwin Hale",
+      "source": "data/entrance_trails.json guides (the owner, 2026-10-22: \"an npc to give a waypoint to a mine would be cool\")",
+      "scope": "player",
+      "speakers": {
+        "guide": "Corwin Hale"
+      },
+      "cursor": {
+        "progression_field": "quest.ambient_entrance_guides.hollow_reach_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "I survey the Hollow Reach for the town ledgers: miles of passage under the midland, and nobody has ever finished the count.",
+          "next": "offer"
+        },
+        {
+          "id": "offer",
+          "kind": "choice",
+          "speaker": "guide",
+          "text": "The nearest mouth is a short walk along a trail from the north avenue. Want it marked on your map?",
+          "responses": [
+            {
+              "id": "r_mark",
+              "text": "Mark it on my map.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "mark_hollow_reach"
+                }
+              ],
+              "next": "marked"
+            },
+            {
+              "id": "r_later",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "marked",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "Marked. Look for the sign where the trail leaves the avenue, and the lanterns after it.",
+          "next": "again"
+        },
+        {
+          "id": "again",
+          "kind": "choice",
+          "speaker": "guide",
+          "text": "Lost the mark? I can give it to you again.",
+          "responses": [
+            {
+              "id": "r_again",
+              "text": "Mark it again.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "mark_hollow_reach"
+                }
+              ],
+              "next": "marked"
+            },
+            {
+              "id": "r_done",
+              "text": "Never mind.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dlg_entrance_guide_frostpeak_deeps",
+      "quest_id": "ambient_entrance_guides",
+      "npc_id": "npc_entrance_guide_frostpeak_deeps",
+      "npc_name": "Hjalmar Skarn",
+      "source": "data/entrance_trails.json guides (the owner, 2026-10-22: \"an npc to give a waypoint to a mine would be cool\")",
+      "scope": "player",
+      "speakers": {
+        "guide": "Hjalmar Skarn"
+      },
+      "cursor": {
+        "progression_field": "quest.ambient_entrance_guides.frostpeak_deeps_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "Far north-west, under Frostpeak Point, the ground goes down and down. The deepest ore in the region lies there, and the farthest walk to it.",
+          "next": "offer"
+        },
+        {
+          "id": "offer",
+          "kind": "choice",
+          "speaker": "guide",
+          "text": "No trail runs that far, and no sign points. I can put the southern mouth on your map if you mean to go.",
+          "responses": [
+            {
+              "id": "r_mark",
+              "text": "Mark it on my map.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "mark_frostpeak_deeps"
+                }
+              ],
+              "next": "marked"
+            },
+            {
+              "id": "r_later",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "marked",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "There. It is a long cold road: bring food, a strong pick, and a party that can take the Point's weather.",
+          "next": "again"
+        },
+        {
+          "id": "again",
+          "kind": "choice",
+          "speaker": "guide",
+          "text": "Lost the mark? I can give it to you again.",
+          "responses": [
+            {
+              "id": "r_again",
+              "text": "Mark it again.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "mark_frostpeak_deeps"
+                }
+              ],
+              "next": "marked"
+            },
+            {
+              "id": "r_done",
+              "text": "Never mind.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dlg_entrance_guide_craters",
+      "quest_id": "ambient_entrance_guides",
+      "npc_id": "npc_entrance_guide_craters",
+      "npc_name": "Pell Dacey",
+      "source": "data/entrance_trails.json guides (the owner, 2026-10-22: \"an npc to give a waypoint to a mine would be cool\")",
+      "scope": "player",
+      "speakers": {
+        "guide": "Pell Dacey"
+      },
+      "cursor": {
+        "progression_field": "quest.ambient_entrance_guides.craters_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "I assayed ore at the Drift before they closed it: coal and iron, good clean seams, driven west under the hills and followed down.",
+          "next": "offer"
+        },
+        {
+          "id": "offer",
+          "kind": "choice",
+          "speaker": "guide",
+          "text": "A lantern trail leaves the bowl walk and runs north to the adit. Shall I put the adit on your map?",
+          "responses": [
+            {
+              "id": "r_mark",
+              "text": "Mark it on my map.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "mark_craters"
+                }
+              ],
+              "next": "marked"
+            },
+            {
+              "id": "r_later",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "marked",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "Done. The deeper levels are the richer, and the farther in, the better the iron.",
+          "next": "again"
+        },
+        {
+          "id": "again",
+          "kind": "choice",
+          "speaker": "guide",
+          "text": "Lost the mark? I can give it to you again.",
+          "responses": [
+            {
+              "id": "r_again",
+              "text": "Mark it again.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "mark_craters"
+                }
+              ],
+              "next": "marked"
+            },
+            {
+              "id": "r_done",
+              "text": "Never mind.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dlg_entrance_guide_gorge",
+      "quest_id": "ambient_entrance_guides",
+      "npc_id": "npc_entrance_guide_gorge",
+      "npc_name": "Marit Doyle",
+      "source": "data/entrance_trails.json guides (the owner, 2026-10-22: \"an npc to give a waypoint to a mine would be cool\")",
+      "scope": "player",
+      "speakers": {
+        "guide": "Marit Doyle"
+      },
+      "cursor": {
+        "progression_field": "quest.ambient_entrance_guides.gorge_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "My husband kept the bridge, and the copper men kept the Hollow Seam up the ridge until the lower levels flooded their tempers.",
+          "next": "offer"
+        },
+        {
+          "id": "offer",
+          "kind": "choice",
+          "speaker": "guide",
+          "text": "The adit stands north of the river, off Route 7. Shall I mark it for you?",
+          "responses": [
+            {
+              "id": "r_mark",
+              "text": "Mark it on my map.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "mark_gorge"
+                }
+              ],
+              "next": "marked"
+            },
+            {
+              "id": "r_later",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "marked",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "Marked. Cross by the bridge and look for the fork and its sign. Copper and lapis, they say.",
+          "next": "again"
+        },
+        {
+          "id": "again",
+          "kind": "choice",
+          "speaker": "guide",
+          "text": "Lost the mark? I can give it to you again.",
+          "responses": [
+            {
+              "id": "r_again",
+              "text": "Mark it again.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "mark_gorge"
+                }
+              ],
+              "next": "marked"
+            },
+            {
+              "id": "r_done",
+              "text": "Never mind.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dlg_entrance_guide_ridgeback",
+      "quest_id": "ambient_entrance_guides",
+      "npc_id": "npc_entrance_guide_ridgeback",
+      "npc_name": "Dorsey Quill",
+      "source": "data/entrance_trails.json guides (the owner, 2026-10-22: \"an npc to give a waypoint to a mine would be cool\")",
+      "scope": "player",
+      "speakers": {
+        "guide": "Dorsey Quill"
+      },
+      "cursor": {
+        "progression_field": "quest.ambient_entrance_guides.ridgeback_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "I drove ore carts down from the Ridgeback for the old company. Iron by the ton, and a long haul either way.",
+          "next": "offer"
+        },
+        {
+          "id": "offer",
+          "kind": "choice",
+          "speaker": "guide",
+          "text": "A lantern trail runs from the east lane all the way up to the adit. It is a long walk. Shall I mark the adit?",
+          "responses": [
+            {
+              "id": "r_mark",
+              "text": "Mark it on my map.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "mark_ridgeback"
+                }
+              ],
+              "next": "marked"
+            },
+            {
+              "id": "r_later",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "marked",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "Marked. Pack light and keep to the lanterns.",
+          "next": "again"
+        },
+        {
+          "id": "again",
+          "kind": "choice",
+          "speaker": "guide",
+          "text": "Lost the mark? I can give it to you again.",
+          "responses": [
+            {
+              "id": "r_again",
+              "text": "Mark it again.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "mark_ridgeback"
+                }
+              ],
+              "next": "marked"
+            },
+            {
+              "id": "r_done",
+              "text": "Never mind.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

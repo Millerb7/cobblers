@@ -573,6 +573,7 @@
         "shrines.py": "not covered: a block source (data/shrines.json blocks) that names the spawn conditions file only in its docstring and does not read it; not yet one of this contract's sources (the test author's to add), and its built functions are checked by shrines_audit.py and by the built-packs test here",
         "route4_events.py": "checker: refuses any spawn-condition block it writes that its SPAWN_OK does not declare (pink_petals, cherry_leaves and water, at the hollow and the gate, each with a data/spawn_block_policy.json entry scoped to route4_events); its built functions are checked by the built-packs test here and by tests/test_route4_events.py",
         "shrines_audit.py": "checker: the built shrines functions, against data/shrines.json blocks and the spawn conditions",
+        "entrance_trails_audit.py": "checker: the built cobblers_entrance_trails functions (dirt_path, gravel, coarse_dirt, spruce fences, lanterns, signs), every block against data/spawn_blocks.json",
         "maze_shrines.py": "source: maze_shrines",
         "maze_shrines_audit.py": "checker: the built maze_shrines functions, against data/maze_shrines.json blocks and the spawn conditions",
         "scar_tarn_audit.py": "checker: the built scar_tarn functions (the tarn and its five wood arms, 2026-10-12): check_forest() reads data/spawn_blocks.json and the scar_tarn whitelist in data/spawn_block_policy.json and fails any spawn-condition block but the allowed water",
