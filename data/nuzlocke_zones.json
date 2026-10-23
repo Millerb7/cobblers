@@ -10,7 +10,7 @@
   "site": 1,
   "waterway": 1,
   "total": 89,
-  "not_zones": 38
+  "not_zones": 32
  },
  "derivation": {
   "tables_are_subregions": "data/encounter_design.json has 61 tables and data/regions.json 61 sub-regions, the same ids",
@@ -844,7 +844,10 @@
    "geometry": "data/regions.json subregions.east_cones polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
-   "sites": []
+   "sites": [
+    "mine_nest_mn_craters_1_pool",
+    "mine_nest_mn_craters_2_pool"
+   ]
   },
   {
    "zone": "plateau_west",
@@ -907,6 +910,9 @@
    "land_share": 1.0,
    "legs": [],
    "sites": [
+    "cave_nest_frostpeak_deeps_1_pool",
+    "cave_nest_frostpeak_deeps_2_pool",
+    "cave_nest_frostpeak_deeps_3_pool",
     "sapling_frost_frostpeak",
     "tbird_sapling_frost_frostpeak_low",
     "tbird_sapling_frost_frostpeak_mid"
@@ -1136,7 +1142,9 @@
    "legs": [
     "route_05_erika_to_koga"
    ],
-   "sites": []
+   "sites": [
+    "mine_nest_mn_ridgeback_1_pool"
+   ]
   },
   {
    "zone": "marshy_marsh",
@@ -1155,6 +1163,7 @@
     "elder_marshy_marsh_1",
     "elder_marshy_marsh_2",
     "elder_marshy_marsh_3",
+    "mine_nest_mn_ridgeback_2_pool",
     "tbird_elder_marshy_marsh_1_low",
     "tbird_elder_marshy_marsh_1_mid",
     "tbird_elder_marshy_marsh_2_low",
@@ -1193,7 +1202,10 @@
    "geometry": "data/regions.json subregions.eastern_moor polygons, 32-block raster",
    "land_share": 1.0,
    "legs": [],
-   "sites": []
+   "sites": [
+    "mine_nest_mn_gorge_1_pool",
+    "mine_nest_mn_gorge_2_pool"
+   ]
   },
   {
    "zone": "glacier_foot_fields",
@@ -1346,6 +1358,8 @@
     "route_02_brock_to_misty"
    ],
    "sites": [
+    "cave_nest_hollow_reach_1_pool",
+    "cave_nest_hollow_reach_2_pool",
     "elder_viltri_plateau_1",
     "elder_viltri_plateau_2",
     "elder_viltri_plateau_3",
@@ -1419,7 +1433,11 @@
    "legs": [
     "route_01_pallet_to_brock"
    ],
-   "sites": []
+   "sites": [
+    "cave_nest_old_seams_1_pool",
+    "cave_nest_old_seams_2_pool",
+    "cave_nest_old_seams_3_pool"
+   ]
   },
   {
    "zone": "pallet_meadows",
@@ -2167,36 +2185,6 @@
    "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
   },
   {
-   "zone": "mine_nest_mn_craters_1_pool",
-   "what": "Habitat Block pool",
-   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
-  },
-  {
-   "zone": "mine_nest_mn_craters_2_pool",
-   "what": "Habitat Block pool",
-   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
-  },
-  {
-   "zone": "mine_nest_mn_gorge_1_pool",
-   "what": "Habitat Block pool",
-   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
-  },
-  {
-   "zone": "mine_nest_mn_gorge_2_pool",
-   "what": "Habitat Block pool",
-   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
-  },
-  {
-   "zone": "mine_nest_mn_ridgeback_1_pool",
-   "what": "Habitat Block pool",
-   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
-  },
-  {
-   "zone": "mine_nest_mn_ridgeback_2_pool",
-   "what": "Habitat Block pool",
-   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
-  },
-  {
    "zone": "mining_town_fossil_levels",
    "what": "Habitat Block pool",
    "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
@@ -2283,7 +2271,7 @@
   },
   {
    "zone": "elder_* / sapling_*",
-   "what": "195 placed elder-tree and sapling Habitat Block pools",
+   "what": "209 placed elder-tree and sapling Habitat Block pools",
    "why": "a few blocks inside the sub-region each is named for: an encounter there is that sub-region's, listed under its zone's \"sites\""
   },
   {
