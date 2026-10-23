@@ -649,7 +649,10 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_rips")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
-SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
+# cobblers_underground_spawns (2026-10-23, tools/underground_spawns.py): the caves' and mines' own pools, canSeeSky false,
+# a pack of its own so the surface audits that read every file of cobblers_spawns never see it, and so the suppression
+# (which skips every cobblers_* pack) never touches it
+SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress", "cobblers_underground_spawns")
 WORLD_PACKS = (ROOT / "modpack" / "datapacks" / "cobblers_height", PACKS / "cobblers_worldtree")
 CROWN = (2044, 535, 2282)                      # the world tree's highest block (tools/build_audit.py world_tree)
 # 25_reshell added 2026-09-30: the shell's own fills run a SECOND time, after the carve and before the tunnel.
@@ -1285,6 +1288,10 @@ def prepare_jobs(a):
     # our wild spawns: the route and sub-region rosters from data/spawns.json (the suppression that makes them the
     # only thing spawning there is generated at install, against the server and world it will run on)
     add("compile_spawns", "compile_spawns.py")
+    # the caves' and mines' own wild pools (data/underground_spawns.json), a pack of their own, then its audit: every system
+    # has a pool for each depth band, every detail is canSeeSky false inside its box and clear of towns
+    add("underground_spawns", "underground_spawns.py")
+    add("underground_spawns_audit", "underground_spawns.py", "check")
     # the training grounds' independent audit (2026-10-06), on the pools compile_spawns just wrote
     add("training_grounds_audit", "training_grounds_audit.py", "--pools", "build/datapacks/cobblers_spawns/data/cobblers/habitat_pools")
     # ... then its independent habitat audit (the owner, 2026-10-04: "wrong-country spawns"): every compiled entry

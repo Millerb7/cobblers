@@ -1,0 +1,164 @@
+{
+  "schema": "cobblers.underground-spawns/1",
+  "status": "authored 2026-10-23 (offline: table, generator, audit; NOTHING installed in any world, not seen in game)",
+  "generated_by": "hand",
+  "builder": "tools/underground_spawns.py",
+  "owner_brief": "the owner, 2026-10-22: \"yeah go ahead and add pokemon to caves\"",
+  "why": "No wild Pokemon spawned underground over most of the map. Every compiled surface detail forces canSeeSky true (tools/compile_spawns.py box_condition), and tools/suppress_inherited_spawns.py removes inherited (Cobblemon, Cobbleverse) details under every route and sub-region box at EVERY height (box_anticondition is x/z only), so the inherited cave spawns went too. This table is our own pool for the six dug systems, one pack, cobblers_underground_spawns, which the suppression tool never reads (its collect() skips every cobblers_* pack).",
+  "condition_fields": "Every detail's condition is {minX, maxX, minY, maxY, minZ, maxZ, canSeeSky false, dimensions [minecraft:overworld]}. Source of the fields: Cobblemon 1.8.0 SpawningCondition lists canSeeSky and minX/minY/minZ/maxX/maxY/maxZ (docs/research/notes/underground-biomes.md section 3c, VERIFIED in source); stock zubat-4 in the 1.8.2 jar uses canSeeSky false, noibat-2 uses maxY 0, and the dimension binding is tools/compile_spawns.py bind_dimension. The position type is 'grounded' as every stock cave detail in the jar (zubat, geodude, noibat) and every compiled detail here; no 'air' position is used because no file in the repository or the jar gives a bat one.",
+  "bands": "Three depth bands per system, shallow / mid / deep, each a minY..maxY slice of the whole system box. Caves: data/cave_systems.json rules.levels put the four floors at y 66 (upper), 30 (middle), -8 (deep) and -30 (abyss); shallow is y 48 up to the system's highest centreline node + 8 (the mouths climb to the surface), mid is 12..47, deep is -64..11. Mines: bands group the levels of derived/mine_networks/plan.json (floors listed per system); a band runs from 2 under its lowest floor to 12 over the highest (a 4-high drift, a 6-high stope) and the bands are contiguous, deep reaching -64.",
+  "box_basis": "Cave boxes are the plan's bounds (derived/cave_systems/plan.json systems.<id>.bounds, x/z) padded 64; mine boxes are the x/z extent of the plan's runs, stopes, inclines and shafts padded 64 and kept inside the network's own box (data/mine_networks.json networks.<id>.box). tests/test_underground_spawns.py re-reads the plan, when derived/ has one, and fails if any of it lies outside the box.",
+  "keep_out": "The compiler cuts out of every box (a) data/spawn_suppression.json spawn_free_zones and (b) every data/towns.json footprint (padded 16) that meets it, at every height: a town's roofs and rooms are not caves. A sweep over both files, not a list of ours. NOT covered: placed structures that are not a town (the Route 1 mansion beside the Old Seams' mansion mouth, the Great Oak's tree), which the world holds and no footprint here lists.",
+  "levels": "A system's levels follow its band of play: the mines' crews (data/mine_crews.json networks.<id>.band, level by level) and, for the caves, the tier of the nearest town (data/encounter_design.json rules.tiers: band and cap). Levels rise with depth inside the band; the rare and ultra-rare picks sit at the band's top. An evolved stage is never spawned below the level its pre-evolution needs (the jar's evolutions), and no level exceeds the system's cap.",
+  "weights": "common 12 (9 for the second-line species), uncommon 6, rare 2, ultra-rare 1: data/spawns.json rarity family_weight per bucket.",
+  "entry_shape": "[species, level range, bucket, weight]",
+  "systems": [
+    {
+      "id": "old_seams", "kind": "cave", "source": "data/cave_systems.json",
+      "name": "The Old Seams",
+      "level_basis": "Pallet country, the first mining place: tier 1, band 4..14, cap 20 (rules.tiers['1']); the deep end runs to 17.",
+      "cap": 20,
+      "pool_box": [1584, 4825, 2478, 5447],
+      "bands": {
+        "shallow": {"minY": 48, "maxY": 121, "entries": [
+          ["zubat", "5-9", "common", 12], ["geodude", "5-9", "common", 12], ["diglett", "6-9", "common", 9],
+          ["roggenrola", "6-9", "uncommon", 6], ["paras", "5-8", "uncommon", 6], ["gastly", "6-9", "rare", 2]]},
+        "mid": {"minY": 12, "maxY": 47, "entries": [
+          ["zubat", "8-12", "common", 12], ["geodude", "9-13", "common", 12], ["roggenrola", "9-13", "common", 9],
+          ["diglett", "9-13", "common", 9], ["onix", "10-13", "uncommon", 6], ["drilbur", "11-13", "uncommon", 6],
+          ["nosepass", "11-13", "uncommon", 6], ["sableye", "11-13", "rare", 2]]},
+        "deep": {"minY": -64, "maxY": 11, "entries": [
+          ["geodude", "12-16", "common", 12], ["onix", "12-17", "common", 12], ["drilbur", "12-16", "common", 9],
+          ["zubat", "12-16", "common", 9], ["aron", "12-16", "uncommon", 6], ["larvitar", "14-17", "uncommon", 6],
+          ["nosepass", "12-16", "uncommon", 6], ["gastly", "12-16", "uncommon", 6], ["sableye", "13-16", "rare", 2],
+          ["duskull", "14-17", "rare", 2], ["gible", "15-17", "rare", 2], ["carbink", "14-17", "ultra-rare", 1]]}
+      }
+    },
+    {
+      "id": "hollow_reach", "kind": "cave", "source": "data/cave_systems.json",
+      "name": "The Hollow Reach",
+      "level_basis": "Tea Town and Brock's town (gym 1, ace 20): tier 2, band 13..22, cap 25 (rules.tiers['2']); shallow 12-16 to deep 18-23.",
+      "cap": 25,
+      "pool_box": [1812, 2944, 2744, 3705],
+      "bands": {
+        "shallow": {"minY": 48, "maxY": 144, "entries": [
+          ["zubat", "12-16", "common", 12], ["geodude", "12-16", "common", 12], ["diglett", "12-16", "common", 9],
+          ["roggenrola", "12-16", "common", 9], ["woobat", "12-16", "uncommon", 6], ["paras", "12-16", "uncommon", 6],
+          ["gastly", "13-16", "rare", 2]]},
+        "mid": {"minY": 12, "maxY": 47, "entries": [
+          ["zubat", "15-20", "common", 12], ["onix", "15-20", "common", 12], ["drilbur", "15-20", "common", 9],
+          ["roggenrola", "15-20", "common", 9], ["woobat", "15-20", "uncommon", 6], ["aron", "15-19", "uncommon", 6],
+          ["nosepass", "15-20", "uncommon", 6], ["gastly", "16-20", "rare", 2], ["sableye", "17-20", "rare", 2]]},
+        "deep": {"minY": -64, "maxY": 11, "entries": [
+          ["onix", "18-23", "common", 12], ["aron", "18-23", "common", 9], ["larvitar", "18-23", "common", 9],
+          ["drilbur", "18-23", "common", 9], ["gible", "18-23", "uncommon", 6], ["golbat", "22-23", "uncommon", 6],
+          ["sableye", "19-23", "uncommon", 6], ["duskull", "19-23", "rare", 2], ["noibat", "18-23", "rare", 2],
+          ["carbink", "20-23", "ultra-rare", 1]]}
+      }
+    },
+    {
+      "id": "frostpeak_deeps", "kind": "cave", "source": "data/cave_systems.json",
+      "name": "The Frostpeak Deeps",
+      "level_basis": "Frostpeak Point: sub-region 'frostpeak' band 28..38, tier 5, cap 40 (data/spawns.json subregions, rules.tiers['5']); shallow 28-32 to deep 34-39. An ice cave: Snorunt and Bergmite lines, Swinub and Cubchoo, Sneasel.",
+      "cap": 40,
+      "pool_box": [463, 180, 993, 823],
+      "bands": {
+        "shallow": {"minY": 48, "maxY": 243, "entries": [
+          ["snorunt", "28-32", "common", 12], ["bergmite", "28-32", "common", 12], ["swinub", "28-32", "common", 9],
+          ["golbat", "28-32", "common", 9], ["sneasel", "30-32", "uncommon", 6], ["cubchoo", "28-32", "uncommon", 6],
+          ["vanillite", "28-32", "uncommon", 6]]},
+        "mid": {"minY": 12, "maxY": 47, "entries": [
+          ["snorunt", "31-35", "common", 12], ["bergmite", "31-35", "common", 12], ["piloswine", "33-35", "common", 9],
+          ["golbat", "31-35", "common", 9], ["sneasel", "31-35", "uncommon", 6], ["cubchoo", "31-35", "uncommon", 6],
+          ["vanillish", "35-35", "uncommon", 6], ["cryogonal", "33-35", "rare", 2]]},
+        "deep": {"minY": -64, "maxY": 11, "entries": [
+          ["snorunt", "34-39", "common", 12], ["piloswine", "34-39", "common", 9], ["golbat", "34-38", "common", 9],
+          ["bergmite", "34-36", "common", 9], ["avalugg", "37-39", "uncommon", 6], ["sneasel", "34-39", "uncommon", 6],
+          ["beartic", "37-39", "uncommon", 6], ["vanillish", "35-39", "uncommon", 6], ["cryogonal", "36-39", "rare", 2],
+          ["dusclops", "37-39", "rare", 2], ["carbink", "36-39", "ultra-rare", 1]]}
+      }
+    },
+    {
+      "id": "mn_ridgeback", "kind": "mine", "source": "data/mine_networks.json",
+      "name": "The Ridgeback Workings",
+      "level_basis": "data/mine_crews.json networks.mn_ridgeback.band 27..34 (crew 27-29 on levels 1-2, 28-32 on 3-5, 32-34 on 6-7); wild 26-29 / 28-32 / 31-35, 35 being Erika's ace and the cap before the fourth badge.",
+      "cap": 35,
+      "levels_y": [69, 53, 37, 21, 5, -11, -27],
+      "level_groups": {"shallow": [1, 2], "mid": [3, 4, 5], "deep": [6, 7]},
+      "pool_box": [4520, 1091, 5287, 1709],
+      "bands": {
+        "shallow": {"minY": 51, "maxY": 81, "entries": [
+          ["graveler", "26-29", "common", 12], ["boldore", "26-29", "common", 12], ["golbat", "26-29", "common", 9],
+          ["onix", "26-29", "common", 9], ["drilbur", "26-29", "common", 9], ["dugtrio", "26-29", "uncommon", 6],
+          ["rhyhorn", "26-29", "uncommon", 6], ["slugma", "26-29", "uncommon", 6], ["numel", "26-29", "uncommon", 6],
+          ["dwebble", "26-29", "uncommon", 6]]},
+        "mid": {"minY": 3, "maxY": 50, "entries": [
+          ["graveler", "28-32", "common", 12], ["boldore", "28-32", "common", 9], ["onix", "28-32", "common", 9],
+          ["dugtrio", "28-32", "common", 9], ["drilbur", "28-30", "common", 9], ["excadrill", "31-32", "uncommon", 6],
+          ["aron", "28-31", "uncommon", 6], ["pupitar", "30-32", "uncommon", 6], ["nosepass", "28-32", "uncommon", 6],
+          ["dwebble", "28-32", "uncommon", 6], ["sableye", "29-32", "rare", 2]]},
+        "deep": {"minY": -64, "maxY": 2, "entries": [
+          ["excadrill", "31-35", "common", 12], ["lairon", "32-35", "common", 12], ["pupitar", "31-35", "common", 9],
+          ["graveler", "31-35", "common", 9], ["onix", "31-35", "common", 9], ["golbat", "31-35", "common", 9],
+          ["crustle", "34-35", "uncommon", 6], ["camerupt", "33-35", "uncommon", 6], ["sableye", "31-35", "uncommon", 6],
+          ["gabite", "31-35", "rare", 2], ["carbink", "32-35", "rare", 2], ["mawile", "32-35", "ultra-rare", 1]]}
+      }
+    },
+    {
+      "id": "mn_gorge", "kind": "mine", "source": "data/mine_networks.json",
+      "name": "The Hollow Seam",
+      "level_basis": "data/mine_crews.json networks.mn_gorge.band 41..48 (crew 41-43 on levels 1-2, 42-46 on 3-5, 45-48 on 6-7); wild 40-43 / 42-46 / 45-49, tier 7 cap 50.",
+      "cap": 50,
+      "levels_y": [70, 54, 38, 22, 6, -10, -26],
+      "level_groups": {"shallow": [1, 2], "mid": [3, 4, 5], "deep": [6, 7]},
+      "pool_box": [6658, 3171, 7317, 3920],
+      "bands": {
+        "shallow": {"minY": 52, "maxY": 82, "entries": [
+          ["graveler", "40-43", "common", 12], ["boldore", "40-43", "common", 12], ["excadrill", "40-43", "common", 9],
+          ["golbat", "40-43", "common", 9], ["onix", "40-43", "common", 9], ["lairon", "40-43", "common", 9],
+          ["dugtrio", "40-43", "uncommon", 6], ["crustle", "40-43", "uncommon", 6], ["camerupt", "40-43", "uncommon", 6],
+          ["magcargo", "40-43", "uncommon", 6], ["rhyhorn", "40-41", "uncommon", 6]]},
+        "mid": {"minY": 4, "maxY": 51, "entries": [
+          ["excadrill", "42-46", "common", 12], ["lairon", "42-46", "common", 12], ["graveler", "42-46", "common", 9],
+          ["boldore", "42-46", "common", 9], ["rhydon", "42-46", "common", 9], ["pupitar", "42-46", "common", 9],
+          ["dusclops", "42-46", "uncommon", 6], ["crustle", "42-46", "uncommon", 6], ["gabite", "42-46", "uncommon", 6],
+          ["magcargo", "42-46", "uncommon", 6], ["camerupt", "42-46", "uncommon", 6], ["haunter", "42-46", "uncommon", 6],
+          ["sableye", "43-46", "rare", 2], ["mawile", "43-46", "rare", 2]]},
+        "deep": {"minY": -64, "maxY": 3, "entries": [
+          ["excadrill", "45-49", "common", 12], ["rhydon", "45-49", "common", 12], ["aggron", "45-49", "common", 9],
+          ["dusclops", "45-49", "common", 9], ["pupitar", "45-49", "common", 9], ["gabite", "45-48", "uncommon", 6],
+          ["sableye", "45-49", "uncommon", 6], ["mawile", "45-49", "uncommon", 6], ["camerupt", "45-49", "uncommon", 6],
+          ["magcargo", "45-49", "uncommon", 6], ["garchomp", "48-49", "rare", 2], ["noivern", "48-49", "rare", 2],
+          ["carbink", "47-50", "ultra-rare", 1]]}
+      }
+    },
+    {
+      "id": "mn_craters", "kind": "mine", "source": "data/mine_networks.json",
+      "name": "The Old Craters Drift",
+      "level_basis": "data/mine_crews.json networks.mn_craters.band 45..52 (crew 45-47 on levels 1-3, 47-50 on 4-6, 49-52 on 7-8); wild 44-47 / 47-50 / 49-52, tier 8 cap 55; the deep rare picks run to the cap.",
+      "cap": 55,
+      "levels_y": [101, 85, 69, 53, 37, 21, 5, -11],
+      "level_groups": {"shallow": [1, 2, 3], "mid": [4, 5, 6], "deep": [7, 8]},
+      "pool_box": [6102, 5049, 6900, 6100],
+      "bands": {
+        "shallow": {"minY": 67, "maxY": 113, "entries": [
+          ["excadrill", "44-47", "common", 12], ["lairon", "44-47", "common", 12], ["rhydon", "44-47", "common", 12],
+          ["aggron", "44-47", "common", 9], ["golbat", "44-47", "common", 9], ["dusclops", "44-47", "common", 9],
+          ["graveler", "44-47", "common", 9], ["boldore", "44-47", "common", 9], ["camerupt", "44-47", "uncommon", 6],
+          ["magcargo", "44-47", "uncommon", 6], ["crustle", "44-47", "uncommon", 6], ["pupitar", "44-47", "uncommon", 6],
+          ["torkoal", "44-47", "uncommon", 6], ["gabite", "44-47", "uncommon", 6]]},
+        "mid": {"minY": 19, "maxY": 66, "entries": [
+          ["excadrill", "47-50", "common", 12], ["aggron", "47-50", "common", 12], ["rhydon", "47-50", "common", 12],
+          ["pupitar", "47-50", "common", 9], ["dusclops", "47-50", "common", 9], ["garchomp", "48-50", "uncommon", 6],
+          ["noivern", "48-50", "uncommon", 6], ["camerupt", "47-50", "uncommon", 6], ["torkoal", "47-50", "uncommon", 6],
+          ["magcargo", "47-50", "uncommon", 6], ["sableye", "47-50", "uncommon", 6], ["mawile", "47-50", "uncommon", 6],
+          ["carbink", "48-50", "rare", 2]]},
+        "deep": {"minY": -64, "maxY": 18, "entries": [
+          ["aggron", "49-52", "common", 12], ["excadrill", "49-52", "common", 12], ["rhydon", "49-52", "common", 9],
+          ["pupitar", "49-52", "common", 9], ["dusclops", "49-52", "common", 9], ["garchomp", "49-53", "uncommon", 6],
+          ["noivern", "49-53", "uncommon", 6], ["sableye", "50-53", "uncommon", 6], ["mawile", "50-53", "uncommon", 6],
+          ["carbink", "50-54", "rare", 2], ["tyranitar", "55-55", "ultra-rare", 1]]}
+      }
+    }
+  ]
+}
