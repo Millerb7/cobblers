@@ -396,6 +396,123 @@ def test_reapply_lists_builds_audits_and_runs_the_pack():
     assert "cobblers_cave_systems" not in reapply.WORLD_LOCAL
 
 
+# ------------------------------------------------------------------ 2026-10-23: wider passages and nest rooms, ADDED to the live carve
+#
+# Written in the same session as the widening (the brief asked for both; CLAUDE.md principle 16 would have a second agent write
+# them). The live carve is pinned in data/cave_systems.json live_carve, read from the as-installed pack's own `_air` lines.
+
+def test_the_live_carve_is_carved_whole_and_only_added_to(real, spec):
+    # the systems are in the live world: a re-run must carve every live cell again and only add air, none of it at a mouth
+    for sid, rp in [(k, v) for k, v in real["report"].items() if not k.startswith("_")]:
+        assert rp["live_cells"] == spec["live_carve"]["systems"][sid]["cells"], sid
+        assert rp["added_cells"] > 20000, sid
+        assert rp["trapped_standing_cells"] == 0, sid
+    assert not [p for p in real["problems"] if "live carve" in p or "mouth" in p]
+
+
+def test_the_passages_are_wider_and_still_squeeze_in_places(real):
+    # the owner: "make some of the caves tunnels wider span from 3-15 blocks wide ... the part i ran through felt tight"
+    for s in real["summary"]:
+        b, w = s["widen"]["measured_width_base"], s["widen"]["measured_width_widened"]
+        assert w["median"] > b["median"], s["id"]
+        assert w["10-15"] >= 0.1 * w["samples"], (s["id"], w)          # wide stretches
+        assert w["3-4"] >= 1, (s["id"], w)                               # and some squeezes are left
+        assert w["5-9"] >= 0.5 * w["samples"], (s["id"], w)              # mostly 5 to 9
+        assert w["under_3"] == 0
+
+
+def test_every_system_has_two_or_three_nest_rooms_that_pass_the_audit(real):
+    # the owner's "random room ... where we have habitat blocks spawning a nest"
+    for sid, rp in [(k, v) for k, v in real["report"].items() if not k.startswith("_")]:
+        assert 2 <= len(rp["nest_rooms"]) <= 3, sid
+        for r in rp["nest_rooms"]:
+            assert r["subregion"] and r["species"], r
+    assert not [p for p in real["problems"] if ": nest" in p]
+
+
+def test_the_rooms_records_are_in_data_as_the_rooms_imply(spec):
+    assert CS.nest_problems(spec) == []
+
+
+def one_system(spec, sid="old_seams"):
+    sp = copy.deepcopy(spec)
+    sp["systems"] = [s for s in sp["systems"] if s["id"] == sid]
+    return sp
+
+
+def test_the_generator_refuses_a_base_that_moved(spec, ground, monkeypatch):
+    # CHECK_LIVE: a re-plan (the ground read one block high) must fail closed, never carve a second network over the live one
+    orig = CS.ground_grid
+    monkeypatch.setattr(CS, "ground_grid", lambda g, box: orig(g, box) + 1)
+    with pytest.raises(CS.CaveSystemError, match="live carve"):
+        CS.build_all(one_system(spec), g=ground)
+
+
+def test_audit_catches_the_widening_written_into_the_live_functions(spec, ground, tmp_path, monkeypatch):
+    # MUTATE THE GENERATOR: the added cells meshed into `_air` with the live ones (no `_wide`): the audit's digest of `_air`
+    # must stop matching the data's live carve
+    orig = CS.tile_functions
+    monkeypatch.setattr(CS, "tile_functions", lambda *a: orig(*a[:8]))
+    problems, _r, _res = build_and_audit(one_system(spec), ground, tmp_path)
+    assert has(problems, "not the live carve's"), problems[:5]
+
+
+def test_audit_catches_cells_added_inside_a_mouth_zone(spec, ground, tmp_path, monkeypatch):
+    # MUTATE THE GENERATOR: the added cells take the base's mouth-zone rule (cover only >= 0 within mouth_zone, no exclusion), so the
+    # widening reaches the mouths; the audit must report cells added inside a mouth's zone
+    def base_rule(region, rules, mouths, X, Y, Z):
+        return CS.clip_cells(region, rules, X, Y, Z, CS.mouth_zone_mask(region, mouths, rules["mouth_zone"]))[0]
+    monkeypatch.setattr(CS, "added_allowed", base_rule)
+    problems, _r, _res = build_and_audit(one_system(spec), ground, tmp_path)
+    assert has(problems, "added inside mouth"), problems[:5]
+
+
+def test_audit_catches_a_room_carved_off_its_record(spec, ground, tmp_path, monkeypatch):
+    # MUTATE THE GENERATOR: every room carved four blocks east of where its record (and its Habitat Block) says, its own room guard
+    # silenced; the audit reads the record and the replayed pack only and must find the room's shape not where it is declared
+    orig = CS.nest_room_cells
+
+    def moved(room, seed):
+        x, y, z = orig(room, seed)
+        return x + 4, y, z
+    monkeypatch.setattr(CS, "nest_room_cells", moved)
+    monkeypatch.setattr(CS, "room_problems", lambda *a, **k: [])
+    problems, _r, _res = build_and_audit(one_system(spec), ground, tmp_path)
+    assert has(problems, ": nest "), problems[:5]
+
+
+def test_the_nest_species_are_in_the_jar(spec):
+    import battle_sim
+    try:
+        jar = battle_sim.find_jar()
+    except Exception as exc:          # noqa: BLE001
+        pytest.skip("no Cobblemon jar here: %s" % exc)
+    import nest_rooms as NR
+    sp = NR.load_species(jar)
+    habs = {h["id"]: h for h in json.loads((ROOT / "data" / "spawns.json").read_text(encoding="utf-8"))["habitats"]}
+    for s in spec["systems"]:
+        for r in s["nest_rooms"]:
+            for e in habs[r["id"] + "_pool"]["entries"]:
+                assert e["pokemon"] in sp, (r["id"], e["pokemon"])
+
+
+def test_the_trap_check_finds_a_one_way_drop(spec, ground, tmp_path):
+    # a hand-made volume: a mouth's chamber and, four lower, a pit reached only by dropping in; the pit cannot be walked out of
+    import numpy as np
+    a = hand_audit(spec, tmp_path, ground)
+    x, z = 2100, 5000
+    g = int(round(ground.heights[z, x]))
+    cells = [(xx, y, zz) for xx in range(x, x + 6) for zz in range(z, z + 3) for y in range(g - 16, g - 13)]
+    cells += [(xx, y, zz) for xx in range(x + 6, x + 10) for zz in range(z, z + 3) for y in range(g - 19, g - 13)]
+    X, Y, Z = (np.array([c[i] for c in cells]) for i in range(3))
+    a.report["h"] = {}
+    a._standing = set()
+    dist = a.check_walk("h", X, Y, Z, [{"id": "m", "x": x + 1, "z": z + 1}])
+    assert dist
+    a.check_traps("h", X, Y, Z, [{"id": "m", "x": x + 1, "z": z + 1}])
+    assert has(a.problems, "no mouth can be walked back to"), a.problems
+
+
 def test_the_pack_has_no_runtime_data(real):
     base = Path(real["pack"])
     kinds = {p.relative_to(base / "data" / "cobblers").parts[0] for p in (base / "data" / "cobblers").rglob("*") if p.is_file()}

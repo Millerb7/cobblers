@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.cave_systems/1",
-  "status": "authored offline 2026-10-22; nothing is applied to any world",
+  "status": "the base carved into the LIVE world 2026-10-22 (R9CS, docs/STATE.md; pinned in live_carve); the 2026-10-23 widening (rules.widen) and nest rooms (rules.nests, systems[].nest_rooms) are generated and audited offline only, NOT applied, not seen in game",
   "generated_by": "hand, from the owner's brief of 2026-10-21; read by tools/cave_systems.py, replayed by tools/cave_systems_audit.py",
   "owner_words": "\"with no caves people wont be incentivized to mine at all ... i need some to be thousands long or just somehow carve out caves underground, really need that\" / \"a few hunderd block caves wont be enoughfor 10 people\" / \"its looking more like 6 now\" (2026-10-21)",
   "design": "tools/cave_systems.py docstring; the picture is docs/world-building/CAVE_SYSTEMS.md",
@@ -138,6 +138,54 @@
       ],
       "why": "a lantern on the floor at four points inside each mouth passage, no other light anywhere: the caves are dark by design"
     },
+    "widen": {
+      "width": [
+        3,
+        15
+      ],
+      "typical": [
+        5.5,
+        9.5
+      ],
+      "share_squeeze": 0.12,
+      "share_wide": 0.25,
+      "noise_scale": 70,
+      "height_max": 12,
+      "mouth_taper": 40,
+      "deck_tolerance": 3,
+      "deck_gap": 2,
+      "own_reach": 30,
+      "rock_between": 3,
+      "owner_words": "\"make some of the caves tunnels wider span from 3-15 blocks wide or something large, the part i ran through felt tight.\" (2026-10-22)",
+      "why": "ADDITIVE over the live 2026-10-22 carve (live_carve): a node's width is a smooth seeded field (value noise over noise_scale blocks) ranked over the system's nodes: the narrowest share_squeeze keep their own width (the squeezes, 3 to 7 as carved), the middle spreads over typical, the top share_wide over 9 to 15; never narrower than the node already is; tapered back to the carved width over mouth_taper blocks outside each mouth zone, and nothing is added inside a mouth zone, so the mouths stay as carved. Headroom 3.2 + 0.55 x width (+-1.6 noise) up to height_max, clipped to cover_min of rock. An added cell within deck_gap of a carved cell whose run floor differs by more than deck_tolerance is dropped, so no level is opened into another. Measured widths (floor + 1, square to the passage) are in derived/cave_systems/plan.json widen"
+    },
+    "nests": {
+      "count": [
+        2,
+        3
+      ],
+      "across": [
+        12,
+        20
+      ],
+      "tall": [
+        6,
+        9
+      ],
+      "spur_len": [
+        8,
+        16
+      ],
+      "spur_width": 3.5,
+      "spur_height": 4,
+      "wall_noise": 0.12,
+      "room_clear": 3,
+      "spur_clear": 2,
+      "spacing": 150,
+      "mouth_clear": 30,
+      "owner_words": "\"I would also like some random room to be added where we have habitat blocks spawning a nest or something.\" (2026-10-22)",
+      "why": "2 or 3 rooms a system, each off a side branch: a straight flat spur spur_len past the passage's wall into an elliptical room 12 to 20 across with a domed roof; the room keeps room_clear from every other carved cell and the spur spur_clear past its attachment, so a room is a dead end reached only by its spur; at least spacing apart and mouth_clear outside the mouth zones. One activated Habitat Block in the floor under the middle (tools/nest_rooms.py). Sited once by `python tools/cave_systems.py nests --site` into systems[].nest_rooms; the build carves the recorded rooms and fails closed if one no longer fits"
+    },
     "ore": {
       "min_cover": 5,
       "centre_rate": 0.0042,
@@ -221,6 +269,24 @@
       "bank": "data/bank.json buys coal, iron, copper, gold, lapis, redstone, diamond (and emerald) in the forms these ores drop"
     }
   },
+  "live_carve": {
+    "what": "the cells R9CS carved into the live world on 2026-10-22 (docs/STATE.md, 838,400 blocks), per system: their count and the sha256 of their int32 (x, y, z) triples sorted by x, then y, then z. Read from the as-installed pack's own `_air` lines (built from a7ccab43, the code and data of that install), not from the generator",
+    "rule": "the generator's base must reproduce these exactly or it fails closed (a re-plan would carve a different network over the live one); the pack keeps carving them in the `_air` functions and tools/cave_systems_audit.py digests those functions against these figures and checks the replayed volume contains every one of them",
+    "systems": {
+      "old_seams": {
+        "cells": 261718,
+        "sha256": "b804591693144bc7c4b74120125611ec849dd651121217c19eaedb669efd58cf"
+      },
+      "hollow_reach": {
+        "cells": 384289,
+        "sha256": "b37ff04d808202de476da9f0156963939feaefeb3d1abceab872c3923819952a"
+      },
+      "frostpeak_deeps": {
+        "cells": 192393,
+        "sha256": "c12808acbcaa81113c22b651948209cf5ffee0b144ffbe96151f192c555af8ca"
+      }
+    }
+  },
   "systems": [
     {
       "id": "old_seams",
@@ -252,6 +318,200 @@
           "x": 1806,
           "z": 5302,
           "near": "great_oak_pallet"
+        }
+      ],
+      "nest_themes": [
+        {
+          "theme": "zubat_roost",
+          "name": "Zubat roost",
+          "families": [
+            {
+              "root": "zubat",
+              "weight": 24,
+              "bucket": "common"
+            },
+            {
+              "root": "woobat",
+              "weight": 10,
+              "bucket": "uncommon"
+            }
+          ],
+          "why": "the first cave a new group finds: the bats every early cave has, roosting in a dead-end room"
+        },
+        {
+          "theme": "rubble_nest",
+          "name": "Rubble nest",
+          "families": [
+            {
+              "root": "geodude",
+              "weight": 20,
+              "bucket": "common"
+            },
+            {
+              "root": "roggenrola",
+              "weight": 14,
+              "bucket": "common"
+            },
+            {
+              "root": "rolycoly",
+              "weight": 8,
+              "bucket": "uncommon"
+            }
+          ],
+          "why": "the rock Pokemon of the Old Seams' ore: Geodude, Roggenrola and the coal-eating Rolycoly"
+        },
+        {
+          "theme": "gem_den",
+          "name": "Gem-eaters' den",
+          "families": [
+            {
+              "root": "nosepass",
+              "weight": 12,
+              "bucket": "uncommon"
+            },
+            {
+              "root": "sableye",
+              "weight": 6,
+              "bucket": "rare"
+            },
+            {
+              "root": "carbink",
+              "weight": 4,
+              "bucket": "rare"
+            }
+          ],
+          "why": "a dark room where the gem-eaters gather: Sableye (dark) with Nosepass and Carbink, a find rather than a roster"
+        }
+      ],
+      "nest_rooms": [
+        {
+          "id": "cave_nest_old_seams_1",
+          "theme": "zubat_roost",
+          "centre": [
+            2163,
+            -7,
+            5223
+          ],
+          "radius": [
+            7.53,
+            7.15
+          ],
+          "wall_noise": 0.12,
+          "angle": -0.1984,
+          "tall": 9,
+          "spur": [
+            [
+              2141.33,
+              -7,
+              5227.62
+            ],
+            [
+              2157.57,
+              -7,
+              5224.35
+            ]
+          ],
+          "spur_width": 3.5,
+          "spur_height": 4,
+          "attach_radius": 7.81,
+          "block": [
+            2163,
+            -8,
+            5223
+          ],
+          "spawn_range": 5,
+          "cancel_range": 9,
+          "across": "15 by 14",
+          "attach_node": 1326,
+          "cells": 1244,
+          "place": "The Old Seams, a nest room off a side branch",
+          "sited_by": "python tools/cave_systems.py nests --site (2026-10-23), on the widened volume"
+        },
+        {
+          "id": "cave_nest_old_seams_2",
+          "theme": "rubble_nest",
+          "centre": [
+            2071,
+            -6,
+            5072
+          ],
+          "radius": [
+            6.9,
+            6.89
+          ],
+          "wall_noise": 0.12,
+          "angle": 0.0235,
+          "tall": 6,
+          "spur": [
+            [
+              2048.92,
+              -6,
+              5071.07
+            ],
+            [
+              2066.11,
+              -6,
+              5071.48
+            ]
+          ],
+          "spur_width": 3.5,
+          "spur_height": 4,
+          "attach_radius": 5.77,
+          "block": [
+            2071,
+            -7,
+            5072
+          ],
+          "spawn_range": 4,
+          "cancel_range": 8,
+          "across": "14 by 14",
+          "attach_node": 1221,
+          "cells": 865,
+          "place": "The Old Seams, a nest room off a side branch",
+          "sited_by": "python tools/cave_systems.py nests --site (2026-10-23), on the widened volume"
+        },
+        {
+          "id": "cave_nest_old_seams_3",
+          "theme": "gem_den",
+          "centre": [
+            1867,
+            -8,
+            4900
+          ],
+          "radius": [
+            8.35,
+            8.17
+          ],
+          "wall_noise": 0.12,
+          "angle": -2.0453,
+          "tall": 8,
+          "spur": [
+            [
+              1879.12,
+              -8,
+              4923.29
+            ],
+            [
+              1870.08,
+              -8,
+              4905.69
+            ]
+          ],
+          "spur_width": 3.5,
+          "spur_height": 4,
+          "attach_radius": 8.64,
+          "block": [
+            1867,
+            -9,
+            4900
+          ],
+          "spawn_range": 5,
+          "cancel_range": 10,
+          "across": "17 by 16",
+          "attach_node": 697,
+          "cells": 1417,
+          "place": "The Old Seams, a nest room off a side branch",
+          "sited_by": "python tools/cave_systems.py nests --site (2026-10-23), on the widened volume"
         }
       ]
     },
@@ -304,6 +564,152 @@
           "z": 3010,
           "near": "route_02_brock_to_misty"
         }
+      ],
+      "nest_themes": [
+        {
+          "theme": "aron_burrow",
+          "name": "Aron burrow",
+          "families": [
+            {
+              "root": "aron",
+              "weight": 18,
+              "bucket": "common"
+            },
+            {
+              "root": "drilbur",
+              "weight": 10,
+              "bucket": "uncommon"
+            }
+          ],
+          "why": "iron-eating Aron and the digging Drilbur, in the midland's iron"
+        },
+        {
+          "theme": "fungus_grotto",
+          "name": "Fungus grotto",
+          "families": [
+            {
+              "root": "paras",
+              "weight": 18,
+              "bucket": "common"
+            },
+            {
+              "root": "foongus",
+              "weight": 12,
+              "bucket": "common"
+            },
+            {
+              "root": "morelull",
+              "weight": 8,
+              "bucket": "uncommon"
+            }
+          ],
+          "why": "a damp grotto grown over with the cave fungi: Paras, Foongus, Morelull"
+        },
+        {
+          "theme": "echo_roost",
+          "name": "Echo roost",
+          "families": [
+            {
+              "root": "noibat",
+              "weight": 14,
+              "bucket": "common"
+            },
+            {
+              "root": "woobat",
+              "weight": 12,
+              "bucket": "common"
+            }
+          ],
+          "why": "a room that rings: the sound-bats Noibat and Woobat"
+        }
+      ],
+      "nest_rooms": [
+        {
+          "id": "cave_nest_hollow_reach_1",
+          "theme": "aron_burrow",
+          "centre": [
+            2332,
+            31,
+            3484
+          ],
+          "radius": [
+            8.29,
+            7.22
+          ],
+          "wall_noise": 0.12,
+          "angle": -1.5197,
+          "tall": 9,
+          "spur": [
+            [
+              2330.93,
+              31,
+              3509.74
+            ],
+            [
+              2331.91,
+              31,
+              3490.56
+            ]
+          ],
+          "spur_width": 3.5,
+          "spur_height": 4,
+          "attach_radius": 6.3,
+          "block": [
+            2332,
+            30,
+            3484
+          ],
+          "spawn_range": 5,
+          "cancel_range": 10,
+          "across": "17 by 14",
+          "attach_node": 1225,
+          "cells": 1372,
+          "place": "The Hollow Reach, a nest room off a side branch",
+          "sited_by": "python tools/cave_systems.py nests --site (2026-10-23), on the widened volume"
+        },
+        {
+          "id": "cave_nest_hollow_reach_2",
+          "theme": "fungus_grotto",
+          "centre": [
+            2511,
+            24,
+            3302
+          ],
+          "radius": [
+            7.76,
+            7.02
+          ],
+          "wall_noise": 0.12,
+          "angle": -1.3392,
+          "tall": 7,
+          "spur": [
+            [
+              2505.76,
+              24,
+              3323.19
+            ],
+            [
+              2509.36,
+              24,
+              3307.94
+            ]
+          ],
+          "spur_width": 3.5,
+          "spur_height": 4,
+          "attach_radius": 7.52,
+          "block": [
+            2511,
+            23,
+            3302
+          ],
+          "spawn_range": 4,
+          "cancel_range": 9,
+          "across": "16 by 14",
+          "attach_node": 1151,
+          "cells": 1004,
+          "place": "The Hollow Reach, a nest room off a side branch",
+          "sited_by": "python tools/cave_systems.py nests --site (2026-10-23), on the widened volume"
+        }
       ]
     },
     {
@@ -342,6 +748,190 @@
           "x": 542,
           "z": 334,
           "near": "frostpeak_shrine"
+        }
+      ],
+      "nest_themes": [
+        {
+          "theme": "snorunt_hollow",
+          "name": "Snorunt hollow",
+          "families": [
+            {
+              "root": "snorunt",
+              "weight": 18,
+              "bucket": "common"
+            },
+            {
+              "root": "bergmite",
+              "weight": 14,
+              "bucket": "common"
+            }
+          ],
+          "why": "under Frostpeak the cold reaches down: Snorunt and Bergmite"
+        },
+        {
+          "theme": "swinub_wallow",
+          "name": "Swinub wallow",
+          "families": [
+            {
+              "root": "swinub",
+              "weight": 18,
+              "bucket": "common"
+            },
+            {
+              "root": "cubchoo",
+              "weight": 12,
+              "bucket": "common"
+            }
+          ],
+          "why": "the frozen mud room: Swinub and Piloswine, Cubchoo and Beartic"
+        },
+        {
+          "theme": "sneasel_den",
+          "name": "Sneasel den",
+          "families": [
+            {
+              "root": "sneasel",
+              "weight": 14,
+              "bucket": "common"
+            },
+            {
+              "root": "larvitar",
+              "weight": 5,
+              "bucket": "rare"
+            }
+          ],
+          "why": "dark and ice: a Sneasel den, and the rare Larvitar line that eats its way through the mountain"
+        }
+      ],
+      "nest_rooms": [
+        {
+          "id": "cave_nest_frostpeak_deeps_1",
+          "theme": "snorunt_hollow",
+          "centre": [
+            608,
+            24,
+            688
+          ],
+          "radius": [
+            8.04,
+            6.95
+          ],
+          "wall_noise": 0.12,
+          "angle": 2.6827,
+          "tall": 7,
+          "spur": [
+            [
+              632.33,
+              24,
+              676.51
+            ],
+            [
+              613.59,
+              24,
+              685.77
+            ]
+          ],
+          "spur_width": 3.5,
+          "spur_height": 4,
+          "attach_radius": 5.79,
+          "block": [
+            608,
+            23,
+            688
+          ],
+          "spawn_range": 4,
+          "cancel_range": 10,
+          "across": "16 by 14",
+          "attach_node": 947,
+          "cells": 1161,
+          "place": "The Frostpeak Deeps, a nest room off a side branch",
+          "sited_by": "python tools/cave_systems.py nests --site (2026-10-23), on the widened volume"
+        },
+        {
+          "id": "cave_nest_frostpeak_deeps_2",
+          "theme": "swinub_wallow",
+          "centre": [
+            604,
+            -31,
+            258
+          ],
+          "radius": [
+            8.45,
+            8.43
+          ],
+          "wall_noise": 0.12,
+          "angle": -1.6714,
+          "tall": 6,
+          "spur": [
+            [
+              605.83,
+              -31,
+              279.55
+            ],
+            [
+              604.34,
+              -31,
+              264.78
+            ]
+          ],
+          "spur_width": 3.5,
+          "spur_height": 4,
+          "attach_radius": 6.58,
+          "block": [
+            604,
+            -32,
+            258
+          ],
+          "spawn_range": 5,
+          "cancel_range": 10,
+          "across": "17 by 17",
+          "attach_node": 1731,
+          "cells": 1118,
+          "place": "The Frostpeak Deeps, a nest room off a side branch",
+          "sited_by": "python tools/cave_systems.py nests --site (2026-10-23), on the widened volume"
+        },
+        {
+          "id": "cave_nest_frostpeak_deeps_3",
+          "theme": "sneasel_den",
+          "centre": [
+            708,
+            89,
+            511
+          ],
+          "radius": [
+            7.68,
+            7.52
+          ],
+          "wall_noise": 0.12,
+          "angle": -1.89,
+          "tall": 8,
+          "spur": [
+            [
+              715.84,
+              89,
+              535.9
+            ],
+            [
+              709.32,
+              89,
+              516.18
+            ]
+          ],
+          "spur_width": 3.5,
+          "spur_height": 4,
+          "attach_radius": 6.42,
+          "block": [
+            708,
+            88,
+            511
+          ],
+          "spawn_range": 5,
+          "cancel_range": 9,
+          "across": "15 by 15",
+          "attach_node": 707,
+          "cells": 1295,
+          "place": "The Frostpeak Deeps, a nest room off a side branch",
+          "sited_by": "python tools/cave_systems.py nests --site (2026-10-23), on the widened volume"
         }
       ]
     }

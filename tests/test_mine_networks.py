@@ -151,7 +151,12 @@ def test_reapply_prepares_audits_and_runs_the_networks():
 
 # ------------------------------------------------------------------ the audit bites: mutate the generator, not the data
 
-def mutated_audit(tmp, monkeypatch, spec, patch):
+def mutated_audit(tmp, monkeypatch, spec, patch, live_guard=False):
+    # the generator's own guards (the live-carve digest, the nest rooms re-checked on the new plan) would refuse a re-planned
+    # working before the audit saw it; they are switched off so the AUDIT is what is tested. The digest guard has its own test.
+    if not live_guard:
+        monkeypatch.setattr(MN, "CHECK_LIVE", False)
+        monkeypatch.setattr(MN, "NESTS", False)
     patch(monkeypatch)
     nets = MN.all_networks(spec)
     MN.write(spec, nets, out=tmp)
@@ -244,3 +249,91 @@ def test_audit_catches_a_ladder_with_air_behind_it(tmp_path, monkeypatch):
         mp.setattr(MN, "function_lines", flip)
     probs = mutated_audit(tmp_path, monkeypatch, spec, patch)
     assert any("ladder" in p for p in probs), probs[:5]
+
+
+# ------------------------------------------------------------------ 2026-10-23: the nest rooms, added to the LIVE working
+#
+# Written in the same session as the rooms (the brief asked for both; CLAUDE.md principle 16 would have a second agent write
+# them). The live working's cells are pinned in data/mine_networks.json live_carve, read from the as-installed pack's own lines.
+
+def test_every_network_has_one_or_two_nest_rooms_that_pass_the_audit(real):
+    # without it the owner's "random room ... where we have habitat blocks spawning a nest" could quietly be zero rooms
+    for nid, st in real["stats"].items():
+        assert 1 <= len(st["nest_rooms"]) <= 2, nid
+        for r in st["nest_rooms"]:
+            assert r["subregion"] and r["species"], r
+    assert not [p for p in real["problems"] if ": nest" in p or ": live:" in p]
+
+
+def test_the_live_working_is_carved_whole_and_only_added_to(real):
+    # the working is in the live world: a re-run must carve every live cell again and only ever add air
+    for nid, st in real["stats"].items():
+        rec = SPEC["live_carve"]["networks"][nid]
+        assert st["live_cells"] == rec["cells"], nid
+        assert 0 < st["added_cells"] < 4000, (nid, st["added_cells"])       # rooms and spurs only: a few hundred to a few thousand
+
+
+def test_the_rooms_move_no_fitting_and_no_carve_of_the_working():
+    # a timber set or a ladder the rooms displaced would be half-written over the live one; the generator compares and refuses
+    for net in SPEC["networks"]:
+        L = MN.Layout(SPEC, net).build()
+        base, rooms = MN.Model(L), MN.Model(L, net["nest_rooms"])
+        assert rooms.fix == base.fix and rooms.fills == base.fills and rooms.air_boxes == base.air_boxes, net["id"]
+        assert rooms.nest_boxes and set(rooms.air) > set(base.air), net["id"]
+
+
+def test_the_rooms_records_are_in_data_as_the_rooms_imply():
+    # a moved room with a stale Habitat Block record would put the block in rock, or in the passage
+    assert MN.nest_problems(SPEC) == []
+
+
+def test_the_generator_refuses_a_base_that_moved(monkeypatch):
+    # CHECK_LIVE: a re-plan (here the ground read one block high) must fail closed, never carve a second working over the live one
+    spec = one("mn_gorge")
+    real_read = MN.read_ground
+    monkeypatch.setattr(MN, "read_ground", lambda box, sr=None: real_read(box, sr) + 1)
+    with pytest.raises(MN.MineError, match="live carve"):
+        MN.all_networks(spec)
+
+
+def test_audit_catches_rooms_written_into_the_live_section(tmp_path, monkeypatch):
+    # MUTATE THE GENERATOR: the nest rooms' carve merged into the base's pass-1 section (no section of their own); the audit's digest
+    # of the live section must no longer match the data
+    spec = one("mn_gorge")
+    orig = MN.function_lines
+
+    def patch(mp):
+        def merged(L, m):
+            return {t: [ln for ln in lines if not ln.startswith("# --- nest rooms")] for t, lines in orig(L, m).items()}
+        mp.setattr(MN, "function_lines", merged)
+    probs = mutated_audit(tmp_path, monkeypatch, spec, patch, live_guard=True)
+    assert any(": live:" in p for p in probs), probs[:5]
+
+
+def test_audit_catches_a_room_that_breaks_into_the_working(tmp_path, monkeypatch):
+    # MUTATE THE GENERATOR: its room shape made 1.8 times as wide and its own room guard silenced; the data is unchanged, so the
+    # audit (which reads only the record and the replayed pack) must find the room no longer a dead end of the declared shape
+    spec = one("mn_gorge")
+    orig = MN.room_cells
+
+    def patch(mp):
+        mp.setattr(MN, "room_cells", lambda room: orig(dict(room, radius=[room["radius"][0] * 1.8, room["radius"][1] * 1.8])))
+        mp.setattr(MN, "room_problems", lambda *a, **k: [])
+    probs = mutated_audit(tmp_path, monkeypatch, spec, patch, live_guard=True)
+    assert any(": nest " in p for p in probs), probs[:5]
+
+
+def test_the_nest_species_are_in_the_jar():
+    # a species the jar does not have compiles to a pool that spawns nothing
+    import battle_sim
+    try:
+        jar = battle_sim.find_jar()
+    except Exception as exc:          # noqa: BLE001
+        pytest.skip("no Cobblemon jar here: %s" % exc)
+    import nest_rooms as NR
+    sp = NR.load_species(jar)
+    habs = {h["id"]: h for h in json.loads((ROOT / "data" / "spawns.json").read_text(encoding="utf-8"))["habitats"]}
+    for net in SPEC["networks"]:
+        for r in net["nest_rooms"]:
+            for e in habs[r["id"] + "_pool"]["entries"]:
+                assert e["pokemon"] in sp, (r["id"], e["pokemon"])

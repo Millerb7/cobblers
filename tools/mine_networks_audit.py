@@ -30,6 +30,13 @@ What is checked (the number is the audit step):
   9  policy     every spawn-condition block placed is allowed by a data/spawn_block_policy.json entry scoped to mine_networks
  10  scale      the independent drift estimate (carved columns of height 4 or less, a third of them) is >= 2,000; networks
                 stand `network_gap` apart
+ 11  nests      (2026-10-23) 1 or 2 nest rooms a network: each one activated Habitat Block record (`mine_nest_` ids) in the floor
+                cell under the record's centre, mimicking the floor's rock; 12 to 20 across by its radii; every column of the room
+                open three high and holding only air; no carved cell within 3 of it but the room and its spur (a dead end);
+                nothing but the room in the spawner's box; reached from an adit; its pool's levels inside the band of the
+                sub-region it stands in. These blocks' own (x, z) are the only points excused from step 5
+ 12  live       (2026-10-23) the cells of the pass-1 carve sections (up to the next section marker, so the nest rooms' section is
+                not in them) are data's live_carve (count and sha256), and every one is in the replayed carved volume
 
 NOT CHECKED (CLAUDE.md "Our list is not the world"): the world. Rock under the surface is assumed to be rock; a natural
 cave, a mod structure, a placed trader or water the data does not carry is invisible to every step above except the
@@ -63,6 +70,9 @@ NUM = r"(-?\d+)"
 FILL = re.compile(r"fill %s %s %s %s %s %s (\S+)(?: replace (\S+))?$" % ((NUM,) * 6))
 SET = re.compile(r"setblock %s %s %s (\S+)$" % ((NUM,) * 3))
 SKIP_FILES = {"mine_networks.json", "mine_crew_trainers.json", "world.json", "regions.json", "cells.json"}
+NEST_PREFIX = "mine_nest_"
+NESTS = (1, 2)                 # the brief: 1 to 2 nest rooms a network
+ROOM_ACROSS = (12, 20)         # the brief: a room 12 to 20 across
 
 
 def base(b):
@@ -172,7 +182,14 @@ def authored_places():
                             if math.hypot(b[0] - a[0], b[1] - a[1]) <= 120:
                                 segs.add((a[0], a[1], b[0], b[1]))
                     stack.extend(o)
-    return sorted(pts), sorted(rects), sorted(segs)
+    # the networks' own nest-room Habitat Blocks stand in the floor of rooms this pack carves: their exact (x, z) are not an
+    # authored place here (step 11 proves each is where a room is); nothing else is excused
+    own = {(b["position"]["x"], b["position"]["z"]) for b in nest_blocks()}
+    return sorted(p for p in pts if p not in own), sorted(rects), sorted(segs)
+
+
+def nest_blocks():
+    return [b for b in jload("habitat_blocks.json")["blocks"] if str(b.get("id", "")).startswith(NEST_PREFIX)]
 
 
 def seg_dist(px, pz, ax, az, bx, bz):
@@ -198,6 +215,142 @@ def in_ring(px, pz, ring):
             inside ^= cond
         j = i
     return inside
+
+
+# ------------------------------------------------------------------ 11 and 12: the 2026-10-23 nest rooms, the live carve
+
+def band_at(x, z):
+    """(sub-region, min, max) of a point, from data/regions.json polygons and data/spawns.json bands, read here for itself."""
+    sp = {s["id"]: s for s in jload("spawns.json")["subregions"]}
+    for r in jload("regions.json")["subregions"]:
+        if r["id"] in sp and any(in_ring(np.array([float(x)]), np.array([float(z)]), poly)[0] for poly in r["polygons"]):
+            b = sp[r["id"]]["level_band"]
+            return r["id"], int(b["minimum"]), int(b["maximum"])
+    return None, None, None
+
+
+def check_nests(spec, net, state, carved, openc, seen, stats):
+    """Each recorded room: its Habitat Block in the floor under the middle, the room's shape open as declared, nothing carved within
+    3 of it but its own spur (a dead end), nothing else in the spawner's box, reached from an adit, its pool in its sub-region's band."""
+    out = []
+    rooms = net.get("nest_rooms") or []
+    if not NESTS[0] <= len(rooms) <= NESTS[1]:
+        out.append("nests: %d rooms (%d to %d wanted)" % (len(rooms), NESTS[0], NESTS[1]))
+    blocks = {b["id"]: b for b in jload("habitat_blocks.json")["blocks"]}
+    mine = [b for b in blocks.values() if str(b["id"]).startswith(NEST_PREFIX + net["id"] + "_")]
+    if len(mine) != len(rooms):
+        out.append("nests: %d Habitat Blocks for %d rooms" % (len(mine), len(rooms)))
+    habs = {h["id"]: h for h in jload("spawns.json")["habitats"]}
+    stats["nest_rooms"] = []
+    for r in rooms:
+        rid = r["id"]
+        b = blocks.get(rid + "_block")
+        if b is None:
+            out.append("nest %s: no Habitat Block record" % rid)
+            continue
+        bx, by, bz = (b["position"][k] for k in "xyz")
+        cx, yf, cz = r["centre"]
+        a, bb = r["radius"]
+        dx, dz = r["d"]
+        px, pz = -dz, dx
+        ex, ez = r["end"]
+        tall, sh, ls = int(r["tall"]), int(r["spur_height"]), int(r["spur_len"])
+        msgs = []
+        if (bx, by, bz) != (cx, yf - 1, cz):
+            msgs.append("the block %s is not the floor cell under the room's middle" % ((bx, by, bz),))
+        if b.get("style") != "activated" or b.get("mimic") != ("minecraft:deepslate" if by < 0 else "minecraft:stone"):
+            msgs.append("not an activated block mimicking the floor's rock")
+        if (bx, by, bz) in carved or (bx, by + 1, bz) not in openc or (bx, by + 2, bz) not in openc:
+            msgs.append("the block is not a rock cell under two open cells")
+        if base(state.get((bx, by, bz), "rock")) != "rock":
+            msgs.append("the pack writes %s at the block" % state[(bx, by, bz)])
+        if 2 * min(a, bb) < ROOM_ACROSS[0] or 2 * max(a, bb) > ROOM_ACROSS[1]:
+            msgs.append("%s by %s across, not %d to %d" % (2 * a, 2 * bb, ROOM_ACROSS[0], ROOM_ACROSS[1]))
+
+        def uv(x, z):
+            return (x - cx) * dx + (z - cz) * dz, (x - cx) * px + (z - cz) * pz
+
+        def rho(x, z):
+            u, v = uv(x, z)
+            return math.sqrt((u / a) ** 2 + (v / bb) ** 2)
+
+        def in_spur(x, z):
+            s = (x - ex) * dx + (z - ez) * dz
+            l = (x - ex) * px + (z - ez) * pz
+            return 1 <= s <= ls + 2 and -1 <= l <= 1
+
+        def own(x, y, z):
+            return (yf <= y < yf + tall and rho(x, z) < 1) or (yf <= y < yf + sh and in_spur(x, z))
+        R = int(math.ceil(max(a, bb))) + 4
+        near = [(x, y, z) for x in range(cx - R, cx + R + 1) for z in range(cz - R, cz + R + 1) for y in range(yf - 4, yf + tall + 4)
+                if (x, y, z) in carved]
+        lim = 1 + 3.0 / max(a, bb)
+        foreign = [c for c in near if not own(*c) and yf - 3 <= c[1] <= yf + 5 and rho(c[0], c[2]) <= lim]
+        if foreign:
+            msgs.append("%d carved cells within 3 of the room are neither room nor spur (first %s)" % (len(foreign), foreign[0]))
+        miss = [(x, z) for x in range(cx - R, cx + R + 1) for z in range(cz - R, cz + R + 1)
+                if rho(x, z) < 1 and not all((x, yf + k, z) in openc for k in range(3))]
+        if miss:
+            msgs.append("%d columns of the room are not open three high (first %s)" % (len(miss), miss[0]))
+        fitted = [c for c in near if own(*c) and base(state.get(c, "")) != "minecraft:air"]
+        if fitted:
+            msgs.append("%d cells of the room or spur hold %s" % (len(fitted), state[fitted[0]]))
+        sr = int(b["activated"]["spawn_range"])
+        boxed = [c for c in near if abs(c[0] - bx) <= sr and abs(c[1] - by) <= sr and abs(c[2] - bz) <= sr and not own(*c)]
+        if boxed:
+            msgs.append("the spawn box (spawn_range %d) holds %d carved cells outside the room" % (sr, len(boxed)))
+        if (bx, by + 1, bz) not in seen:
+            msgs.append("the room's middle is not reached from an adit")
+        sub, lo, hi = band_at(bx, bz)
+        h = habs.get(str(b["pool"]).split(":", 1)[-1])
+        if h is None or not h.get("entries"):
+            msgs.append("pool %s missing or empty" % b["pool"])
+        else:
+            for e in h["entries"]:
+                lv = [int(q) for q in str(e["level"]).split("-")]
+                if lo is None or min(lv) < lo or max(lv) > hi:
+                    msgs.append("%s at %s is outside the band of %s (%s-%s)" % (e["pokemon"], e["level"], sub, lo, hi))
+        out += ["nest %s: %s" % (rid, q) for q in msgs]
+        stats["nest_rooms"].append({"id": rid, "block": [bx, by, bz], "subregion": sub, "band": [lo, hi],
+                                    "species": ["%s %s" % (e["pokemon"], e["level"]) for e in (h or {}).get("entries", [])]})
+    return out
+
+
+def check_live(spec, net, tiles, carved, stats):
+    """The live 2026-10-22 carve: the cells of every pass-1 carve section (up to the next section marker, so the nest rooms' section
+    is not in it) must be the data's live_carve, and every one of them must be in the replayed carved volume."""
+    rec = ((spec.get("live_carve") or {}).get("networks") or {}).get(net["id"])
+    if not rec:
+        return ["live: data/mine_networks.json live_carve has no record for this network"]
+    cells = set()
+    for t, (_ops, lines) in tiles.items():
+        on = False
+        for raw in lines:
+            s = raw.strip()
+            if s.startswith("# ---"):
+                on = s.startswith("# --- pass 1: carve")
+                continue
+            if not on:
+                continue
+            m = FILL.match(s)
+            if m and base(m.group(7)) == "minecraft:air" and m.group(8) is None:
+                v = [int(q) for q in m.groups()[:6]]
+                cells.update(cells_of((min(v[0], v[3]), min(v[1], v[4]), min(v[2], v[5]), max(v[0], v[3]), max(v[1], v[4]), max(v[2], v[5]))))
+            m = SET.match(s)
+            if m and base(m.group(4)) == "minecraft:air":
+                cells.add(tuple(int(q) for q in m.groups()[:3]))
+    import hashlib
+    a = np.array(sorted(cells), np.int64).reshape(-1, 3)
+    dg = hashlib.sha256(np.ascontiguousarray(a).astype("<i4").tobytes()).hexdigest()
+    stats["live_cells"] = len(a)
+    stats["added_cells"] = len(carved - cells)
+    out = []
+    if len(a) != rec["cells"] or dg != rec["sha256"]:
+        out.append("live: the pass-1 carve writes %d cells (sha256 %s...), not the live carve's %d (%s...)" % (len(a), dg[:12], rec["cells"], rec["sha256"][:12]))
+    lost = cells - carved
+    if lost:
+        out.append("live: %d live cells are not in the replayed carved volume" % len(lost))
+    return out
 
 
 # ------------------------------------------------------------------ the audit
@@ -437,6 +590,9 @@ def audit_network(spec, net, tiles, state, carved, g):
         elif bb == "minecraft:lantern":
             if (c[0], c[1] + 1, c[2]) in openc:
                 out.append("walk: lantern at %s hangs from open air" % (c,))
+    # -- 11 nest rooms and 12 the live carve
+    out += check_nests(spec, net, state, carved, openc, seen, stats)
+    out += check_live(spec, net, tiles, carved, stats)
     # -- fittings
     mat = spec["materials"]
     allowed = {"minecraft:air", "minecraft:stone", "minecraft:deepslate", base(mat["bed"]), base(mat["stair"]), base(mat["post"]),

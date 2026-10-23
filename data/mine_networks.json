@@ -1,6 +1,6 @@
 {
  "schema": "cobblers.mine-networks/1",
- "status": "authored 2026-10-22 (offline: plan, generator, audit, pictures; NOTHING applied to any world, not seen in game)",
+ "status": "authored 2026-10-22 and carved into the LIVE world that day (R9MN, docs/STATE.md; pinned in live_carve); the 2026-10-23 nest rooms (nests, networks[].nest_rooms) are generated and audited offline only, NOT applied, not seen in game",
  "builder": "tools/mine_networks.py",
  "audit": "tools/mine_networks_audit.py",
  "owner_brief": "the owner, 2026-10-21: \"with no caves people wont be incentivized to mine at all, it would be really nice to have some really really large and long mines every so often in the world\" / \"i need some to be thousands long or just somehow carve out caves underground, really need that\" / \"a few hunderd block caves wont be enoughfor 10 people\" / \"its looking more like 6 now\"",
@@ -34,6 +34,26 @@
   "stope_len": [14, 20],
   "stope_width": [13, 19],
   "pillar_pitch": 6
+ },
+ "nests": {
+  "count": [1, 2],
+  "across": [12, 20],
+  "tall": [5, 7],
+  "spur_len": [6, 12],
+  "room_clear": 3,
+  "spur_clear": 2,
+  "spacing": 120,
+  "owner_words": "\"I would also like some random room to be added where we have habitat blocks spawning a nest or something.\" (2026-10-22)",
+  "why": "1 or 2 rooms a network, ADDED to the live 2026-10-22 working (live_carve): from the dead end of a side drift or crosscut a straight drift 3 wide and side_height tall runs spur_len on, then opens into an elliptical cavity the miners broke into, 12 to 20 across, a domed roof `tall` high, with no timber, rail or lantern; the room keeps room_clear from every other carved cell and the spur spur_clear past its first two cells, so it is reached only by its spur; no fitting of the working moves (the generator compares them and fails closed). One activated Habitat Block in the floor under the middle (tools/nest_rooms.py). Sited once by `python tools/mine_networks.py nests --site` into networks[].nest_rooms"
+ },
+ "live_carve": {
+  "what": "the cells R9MN carved into the live world on 2026-10-22, per network: the count and sha256 of the int32 (x, y, z) triples, sorted by x, then y, then z, of every air write in the pass-1 carve section of the as-installed pack (built from a7ccab43, the code and data of that install). Pillar columns are counted: the pack carves them, then the fittings stand the pillars in them",
+  "rule": "the generator's base must reproduce these or it fails closed; nest-room carves are written in their own section after the base's, and tools/mine_networks_audit.py digests the base section against these figures and checks the replayed volume holds every one",
+  "networks": {
+   "mn_craters": {"cells": 62692, "sha256": "11f9665986cf2b69408427b3ef5519fbdc472387192ccac729f245aad140e0cb"},
+   "mn_gorge": {"cells": 62226, "sha256": "0814f5fd409155666406f067239e3faa29e97db3a82f8a17a230b229893fe0d4"},
+   "mn_ridgeback": {"cells": 61630, "sha256": "628031096ed18fc257a4138d2eb90d5bcefe9aed54ff49f3500e28f7f6b29063"}
+  }
  },
  "growth": {
   "min_run": 8,
@@ -94,7 +114,9 @@
    "budgets": [900, 750, 600, 480, 400, 300, 260, 180],
    "inclines": [2, 2, 1, 1, 1, 1, 1, 0],
    "shafts": [1, 1, 1, 1, 1, 1, 1, 0],
-   "stopes": [1, 1, 1, 1, 1, 1, 1, 1]
+   "stopes": [1, 1, 1, 1, 1, 1, 1, 1],
+   "nest_themes": [{"theme": "coal_eaters", "name": "Coal-eaters' nest", "families": [{"root": "rolycoly", "weight": 16, "bucket": "common"}, {"root": "drilbur", "weight": 12, "bucket": "common"}], "why": "the Old Craters Drift was a coal and iron working: Coalossal grew fat on what the miners left, and Excadrill dug in after them"}, {"theme": "iron_den", "name": "Iron den", "families": [{"root": "aron", "weight": 16, "bucket": "common"}], "why": "the iron-eaters: Lairon and Aggron in the iron the drift was driven for"}],
+   "nest_rooms": [{"id": "mine_nest_mn_craters_1", "theme": "coal_eaters", "level": 2, "run": 13, "end": [6460, 5547], "d": [1, 0], "spur_len": 12, "spur_height": 3, "spur_width": 3, "centre": [6480, 86, 5547], "radius": [6.55, 6.5], "wall_noise": 0.0, "tall": 5, "spur": [[6461, 86, 5547], [6474, 86, 5547]], "block": [6480, 85, 5547], "spawn_range": 4, "cancel_range": 8, "across": "13 by 13", "dist": 346, "place": "The Old Craters Drift, a nest room off a dead-end drift on level 2", "sited_by": "python tools/mine_networks.py nests --site (2026-10-23)"}, {"id": "mine_nest_mn_craters_2", "theme": "iron_den", "level": 1, "run": 2, "end": [6559, 5429], "d": [0, -1], "spur_len": 11, "spur_height": 3, "spur_width": 3, "centre": [6559, 102, 5410], "radius": [6.45, 6.45], "wall_noise": 0.0, "tall": 6, "spur": [[6559, 102, 5428], [6559, 102, 5416]], "block": [6559, 101, 5410], "spawn_range": 4, "cancel_range": 8, "across": "13 by 13", "dist": 102, "place": "The Old Craters Drift, a nest room off a dead-end drift on level 1", "sited_by": "python tools/mine_networks.py nests --site (2026-10-23)"}]
   },
   {
    "id": "mn_gorge",
@@ -106,7 +128,9 @@
    "budgets": [1100, 800, 600, 500, 420, 330, 250],
    "inclines": [2, 2, 1, 1, 1, 1, 0],
    "shafts": [1, 1, 1, 1, 1, 1, 0],
-   "stopes": [1, 1, 1, 1, 1, 1, 1]
+   "stopes": [1, 1, 1, 1, 1, 1, 1],
+   "nest_themes": [{"theme": "crustle_nest", "name": "Crustle nest", "families": [{"root": "dwebble", "weight": 16, "bucket": "common"}, {"root": "klawf", "weight": 8, "bucket": "uncommon"}], "why": "rock-shelled Crustle and Klawf in a broken-through cavity of the Hollow Seam"}, {"theme": "salt_seam", "name": "Salt seam", "families": [{"root": "nacli", "weight": 16, "bucket": "common"}], "why": "a seam of rock salt: Naclstack and Garganacl"}],
+   "nest_rooms": [{"id": "mine_nest_mn_gorge_1", "theme": "crustle_nest", "level": 4, "run": 20, "end": [7178, 3358], "d": [0, -1], "spur_len": 10, "spur_height": 3, "spur_width": 3, "centre": [7178, 23, 3337], "radius": [9.55, 7.75], "wall_noise": 0.0, "tall": 7, "spur": [[7178, 23, 3357], [7178, 23, 3346]], "block": [7178, 22, 3337], "spawn_range": 5, "cancel_range": 11, "across": "19 by 16", "dist": 897, "place": "The Hollow Seam, a nest room off a dead-end drift on level 4", "sited_by": "python tools/mine_networks.py nests --site (2026-10-23)"}, {"id": "mine_nest_mn_gorge_2", "theme": "salt_seam", "level": 2, "run": 10, "end": [6956, 3490], "d": [-1, 0], "spur_len": 8, "spur_height": 3, "spur_width": 3, "centre": [6937, 55, 3490], "radius": [9.4, 8.0], "wall_noise": 0.0, "tall": 5, "spur": [[6955, 55, 3490], [6946, 55, 3490]], "block": [6937, 54, 3490], "spawn_range": 5, "cancel_range": 11, "across": "19 by 16", "dist": 408, "place": "The Hollow Seam, a nest room off a dead-end drift on level 2", "sited_by": "python tools/mine_networks.py nests --site (2026-10-23)"}]
   },
   {
    "id": "mn_ridgeback",
@@ -118,7 +142,9 @@
    "budgets": [1000, 800, 620, 520, 420, 330, 250],
    "inclines": [2, 2, 1, 1, 1, 1, 0],
    "shafts": [1, 1, 1, 1, 1, 1, 0],
-   "stopes": [1, 1, 1, 1, 1, 1, 1]
+   "stopes": [1, 1, 1, 1, 1, 1, 1],
+   "nest_themes": [{"theme": "timburr_gang", "name": "Timburr gang", "families": [{"root": "timburr", "weight": 16, "bucket": "common"}], "why": "the beam-carriers: a gang of Gurdurr took over a room the miners broke into"}, {"theme": "copper_nest", "name": "Copper nest", "families": [{"root": "cufant", "weight": 16, "bucket": "common"}], "why": "Cufant and Copperajah, drawn to the Ridgeback's copper"}],
+   "nest_rooms": [{"id": "mine_nest_mn_ridgeback_1", "theme": "timburr_gang", "level": 4, "run": 22, "end": [4885, 1193], "d": [0, -1], "spur_len": 9, "spur_height": 3, "spur_width": 3, "centre": [4885, 22, 1176], "radius": [6.85, 6.6], "wall_noise": 0.0, "tall": 5, "spur": [[4885, 22, 1192], [4885, 22, 1182]], "block": [4885, 21, 1176], "spawn_range": 4, "cancel_range": 8, "across": "14 by 13", "dist": 767, "place": "The Ridgeback Workings, a nest room off a dead-end drift on level 4", "sited_by": "python tools/mine_networks.py nests --site (2026-10-23)"}, {"id": "mine_nest_mn_ridgeback_2", "theme": "copper_nest", "level": 2, "run": 13, "end": [5033, 1438], "d": [1, 0], "spur_len": 7, "spur_height": 3, "spur_width": 3, "centre": [5047, 54, 1438], "radius": [6.0, 6.0], "wall_noise": 0.0, "tall": 7, "spur": [[5034, 54, 1438], [5042, 54, 1438]], "block": [5047, 53, 1438], "spawn_range": 4, "cancel_range": 7, "across": "12 by 12", "dist": 384, "place": "The Ridgeback Workings, a nest room off a dead-end drift on level 2", "sited_by": "python tools/mine_networks.py nests --site (2026-10-23)"}]
   }
  ]
 }

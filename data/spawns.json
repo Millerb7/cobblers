@@ -48225,6 +48225,487 @@
       "conditions": {},
       "eligibility_reason": "fishing: evolves from Wailmer at level 40: spawns 48-50, inside the tier 7 band 46-50",
       "spawnable_position": "fishing"
+    },
+    {
+      "id": "habitat.cave_nest_old_seams_1_pool.zubat",
+      "species": "zubat",
+      "bucket": "common",
+      "level": "8-13",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "cave_nest_old_seams_1_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 22 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_old_seams_1_pool.woobat",
+      "species": "woobat",
+      "bucket": "uncommon",
+      "level": "8-13",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "cave_nest_old_seams_1_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_old_seams_2_pool.geodude",
+      "species": "geodude",
+      "bucket": "common",
+      "level": "8-13",
+      "weight": 20.0,
+      "ambient": true,
+      "scope": "cave_nest_old_seams_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 25 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_old_seams_2_pool.roggenrola",
+      "species": "roggenrola",
+      "bucket": "common",
+      "level": "8-13",
+      "weight": 14.0,
+      "ambient": true,
+      "scope": "cave_nest_old_seams_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 25 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_old_seams_2_pool.rolycoly",
+      "species": "rolycoly",
+      "bucket": "uncommon",
+      "level": "8-13",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "cave_nest_old_seams_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 18 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_old_seams_3_pool.nosepass",
+      "species": "nosepass",
+      "bucket": "uncommon",
+      "level": "8-13",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "cave_nest_old_seams_3_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_old_seams_3_pool.sableye",
+      "species": "sableye",
+      "bucket": "rare",
+      "level": "8-13",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "cave_nest_old_seams_3_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_old_seams_3_pool.carbink",
+      "species": "carbink",
+      "bucket": "rare",
+      "level": "8-13",
+      "weight": 4.0,
+      "ambient": true,
+      "scope": "cave_nest_old_seams_3_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_hollow_reach_1_pool.aron",
+      "species": "aron",
+      "bucket": "common",
+      "level": "9-14",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "cave_nest_hollow_reach_1_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 32 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_hollow_reach_1_pool.drilbur",
+      "species": "drilbur",
+      "bucket": "uncommon",
+      "level": "9-14",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "cave_nest_hollow_reach_1_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 31 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_hollow_reach_2_pool.paras",
+      "species": "paras",
+      "bucket": "common",
+      "level": "9-14",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "cave_nest_hollow_reach_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 24 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_hollow_reach_2_pool.foongus",
+      "species": "foongus",
+      "bucket": "common",
+      "level": "9-14",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "cave_nest_hollow_reach_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 39 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_hollow_reach_2_pool.morelull",
+      "species": "morelull",
+      "bucket": "uncommon",
+      "level": "9-14",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "cave_nest_hollow_reach_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 24 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_frostpeak_deeps_1_pool.snorunt",
+      "species": "snorunt",
+      "bucket": "common",
+      "level": "28-38",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "cave_nest_frostpeak_deeps_1_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 42 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_frostpeak_deeps_1_pool.bergmite",
+      "species": "bergmite",
+      "bucket": "common",
+      "level": "28-38",
+      "weight": 9.33,
+      "ambient": true,
+      "scope": "cave_nest_frostpeak_deeps_1_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 37 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_frostpeak_deeps_1_pool.avalugg",
+      "species": "avalugg",
+      "bucket": "common",
+      "level": "37-38",
+      "weight": 4.67,
+      "ambient": true,
+      "scope": "cave_nest_frostpeak_deeps_1_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from bergmite at 37; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_frostpeak_deeps_2_pool.swinub",
+      "species": "swinub",
+      "bucket": "common",
+      "level": "28-37",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "cave_nest_frostpeak_deeps_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 33 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_frostpeak_deeps_2_pool.piloswine",
+      "species": "piloswine",
+      "bucket": "common",
+      "level": "33-38",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "cave_nest_frostpeak_deeps_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from swinub at 33; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_frostpeak_deeps_2_pool.cubchoo",
+      "species": "cubchoo",
+      "bucket": "common",
+      "level": "28-38",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "cave_nest_frostpeak_deeps_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 37 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_frostpeak_deeps_2_pool.beartic",
+      "species": "beartic",
+      "bucket": "common",
+      "level": "37-38",
+      "weight": 4.0,
+      "ambient": true,
+      "scope": "cave_nest_frostpeak_deeps_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from cubchoo at 37; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_frostpeak_deeps_3_pool.sneasel",
+      "species": "sneasel",
+      "bucket": "common",
+      "level": "28-38",
+      "weight": 14.0,
+      "ambient": true,
+      "scope": "cave_nest_frostpeak_deeps_3_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_frostpeak_deeps_3_pool.larvitar",
+      "species": "larvitar",
+      "bucket": "rare",
+      "level": "28-34",
+      "weight": 3.33,
+      "ambient": true,
+      "scope": "cave_nest_frostpeak_deeps_3_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 30 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.cave_nest_frostpeak_deeps_3_pool.pupitar",
+      "species": "pupitar",
+      "bucket": "rare",
+      "level": "30-38",
+      "weight": 1.67,
+      "ambient": true,
+      "scope": "cave_nest_frostpeak_deeps_3_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from larvitar at 30; evolves at 55 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.mine_nest_mn_craters_1_pool.carkol",
+      "species": "carkol",
+      "bucket": "common",
+      "level": "38",
+      "weight": 5.33,
+      "ambient": true,
+      "scope": "mine_nest_mn_craters_1_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from rolycoly at 18; evolves at 34 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.mine_nest_mn_craters_1_pool.coalossal",
+      "species": "coalossal",
+      "bucket": "common",
+      "level": "38-48",
+      "weight": 10.67,
+      "ambient": true,
+      "scope": "mine_nest_mn_craters_1_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from carkol at 34; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.mine_nest_mn_craters_1_pool.excadrill",
+      "species": "excadrill",
+      "bucket": "common",
+      "level": "38-48",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "mine_nest_mn_craters_1_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from drilbur at 31; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.mine_nest_mn_craters_2_pool.lairon",
+      "species": "lairon",
+      "bucket": "common",
+      "level": "38-46",
+      "weight": 5.33,
+      "ambient": true,
+      "scope": "mine_nest_mn_craters_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from aron at 32; evolves at 42 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.mine_nest_mn_craters_2_pool.aggron",
+      "species": "aggron",
+      "bucket": "common",
+      "level": "42-48",
+      "weight": 10.67,
+      "ambient": true,
+      "scope": "mine_nest_mn_craters_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from lairon at 42; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.mine_nest_mn_gorge_1_pool.dwebble",
+      "species": "dwebble",
+      "bucket": "common",
+      "level": "38",
+      "weight": 5.33,
+      "ambient": true,
+      "scope": "mine_nest_mn_gorge_1_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 34 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.mine_nest_mn_gorge_1_pool.crustle",
+      "species": "crustle",
+      "bucket": "common",
+      "level": "38-48",
+      "weight": 10.67,
+      "ambient": true,
+      "scope": "mine_nest_mn_gorge_1_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from dwebble at 34; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.mine_nest_mn_gorge_1_pool.klawf",
+      "species": "klawf",
+      "bucket": "uncommon",
+      "level": "38-48",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "mine_nest_mn_gorge_1_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.mine_nest_mn_gorge_2_pool.naclstack",
+      "species": "naclstack",
+      "bucket": "common",
+      "level": "38-42",
+      "weight": 5.33,
+      "ambient": true,
+      "scope": "mine_nest_mn_gorge_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from nacli at 24; evolves at 38 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.mine_nest_mn_gorge_2_pool.garganacl",
+      "species": "garganacl",
+      "bucket": "common",
+      "level": "38-48",
+      "weight": 10.67,
+      "ambient": true,
+      "scope": "mine_nest_mn_gorge_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from naclstack at 38; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.mine_nest_mn_ridgeback_1_pool.timburr",
+      "species": "timburr",
+      "bucket": "common",
+      "level": "27-29",
+      "weight": 12.8,
+      "ambient": true,
+      "scope": "mine_nest_mn_ridgeback_1_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 25 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.mine_nest_mn_ridgeback_1_pool.gurdurr",
+      "species": "gurdurr",
+      "bucket": "common",
+      "level": "27-33",
+      "weight": 3.2,
+      "ambient": true,
+      "scope": "mine_nest_mn_ridgeback_1_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from timburr at 25; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.mine_nest_mn_ridgeback_2_pool.cufant",
+      "species": "cufant",
+      "bucket": "common",
+      "level": "28-38",
+      "weight": 10.67,
+      "ambient": true,
+      "scope": "mine_nest_mn_ridgeback_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "the family's first stage; evolves at 34 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.mine_nest_mn_ridgeback_2_pool.copperajah",
+      "species": "copperajah",
+      "bucket": "common",
+      "level": "34-38",
+      "weight": 5.33,
+      "ambient": true,
+      "scope": "mine_nest_mn_ridgeback_2_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from cufant at 34; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
     }
   ],
   "placement_sites_note": "A placed structure's grounds with a roster of its own (mechanism placement_coordinate_boxes, an entry's scope a site id). tools/compile_spawns.py lays a site's entries over its placement's footprint (data/placements.json position and size) widened by margin, less the path and the spawn-free zones, inside the sub-region holding it, and appends them to that sub-region's file on top of its roster. Grounded entries are forced canSeeSky like every land entry, so a site spawns on the open grounds round the structure and its sky-open surfaces (a tower's summit), never inside under a roof. Hand-authored; tools/build_encounters.py copies it through.",
@@ -88270,6 +88751,674 @@
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "cave_nest_old_seams_1_pool",
+      "display_name": "Zubat roost",
+      "intended_location": "The Old Seams, a nest room off a side branch at x2163 z5223 (data/cave_systems.json): one activated Habitat Block, cave_nest_old_seams_1_block in data/habitat_blocks.json, in the floor of a nest room 15 by 14 across off a side branch",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 8,
+        "maximum": 13
+      },
+      "level_band_why": "the band of river_of_shrews_vale (8-13, tier 1), the sub-region the room is in (data/regions.json polygons, data/spawns.json subregions), staged by data/spawns.json evolution_policy",
+      "why": "the first cave a new group finds: the bats every early cave has, roosting in a dead-end room",
+      "entries": [
+        {
+          "species": "Zubat",
+          "pokemon": "zubat",
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 22 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "8-13",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Woobat",
+          "pokemon": "woobat",
+          "family": "woobat",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "8-13",
+          "bucket": "uncommon",
+          "weight": 10.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json cave_nest_old_seams_1_block, status planned (tools/cave_systems.py)"
+    },
+    {
+      "id": "cave_nest_old_seams_2_pool",
+      "display_name": "Rubble nest",
+      "intended_location": "The Old Seams, a nest room off a side branch at x2071 z5072 (data/cave_systems.json): one activated Habitat Block, cave_nest_old_seams_2_block in data/habitat_blocks.json, in the floor of a nest room 14 by 14 across off a side branch",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 8,
+        "maximum": 13
+      },
+      "level_band_why": "the band of river_of_shrews_vale (8-13, tier 1), the sub-region the room is in (data/regions.json polygons, data/spawns.json subregions), staged by data/spawns.json evolution_policy",
+      "why": "the rock Pokemon of the Old Seams' ore: Geodude, Roggenrola and the coal-eating Rolycoly",
+      "entries": [
+        {
+          "species": "Geodude",
+          "pokemon": "geodude",
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 25 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "8-13",
+          "bucket": "common",
+          "weight": 20.0,
+          "conditions": {}
+        },
+        {
+          "species": "Roggenrola",
+          "pokemon": "roggenrola",
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 25 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "8-13",
+          "bucket": "common",
+          "weight": 14.0,
+          "conditions": {}
+        },
+        {
+          "species": "Rolycoly",
+          "pokemon": "rolycoly",
+          "family": "rolycoly",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 18 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "8-13",
+          "bucket": "uncommon",
+          "weight": 8.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json cave_nest_old_seams_2_block, status planned (tools/cave_systems.py)"
+    },
+    {
+      "id": "cave_nest_old_seams_3_pool",
+      "display_name": "Gem-eaters' den",
+      "intended_location": "The Old Seams, a nest room off a side branch at x1867 z4900 (data/cave_systems.json): one activated Habitat Block, cave_nest_old_seams_3_block in data/habitat_blocks.json, in the floor of a nest room 17 by 16 across off a side branch",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 8,
+        "maximum": 13
+      },
+      "level_band_why": "the band of river_of_shrews_vale (8-13, tier 1), the sub-region the room is in (data/regions.json polygons, data/spawns.json subregions), staged by data/spawns.json evolution_policy",
+      "why": "a dark room where the gem-eaters gather: Sableye (dark) with Nosepass and Carbink, a find rather than a roster",
+      "entries": [
+        {
+          "species": "Nosepass",
+          "pokemon": "nosepass",
+          "family": "nosepass",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "8-13",
+          "bucket": "uncommon",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Sableye",
+          "pokemon": "sableye",
+          "family": "sableye",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "8-13",
+          "bucket": "rare",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Carbink",
+          "pokemon": "carbink",
+          "family": "carbink",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "8-13",
+          "bucket": "rare",
+          "weight": 4.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json cave_nest_old_seams_3_block, status planned (tools/cave_systems.py)"
+    },
+    {
+      "id": "cave_nest_hollow_reach_1_pool",
+      "display_name": "Aron burrow",
+      "intended_location": "The Hollow Reach, a nest room off a side branch at x2332 z3484 (data/cave_systems.json): one activated Habitat Block, cave_nest_hollow_reach_1_block in data/habitat_blocks.json, in the floor of a nest room 17 by 14 across off a side branch",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 9,
+        "maximum": 14
+      },
+      "level_band_why": "the band of viltri_plateau (9-14, tier 1), the sub-region the room is in (data/regions.json polygons, data/spawns.json subregions), staged by data/spawns.json evolution_policy",
+      "why": "iron-eating Aron and the digging Drilbur, in the midland's iron",
+      "entries": [
+        {
+          "species": "Aron",
+          "pokemon": "aron",
+          "family": "aron",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 32 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "9-14",
+          "bucket": "common",
+          "weight": 18.0,
+          "conditions": {}
+        },
+        {
+          "species": "Drilbur",
+          "pokemon": "drilbur",
+          "family": "drilbur",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 31 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "9-14",
+          "bucket": "uncommon",
+          "weight": 10.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json cave_nest_hollow_reach_1_block, status planned (tools/cave_systems.py)"
+    },
+    {
+      "id": "cave_nest_hollow_reach_2_pool",
+      "display_name": "Fungus grotto",
+      "intended_location": "The Hollow Reach, a nest room off a side branch at x2511 z3302 (data/cave_systems.json): one activated Habitat Block, cave_nest_hollow_reach_2_block in data/habitat_blocks.json, in the floor of a nest room 16 by 14 across off a side branch",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 9,
+        "maximum": 14
+      },
+      "level_band_why": "the band of viltri_plateau (9-14, tier 1), the sub-region the room is in (data/regions.json polygons, data/spawns.json subregions), staged by data/spawns.json evolution_policy",
+      "why": "a damp grotto grown over with the cave fungi: Paras, Foongus, Morelull",
+      "entries": [
+        {
+          "species": "Paras",
+          "pokemon": "paras",
+          "family": "paras",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 24 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "9-14",
+          "bucket": "common",
+          "weight": 18.0,
+          "conditions": {}
+        },
+        {
+          "species": "Foongus",
+          "pokemon": "foongus",
+          "family": "foongus",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 39 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "9-14",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Morelull",
+          "pokemon": "morelull",
+          "family": "morelull",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 24 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "9-14",
+          "bucket": "uncommon",
+          "weight": 8.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json cave_nest_hollow_reach_2_block, status planned (tools/cave_systems.py)"
+    },
+    {
+      "id": "cave_nest_frostpeak_deeps_1_pool",
+      "display_name": "Snorunt hollow",
+      "intended_location": "The Frostpeak Deeps, a nest room off a side branch at x608 z688 (data/cave_systems.json): one activated Habitat Block, cave_nest_frostpeak_deeps_1_block in data/habitat_blocks.json, in the floor of a nest room 16 by 14 across off a side branch",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 28,
+        "maximum": 38
+      },
+      "level_band_why": "the band of frostpeak (28-38, tier 5), the sub-region the room is in (data/regions.json polygons, data/spawns.json subregions), staged by data/spawns.json evolution_policy",
+      "why": "under Frostpeak the cold reaches down: Snorunt and Bergmite",
+      "entries": [
+        {
+          "species": "Snorunt",
+          "pokemon": "snorunt",
+          "family": "snorunt",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 42 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "28-38",
+          "bucket": "common",
+          "weight": 18.0,
+          "conditions": {}
+        },
+        {
+          "species": "Bergmite",
+          "pokemon": "bergmite",
+          "family": "bergmite",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 37 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "28-38",
+          "bucket": "common",
+          "weight": 9.33,
+          "conditions": {}
+        },
+        {
+          "species": "Avalugg",
+          "pokemon": "avalugg",
+          "family": "bergmite",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from bergmite at 37; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "37-38",
+          "bucket": "common",
+          "weight": 4.67,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json cave_nest_frostpeak_deeps_1_block, status planned (tools/cave_systems.py)"
+    },
+    {
+      "id": "cave_nest_frostpeak_deeps_2_pool",
+      "display_name": "Swinub wallow",
+      "intended_location": "The Frostpeak Deeps, a nest room off a side branch at x604 z258 (data/cave_systems.json): one activated Habitat Block, cave_nest_frostpeak_deeps_2_block in data/habitat_blocks.json, in the floor of a nest room 17 by 17 across off a side branch",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 28,
+        "maximum": 38
+      },
+      "level_band_why": "the band of frostpeak (28-38, tier 5), the sub-region the room is in (data/regions.json polygons, data/spawns.json subregions), staged by data/spawns.json evolution_policy",
+      "why": "the frozen mud room: Swinub and Piloswine, Cubchoo and Beartic",
+      "entries": [
+        {
+          "species": "Swinub",
+          "pokemon": "swinub",
+          "family": "swinub",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 33 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "28-37",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Piloswine",
+          "pokemon": "piloswine",
+          "family": "swinub",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from swinub at 33; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "33-38",
+          "bucket": "common",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Cubchoo",
+          "pokemon": "cubchoo",
+          "family": "cubchoo",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 37 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "28-38",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Beartic",
+          "pokemon": "beartic",
+          "family": "cubchoo",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from cubchoo at 37; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "37-38",
+          "bucket": "common",
+          "weight": 4.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json cave_nest_frostpeak_deeps_2_block, status planned (tools/cave_systems.py)"
+    },
+    {
+      "id": "cave_nest_frostpeak_deeps_3_pool",
+      "display_name": "Sneasel den",
+      "intended_location": "The Frostpeak Deeps, a nest room off a side branch at x708 z511 (data/cave_systems.json): one activated Habitat Block, cave_nest_frostpeak_deeps_3_block in data/habitat_blocks.json, in the floor of a nest room 15 by 15 across off a side branch",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 28,
+        "maximum": 38
+      },
+      "level_band_why": "the band of frostpeak (28-38, tier 5), the sub-region the room is in (data/regions.json polygons, data/spawns.json subregions), staged by data/spawns.json evolution_policy",
+      "why": "dark and ice: a Sneasel den, and the rare Larvitar line that eats its way through the mountain",
+      "entries": [
+        {
+          "species": "Sneasel",
+          "pokemon": "sneasel",
+          "family": "sneasel",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "28-38",
+          "bucket": "common",
+          "weight": 14.0,
+          "conditions": {}
+        },
+        {
+          "species": "Larvitar",
+          "pokemon": "larvitar",
+          "family": "larvitar",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 30 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "28-34",
+          "bucket": "rare",
+          "weight": 3.33,
+          "conditions": {}
+        },
+        {
+          "species": "Pupitar",
+          "pokemon": "pupitar",
+          "family": "larvitar",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "evolves from larvitar at 30; evolves at 55 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "30-38",
+          "bucket": "rare",
+          "weight": 1.67,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json cave_nest_frostpeak_deeps_3_block, status planned (tools/cave_systems.py)"
+    },
+    {
+      "id": "mine_nest_mn_craters_1_pool",
+      "display_name": "Coal-eaters' nest",
+      "intended_location": "The Old Craters Drift, a nest room off a dead-end drift on level 2 at x6480 z5547 (data/mine_networks.json): one activated Habitat Block, mine_nest_mn_craters_1_block in data/habitat_blocks.json, in the floor of a nest room 13 by 13 across off a side branch",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 38,
+        "maximum": 48
+      },
+      "level_band_why": "the band of east_cones (38-48, tier 7), the sub-region the room is in (data/regions.json polygons, data/spawns.json subregions), staged by data/spawns.json evolution_policy",
+      "why": "the Old Craters Drift was a coal and iron working: Coalossal grew fat on what the miners left, and Excadrill dug in after them",
+      "entries": [
+        {
+          "species": "Carkol",
+          "pokemon": "carkol",
+          "family": "rolycoly",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from rolycoly at 18; evolves at 34 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "38",
+          "bucket": "common",
+          "weight": 5.33,
+          "conditions": {}
+        },
+        {
+          "species": "Coalossal",
+          "pokemon": "coalossal",
+          "family": "rolycoly",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from carkol at 34; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "38-48",
+          "bucket": "common",
+          "weight": 10.67,
+          "conditions": {}
+        },
+        {
+          "species": "Excadrill",
+          "pokemon": "excadrill",
+          "family": "drilbur",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from drilbur at 31; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "38-48",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json mine_nest_mn_craters_1_block, status planned (tools/mine_networks.py)"
+    },
+    {
+      "id": "mine_nest_mn_craters_2_pool",
+      "display_name": "Iron den",
+      "intended_location": "The Old Craters Drift, a nest room off a dead-end drift on level 1 at x6559 z5410 (data/mine_networks.json): one activated Habitat Block, mine_nest_mn_craters_2_block in data/habitat_blocks.json, in the floor of a nest room 13 by 13 across off a side branch",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 38,
+        "maximum": 48
+      },
+      "level_band_why": "the band of east_cones (38-48, tier 7), the sub-region the room is in (data/regions.json polygons, data/spawns.json subregions), staged by data/spawns.json evolution_policy",
+      "why": "the iron-eaters: Lairon and Aggron in the iron the drift was driven for",
+      "entries": [
+        {
+          "species": "Lairon",
+          "pokemon": "lairon",
+          "family": "aron",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from aron at 32; evolves at 42 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "38-46",
+          "bucket": "common",
+          "weight": 5.33,
+          "conditions": {}
+        },
+        {
+          "species": "Aggron",
+          "pokemon": "aggron",
+          "family": "aron",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from lairon at 42; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "42-48",
+          "bucket": "common",
+          "weight": 10.67,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json mine_nest_mn_craters_2_block, status planned (tools/mine_networks.py)"
+    },
+    {
+      "id": "mine_nest_mn_gorge_1_pool",
+      "display_name": "Crustle nest",
+      "intended_location": "The Hollow Seam, a nest room off a dead-end drift on level 4 at x7178 z3337 (data/mine_networks.json): one activated Habitat Block, mine_nest_mn_gorge_1_block in data/habitat_blocks.json, in the floor of a nest room 19 by 16 across off a side branch",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 38,
+        "maximum": 48
+      },
+      "level_band_why": "the band of eastern_moor (38-48, tier 7), the sub-region the room is in (data/regions.json polygons, data/spawns.json subregions), staged by data/spawns.json evolution_policy",
+      "why": "rock-shelled Crustle and Klawf in a broken-through cavity of the Hollow Seam",
+      "entries": [
+        {
+          "species": "Dwebble",
+          "pokemon": "dwebble",
+          "family": "dwebble",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 34 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "38",
+          "bucket": "common",
+          "weight": 5.33,
+          "conditions": {}
+        },
+        {
+          "species": "Crustle",
+          "pokemon": "crustle",
+          "family": "dwebble",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from dwebble at 34; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "38-48",
+          "bucket": "common",
+          "weight": 10.67,
+          "conditions": {}
+        },
+        {
+          "species": "Klawf",
+          "pokemon": "klawf",
+          "family": "klawf",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "38-48",
+          "bucket": "uncommon",
+          "weight": 8.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json mine_nest_mn_gorge_1_block, status planned (tools/mine_networks.py)"
+    },
+    {
+      "id": "mine_nest_mn_gorge_2_pool",
+      "display_name": "Salt seam",
+      "intended_location": "The Hollow Seam, a nest room off a dead-end drift on level 2 at x6937 z3490 (data/mine_networks.json): one activated Habitat Block, mine_nest_mn_gorge_2_block in data/habitat_blocks.json, in the floor of a nest room 19 by 16 across off a side branch",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 38,
+        "maximum": 48
+      },
+      "level_band_why": "the band of eastern_moor (38-48, tier 7), the sub-region the room is in (data/regions.json polygons, data/spawns.json subregions), staged by data/spawns.json evolution_policy",
+      "why": "a seam of rock salt: Naclstack and Garganacl",
+      "entries": [
+        {
+          "species": "Naclstack",
+          "pokemon": "naclstack",
+          "family": "nacli",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from nacli at 24; evolves at 38 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "38-42",
+          "bucket": "common",
+          "weight": 5.33,
+          "conditions": {}
+        },
+        {
+          "species": "Garganacl",
+          "pokemon": "garganacl",
+          "family": "nacli",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from naclstack at 38; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "38-48",
+          "bucket": "common",
+          "weight": 10.67,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json mine_nest_mn_gorge_2_block, status planned (tools/mine_networks.py)"
+    },
+    {
+      "id": "mine_nest_mn_ridgeback_1_pool",
+      "display_name": "Timburr gang",
+      "intended_location": "The Ridgeback Workings, a nest room off a dead-end drift on level 4 at x4885 z1176 (data/mine_networks.json): one activated Habitat Block, mine_nest_mn_ridgeback_1_block in data/habitat_blocks.json, in the floor of a nest room 14 by 13 across off a side branch",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 27,
+        "maximum": 33
+      },
+      "level_band_why": "the band of north_east_downs (27-33, tier 4), the sub-region the room is in (data/regions.json polygons, data/spawns.json subregions), staged by data/spawns.json evolution_policy",
+      "why": "the beam-carriers: a gang of Gurdurr took over a room the miners broke into",
+      "entries": [
+        {
+          "species": "Timburr",
+          "pokemon": "timburr",
+          "family": "timburr",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 25 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "27-29",
+          "bucket": "common",
+          "weight": 12.8,
+          "conditions": {}
+        },
+        {
+          "species": "Gurdurr",
+          "pokemon": "gurdurr",
+          "family": "timburr",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from timburr at 25; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "27-33",
+          "bucket": "common",
+          "weight": 3.2,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json mine_nest_mn_ridgeback_1_block, status planned (tools/mine_networks.py)"
+    },
+    {
+      "id": "mine_nest_mn_ridgeback_2_pool",
+      "display_name": "Copper nest",
+      "intended_location": "The Ridgeback Workings, a nest room off a dead-end drift on level 2 at x5047 z1438 (data/mine_networks.json): one activated Habitat Block, mine_nest_mn_ridgeback_2_block in data/habitat_blocks.json, in the floor of a nest room 12 by 12 across off a side branch",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 28,
+        "maximum": 38
+      },
+      "level_band_why": "the band of marshy_marsh (28-38, tier 5), the sub-region the room is in (data/regions.json polygons, data/spawns.json subregions), staged by data/spawns.json evolution_policy",
+      "why": "Cufant and Copperajah, drawn to the Ridgeback's copper",
+      "entries": [
+        {
+          "species": "Cufant",
+          "pokemon": "cufant",
+          "family": "cufant",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "the family's first stage; evolves at 34 (spawns to four past it) (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "28-38",
+          "bucket": "common",
+          "weight": 10.67,
+          "conditions": {}
+        },
+        {
+          "species": "Copperajah",
+          "pokemon": "copperajah",
+          "family": "cufant",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from cufant at 34; no further level evolution (Cobblemon jar species data, data/spawns.json evolution_policy)",
+          "level": "34-38",
+          "bucket": "common",
+          "weight": 5.33,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json mine_nest_mn_ridgeback_2_block, status planned (tools/mine_networks.py)"
     }
   ],
   "route_species_selection_note": "Generated by tools/build_encounters.py from data/encounter_design.json (docs/mechanics/ENCOUNTER_DESIGN.md section 6): per route, the families in rules.corridor_roles (never a find) of every sub-region its corridor crosses (data/routes.json geography transitions), at most corridor_species_limit: every crossed table's water species kept, rules.corridor_rare_min of the crossed on-path tables' rare- and ultra-role species reserved (the owner, 2026-10-05), and the rest by chance times corridor length. tools/compile_spawns.py reads this list and does not choose. Do not edit by hand.",
