@@ -395,7 +395,7 @@ def test_every_npc_an_engine_spawn_makes_carries_the_exempt_tag_when_the_spawn_r
         # (tools/dungeon_extras.py lure_variants, commit 9f7a262a) between the band and `in`; each gated on the lure holder holding that bait's
         # index; run as the member for every pair with the holder set, exactly one Pokemon each, exempt and kept
         pairs = sorted({(m.group(1), int(m.group(2)), int(m.group(3))) for l in DA.body(FNS[site])
-                        for m in [re.search(r"if score (\S+) dg\.rs matches (\d+) if score @s dg\.band matches (\d+)(?: (?:if|unless) [^ ]+ [^ ]+ [^ ]+ [^ ]+)* in \S+ run "
+                        for m in [re.search(r"if score (\S+) dg\.rs matches (\d+) if score @s dg\.band matches (\d+)(?: (?:if|unless) score \S+ \S+ matches \S+)* in \S+ run "
                                             r"function cobblers:dungeons/extras/s\d+/at \{", l)] if m})
         assert pairs, site
         for holder, bait, band in pairs:
