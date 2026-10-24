@@ -234,7 +234,7 @@ def test_the_rate_never_falls(rooms_pack):
 def catch_at(w, doc, p, rid):
     r = TR.room_of(doc, rid)
     p.pos = [(r["ix0"] + r["ix1"]) / 2.0, float(r["floor_in"]), (r["iz0"] + r["iz1"]) / 2.0]
-    w.run_callback("pokemon_captured", query={"pokemon": {"species": {"identifier": "larvitar"}}, "player": {"uuid": p.uid}})
+    w.run_callback("pokemon_captured", query={"pokemon": {"species": {"identifier": "larvitar"}, "id": "pk-larvitar", "is_shiny": 0}, "player": {"uuid": p.uid}})
 
 
 def test_a_catch_weighs_by_the_room_it_was_made_in_and_only_in_a_live_run(rooms_pack):
@@ -250,7 +250,7 @@ def test_a_catch_weighs_by_the_room_it_was_made_in_and_only_in_a_live_run(rooms_
     w.passes(1)
     assert w.get(p.name, "dg.gp") == gp
     q = w.player("Misty", "minecraft:overworld", (0.5, 70, 0.5))
-    w.run_callback("pokemon_captured", query={"pokemon": {"species": {"identifier": "psyduck"}}, "player": {"uuid": q.uid}})
+    w.run_callback("pokemon_captured", query={"pokemon": {"species": {"identifier": "psyduck"}, "id": "pk-psyduck", "is_shiny": 0}, "player": {"uuid": q.uid}})
     assert not w.get(q.name, "dg.gp"), "a catch outside a run weighs nothing"
 
 

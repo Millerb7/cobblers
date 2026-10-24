@@ -295,6 +295,14 @@
         "docs/research/DUNGEON_DEATH.md"
       ]
     },
+    "dungeon_risk": {
+      "what": "the dungeon risk: a run's finds held in the Run Stash (shown by the Run Satchel) until a clean exit's Take it all / Sell it all, deleted by any other end; the catch ledger by Pokemon UUID with a dry-run reaper (tools/dungeon_risk.py, built 2026-10-23, not run in game)",
+      "paths": [
+        "docs/mechanics/DUNGEON_RISK.md",
+        "data/dungeon_risk.json",
+        "tools/dungeon_risk.py"
+      ]
+    },
     "caves": {
       "what": "the cave kit: since 2026-10-12 the natural caves N1-N3 only (a mouth, a winding passage, a hall; no gate, occupant or keeper). K1-K6 were retired the same day and their gates and keepers moved to the sanctuaries",
       "paths": [
@@ -1590,6 +1598,27 @@
       "tests": [
         "tests/test_system_contracts.py::test_contract_c31_the_cavern_cleanup_clears_the_chamber_score_once",
         "tests/test_groudon_revert.py::test_a_second_run_writes_nothing_and_keeps_a_chamber_opened_since"
+      ]
+    },
+    {
+      "id": "C32",
+      "title": "A pocket death drops nothing, so the Run Stash's sweep can only ever take what a run found",
+      "owner": "recovery_claims",
+      "consumers": ["dungeon_risk"],
+      "constrained_by": ["dungeons"],
+      "statement": "The blackout keeps keepInventory set at load, so a player who dies in cobblers:pocket drops no item entity. The dungeon risk (tools/dungeon_risk.py, 2026-10-23) relies on that: every tick it moves into the Run Stash every item entity within stash.absorb_radius of a live member that has no Thrower and no Owner, and a death drop has neither (vanilla drops a dead player's inventory without one). A blackout change that let a pocket death drop the inventory would put the player's own belongings into the stash, and the stash is deleted by that same death. The risk keeps its half by skipping Thrower and Owner items (a player's drop, a give's overflow, our own deliveries) and the relic, pick, sigil, satchel and lent-rod keys.",
+      "stated_in": [
+        {
+          "at": "tools/blackout_pack.py:177",
+          "quote": "\"gamerule keepInventory true\","
+        },
+        {
+          "at": "data/dungeon_risk.json:21",
+          "quote": "\"skip_item_entity_fields\": [\"Thrower\", \"Owner\"],"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c32_a_pocket_death_drops_nothing_for_the_stash_to_take"
       ]
     }
   ]

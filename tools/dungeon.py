@@ -1509,10 +1509,10 @@ def functions(doc, blackout=None):
 
     def lines_for(which):
         lines = [HEAD, "# DUNGEONS.md 2.5's chat lines, in order"]
-        lines += [say(ch[0], "green"), say(ch[1], "gray"),
-                  "execute if score @s %s matches 1.. run %s" % (O["esc"], say("Lost with the run: what it had earned.", "gray")),
-                  "execute unless score @s %s matches 1.. run %s" % (O["esc"], say("The run had earned nothing yet.", "gray")),
-                  say(ch[2], "gray")]
+        # the escrow's two lines ("Lost with the run: what it had earned." / "The run had earned nothing yet.") were
+        # removed 2026-10-23 (DUNGEON-RISK): dg.esc never holds anything, so the second always printed, and what a run
+        # loses is now the Run Satchel, whose own line follows from risk/forfeit (tools/dungeon_risk.py)
+        lines += [say(ch[0], "green"), say(ch[1], "gray"), say(ch[2], "gray")]
         for di, d in which:
             lines += lockout_lines(di, d)
         return lines
@@ -2338,9 +2338,13 @@ def build(doc, **kw):
     import dungeon_extras2 as DX2       # lazy (RT-B): the fishing pools, the egg vendors' classes and dialogues, the fossil loot tables
     files.update(DX2.pack_files(doc))
     DX2.patch_functions(doc, fns)       # the lent rod is taken back wherever the rift pick is
+    import dungeon_risk as DRK          # lazy (DUNGEON-RISK, 2026-10-23): the Run Stash, the satchel, the exit's sale, the catch ledger
+    fns.update(DRK.functions(doc))
+    DRK.patch_functions(doc, fns)       # the satchel with the pick, risk/begin at the threshold, risk/won in pay, risk/forfeit at every end
     files["data/minecraft/tags/function/load.json"] = json.dumps(
-        {"values": [F("load")] + DF.load_entries() + DL.load_entries(doc) + DRel.load_entries(doc)}, indent=2) + "\n"
-    files["data/minecraft/tags/function/tick.json"] = json.dumps({"values": DF.tick_entries()}, indent=2) + "\n"
+        {"values": [F("load")] + DF.load_entries() + DL.load_entries(doc) + DRel.load_entries(doc) + DRK.load_entries()},
+        indent=2) + "\n"
+    files["data/minecraft/tags/function/tick.json"] = json.dumps({"values": DF.tick_entries() + DRK.tick_entries()}, indent=2) + "\n"
     ch, _ws, _wr = chains(doc)
     for ref, lines in ch.items():
         fns[ref.split(":", 1)[1][len(FOLDER) + 1:]] = lines
@@ -2355,6 +2359,7 @@ def build(doc, **kw):
     files[CALLBACK] = callback(doc)
     import dungeon_greed as DG      # lazy (unit GREED): a catch in a live run weighs on the clock
     files[DG.CALLBACK_PATH] = DG.callback(doc)
+    DRK.patch_files(doc, files)     # every dungeon loot table marks what it rolls; the catch ledger's pokemon_captured callback
     # a room's s<g>/clear that nothing calls (a room whose door is open from the start: a drift, the exit) is a function
     # no step or pack runs, which prepare refuses; the kit emits one per room so every kind can call it, and the pack
     # keeps only the ones that are called (2026-10-09)

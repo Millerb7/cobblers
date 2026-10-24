@@ -545,7 +545,7 @@ def test_the_marker_cells_sit_within_four_blocks_of_every_water_cell_and_under_t
 def catch_in(doc, w, p, rid, species="mudkip"):
     r = TR.room_of(doc, rid)
     p.pos = [(r["ix0"] + r["ix1"]) / 2.0, float(r["floor_in"]), (r["iz0"] + r["iz1"]) / 2.0]
-    w.run_callback("pokemon_captured", query={"pokemon": {"species": {"identifier": species}}, "player": {"uuid": p.uid}})
+    w.run_callback("pokemon_captured", query={"pokemon": {"species": {"identifier": species}, "id": "pk-" + species, "is_shiny": 0}, "player": {"uuid": p.uid}})
 
 
 def test_a_catch_in_the_fishing_room_weighs_as_a_nest_catch_in_a_live_run(mk):

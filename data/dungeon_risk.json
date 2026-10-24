@@ -1,0 +1,107 @@
+{
+  "schema": "cobblers.dungeon_risk/1",
+  "generated_by": "hand",
+  "status": "BUILT 2026-10-23 (tools/dungeon_risk.py, inside the cobblers_dungeons pack), NOT RUN IN GAME: the Run Stash, the Run Satchel's view, the exit's Take it all / Sell it all, death clears the stash, and the catch ledger. Catch REMOVAL is written but OFF: catches.mode dry_run logs what it would take and takes nothing (the owner, 2026-10-23: removal stays dry-run until the owner turns it on). Proof: experiments/EXP-098-dungeon-risk",
+  "spec": "docs/mechanics/DUNGEON_RISK.md",
+  "owner_decisions": [
+    "2026-10-23: 'keep relics, i think theeasiest soluton would be some held item that would open a chest somehwere and show the collected itme to player, also it would be good to offer teh player a way to sell everything for money, so dungeons can be lucrative.'",
+    "2026-10-23: 'for the pokemon caught, we just log each one and then can remove it later, surely pokemon in the game have an unique id of some sort.'",
+    "earlier: 'everything you get should be risked, except cool catches' (shinies and the dungeon's reward Pokemon kept); mini-bosses are losable",
+    "2026-10-23: 'okay just choose best option and build it all, people might play tonight' (relayed by the coordinator): removal stays dry-run tonight"
+  ],
+  "rung": "datapack plus functions/commands (CLAUDE.md principle 6): command storage, vanilla item entities, a vanilla wandering trader's own trade screen for the view, /trigger for the exit choice, the carrot-on-a-stick use statistic, Cobblemon 1.8.2's pokemon_captured callback and its party/PC remove_by_id MoLang function, and CobbleDollars' own give command. No installed mod opens a container screen from an item or a command (docs/mechanics/DUNGEON_RISK.md section 2.2); nothing here is a mod",
+  "storage": "cobblers:dg_risk",
+  "stash": {
+    "gain_key": "cobblers_dg_gain",
+    "gain_key_why": "every dungeon loot table (data/cobblers/loot_table/dungeons/...) gets a table-level minecraft:set_custom_data {cobblers_dg_gain:1b}, so an item taken from a vault, bank or cache chest, or given by `loot give` (the fossil bay), is recognisable in the inventory for the one tick before the sweep moves it to the stash. The key is stripped when the item enters the stash, so a delivered item stacks with ordinary ones",
+    "loot_table_prefix": "data/cobblers/loot_table/dungeons/",
+    "loot_table_prefix_why": "only the dungeons' own tables. NEVER data/cobblemon/loot_table/fishing/pokerod.json (tools/dungeon_extras2.py overrides that GLOBAL path; its in-pocket branch is a separate cobblers table, which is under this prefix)",
+    "absorb_radius": 8,
+    "absorb_radius_why": "an item entity within this many blocks of a live member (dg.st 3..4, in cobblers:pocket) is moved into the stash the tick it is seen: a block's drop (pickup delay 10 ticks), a wild Pokemon's on-entity drop, a fished item (spawned at the bobber, pulled towards the player) all pass inside it before they can be picked up",
+    "skip_item_entity_fields": ["Thrower", "Owner"],
+    "skip_item_entity_fields_why": "an item entity with a Thrower was dropped by a player (their own item: never risked); one with an Owner is a `give` overflow or a delivery (the rift pick, a relic, a refund, our own exit delivery). ItemEntity's saved keys in 1.21.1 are Age, Health, Item, Owner, PickupDelay, Thrower (the 1.21.1 jar, class cjh)",
+    "skip_item_tags_on_ground": ["#cobblemon:poke_balls"],
+    "skip_item_tags_on_ground_why": "a Poke Ball on the ground in a run is the player's own ball handed back (a throw at a Pokemon that cannot be caught drops it), never a find: kept. The tag is Cobblemon 1.8.2's own (data/cobblemon/tags/item/poke_balls.json in the jar). A ball from a chest is still risked: it reaches the inventory with the gain key",
+    "skip_custom_data_keys": ["cobblers_relic", "cobblers_dg_pick", "cobblers_dg_sigil", "cobblers_dg_satchel", "cobblers_lent_rod"],
+    "skip_custom_data_keys_why": "relics are kept (the owner, 2026-10-23); the pick, the satchel and the lent rod are the engine's; a sigil is a refund. Checked on item entities as well as the Owner field, so a relic dropped on a full inventory is never stashed",
+    "fungible": [
+      "minecraft:coal", "minecraft:charcoal", "minecraft:raw_iron", "minecraft:raw_copper", "minecraft:raw_gold",
+      "minecraft:iron_ingot", "minecraft:copper_ingot", "minecraft:gold_ingot", "minecraft:iron_nugget",
+      "minecraft:gold_nugget", "minecraft:diamond", "minecraft:emerald", "minecraft:lapis_lazuli", "minecraft:redstone",
+      "minecraft:quartz", "minecraft:amethyst_shard", "minecraft:netherite_scrap", "minecraft:flint", "minecraft:bone",
+      "minecraft:glowstone_dust"
+    ],
+    "fungible_why": "items that stack to 64 in vanilla and whose plain form has no components: the stash keeps them as a count per id (any amount) instead of one entry a pickup, and gives them back in stacks of 64. Anything else, or any of these carrying a component, is kept as the exact stack it was",
+    "absorbed_line": "Into your Run Satchel."
+  },
+  "satchel": {
+    "item": "minecraft:carrot_on_a_stick",
+    "item_why": "its use is a vanilla statistic: FoodOnAStickItem.use (the 1.21.1 jar, class ctz) awards Stats.ITEM_USED server-side on every right-click while not riding, so `minecraft.used:minecraft.carrot_on_a_stick` counts a use (the stat's criterion form, as EXP-073 step 2 proved for minecraft.mined)",
+    "custom_data_key": "cobblers_dg_satchel",
+    "name": "Run Satchel",
+    "colour": "light_purple",
+    "lore": ["Right-click to look inside.", "What you find in a rift goes in here.", "Leave by the exit to keep it. Die and it is gone."],
+    "use_objective": "dg.rku",
+    "view": {
+      "entity": "minecraft:wandering_trader",
+      "entity_why": "a vanilla merchant's trade screen is the one clickable item screen a datapack can show: its offers carry real item stacks (the stash's own NBT), every one out of stock (uses = maxUses) so the screen shows each item and its tooltip and nothing can be taken. A wandering trader needs no profession and never despawns with DespawnDelay 0; NoAI, Invulnerable, Silent, PersistenceRequired, DeathLootTable minecraft:empty. The Offers.Recipes record shape is the one tools/gulch_mine.py:1281 summons",
+      "tag": "dg.rk_view",
+      "life_ticks": 400,
+      "distance": 1.6,
+      "name": "Run Satchel",
+      "price_item": "minecraft:paper",
+      "price_name": "In your satchel",
+      "empty_line": "Your Run Satchel is empty.",
+      "open_line": "Right-click the satchel in front of you to look inside."
+    }
+  },
+  "exit": {
+    "choice_objective": "dg.rkc",
+    "choice_ticks": 1200,
+    "choice_default": "take",
+    "choice_why": "the choice is offered after a clean exit, in the overworld; unanswered for 60 s (counted only while online) it is Take it all, so an exit never loses an item",
+    "bonus_pct_by_band": {"1": 0, "2": 2, "3": 4, "4": 6, "5": 8, "6": 10},
+    "boss_bonus_pct": 5,
+    "bonus_why": "DESIGN numbers for trainer-balance-designer: selling the satchel at the exit pays the bank's own price (CobbleDollars' bank list, tools/markets.py bank_prices: the base pack's then ours) plus a small bonus by band and for a run whose boss fell. Small on purpose: the bank buys the same items at the same price in any town",
+    "price_source": "tools/markets.py bank_prices (base-pack/cobbleverse/config/cobbledollars/bank.json, overridden by modpack/config/cobbledollars/bank.json, which tools/bank.py writes from data/bank.json)",
+    "lines": {
+      "summary": "Your Run Satchel holds %d stacks.",
+      "worth": "The bank pays $%d for what it buys from it (with this run's bonus).",
+      "unsold": "It does not buy the rest; that comes to you either way.",
+      "take": "[Take it all]",
+      "sell": "[Sell it all]",
+      "look": "[List it]",
+      "taken": "Your Run Satchel is emptied into your hands.",
+      "sold": "Sold to the bank: +$%d.",
+      "pay_failed": "The bank could not pay. Everything comes to you instead.",
+      "auto": "No answer, so the Run Satchel is emptied into your hands.",
+      "empty": "Your Run Satchel was empty."
+    }
+  },
+  "death": {
+    "lost_line": "Lost with the run: your Run Satchel and everything in it.",
+    "empty_line": "Your Run Satchel was empty."
+  },
+  "catches": {
+    "mode": "dry_run",
+    "modes": {
+      "dry_run": "every catch in a run is logged with its Pokemon UUID; a run that ends by any way but a clean exit looks each one up in the party and the PC and LOGS what it would remove. Nothing is removed. The default until the owner turns removal on",
+      "remove": "the same, and a logged Pokemon still found is removed by its UUID (remove_by_id) only if the player is out of battle, it holds no item, and (in the party) it is not the party's last Pokemon. Anything else is kept and logged"
+    },
+    "uuid_source": "q.pokemon.id in the pokemon_captured callback: Pokemon.getUuid().toString() (Cobblemon 1.8.2 jar, PokemonMoLangFunctions lambda$0)",
+    "remove_source": "q.player.party.remove_by_id(uuid) / q.player.pc.remove_by_id(uuid): iterates the store for Pokemon.getUuid() equal to the parsed UUID, returns 0 when none, else PokemonStore.remove's result (Cobblemon 1.8.2 jar, PokemonStoreMoLangFunctions lambda$6)",
+    "exempt_shiny": true,
+    "exempt_prize": true,
+    "exempt_why": "the owner: 'everything you get should be risked, except cool catches'. A shiny (q.pokemon.is_shiny, Pokemon.getShiny) and any species a dungeon's prize can be at any band (tools/dungeon_prize.pool_at, rare and legendary, and the roster's spine boss) are never logged, so no removal can name them (an absence, the strongest anchor: docs/research/notes/dungeon-catches-on-the-clock.md section 6)",
+    "log_max": 256,
+    "lines": {
+      "at_stake": "At stake until you leave by the exit: ",
+      "kept_shiny": "A shiny! Yours whatever happens.",
+      "kept_prize": "The rift's prize. Yours whatever happens.",
+      "kept_exit": "Your catches from the run are yours.",
+      "dry": "Not enforced yet: the rift would take back ",
+      "removed": "The rift took back ",
+      "kept_guard": "Kept (the rift could not take it safely): "
+    }
+  }
+}

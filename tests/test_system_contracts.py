@@ -1915,6 +1915,27 @@ def test_contract_c31_the_cavern_cleanup_clears_the_chamber_score_once():
         restore[-2] == "scoreboard players set #built cobblers.gq 0" and restore[-3].startswith("setblock %d %d %d " % (px, py, pz))
 
 
+# =================================================================================================================
+# C32. A pocket death drops nothing, so the Run Stash's sweep only ever takes what a run found (DUNGEON_RISK.md 2.1)
+# =================================================================================================================
+#
+# Both halves as generated: the blackout's load sets keepInventory, and the risk's sweep (run on tests/risk_sim.py)
+# takes an item entity with neither Thrower nor Owner (exactly a death drop's shape, so the dependency is real) and
+# leaves one with either. NOT covered: vanilla's own death-drop NBT (read from the 1.21.1 jar in DUNGEON_RISK.md, not
+# run), and a mod that drops items on death in spite of the gamerule (Lenient Death's config is not read here).
+def test_contract_c32_a_pocket_death_drops_nothing_for_the_stash_to_take():
+    import test_dungeon_risk as TR
+    assert "gamerule keepInventory true" in TB.commands("blackout/load")
+    w = TR.world()
+    p = TR.member(w)
+    bare = TR.drop(w, p, TR.coal(1))
+    thrown = TR.drop(w, p, TR.coal(1), Thrower=[9, 9, 9, 9])
+    owned = TR.drop(w, p, TR.coal(1), Owner=list(p.uuid))
+    w.tick()
+    assert not bare.alive, "the sweep must take a Thrower-less, Owner-less item: that is what a death drop is"
+    assert thrown.alive and owned.alive
+
+
 def test_every_contract_names_existing_tests():
     for c in REGISTRY["contracts"]:
         assert c["tests"], c["id"]

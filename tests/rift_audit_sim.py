@@ -321,6 +321,14 @@ def deliver_hook(world, ctx, args):
     return 0
 
 
+def _risk_hook(name):
+    def hook(world, ctx, args):
+        p = ctx.ent
+        world.log.append("risk/%s %s" % (name, p.name if p is not None and p.kind == "player" else "-"))
+        return 0
+    return hook
+
+
 def world(dungeon_files, blackout_files, ns="cobblers"):
     """A booted world holding the dungeon pack and the blackout's two run-tag functions (verbatim)."""
     extra = {}
@@ -331,6 +339,12 @@ def world(dungeon_files, blackout_files, ns="cobblers"):
     extra["%s:levelcap/battle_check" % ns] = ["# no-op: the test sets cobblers.lc_cap"]
     w = RiftWorld(dungeon_files, extra)
     w.hooks["%s:recovery/deliver" % ns] = deliver_hook
+    # The dungeon risk (tools/dungeon_risk.py, 2026-10-23: the Run Stash, the satchel, the exit's sale, the catch
+    # ledger) uses storage paths with quoted keys and filters, item entities, a merchant and runmolang, which this
+    # interpreter does not model. Its five entry points are recorded here and run on their own harness instead
+    # (tests/risk_sim.py, tests/test_dungeon_risk.py), so the engine's audits keep testing the engine.
+    for name in ("load", "tick", "begin", "won", "forfeit"):
+        w.hooks["%s:dungeons/risk/%s" % (ns, name)] = _risk_hook(name)
     w.objectives |= {"cobblers.lc_cap"}
     w.boot()
     return w
